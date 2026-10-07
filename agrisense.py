@@ -146,14 +146,11 @@ with tab1:
     live_temp, live_rain = None, None
 
     if city:
-        if "474928493d640bda234fb2612a2d9091" in get_live_weather.__code__.co_consts:
-             st.error("Please insert your actual OpenWeatherMap API Key in the code to use this feature.")
+        live_temp, live_rain = get_live_weather(city)
+        if live_temp:
+            st.success(f"Live Weather in {city.capitalize()}: {live_temp}°C, {live_rain:.1f}mm Rain")
         else:
-            live_temp, live_rain = get_live_weather(city)
-            if live_temp:
-                st.success(f"Live Weather in {city.capitalize()}: {live_temp}°C, {live_rain:.1f}mm Rain")
-            else:
-                st.error("City not found. Using manual sliders below.")
+            st.error("City not found. Using manual sliders below.")
 
     st.divider()
     st.write("### Agricultural Inputs")
