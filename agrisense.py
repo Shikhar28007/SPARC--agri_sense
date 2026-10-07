@@ -25,6 +25,37 @@ def recommend_crop(nitrogen, phosphorus, potassium, temp, rainfall):
     top_3_indices = probabilities.argsort()[-3:][::-1]
     return [(model.classes_[i], probabilities[i] * 100) for i in top_3_indices]
 
+   
+CROP_WATER_NEEDS = {
+    'rice': 1200, 'maize': 600, 'jute': 1000, 'cotton': 800, 'coconut': 1500,
+    'papaya': 1000, 'orange': 900, 'apple': 800, 'muskmelon': 400, 'watermelon': 400,
+    'grapes': 700, 'mango': 1000, 'banana': 1500, 'pomegranate': 600, 'lentil': 300,
+    'blackgram': 350, 'mungbean': 350, 'mothbeans': 300, 'pigeonpeas': 500,
+    'kidneybeans': 400, 'chickpea': 350, 'coffee': 1500
+}
+
+def estimate_water_requirement(crop, live_temp):
+    """Calculates estimated water needs adjusted for thermal evaporation."""
+    base_water = CROP_WATER_NEEDS.get(crop.lower(), 600)
+    
+    evaporation_factor = max(0, (live_temp - 25) * 0.02)
+    adjusted_water = base_water * (1 + evaporation_factor)
+    
+    return round(adjusted_water)
+
+def predict_failure_risk(confidence_score, live_temp, live_rain):
+    """Calculates failure risk using model probability and weather extremes."""
+    base_risk = 100 - confidence_score
+    
+    weather_penalty = 0
+    if live_temp > 38 or live_temp < 10:
+        weather_penalty += 15
+    if live_rain > 800 or live_rain < 30:
+        weather_penalty += 20
+        
+    total_risk = base_risk + weather_penalty
+    return min(total_risk, 95.0) 
+
 def get_live_weather(city_name):
     API_KEY = "474928493d640bda234fb2612a2d9091" 
     geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={API_KEY}"
@@ -67,11 +98,38 @@ final_rain = st.slider("Rainfall (mm)", 0.0, 500.0, float(live_rain) if live_rai
 
 if st.button("Recommend Crop", type="primary"):
     results = recommend_crop(n, p, k, final_temp, final_rain)
+    
     if results:
-        top_crop = results[0][0].capitalize()
-        st.success(f"### Top Recommendation: {top_crop} ({results[0][1]:.1f}% Match)")
-        st.info(f"**Alternatives:** {results[1][0].capitalize()} ({results[1][1]:.1f}%), {results[2][0].capitalize()} ({results[2][1]:.1f}%)")
-        db_manager.log_prediction(n, p, k, final_temp, final_rain, top_crop)
+        top_crop = results[0][0]
+        confidence = results[0][1]
+        
+        est_water = estimate_water_requirement(top_crop, final_temp)
+        risk_percent = predict_failure_risk(confidence, final_temp, final_rain)
+        
+        st.success(f"### 🌱 Primary Recommendation: {top_crop.capitalize()} ({confidence:.1f}% Match)")
+        st.info(f"**Alternative Options:** {results[1][0].capitalize()} ({results[1][1]:.1f}%), {results[2][0].capitalize()} ({results[2][1]:.1f}%)")
+        
+        st.write("---")
+        st.write("### 📊 Live Predictive Analytics")
+        metric_col1, metric_col2 = st.columns(2)
+        
+        with metric_col1:
+            st.metric(
+                label="Estimated Seasonal Water Need", 
+                value=f"{est_water} mm", 
+                delta="Adjusted for local evaporation" if final_temp > 25 else "Standard baseline",
+                delta_color="off"
+            )
+            
+        with metric_col2:
+            if risk_percent < 30:
+                st.success(f"Crop Failure Risk: {risk_percent:.1f}% (Low)")
+            elif risk_percent < 60:
+                st.warning(f"Crop Failure Risk: {risk_percent:.1f}% (Moderate)")
+            else:
+                st.error(f"Crop Failure Risk: {risk_percent:.1f}% (High)")
+                
+        db_manager.log_prediction(n, p, k, final_temp, final_rain, top_crop.capitalize())
 
 st.divider()
 with st.expander("🛠️ Admin Dashboard: View Prediction History"):
