@@ -74,7 +74,7 @@ def recommend_crop(nitrogen, phosphorus, potassium, temp, rainfall):
     return [(model.classes_[i], probabilities[i] * 100) for i in top_3_indices]
 
 def get_live_weather(city_name):
-    API_KEY = "474928493d640bda234fb2612a2d9091" 
+    API_KEY = "fc9d2a9f7b9d8e48e377f50974b570aa" 
     geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={API_KEY}"
     geo_response = requests.get(geo_url).json()
     
