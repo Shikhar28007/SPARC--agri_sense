@@ -69,7 +69,7 @@ def recommend_crop(nitrogen, phosphorus, potassium, temp, rainfall):
     if temp > 60 or rainfall > 1000:
         st.warning("Warning: high weather values detected. Result may be inaccurate.")
         
-    probabilities = model.predict_proba([[nitrogen, phosphorus, potassium, temp, rainfall]])[0]
+    probabilities = model.predict_proba([[nitrogen, phosphorus, potassium, rainfall, temp]])[0]
     top_3_indices = probabilities.argsort()[-3:][::-1]
     return [(model.classes_[i], probabilities[i] * 100) for i in top_3_indices]
 
