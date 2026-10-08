@@ -10,9 +10,131 @@ st.set_page_config(page_title="SPARC", layout="wide")
 
 hide_streamlit_style = """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+
+    /* ─── Light Scratchpad Canvas ─── */
+    .stApp {
+        background-color: #faf9f5 !important;
+        background-image: 
+            radial-gradient(#dcd8cf 1px, transparent 1px) !important;
+        background-size: 20px 20px !important;
+        color: #2b2d42 !important;
+        font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+    }
+
+    /* ─── Scratchpad Header & Banners ─── */
+    .scratchpad-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #fffefb;
+        border: 1.5px dashed #cfc9bb;
+        border-radius: 8px;
+        padding: 10px 16px;
+        margin-bottom: 20px;
+        box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.04);
+    }
+    .draft-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fef3c7;
+        color: #92400e;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid #fde68a;
+    }
+    .dev-stage-badge {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.75rem;
+        color: #57534e;
+        background: #f5f4ef;
+        padding: 4px 10px;
+        border-radius: 4px;
+        border: 1px solid #e7e4dc;
+    }
+
+    /* ─── Sticky Note Callout ─── */
+    .sticky-note {
+        background: #fffbe6;
+        border-left: 4px solid #eab308;
+        border-top: 1px solid #fef08a;
+        border-right: 1px solid #fef08a;
+        border-bottom: 1px solid #fef08a;
+        padding: 12px 16px;
+        border-radius: 4px;
+        font-size: 0.88rem;
+        color: #713f12;
+        margin: 12px 0;
+        box-shadow: 1px 2px 4px rgba(0,0,0,0.02);
+    }
+
+    /* ─── Notebook Tabs ─── */
+    button[data-baseweb="tab"] {
+        background-color: #f1ede4 !important;
+        border: 1px solid #ded9cb !important;
+        border-bottom: none !important;
+        border-radius: 8px 8px 0 0 !important;
+        padding: 8px 18px !important;
+        margin-right: 5px !important;
+        font-weight: 600 !important;
+        color: #57534e !important;
+        font-family: 'Fira Code', monospace !important;
+        font-size: 0.85rem !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background-color: #ffffff !important;
+        border-top: 3px solid #2d6a4f !important;
+        color: #1b4332 !important;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.02) !important;
+    }
+
+    /* ─── Metric Paper Cards ─── */
+    div[data-testid="stMetric"] {
+        background: #ffffff !important;
+        border: 1.5px solid #e8e4da !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        box-shadow: 2px 2px 0px rgba(0,0,0,0.03) !important;
+    }
+    div[data-testid="stMetricLabel"] {
+        font-size: 0.82rem !important;
+        color: #78716c !important;
+        font-family: 'Fira Code', monospace !important;
+    }
+    div[data-testid="stMetricValue"] {
+        color: #1b4332 !important;
+        font-weight: 700 !important;
+    }
+
+    /* ─── Inputs & Sliders on Light Paper ─── */
+    div[data-baseweb="input"], div[data-baseweb="select"] {
+        background-color: #ffffff !important;
+        border-radius: 6px !important;
+        border: 1px solid #d6d0c4 !important;
+    }
+
+    /* ─── Buttons ─── */
+    button[kind="primary"] {
+        background-color: #2d6a4f !important;
+        border-color: #2d6a4f !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        box-shadow: 2px 2px 0px rgba(0,0,0,0.1) !important;
+    }
+    button[kind="primary"]:hover {
+        background-color: #1b4332 !important;
+        border-color: #1b4332 !important;
+    }
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -300,8 +422,27 @@ def harvest_celebration():
 
 # ──────────────────────── APPLICATION UI ─────────────────────────
 
+st.markdown("""
+<div class="scratchpad-banner">
+    <div>
+        <span class="draft-badge">📝 LAB SCRATCHPAD • ACTIVE DRAFT</span>
+        <span style="font-weight: 700; color: #2d6a4f; margin-left: 8px; font-size: 1.1rem;">SPARC Workbench</span>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <span class="dev-stage-badge">STATUS: IN-DEVELOPMENT</span>
+        <span class="dev-stage-badge">STAGE: v0.4-dev</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 st.title("🌱 SPARC")
 st.subheader("Smart Python-based Agricultural Recommendation and Classification System")
+
+st.markdown("""
+<div class="sticky-note">
+    📌 <b>Lab Scratchpad Note:</b> This prototype is currently in active development stage. Integrating real-time OpenWeatherMap air pollution telemetry, browser geolocation, and heuristic crop mitigation algorithms.
+</div>
+""", unsafe_allow_html=True)
 
 tab1, tab2, tab3, tab4 = st.tabs([
     "🌱 Crop Predictor",
