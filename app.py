@@ -388,9 +388,9 @@ def build_3d_npk_graph(fert_calc: dict, active_crop: str, view_mode: str = "line
                 y=1.02,
                 xanchor="center",
                 x=0.5,
-                font=dict(size=11, color="#F3E5AB"),
-                bgcolor="rgba(10, 14, 25, 0.85)",
-                bordercolor="rgba(212, 175, 55, 0.35)",
+                font=dict(size=11, color="#ECFDF5"),
+                bgcolor="rgba(11, 20, 16, 0.85)",
+                bordercolor="rgba(16, 185, 129, 0.35)",
                 borderwidth=1
             )
         )
@@ -400,44 +400,41 @@ def build_3d_npk_graph(fert_calc: dict, active_crop: str, view_mode: str = "line
 # STREAMLIT PAGE CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="SPARC | Luxury 3D Agriculture AI",
-    page_icon="👑",
+    page_title="AgrisenseAI | Precision Agriculture & Crop Diagnostics",
+    page_icon="🌱",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
-# LUXURY 3D CASE THEME & IMMERSIVE FADED TRANSITIONS
-# Palette: Royal Obsidian (#060913) + 24K Champagne Gold (#D4AF37) + Emerald (#10B981) + Platinum (#38BDF8)
+# EMERALD MODERN AGRO-TECH THEME & STREAMLINED UX
+# Palette: Deep Forest Obsidian (#070D0A) + Emerald (#10B981) + Mint (#6EE7B7) + Sky (#38BDF8)
 # ─────────────────────────────────────────────────────────────────────────────
 CUSTOM_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-    --bg-main: #060913;
-    --bg-case: linear-gradient(145deg, rgba(20, 27, 46, 0.94) 0%, rgba(10, 14, 26, 0.98) 60%, rgba(5, 8, 17, 1) 100%);
-    --bg-case-subtle: linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0%, rgba(212, 175, 55, 0.02) 100%);
-    --border-gold: rgba(212, 175, 55, 0.28);
-    --border-gold-hover: rgba(212, 175, 55, 0.55);
-    --border-emerald: rgba(16, 185, 129, 0.3);
-    --accent-gold: #D4AF37;
-    --accent-gold-light: #F3E5AB;
+    --bg-main: #070D0A;
+    --bg-case: linear-gradient(145deg, rgba(16, 28, 22, 0.95) 0%, rgba(9, 17, 13, 0.98) 60%, rgba(5, 10, 7, 1) 100%);
+    --border-emerald: rgba(16, 185, 129, 0.28);
+    --border-emerald-hover: rgba(52, 211, 153, 0.65);
     --accent-emerald: #10B981;
+    --accent-mint: #6EE7B7;
     --accent-cyan: #38BDF8;
-    --accent-amber: #F59E0B;
-    --accent-rose: #F43F5E;
-    --text-primary: #F8FAFC;
+    --accent-amber: #FBBF24;
+    --accent-rose: #FB7185;
+    --text-primary: #F0FDF4;
     --text-muted: #94A3B8;
-    --shadow-3d-case: 0 18px 45px -8px rgba(0, 0, 0, 0.9), inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px 0 rgba(0, 0, 0, 0.75), 0 0 25px rgba(212, 175, 55, 0.05);
+    --shadow-case: 0 16px 40px -10px rgba(0, 0, 0, 0.85), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), 0 0 25px rgba(16, 185, 129, 0.06);
 }
 
-/* Global Luxury Obsidian App Canvas */
+/* Global Emerald Agro-Tech Canvas */
 .stApp {
     background-color: var(--bg-main) !important;
     background-image: 
-        radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.035) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.04) 0%, transparent 45%),
+        radial-gradient(circle at 12% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 88% 85%, rgba(5, 150, 105, 0.06) 0%, transparent 45%),
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.02) 0%, transparent 60%) !important;
     color: var(--text-primary) !important;
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
@@ -447,16 +444,105 @@ CUSTOM_CSS = """
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-/* ─── IMMERSIVE FADED SECTION TRANSITIONS ─── */
-@keyframes luxuryFadeInGlide {
+/* Modern Floating App Header */
+.agro-floating-header {
+    background: linear-gradient(135deg, rgba(15, 26, 20, 0.95), rgba(9, 16, 12, 0.98));
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 18px;
+    padding: 16px 24px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 20px rgba(16, 185, 129, 0.12);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+}
+
+.agro-logo-badge {
+    font-size: 1.85rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.1));
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    border-radius: 14px;
+    padding: 6px 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(16, 185, 129, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.agro-chip-version {
+    font-size: 0.70rem;
+    font-weight: 800;
+    color: #34D399;
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid rgba(52, 211, 153, 0.45);
+    padding: 3px 9px;
+    border-radius: 12px;
+    letter-spacing: 0.06em;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Micro Status Pills */
+.agro-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.02em;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 8px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+.pill-gps {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.12));
+    color: #6EE7B7;
+    border: 1px solid #10B981;
+}
+.pill-loc {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.pill-sky {
+    background: rgba(56, 189, 248, 0.15);
+    color: #7DD3FC;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+}
+.pill-temp {
+    background: rgba(251, 191, 36, 0.15);
+    color: #FDE68A;
+    border: 1px solid rgba(251, 191, 36, 0.35);
+}
+.pill-hum {
+    background: rgba(52, 211, 153, 0.15);
+    color: #A7F3D0;
+    border: 1px solid rgba(52, 211, 153, 0.35);
+}
+.pill-rain {
+    background: rgba(96, 165, 250, 0.15);
+    color: #93C5FD;
+    border: 1px solid rgba(96, 165, 250, 0.35);
+}
+
+/* Sidebar Branding */
+.sidebar-brand-box {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(6, 78, 59, 0.22) 100%);
+    border: 1px solid rgba(52, 211, 153, 0.35);
+    border-radius: 14px;
+    padding: 16px 14px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ─── STREAMLINED TAB TRANSITIONS ─── */
+@keyframes emeraldFadeGlide {
     0% {
         opacity: 0;
-        transform: translateY(18px) scale(0.99);
-        filter: blur(6px);
-    }
-    50% {
-        opacity: 0.88;
-        filter: blur(1px);
+        transform: translateY(12px) scale(0.995);
+        filter: blur(3px);
     }
     100% {
         opacity: 1;
@@ -466,27 +552,55 @@ header {visibility: hidden;}
 }
 
 div[data-testid="stTabsContent"] {
-    animation: luxuryFadeInGlide 0.52s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    animation: emeraldFadeGlide 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     will-change: transform, opacity, filter;
 }
 
-/* ─── 3D LUXURY CASE CARD CONTAINERS ─── */
+/* Streamlined Navigation Tabs */
+button[data-baseweb="tab"] {
+    background: rgba(15, 26, 20, 0.6) !important;
+    border: 1px solid rgba(16, 185, 129, 0.15) !important;
+    border-bottom: none !important;
+    border-radius: 12px 12px 0 0 !important;
+    margin-right: 6px !important;
+    padding: 11px 22px !important;
+    font-weight: 600 !important;
+    color: #94A3B8 !important;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+button[data-baseweb="tab"]:hover {
+    background: rgba(16, 185, 129, 0.12) !important;
+    color: #6EE7B7 !important;
+    border-color: rgba(52, 211, 153, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+button[data-baseweb="tab"][aria-selected="true"] {
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.22) 0%, rgba(6, 78, 59, 0.12) 100%) !important;
+    border-color: rgba(52, 211, 153, 0.55) !important;
+    border-bottom: 3px solid #10B981 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 -6px 20px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Modern Frosted Cards */
 .sparc-card {
     background: var(--bg-case);
-    border: 1px solid var(--border-gold);
+    border: 1px solid var(--border-emerald);
     border-radius: 16px;
     padding: 24px 26px;
     margin-bottom: 22px;
-    box-shadow: var(--shadow-3d-case);
-    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-case);
+    backdrop-filter: blur(18px);
     position: relative;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .sparc-card:hover {
-    border-color: var(--border-gold-hover);
-    box-shadow: 0 28px 60px -12px rgba(0, 0, 0, 0.95), inset 0 1px 2px 0 rgba(255, 255, 255, 0.28), 0 0 30px rgba(212, 175, 55, 0.16);
-    transform: translateY(-3px) scale(1.003);
+    border-color: var(--border-emerald-hover);
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.9), inset 0 1px 2px 0 rgba(255, 255, 255, 0.2), 0 0 25px rgba(16, 185, 129, 0.15);
+    transform: translateY(-3px) scale(1.002);
 }
 
 .sparc-card-header {
@@ -494,7 +608,7 @@ div[data-testid="stTabsContent"] {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 18px;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.18);
     padding-bottom: 14px;
 }
 
@@ -509,7 +623,7 @@ div[data-testid="stTabsContent"] {
     margin: 0;
 }
 
-/* ─── 3D METALLIC EMBOSSED BADGES ─── */
+/* Badges */
 .sparc-badge {
     display: inline-flex;
     align-items: center;
@@ -521,12 +635,6 @@ div[data-testid="stTabsContent"] {
     font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.04em;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.badge-gold {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.06) 100%);
-    color: #F3E5AB;
-    border: 1px solid rgba(212, 175, 55, 0.45);
 }
 
 .badge-emerald {
@@ -553,26 +661,32 @@ div[data-testid="stTabsContent"] {
     border: 1px solid rgba(244, 63, 94, 0.45);
 }
 
-/* ─── 3D INSET METRIC CASES ─── */
+.badge-gold {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%);
+    color: #6EE7B7;
+    border: 1px solid rgba(52, 211, 153, 0.45);
+}
+
+/* Metric Cases */
 .metric-box {
-    background: linear-gradient(145deg, rgba(22, 30, 52, 0.85) 0%, rgba(9, 13, 24, 0.95) 100%);
-    border: 1px solid rgba(212, 175, 55, 0.22);
+    background: linear-gradient(145deg, rgba(16, 28, 22, 0.85) 0%, rgba(8, 15, 11, 0.95) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.24);
     border-radius: 12px;
     padding: 16px 18px;
     text-align: center;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7), 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(212, 175, 55, 0.35);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.65), 0 8px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(52, 211, 153, 0.3);
     transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .metric-box:hover {
     transform: translateY(-2px);
-    border-color: #D4AF37;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 12px 25px rgba(212, 175, 55, 0.16);
+    border-color: #10B981;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 12px 25px rgba(16, 185, 129, 0.2);
 }
 
 .metric-label {
     font-size: 0.74rem;
-    color: #D4AF37;
+    color: #34D399;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 700;
@@ -587,10 +701,10 @@ div[data-testid="stTabsContent"] {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
-/* ─── 3D ALTERNATIVE CROP CARDS ─── */
+/* Alternative Crop Cards */
 .alt-crop-card {
-    background: linear-gradient(145deg, rgba(26, 36, 60, 0.65) 0%, rgba(12, 17, 30, 0.85) 100%);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: linear-gradient(145deg, rgba(18, 32, 25, 0.7) 0%, rgba(9, 17, 13, 0.9) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.22);
     border-radius: 14px;
     padding: 18px 20px;
     margin-bottom: 14px;
@@ -599,59 +713,31 @@ div[data-testid="stTabsContent"] {
 }
 
 .alt-crop-card:hover {
-    background: linear-gradient(145deg, rgba(32, 45, 75, 0.8) 0%, rgba(16, 22, 38, 0.95) 100%);
-    border-color: rgba(212, 175, 55, 0.45);
-    box-shadow: 0 16px 35px -6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+    background: linear-gradient(145deg, rgba(23, 42, 32, 0.85) 0%, rgba(12, 22, 17, 0.98) 100%);
+    border-color: rgba(52, 211, 153, 0.5);
+    box-shadow: 0 16px 35px -6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.18);
     transform: translateY(-3px);
 }
 
-/* ─── 3D RESCUE PROTOCOL ITEMS ─── */
+/* Rescue Protocol Items */
 .rescue-item {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(10, 14, 26, 0.4) 100%);
-    border-left: 4px solid #D4AF37;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(8, 16, 12, 0.6) 100%);
+    border-left: 4px solid #10B981;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 8px;
     padding: 14px 16px;
     margin-bottom: 12px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
-/* ─── LUXURY TAB NAVIGATION BAR ─── */
-button[data-baseweb="tab"] {
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.07) !important;
-    border-bottom: none !important;
-    border-radius: 10px 10px 0 0 !important;
-    margin-right: 6px !important;
-    padding: 10px 20px !important;
-    font-weight: 600 !important;
-    color: #94A3B8 !important;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-button[data-baseweb="tab"]:hover {
-    background: rgba(212, 175, 55, 0.08) !important;
-    color: #F3E5AB !important;
-    border-color: rgba(212, 175, 55, 0.35) !important;
-    transform: translateY(-2px) !important;
-}
-
-button[data-baseweb="tab"][aria-selected="true"] {
-    background: linear-gradient(180deg, rgba(212, 175, 55, 0.16) 0%, rgba(16, 185, 129, 0.06) 100%) !important;
-    border-color: rgba(212, 175, 55, 0.45) !important;
-    border-bottom: 3px solid #D4AF37 !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 -6px 20px rgba(212, 175, 55, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-}
-
-/* ─── 3D TACTILE LUXURY BUTTONS ─── */
+/* Tactile Emerald Buttons */
 div.stButton > button {
     background: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%) !important;
     color: #FFFFFF !important;
     font-weight: 700 !important;
-    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border: 1px solid rgba(52, 211, 153, 0.45) !important;
     border-radius: 10px !important;
     padding: 11px 24px !important;
     box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2px 0 rgba(0, 0, 0, 0.45) !important;
@@ -661,14 +747,26 @@ div.stButton > button {
 
 div.stButton > button:hover {
     background: linear-gradient(135deg, #059669 0%, #047857 50%, #065F46 100%) !important;
-    border-color: #D4AF37 !important;
-    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+    border-color: #34D399 !important;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
     transform: translateY(-2px) scale(1.01) !important;
 }
 
 div.stButton > button:active {
     transform: translateY(1px) scale(0.99) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Polished Inputs and Selects */
+div[data-baseweb="input"], div[data-baseweb="select"] {
+    border-radius: 10px !important;
+    background-color: rgba(14, 24, 18, 0.8) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+div[data-baseweb="input"]:focus-within, div[data-baseweb="select"]:focus-within {
+    border-color: #10B981 !important;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.35) !important;
 }
 </style>
 """
@@ -1063,9 +1161,9 @@ def main_dashboard():
     with st.sidebar:
         st.markdown("""
         <div class="sidebar-brand-box">
-            <div style="font-size: 2rem; margin-bottom: 6px;">🌱⚡</div>
-            <div style="font-weight: 800; font-size: 1.3rem; letter-spacing: 0.05em; color: #FFFFFF;">SPARC CORE</div>
-            <div style="font-size: 0.72rem; color: #34D399; font-family: monospace; letter-spacing: 0.08em;">AUTONOMOUS AGRI-AI</div>
+            <div style="font-size: 2.1rem; margin-bottom: 6px;">🌱⚡</div>
+            <div style="font-weight: 800; font-size: 1.35rem; letter-spacing: 0.04em; color: #FFFFFF;">AGRISENSE AI</div>
+            <div style="font-size: 0.72rem; color: #34D399; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em;">PRECISION AGRI-TECH</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1090,7 +1188,7 @@ def main_dashboard():
         live_precip = w.get('live_rain', 0.0)
         rain_label = f"{live_precip} mm (Live)" if live_precip > 0 else f"{w.get('rainfall', 100.0)} mm (Seasonal)"
         st.markdown(f"""
-        <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB; background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+        <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB; background: rgba(16, 28, 22, 0.75); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.25);">
             <div><strong>Location:</strong> <span style="color: #38BDF8;">{w.get('location', 'Auto-Synced')}</span></div>
             <div><strong>Condition:</strong> <span style="color: #F472B6;">{c_icon} {c_desc}</span></div>
             <div><strong>Temperature:</strong> <span style="color: #FBBF24;">{w.get('temperature', 26.0)}°C</span></div>
@@ -1105,25 +1203,44 @@ def main_dashboard():
             st.session_state.splash_completed = False
             st.rerun()
 
-    # ─── TOP APP HEADER BANNER ───
+    # ─── TOP APP HEADER BANNER (Streamlined Floating Agro-Tech Header) ───
     w = st.session_state.get("weather_telemetry") or {}
+    home_loc = st.session_state.get("my_home_location") or {}
+    is_gps = bool(home_loc.get("is_gps_verified"))
+
     st.markdown(f"""
-    <div class="sparc-card" style="margin-top: 10px; padding: 18px 24px; border-left: 4px solid #10B981;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <div>
-                <h2 style="margin: 0; font-size: 1.7rem; font-weight: 800; color: #FFFFFF;">
-                    Project SPARC <span style="font-size: 0.95rem; font-weight: 600; color: #10B981; margin-left: 8px;">v3.0 Adaptive</span>
-                </h2>
-                <div style="color: #9CA3AF; font-size: 0.88rem; margin-top: 3px;">
-                    Smart Agriculture Recommendation, Crop Diagnostics, Adaptation Protocols & Classification
+    <div class="agro-floating-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="agro-logo-badge">🌱</div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <h1 style="margin: 0; font-size: 1.65rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.02em;">
+                            Agrisense<span style="color: #10B981;">AI</span>
+                        </h1>
+                        <span class="agro-chip-version">v3.2 PRO</span>
+                    </div>
+                    <div style="color: #94A3B8; font-size: 0.82rem; margin-top: 2px; font-weight: 500;">
+                        Precision Agronomy • Satellite Micro-Telemetry • Disease Diagnostics • Adaptive Nutrition
+                    </div>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <span class="sparc-badge badge-emerald">📍 {w.get('city', 'Local')}</span>
-                <span class="sparc-badge badge-cyan">{w.get('condition_icon', '⛅')} {w.get('condition', 'Fair Weather')}</span>
-                <span class="sparc-badge badge-amber">🌡️ {w.get('temperature', 26.0)}°C</span>
-                <span class="sparc-badge badge-emerald">💧 {w.get('humidity', 60.0)}%</span>
-                <span class="sparc-badge badge-cyan">🌧️ {w.get('rainfall', 100.0)} mm</span>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <span class="agro-status-pill {'pill-gps' if is_gps else 'pill-loc'}">
+                    {'🎯' if is_gps else '📍'} {w.get('city', 'Local Farm')}
+                </span>
+                <span class="agro-status-pill pill-sky">
+                    {w.get('condition_icon', '⛅')} {w.get('condition', 'Clear Sky')}
+                </span>
+                <span class="agro-status-pill pill-temp">
+                    🌡️ {w.get('temperature', 26.0)}°C
+                </span>
+                <span class="agro-status-pill pill-hum">
+                    💧 {w.get('humidity', 60.0)}%
+                </span>
+                <span class="agro-status-pill pill-rain">
+                    🌧️ {w.get('rainfall', 100.0)} mm
+                </span>
             </div>
         </div>
     </div>
