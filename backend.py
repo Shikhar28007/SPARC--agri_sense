@@ -1336,8 +1336,8 @@ class SparcEngine:
             except Exception:
                 continue
 
-        # 4. Calibrated default baseline for Indian Agriculture (e.g. Jaipur, Rajasthan)
-        return self.fetch_live_weather("Jaipur, Rajasthan")
+        # 4. Calibrated default baseline for Indian Agriculture
+        return self.fetch_live_weather("Delhi")
 
 
     def fetch_live_weather(self, city_or_preset: str) -> Dict[str, Any]:

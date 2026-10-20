@@ -737,6 +737,27 @@ def ensure_session_state():
             st.session_state.my_home_location = gps_w
             st.session_state.weather_telemetry = gps_w
             st.session_state.active_location_mode = "home"
+            st.session_state._last_synced_farm_input = gps_w.get("city", "").lower()
+            st.session_state["slider_temp"] = max(-10.0, min(55.0, float(gps_w.get("temperature", 25.0))))
+            st.session_state["slider_hum"] = max(5.0, min(100.0, float(gps_w.get("humidity", 60.0))))
+            st.session_state["slider_rain"] = max(0.0, min(500.0, float(gps_w.get("rainfall", 90.0))))
+
+    if "user_city" in st.query_params:
+        try:
+            u_city = str(st.query_params["user_city"]).strip()
+            del st.query_params["user_city"]
+            if u_city:
+                city_w = engine_instance.fetch_live_weather(u_city)
+                if city_w:
+                    st.session_state.my_home_location = city_w
+                    st.session_state.weather_telemetry = city_w
+                    st.session_state.active_location_mode = "home"
+                    st.session_state._last_synced_farm_input = city_w.get("city", "").lower()
+                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(city_w.get("temperature", 25.0))))
+                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(city_w.get("humidity", 60.0))))
+                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(city_w.get("rainfall", 90.0))))
+        except Exception:
+            pass
 
     if "my_home_location" not in st.session_state or not isinstance(st.session_state.my_home_location, dict):
         try:
@@ -747,7 +768,8 @@ def ensure_session_state():
                 user_lon=user_lon
             )
         except Exception:
-            st.session_state.my_home_location = engine_instance.fetch_live_weather("Jaipur, Rajasthan")
+            st.session_state.my_home_location = engine_instance.fetch_live_weather("Delhi")
+
 
     if "other_place_location" not in st.session_state:
         st.session_state.other_place_location = None
@@ -1211,21 +1233,128 @@ def main_dashboard():
                     st.toast(f"🏡 Farm location updated to: {new_home['location']}")
                     st.rerun()
 
-            col_h1, col_h2 = st.columns([1.1, 1])
+            # Direct Browser Live Location Detector (Hardware GPS + Browser IP)
+            components.html("""
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="utf-8">
+            <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: transparent; }
+            .btn-loc {
+                background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+                color: #FFFFFF;
+                border: 1px solid rgba(52, 211, 153, 0.4);
+                border-radius: 8px;
+                padding: 10px 16px;
+                font-size: 13.5px;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+                justify-content: center;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            }
+            .btn-loc:hover {
+                background: linear-gradient(135deg, #047857 0%, #059669 100%);
+                box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+            }
+            .status-text {
+                font-size: 12px;
+                color: #94A3B8;
+                margin-top: 5px;
+                text-align: center;
+                min-height: 18px;
+                font-weight: 500;
+            }
+            </style>
+            </head>
+            <body>
+            <a id="nav-target" href="#" target="_top" style="display: none;"></a>
+            <button class="btn-loc" id="btn-gps" onclick="fetchLiveDeviceLocation()">
+                <span>🛰️ Tap to Detect My Live Location (GPS / Network)</span>
+            </button>
+            <div id="loc-status" class="status-text">Click to sync with your phone/device's actual location</div>
+            <script>
+            function fetchLiveDeviceLocation() {
+                var btn = document.getElementById('btn-gps');
+                var st = document.getElementById('loc-status');
+                var nav = document.getElementById('nav-target');
+                btn.innerHTML = '<span>⏳ Detecting physical location...</span>';
+                st.innerText = 'Requesting browser device coordinates...';
+
+                function navTo(url) {
+                    nav.href = url;
+                    nav.click();
+                }
+
+                function tryClientIpFallback() {
+                    st.innerText = 'Checking network location...';
+                    fetch('https://ipapi.co/json/')
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.city) {
+                                st.innerText = 'Detected ' + data.city + '! Applying telemetry...';
+                                var q = '?user_city=' + encodeURIComponent(data.city);
+                                if (data.latitude && data.longitude) {
+                                    q += '&user_lat=' + data.latitude.toFixed(4) + '&user_lon=' + data.longitude.toFixed(4);
+                                }
+                                navTo(q);
+                            } else {
+                                tryBigDataCloud();
+                            }
+                        })
+                        .catch(e => tryBigDataCloud());
+                }
+
+                function tryBigDataCloud() {
+                    fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en')
+                        .then(r => r.json())
+                        .then(d => {
+                            var city = d.city || d.locality || d.principalSubdivision;
+                            if (city) {
+                                st.innerText = 'Detected ' + city + '! Applying telemetry...';
+                                var q = '?user_city=' + encodeURIComponent(city);
+                                if (d.latitude && d.longitude) {
+                                    q += '&user_lat=' + d.latitude.toFixed(4) + '&user_lon=' + d.longitude.toFixed(4);
+                                }
+                                navTo(q);
+                            } else {
+                                st.innerText = 'Could not detect automatically. Please type your city below.';
+                                btn.innerHTML = '<span>🛰️ Tap to Detect My Live Location (GPS / Network)</span>';
+                            }
+                        })
+                        .catch(e => {
+                            st.innerText = 'Could not detect automatically. Please type your city below.';
+                            btn.innerHTML = '<span>🛰️ Tap to Detect My Live Location (GPS / Network)</span>';
+                        });
+                }
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                        var lat = pos.coords.latitude.toFixed(4);
+                        var lon = pos.coords.longitude.toFixed(4);
+                        st.innerText = 'GPS location acquired! Updating farm...';
+                        navTo('?user_lat=' + lat + '&user_lon=' + lon);
+                    }, function(err) {
+                        tryClientIpFallback();
+                    }, { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 });
+                } else {
+                    tryClientIpFallback();
+                }
+            }
+            </script>
+            </body>
+            </html>
+            """, height=72)
+
+            col_h1, col_h2 = st.columns([1, 1])
             with col_h1:
-                if st.button("🛰️ Auto-Detect (IP/GPS)", key="btn_detect_ip", use_container_width=True, help="Auto-detects physical device location"):
-                    with st.spinner("Locating your physical farm..."):
-                        c_ip, c_tz, _, _ = get_client_telemetry_params()
-                        detected_home = engine_instance.auto_detect_location_and_weather(client_ip=c_ip, timezone=c_tz)
-                        st.session_state.my_home_location = detected_home
-                        st.session_state.weather_telemetry = detected_home
-                        st.session_state.active_location_mode = "home"
-                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(detected_home.get("temperature", 25.0))))
-                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(detected_home.get("humidity", 60.0))))
-                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(detected_home.get("rainfall", 90.0))))
-                        st.toast(f"🏡 Farm location verified: {detected_home['location']}")
-                        st.rerun()
-            with col_h2:
+                # 1-click return to home farm if currently viewing other place
                 is_home_active = (active_mode == "home")
                 if st.button("🔄 Activate My Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active, help="Switch recommendation engine back to your home farm"):
                     st.session_state.weather_telemetry = home_loc
@@ -1235,6 +1364,13 @@ def main_dashboard():
                     st.session_state["slider_rain"] = max(0.0, min(500.0, float(home_loc.get("rainfall", 90.0))))
                     st.toast(f"Switched context back to My Farm: {home_loc.get('city')}")
                     st.rerun()
+            with col_h2:
+                if st.button("🗑️ Reset Saved Farm", key="btn_reset_farm", use_container_width=True, help="Clears stored farm location to re-detect"):
+                    st.session_state.my_home_location = None
+                    st.session_state.weather_telemetry = None
+                    st.toast("Cleared saved farm. Click Tap to Detect to get your live location.")
+                    st.rerun()
+
 
             farm_states = [
                 "Select State / Agro-Region...",
