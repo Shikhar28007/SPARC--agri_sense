@@ -672,41 +672,52 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 # ─────────────────────────────────────────────────────────────────────────────
 # SESSION STATE INITIALIZATION & SEAMLESS AUTO-LOCATION SYNC
 # ─────────────────────────────────────────────────────────────────────────────
-if "splash_completed" not in st.session_state:
-    st.session_state.splash_completed = False
+def ensure_session_state():
+    """
+    Guarantees that all necessary session state keys exist for the active user session.
+    Must be called on every script rerun and at the start of any page/function.
+    """
+    if "splash_completed" not in st.session_state:
+        st.session_state.splash_completed = False
 
-if "current_user" not in st.session_state:
-    users = db_instance.get_users()
-    st.session_state.current_user = users[0]["username"] if users else "lead_agronomist"
+    if "current_user" not in st.session_state:
+        try:
+            users = db_instance.get_users()
+            st.session_state.current_user = users[0]["username"] if users else "lead_agronomist"
+        except Exception:
+            st.session_state.current_user = "lead_agronomist"
 
-# Seamless auto-detection on first visit
-if "weather_telemetry" not in st.session_state:
-    try:
-        if hasattr(engine_instance, "auto_detect_location_and_weather"):
-            st.session_state.weather_telemetry = engine_instance.auto_detect_location_and_weather()
-        else:
-            st.session_state.weather_telemetry = engine_instance.fetch_live_weather("Lucknow, Uttar Pradesh")
-    except Exception as e:
-        st.session_state.weather_telemetry = {
-            "city": "Lucknow",
-            "region": "Uttar Pradesh",
-            "country": "India",
-            "location": "Lucknow, Uttar Pradesh (India)",
-            "temperature": 27.5,
-            "rainfall": 125.0,
-            "humidity": 65.0,
-            "source": "Agro-Telemetry Fallback",
-            "status": "Online"
-        }
+    # Seamless auto-detection on first visit
+    if "weather_telemetry" not in st.session_state or not isinstance(st.session_state.weather_telemetry, dict):
+        try:
+            if hasattr(engine_instance, "auto_detect_location_and_weather"):
+                st.session_state.weather_telemetry = engine_instance.auto_detect_location_and_weather()
+            else:
+                st.session_state.weather_telemetry = engine_instance.fetch_live_weather("Lucknow, Uttar Pradesh")
+        except Exception:
+            st.session_state.weather_telemetry = {
+                "city": "Lucknow",
+                "region": "Uttar Pradesh",
+                "country": "India",
+                "location": "Lucknow, Uttar Pradesh (India)",
+                "temperature": 27.5,
+                "rainfall": 125.0,
+                "humidity": 65.0,
+                "source": "Agro-Telemetry Fallback",
+                "status": "Online"
+            }
 
-if "chosen_target_crop" not in st.session_state:
-    st.session_state.chosen_target_crop = "rice"
+    if "chosen_target_crop" not in st.session_state:
+        st.session_state.chosen_target_crop = "rice"
 
-if "last_prediction" not in st.session_state:
-    st.session_state.last_prediction = None
+    if "last_prediction" not in st.session_state:
+        st.session_state.last_prediction = None
 
-if "last_diagnostics" not in st.session_state:
-    st.session_state.last_diagnostics = None
+    if "last_diagnostics" not in st.session_state:
+        st.session_state.last_diagnostics = None
+
+# Ensure active session state on initial module evaluation
+ensure_session_state()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -718,6 +729,7 @@ def render_splash_screen():
     pulsing aura, glowing typography, and dynamic initialization progress.
     Uses components.v1.html for native HTML/SVG rendering without Markdown escaping.
     """
+    ensure_session_state()
     splash_html = """<!DOCTYPE html>
 <html>
 <head>
@@ -950,6 +962,7 @@ body {
 # MAIN DASHBOARD INTERFACE
 # ─────────────────────────────────────────────────────────────────────────────
 def main_dashboard():
+    ensure_session_state()
     # ─── SIDEBAR ───
     with st.sidebar:
         st.markdown("""
@@ -973,7 +986,7 @@ def main_dashboard():
         st.session_state.current_user = selected_username
 
         # Current live weather in sidebar
-        w = st.session_state.weather_telemetry
+        w = st.session_state.get("weather_telemetry") or {}
         st.markdown("---")
         st.markdown("### 📍 Farm Telemetry")
         st.markdown(f"""
@@ -991,7 +1004,7 @@ def main_dashboard():
             st.rerun()
 
     # ─── TOP APP HEADER BANNER ───
-    w = st.session_state.weather_telemetry
+    w = st.session_state.get("weather_telemetry") or {}
     st.markdown(f"""
     <div class="sparc-card" style="margin-top: 10px; padding: 18px 24px; border-left: 4px solid #10B981;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
@@ -1083,7 +1096,7 @@ def main_dashboard():
                 </div>
             """, unsafe_allow_html=True)
 
-            w_curr = st.session_state.weather_telemetry
+            w_curr = st.session_state.get("weather_telemetry") or {}
 
             # Place-Wise Indian Soil Auto-Fill Expander
             with st.expander("📍 Place-Wise Indian Soil Baseline Auto-Fill", expanded=False):
@@ -1336,7 +1349,7 @@ def main_dashboard():
         """, unsafe_allow_html=True)
 
         active_crop_doc = st.session_state.get("chosen_target_crop", "rice").lower()
-        w_live = st.session_state.weather_telemetry
+        w_live = st.session_state.get("weather_telemetry") or {}
         cur_t = float(w_live.get("temperature", 26.0))
         cur_h = float(w_live.get("humidity", 65.0))
 
