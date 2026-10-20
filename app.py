@@ -17,6 +17,11 @@ try:
 except ImportError:
     go = None
 
+try:
+    from streamlit_geolocation import streamlit_geolocation
+except ImportError:
+    streamlit_geolocation = None
+
 # Import unified Python backend service layer with hot-reload guard
 import importlib
 import backend
@@ -1150,6 +1155,25 @@ def main_dashboard():
         if other_loc:
             other_badge_snippet = f"""<div style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;"><span style="color: #C084FC; font-weight: 600;">🔍 Other Place:</span> <span style="color: #FFFFFF; font-weight: 700;">{other_loc.get('city')} ({other_loc.get('temperature')}°C)</span></div>"""
 
+        is_gps_locked = bool(home_loc.get("is_gps_verified"))
+        is_default_baseline = bool(home_loc.get("is_baseline_default"))
+
+        if is_gps_locked:
+            farm_badge_label = "🎯 Satellite Pinpoint Farm:"
+            farm_badge_style = "background: rgba(16, 185, 129, 0.25); border: 1px solid #10B981;"
+        elif is_default_baseline:
+            farm_badge_label = "⚠️ Default Baseline:"
+            farm_badge_style = "background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.4);"
+        else:
+            farm_badge_label = "🏡 My Farm Base:"
+            farm_badge_style = "background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);"
+
+        farm_badge_snippet = f"""<div style="{farm_badge_style} border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+<span style="color: {'#34D399' if is_gps_locked else '#FBBF24' if is_default_baseline else '#6EE7B7'}; font-weight: 600;">{farm_badge_label}</span> <span style="color: #FFFFFF; font-weight: 700;">{home_loc.get('city', 'Local Farm')} ({home_loc.get('temperature', 25.0)}°C)</span>
+</div>"""
+
+        active_title_prefix = "🎯 SATELLITE PINPOINT: " if w_active.get("is_gps_verified") else ""
+
         st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
 <div>
@@ -1158,7 +1182,7 @@ def main_dashboard():
 <span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: {'#34D399' if active_mode == 'home' else '#A78BFA'}; font-weight: 800;">{'🏡 MY FARM LOCATION' if active_mode == 'home' else '🔍 OTHER PLACE (EXPLORATION)'}</span></span>
 </div>
 <div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
-{w_active.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
+{active_title_prefix}{w_active.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
 <span style='color: #F472B6;'>{w_active.get('condition_icon', '☀️')} {w_active.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
 <span style='color: #34D399;'>{w_active.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
 <span style='color: #FBBF24;'>{w_active.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
@@ -1166,9 +1190,7 @@ def main_dashboard():
 </div>
 </div>
 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-<div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-<span style="color: #6EE7B7; font-weight: 600;">🏡 My Farm Base:</span> <span style="color: #FFFFFF; font-weight: 700;">{home_loc.get('city', 'Local Farm')} ({home_loc.get('temperature', 25.0)}°C)</span>
-</div>
+{farm_badge_snippet}
 {other_badge_snippet}
 </div>
 </div>
@@ -1199,14 +1221,49 @@ def main_dashboard():
         col_ctl_home, col_ctl_other = st.columns([1.15, 1.35], gap="large")
 
         with col_ctl_home:
-            st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location (Home Base)</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.92rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location (Home Base)</div>", unsafe_allow_html=True)
 
-            # Input to set custom home farm city
+            # Direct Hardware GPS Satellite Pinpoint Block
+            st.markdown("""<div style='background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.25)); border: 1px solid rgba(52, 211, 153, 0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;'>
+<div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;'>
+    <span style='font-size: 0.88rem; font-weight: 800; color: #34D399;'>🛰️ Satellite GPS Auto-Detector</span>
+    <span style='font-size: 0.70rem; background: rgba(52, 211, 153, 0.2); color: #6EE7B7; border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 12px; padding: 2px 8px; font-weight: 700;'>EXACT DEVICE SENSORS</span>
+</div>
+<div style='font-size: 0.80rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 8px;'>
+    Click the 📍 <strong>GPS Pin button</strong> below and allow browser location to pinpoint your exact village/town, district, and field coordinates:
+</div>
+""", unsafe_allow_html=True)
+
+            if streamlit_geolocation is not None:
+                loc_gps = streamlit_geolocation()
+                if loc_gps and loc_gps.get("latitude") is not None and loc_gps.get("longitude") is not None:
+                    g_lat = round(float(loc_gps["latitude"]), 4)
+                    g_lon = round(float(loc_gps["longitude"]), 4)
+                    last_g = st.session_state.get("_last_detected_gps")
+                    if last_g != (g_lat, g_lon):
+                        st.session_state._last_detected_gps = (g_lat, g_lon)
+                        with st.spinner(f"🛰️ Pinpointing exact field coordinates ({g_lat}°N, {g_lon}°E)..."):
+                            gps_w = engine_instance.fetch_weather_by_coords(g_lat, g_lon)
+                            if gps_w:
+                                st.session_state.my_home_location = gps_w
+                                st.session_state.weather_telemetry = gps_w
+                                st.session_state.active_location_mode = "home"
+                                st.session_state._last_synced_farm_input = gps_w.get("city", "").lower()
+                                st.session_state["slider_temp"] = max(-10.0, min(55.0, float(gps_w.get("temperature", 25.0))))
+                                st.session_state["slider_hum"] = max(5.0, min(100.0, float(gps_w.get("humidity", 60.0))))
+                                st.session_state["slider_rain"] = max(0.0, min(500.0, float(gps_w.get("rainfall", 90.0))))
+                                st.toast(f"🎯 Pinpoint GPS Acquired: {gps_w['location']}")
+                                st.rerun()
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # Manual Farm City / Town / Village / PIN Code text input
+            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #E2E8F0; margin-bottom: 4px;'>📍 Or Type Exact City / Town / Village / PIN Code:</div>", unsafe_allow_html=True)
             col_f_in, col_f_btn = st.columns([1.8, 1])
             with col_f_in:
                 farm_input = st.text_input(
                     "Set Farm City:",
-                    placeholder="Type your farm city (e.g. Delhi, Lucknow, Pune, Patna) & press Enter",
+                    placeholder="e.g. Alwar, Varanasi, Muzaffarpur, 302001",
                     label_visibility="collapsed",
                     key="farm_city_input"
                 )
@@ -1221,7 +1278,7 @@ def main_dashboard():
                 should_sync_farm = True
 
             if should_sync_farm:
-                with st.spinner(f"Setting your farm location to {farm_input}..."):
+                with st.spinner(f"Pinpointing farm location to {farm_input}..."):
                     new_home = engine_instance.fetch_live_weather(farm_input.strip())
                     st.session_state.my_home_location = new_home
                     st.session_state.weather_telemetry = new_home
@@ -1233,128 +1290,8 @@ def main_dashboard():
                     st.toast(f"🏡 Farm location updated to: {new_home['location']}")
                     st.rerun()
 
-            # Direct Browser Live Location Detector (Hardware GPS + Browser IP)
-            components.html("""
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta charset="utf-8">
-            <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: transparent; }
-            .btn-loc {
-                background: linear-gradient(135deg, #059669 0%, #10B981 100%);
-                color: #FFFFFF;
-                border: 1px solid rgba(52, 211, 153, 0.4);
-                border-radius: 8px;
-                padding: 10px 16px;
-                font-size: 13.5px;
-                font-weight: 700;
-                cursor: pointer;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                width: 100%;
-                justify-content: center;
-                transition: all 0.2s ease;
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-            }
-            .btn-loc:hover {
-                background: linear-gradient(135deg, #047857 0%, #059669 100%);
-                box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-            }
-            .status-text {
-                font-size: 12px;
-                color: #94A3B8;
-                margin-top: 5px;
-                text-align: center;
-                min-height: 18px;
-                font-weight: 500;
-            }
-            </style>
-            </head>
-            <body>
-            <a id="nav-target" href="#" target="_top" style="display: none;"></a>
-            <button class="btn-loc" id="btn-gps" onclick="fetchLiveDeviceLocation()">
-                <span>🛰️ Tap to Detect My Live Location (GPS / Network)</span>
-            </button>
-            <div id="loc-status" class="status-text">Click to sync with your phone/device's actual location</div>
-            <script>
-            function fetchLiveDeviceLocation() {
-                var btn = document.getElementById('btn-gps');
-                var st = document.getElementById('loc-status');
-                var nav = document.getElementById('nav-target');
-                btn.innerHTML = '<span>⏳ Detecting physical location...</span>';
-                st.innerText = 'Requesting browser device coordinates...';
-
-                function navTo(url) {
-                    nav.href = url;
-                    nav.click();
-                }
-
-                function tryClientIpFallback() {
-                    st.innerText = 'Checking network location...';
-                    fetch('https://ipapi.co/json/')
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data && data.city) {
-                                st.innerText = 'Detected ' + data.city + '! Applying telemetry...';
-                                var q = '?user_city=' + encodeURIComponent(data.city);
-                                if (data.latitude && data.longitude) {
-                                    q += '&user_lat=' + data.latitude.toFixed(4) + '&user_lon=' + data.longitude.toFixed(4);
-                                }
-                                navTo(q);
-                            } else {
-                                tryBigDataCloud();
-                            }
-                        })
-                        .catch(e => tryBigDataCloud());
-                }
-
-                function tryBigDataCloud() {
-                    fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en')
-                        .then(r => r.json())
-                        .then(d => {
-                            var city = d.city || d.locality || d.principalSubdivision;
-                            if (city) {
-                                st.innerText = 'Detected ' + city + '! Applying telemetry...';
-                                var q = '?user_city=' + encodeURIComponent(city);
-                                if (d.latitude && d.longitude) {
-                                    q += '&user_lat=' + d.latitude.toFixed(4) + '&user_lon=' + d.longitude.toFixed(4);
-                                }
-                                navTo(q);
-                            } else {
-                                st.innerText = 'Could not detect automatically. Please type your city below.';
-                                btn.innerHTML = '<span>🛰️ Tap to Detect My Live Location (GPS / Network)</span>';
-                            }
-                        })
-                        .catch(e => {
-                            st.innerText = 'Could not detect automatically. Please type your city below.';
-                            btn.innerHTML = '<span>🛰️ Tap to Detect My Live Location (GPS / Network)</span>';
-                        });
-                }
-
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(pos) {
-                        var lat = pos.coords.latitude.toFixed(4);
-                        var lon = pos.coords.longitude.toFixed(4);
-                        st.innerText = 'GPS location acquired! Updating farm...';
-                        navTo('?user_lat=' + lat + '&user_lon=' + lon);
-                    }, function(err) {
-                        tryClientIpFallback();
-                    }, { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 });
-                } else {
-                    tryClientIpFallback();
-                }
-            }
-            </script>
-            </body>
-            </html>
-            """, height=72)
-
             col_h1, col_h2 = st.columns([1, 1])
             with col_h1:
-                # 1-click return to home farm if currently viewing other place
                 is_home_active = (active_mode == "home")
                 if st.button("🔄 Activate My Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active, help="Switch recommendation engine back to your home farm"):
                     st.session_state.weather_telemetry = home_loc
@@ -1368,9 +1305,10 @@ def main_dashboard():
                 if st.button("🗑️ Reset Saved Farm", key="btn_reset_farm", use_container_width=True, help="Clears stored farm location to re-detect"):
                     st.session_state.my_home_location = None
                     st.session_state.weather_telemetry = None
-                    st.toast("Cleared saved farm. Click Tap to Detect to get your live location.")
+                    st.session_state._last_detected_gps = None
+                    st.session_state._last_synced_farm_input = ""
+                    st.toast("Cleared saved farm. Click GPS button or type city to set your farm.")
                     st.rerun()
-
 
             farm_states = [
                 "Select State / Agro-Region...",
@@ -1441,23 +1379,6 @@ def main_dashboard():
 
             if other_loc and active_mode == "other":
                 st.caption(f"📍 Currently analyzing: **{other_loc.get('location')}**. Your Home Farm (**{home_loc.get('city')}**) is preserved. Click 'Activate My Farm' on the left anytime to switch back.")
-
-        # Silent client-side GPS helper script
-        components.html("""<script>
-        if (!window.sessionStorage.getItem('agri_gps_checked')) {
-            window.sessionStorage.setItem('agri_gps_checked', '1');
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(pos) {
-                    var url = new URL(window.parent.location.href);
-                    if (!url.searchParams.has('user_lat') && !url.searchParams.has('user_city')) {
-                        url.searchParams.set('user_lat', pos.coords.latitude.toFixed(4));
-                        url.searchParams.set('user_lon', pos.coords.longitude.toFixed(4));
-                        window.parent.location.href = url.href;
-                    }
-                }, function(err) {}, { timeout: 5000, maximumAge: 60000 });
-            }
-        }
-        </script>""", height=0)
 
         col_input, col_results = st.columns([1.1, 1.4], gap="large")
 

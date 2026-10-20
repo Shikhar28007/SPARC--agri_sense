@@ -1222,22 +1222,52 @@ class SparcEngine:
             daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [12.0]))
             est_monthly_rain = max(30.0, min(380.0, float(daily_rain * 6.5 + 20.0)))
 
-            # Reverse geocode via BigDataCloud client API
-            city_name = "Field Station"
-            admin1 = "Agricultural Zone"
+            # Reverse geocode: 1st priority OpenStreetMap Nominatim for pinpoint village/town/district
+            city_name = ""
+            admin1 = ""
             country_name = "India"
+            postcode = ""
             try:
-                geo_url = f"https://api.bigdatacloud.net/data/reverse-geocode-client?latitude={lat}&longitude={lon}&localityLanguage=en"
-                geo_resp = requests.get(geo_url, timeout=3.5)
-                if geo_resp.status_code == 200:
-                    g = geo_resp.json()
-                    city_name = g.get("city") or g.get("locality") or g.get("principalSubdivision") or city_name
-                    admin1 = g.get("principalSubdivision") or admin1
-                    country_name = g.get("countryName") or country_name
+                nom_url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=14&addressdetails=1"
+                nom_headers = {"User-Agent": "AgrisenseAI/2.0 (Agricultural Intelligence System; agrisense.app)"}
+                nom_resp = requests.get(nom_url, headers=nom_headers, timeout=3.5)
+                if nom_resp.status_code == 200:
+                    addr = nom_resp.json().get("address", {})
+                    local_place = addr.get("village") or addr.get("town") or addr.get("suburb") or addr.get("neighbourhood")
+                    broad_city = addr.get("city") or addr.get("county") or addr.get("state_district")
+                    if local_place and broad_city and local_place.lower() != broad_city.lower():
+                        city_name = f"{local_place}, {broad_city}"
+                    else:
+                        city_name = local_place or broad_city or ""
+                    admin1 = addr.get("state") or addr.get("state_district") or ""
+                    country_name = addr.get("country") or "India"
+                    postcode = addr.get("postcode", "")
             except Exception:
                 pass
 
-            full_name = f"{city_name}, {admin1} ({country_name})" if admin1 else f"{city_name}, {country_name}"
+            # 2nd priority fallback: BigDataCloud Reverse Geocoding
+            if not city_name:
+                try:
+                    geo_url = f"https://api.bigdatacloud.net/data/reverse-geocode-client?latitude={lat}&longitude={lon}&localityLanguage=en"
+                    geo_resp = requests.get(geo_url, timeout=3.5)
+                    if geo_resp.status_code == 200:
+                        g = geo_resp.json()
+                        city_name = g.get("locality") or g.get("city") or g.get("principalSubdivision") or ""
+                        admin1 = g.get("principalSubdivision") or admin1
+                        country_name = g.get("countryName") or country_name
+                except Exception:
+                    pass
+
+            if not city_name:
+                city_name = f"Field Station ({lat:.2f}N, {lon:.2f}E)"
+
+            if postcode and admin1:
+                full_name = f"{city_name} ({postcode}), {admin1} ({country_name})"
+            elif admin1:
+                full_name = f"{city_name}, {admin1} ({country_name})"
+            else:
+                full_name = f"{city_name}, {country_name}"
+
             elapsed = (time.time() - t0) * 1000
             self.db.log_event("INFO", "GPS_WEATHER", f"Telemetry at {lat:.4f}, {lon:.4f} ('{full_name}'): {temp}°C, {humidity}%", elapsed)
             return {
@@ -1256,7 +1286,8 @@ class SparcEngine:
                 "latitude": round(lat, 4),
                 "longitude": round(lon, 4),
                 "source": "Exact GPS / Coordinate Telemetry (Open-Meteo)",
-                "status": "Live Connected (GPS)"
+                "status": "Live Connected (GPS)",
+                "is_gps_verified": True
             }
         except Exception as e:
             self.db.log_event("WARNING", "GPS_WEATHER", f"Failed coordinate weather lookup ({e})", 0.0)
@@ -1336,8 +1367,12 @@ class SparcEngine:
             except Exception:
                 continue
 
-        # 4. Calibrated default baseline for Indian Agriculture
-        return self.fetch_live_weather("Delhi")
+        # 4. Calibrated default baseline for Indian Agriculture (pending user GPS pinpoint)
+        baseline = self.fetch_live_weather("Delhi")
+        if isinstance(baseline, dict):
+            baseline["is_baseline_default"] = True
+            baseline["source"] = "Default Baseline (Click 🛰️ to Pinpoint)"
+        return baseline
 
 
     def fetch_live_weather(self, city_or_preset: str) -> Dict[str, Any]:
