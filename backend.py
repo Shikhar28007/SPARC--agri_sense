@@ -1181,10 +1181,100 @@ class SparcEngine:
             self.db.log_event("WARNING", "WEATHER_API", f"wttr.in lookup exception for '{query_target}': {e}", 0.0)
         return None
 
-    def auto_detect_location_and_weather(self) -> Dict[str, Any]:
+    def is_datacenter_location(self, city: str, country: str, timezone: Optional[str] = None) -> bool:
+        """Determines if a resolved geocode belongs to a cloud provider datacenter (AWS/GCP/Azure) rather than an end user."""
+        city_lower = (city or "").strip().lower()
+        country_lower = (country or "").strip().lower()
+        datacenter_cities = {
+            "the dalles", "boardman", "council bluffs", "ashburn", "boydton",
+            "des moines", "quincy", "moncks corner", "dublin", "frankfurt",
+            "hamina", "ghlin", "st. ghislain", "eemshaven", "middenmeer"
+        }
+        if city_lower in datacenter_cities:
+            return True
+        tz_lower = (timezone or "").lower()
+        if any(k in tz_lower for k in ["kolkata", "calcutta", "india", "ist"]):
+            if country_lower in ["united states", "united states of america", "ireland", "germany", "netherlands", "finland"]:
+                return True
+        return False
+
+    def fetch_weather_by_coords(self, lat: float, lon: float) -> Optional[Dict[str, Any]]:
+        """Direct High-Accuracy Meteorological Telemetry & Reverse Geocoding from GPS Coordinates."""
+        try:
+            t0 = time.time()
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            weather_url = (
+                f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
+                f"&current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,wind_speed_10m"
+                f"&daily=precipitation_sum&timezone=auto"
+            )
+            w_resp = requests.get(weather_url, headers=headers, timeout=5.0)
+            if w_resp.status_code != 200:
+                return None
+            w_data = w_resp.json()
+            current = w_data.get("current", {})
+            temp = float(current.get("temperature_2m", 25.0))
+            humidity = float(current.get("relative_humidity_2m", 60.0))
+            live_rain = float(current.get("precipitation", 0.0))
+            w_code = int(current.get("weather_code", 0))
+            wind = float(current.get("wind_speed_10m", 8.0))
+            cond_text, cond_icon = WMO_WEATHER_CODES.get(w_code, ("Clear Sky", "☀️"))
+            daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [12.0]))
+            est_monthly_rain = max(30.0, min(380.0, float(daily_rain * 6.5 + 20.0)))
+
+            # Reverse geocode via BigDataCloud client API
+            city_name = "Field Station"
+            admin1 = "Agricultural Zone"
+            country_name = "India"
+            try:
+                geo_url = f"https://api.bigdatacloud.net/data/reverse-geocode-client?latitude={lat}&longitude={lon}&localityLanguage=en"
+                geo_resp = requests.get(geo_url, timeout=3.5)
+                if geo_resp.status_code == 200:
+                    g = geo_resp.json()
+                    city_name = g.get("city") or g.get("locality") or g.get("principalSubdivision") or city_name
+                    admin1 = g.get("principalSubdivision") or admin1
+                    country_name = g.get("countryName") or country_name
+            except Exception:
+                pass
+
+            full_name = f"{city_name}, {admin1} ({country_name})" if admin1 else f"{city_name}, {country_name}"
+            elapsed = (time.time() - t0) * 1000
+            self.db.log_event("INFO", "GPS_WEATHER", f"Telemetry at {lat:.4f}, {lon:.4f} ('{full_name}'): {temp}°C, {humidity}%", elapsed)
+            return {
+                "city": city_name,
+                "region": admin1,
+                "country": country_name,
+                "location": full_name,
+                "temperature": round(temp, 1),
+                "humidity": round(humidity, 1),
+                "live_rain": round(live_rain, 1),
+                "rainfall": round(est_monthly_rain, 1),
+                "weather_code": w_code,
+                "condition": cond_text,
+                "condition_icon": cond_icon,
+                "wind_speed": round(wind, 1),
+                "latitude": round(lat, 4),
+                "longitude": round(lon, 4),
+                "source": "Exact GPS / Coordinate Telemetry (Open-Meteo)",
+                "status": "Live Connected (GPS)"
+            }
+        except Exception as e:
+            self.db.log_event("WARNING", "GPS_WEATHER", f"Failed coordinate weather lookup ({e})", 0.0)
+            return None
+
+    def auto_detect_location_and_weather(
+        self,
+        client_ip: Optional[str] = None,
+        timezone: Optional[str] = None,
+        user_lat: Optional[float] = None,
+        user_lon: Optional[float] = None
+    ) -> Dict[str, Any]:
         """
-        Seamlessly auto-detects user's real-time physical location via IP Geolocation
-        and immediately pulls live telemetry from Open-Meteo or wttr.in.
+        Seamlessly auto-detects user's real-time physical location:
+        1. Exact GPS coordinates (if provided by client device)
+        2. Client IP address forwarded by proxy / headers
+        3. Cloud datacenter filter to prevent detecting Streamlit Cloud servers (e.g. The Dalles, Oregon)
+        4. Calibrated Indian agricultural baseline fallback
         """
         import unicodedata
         t0 = time.time()
@@ -1194,9 +1284,37 @@ class SparcEngine:
                 return ""
             return unicodedata.normalize('NFKD', str(text)).encode('ascii', 'ignore').decode('ascii')
 
+        # 1. Direct GPS coordinates if passed from browser
+        if user_lat is not None and user_lon is not None:
+            w_coords = self.fetch_weather_by_coords(user_lat, user_lon)
+            if w_coords:
+                self.db.log_event("INFO", "TELEMETRY", f"GPS detected location '{w_coords['location']}'", (time.time() - t0) * 1000)
+                return w_coords
+
+        # 2. Client IP lookup (if client_ip provided from headers)
+        if client_ip and not client_ip.startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
+            try:
+                ip_url = f"http://ip-api.com/json/{client_ip}"
+                headers = {"User-Agent": "Mozilla/5.0"}
+                resp = requests.get(ip_url, headers=headers, timeout=3.5)
+                if resp.status_code == 200:
+                    geo = resp.json()
+                    c = geo.get("city")
+                    co = geo.get("country", "")
+                    lat, lon = geo.get("lat"), geo.get("lon")
+                    if c and not self.is_datacenter_location(c, co, timezone):
+                        city = sanitize(c)
+                        w = self.fetch_weather_by_coords(lat, lon) if (lat and lon) else (self._fetch_from_open_meteo(city) or self._fetch_from_wttr(city))
+                        if w:
+                            self.db.log_event("INFO", "TELEMETRY", f"Client IP detected location '{w['location']}'", (time.time() - t0) * 1000)
+                            return w
+            except Exception:
+                pass
+
+        # 3. Server-side public IP fallback with Datacenter Rejection
         geo_services = [
-            ("https://ipapi.co/json/", lambda d: (d.get("city"), d.get("region"), d.get("country_name"), d.get("latitude"), d.get("longitude"))),
             ("http://ip-api.com/json/", lambda d: (d.get("city"), d.get("regionName"), d.get("country"), d.get("lat"), d.get("lon"))),
+            ("https://ipapi.co/json/", lambda d: (d.get("city"), d.get("region"), d.get("country_name"), d.get("latitude"), d.get("longitude"))),
         ]
 
         for s_url, extractor in geo_services:
@@ -1206,34 +1324,21 @@ class SparcEngine:
                 if ip_resp.status_code == 200:
                     geo = ip_resp.json()
                     c, r, co, lat, lon = extractor(geo)
-                    if c:
+                    if c and not self.is_datacenter_location(c, co or "", timezone):
                         city = sanitize(c)
-                        # Fetch live telemetry for detected city
                         w = self._fetch_from_open_meteo(city) or self._fetch_from_wttr(city)
                         if w:
                             elapsed = (time.time() - t0) * 1000
                             self.db.log_event("INFO", "TELEMETRY", f"Auto-detected location '{w['location']}' ({w['condition']})", elapsed)
                             return w
+                    elif c and self.is_datacenter_location(c, co or "", timezone):
+                        self.db.log_event("WARNING", "TELEMETRY", f"Rejected cloud datacenter location '{c}, {co}' - applying regional farm baseline.", 0.0)
             except Exception:
                 continue
 
-        # Calibrated default fallback if completely offline
-        return {
-            "city": "Lucknow",
-            "region": "Uttar Pradesh",
-            "country": "India",
-            "location": "Lucknow, Uttar Pradesh (India)",
-            "temperature": 26.0,
-            "humidity": 56.0,
-            "live_rain": 0.0,
-            "rainfall": 105.0,
-            "weather_code": 0,
-            "condition": "Clear Sky",
-            "condition_icon": "☀️",
-            "wind_speed": 6.5,
-            "source": "Agro-Telemetry Fallback (Calibrated)",
-            "status": "Calibrated Preset"
-        }
+        # 4. Calibrated default baseline for Indian Agriculture (e.g. Jaipur, Rajasthan)
+        return self.fetch_live_weather("Jaipur, Rajasthan")
+
 
     def fetch_live_weather(self, city_or_preset: str) -> Dict[str, Any]:
         """

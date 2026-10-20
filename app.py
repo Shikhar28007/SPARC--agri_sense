@@ -673,6 +673,47 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 # ─────────────────────────────────────────────────────────────────────────────
 # SESSION STATE INITIALIZATION & SEAMLESS AUTO-LOCATION SYNC
 # ─────────────────────────────────────────────────────────────────────────────
+def get_client_telemetry_params():
+    """Extracts client IP, browser timezone, and GPS coordinates if available."""
+    client_ip = None
+    try:
+        headers = getattr(st.context, "headers", {}) or {}
+        for h in ["cf-connecting-ip", "x-real-ip", "x-client-ip"]:
+            val = headers.get(h)
+            if val and not str(val).startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
+                client_ip = str(val).strip()
+                break
+        if not client_ip:
+            xff = headers.get("x-forwarded-for")
+            if xff:
+                first = str(xff).split(",")[0].strip()
+                if first and not first.startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
+                    client_ip = first
+        if not client_ip:
+            ip_val = getattr(st.context, "ip_address", None)
+            if ip_val and not str(ip_val).startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
+                client_ip = str(ip_val).strip()
+    except Exception:
+        pass
+
+    timezone = getattr(st.context, "timezone", "Asia/Kolkata")
+    
+    # Check if browser passed GPS coordinates via URL
+    user_lat = None
+    user_lon = None
+    try:
+        if "user_lat" in st.query_params and "user_lon" in st.query_params:
+            user_lat = float(st.query_params["user_lat"])
+            user_lon = float(st.query_params["user_lon"])
+            # Remove from query params so it doesn't repeatedly trigger
+            del st.query_params["user_lat"]
+            del st.query_params["user_lon"]
+    except Exception:
+        pass
+
+    return client_ip, timezone, user_lat, user_lon
+
+
 def ensure_session_state():
     """
     Guarantees that all necessary session state keys exist for the active user session.
@@ -688,25 +729,35 @@ def ensure_session_state():
         except Exception:
             st.session_state.current_user = "lead_agronomist"
 
-    # Seamless auto-detection on first visit
-    if "weather_telemetry" not in st.session_state or not isinstance(st.session_state.weather_telemetry, dict):
+    # Check for direct GPS coordinate parameters from browser
+    client_ip, client_tz, user_lat, user_lon = get_client_telemetry_params()
+    if user_lat is not None and user_lon is not None:
+        gps_w = engine_instance.fetch_weather_by_coords(user_lat, user_lon)
+        if gps_w:
+            st.session_state.my_home_location = gps_w
+            st.session_state.weather_telemetry = gps_w
+            st.session_state.active_location_mode = "home"
+
+    if "my_home_location" not in st.session_state or not isinstance(st.session_state.my_home_location, dict):
         try:
-            if hasattr(engine_instance, "auto_detect_location_and_weather"):
-                st.session_state.weather_telemetry = engine_instance.auto_detect_location_and_weather()
-            else:
-                st.session_state.weather_telemetry = engine_instance.fetch_live_weather("Lucknow, Uttar Pradesh")
+            st.session_state.my_home_location = engine_instance.auto_detect_location_and_weather(
+                client_ip=client_ip,
+                timezone=client_tz,
+                user_lat=user_lat,
+                user_lon=user_lon
+            )
         except Exception:
-            st.session_state.weather_telemetry = {
-                "city": "Lucknow",
-                "region": "Uttar Pradesh",
-                "country": "India",
-                "location": "Lucknow, Uttar Pradesh (India)",
-                "temperature": 27.5,
-                "rainfall": 125.0,
-                "humidity": 65.0,
-                "source": "Agro-Telemetry Fallback",
-                "status": "Online"
-            }
+            st.session_state.my_home_location = engine_instance.fetch_live_weather("Jaipur, Rajasthan")
+
+    if "other_place_location" not in st.session_state:
+        st.session_state.other_place_location = None
+
+    if "active_location_mode" not in st.session_state:
+        st.session_state.active_location_mode = "home"
+
+    # Active weather telemetry follows active_location_mode
+    if "weather_telemetry" not in st.session_state or not isinstance(st.session_state.weather_telemetry, dict):
+        st.session_state.weather_telemetry = st.session_state.my_home_location
 
     if "chosen_target_crop" not in st.session_state:
         st.session_state.chosen_target_crop = "rice"
@@ -1066,69 +1117,170 @@ def main_dashboard():
     # TAB 1: SMART CROP PREDICTOR & ADAPTATION PROTOCOL
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     with tab_diagnostics:
-        # ── SEAMLESS AUTO-LOCATION BAR ──
-        st.markdown("""
-        <div class="sparc-card" style="padding: 14px 20px; margin-bottom: 18px; border-color: rgba(6, 182, 212, 0.4);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">🛰️</span>
-                    <div>
-                        <div style="font-size: 0.8rem; color: #38BDF8; font-weight: 600; text-transform: uppercase;">Real-Time Field Telemetry & Geolocation</div>
-                        <div style="font-size: 1.05rem; font-weight: 700; color: #FFFFFF;">
-        """ + f"{w.get('location', 'Auto-Synced Location')} &nbsp;·&nbsp; "
-        f"<span style='color: #F472B6;'>{w.get('condition_icon', '☀️')} {w.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp; "
-        f"<span style='color: #34D399;'>{w.get('temperature', 26.0)}°C</span> &nbsp;·&nbsp; "
-        f"<span style='color: #FBBF24;'>{w.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp; "
-        f"<span style='color: #60A5FA;'>{w.get('rainfall', 100.0)} mm Rain</span>" + """
-                        </div>
+        # ── SEAMLESS DUAL-LOCATION & ACTIVE CONTEXT BAR ──
+        home_loc = st.session_state.get("my_home_location") or {}
+        other_loc = st.session_state.get("other_place_location")
+        active_mode = st.session_state.get("active_location_mode", "home")
+        w_active = st.session_state.get("weather_telemetry") or home_loc
+
+        # Card header showing active telemetry context with dual status
+        st.markdown(f"""
+        <div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <span style="font-size: 1.1rem;">🛰️</span>
+                        <span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Active Telemetry Context: <span style="color: {'#34D399' if active_mode == 'home' else '#A78BFA'}; font-weight: 800;">
+                                {'🏡 MY FARM LOCATION' if active_mode == 'home' else '🔍 OTHER PLACE (EXPLORATION)'}
+                            </span>
+                        </span>
+                    </div>
+                    <div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
+                        {w_active.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
+                        <span style='color: #F472B6;'>{w_active.get('condition_icon', '☀️')} {w_active.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
+                        <span style='color: #34D399;'>{w_active.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
+                        <span style='color: #FBBF24;'>{w_active.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
+                        <span style='color: #60A5FA;'>{w_active.get('rainfall', 100.0)} mm Rain</span>
                     </div>
                 </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+                        <span style="color: #6EE7B7; font-weight: 600;">🏡 My Farm Base:</span>
+                        <span style="color: #FFFFFF; font-weight: 700; margin-left: 4px;">{home_loc.get('city', 'Jaipur')} ({home_loc.get('temperature', 25.0)}°C)</span>
+                    </div>
+                    {f'''
+                    <div style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+                        <span style="color: #C084FC; font-weight: 600;">🔍 Other Place:</span>
+                        <span style="color: #FFFFFF; font-weight: 700; margin-left: 4px;">{other_loc.get('city')} ({other_loc.get('temperature')}°C)</span>
+                    </div>
+                    ''' if other_loc else ''}
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        col_loc_act1, col_loc_act2, col_loc_act3 = st.columns([1.2, 1.8, 1])
-        with col_loc_act1:
-            if st.button("📍 Auto-Detect My Location", use_container_width=True):
-                with st.spinner("Locating farm via IP & Real-Time Weather..."):
-                    if hasattr(engine_instance, "auto_detect_location_and_weather"):
-                        new_loc = engine_instance.auto_detect_location_and_weather()
-                    else:
-                        new_loc = engine_instance.fetch_live_weather("Lucknow, Uttar Pradesh")
-                    st.session_state.weather_telemetry = new_loc
-                    st.session_state._last_synced_city = new_loc.get("city", "").lower()
-                    # Update sliders reactively
-                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_loc.get("temperature", 26.0))))
-                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_loc.get("humidity", 65.0))))
-                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_loc.get("rainfall", 100.0))))
-                    st.toast(f"📍 Location detected: {new_loc.get('location', 'Field Synced')} ({new_loc.get('condition', '')})")
+        # Comparative Telemetry Bar (Working Progress: Other Place vs My Farm)
+        if other_loc and active_mode == "other":
+            t_diff = round(float(other_loc.get('temperature', 0)) - float(home_loc.get('temperature', 0)), 1)
+            h_diff = round(float(other_loc.get('humidity', 0)) - float(home_loc.get('humidity', 0)), 1)
+            r_diff = round(float(other_loc.get('rainfall', 0)) - float(home_loc.get('rainfall', 0)), 1)
+            t_sign = f"+{t_diff}" if t_diff > 0 else f"{t_diff}"
+            h_sign = f"+{h_diff}" if h_diff > 0 else f"{h_diff}"
+            r_sign = f"+{r_diff}" if r_diff > 0 else f"{r_diff}"
+
+            st.markdown(f"""
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; margin-bottom: 6px;">
+                    📊 Comparative Working Progress: {other_loc.get('city')} vs My Home Farm ({home_loc.get('city')})
+                </div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem;">
+                    <div>🌡️ <strong>Temp:</strong> <span style="color: #F87171;">{other_loc.get('temperature')}°C</span> vs {home_loc.get('temperature')}°C (<span style="color: {'#34D399' if t_diff < 0 else '#F87171'}; font-weight: 700;">{t_sign}°C</span>)</div>
+                    <div>💧 <strong>Humidity:</strong> <span style="color: #FBBF24;">{other_loc.get('humidity')}%</span> vs {home_loc.get('humidity')}% (<span style="color: #FBBF24; font-weight: 700;">{h_sign}%</span>)</div>
+                    <div>🌧️ <strong>Rainfall:</strong> <span style="color: #60A5FA;">{other_loc.get('rainfall')} mm</span> vs {home_loc.get('rainfall')} mm (<span style="color: #60A5FA; font-weight: 700;">{r_sign} mm</span>)</div>
+                    <div>🌤️ <strong>Sky:</strong> {other_loc.get('condition_icon')} {other_loc.get('condition')}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Dual Control Columns: Option 1 (My Farm) vs Option 2 (Other Place)
+        col_ctl_home, col_ctl_other = st.columns([1.15, 1.35], gap="large")
+
+        with col_ctl_home:
+            st.markdown("<div style='font-size: 0.86rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location</div>", unsafe_allow_html=True)
+            col_h1, col_h2 = st.columns([1.1, 1])
+            with col_h1:
+                if st.button("📍 Auto-Detect (IP/GPS)", key="btn_detect_ip", use_container_width=True, help="Detects your real physical location using client IP and GPS"):
+                    with st.spinner("Locating your physical farm..."):
+                        c_ip, c_tz, _, _ = get_client_telemetry_params()
+                        detected_home = engine_instance.auto_detect_location_and_weather(client_ip=c_ip, timezone=c_tz)
+                        st.session_state.my_home_location = detected_home
+                        st.session_state.weather_telemetry = detected_home
+                        st.session_state.active_location_mode = "home"
+                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(detected_home.get("temperature", 25.0))))
+                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(detected_home.get("humidity", 60.0))))
+                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(detected_home.get("rainfall", 90.0))))
+                        st.toast(f"🏡 Farm location verified: {detected_home['location']}")
+                        st.rerun()
+            with col_h2:
+                is_home_active = (active_mode == "home")
+                if st.button("🔄 Activate My Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active, help="Switch recommendation engine back to your home farm"):
+                    st.session_state.weather_telemetry = home_loc
+                    st.session_state.active_location_mode = "home"
+                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(home_loc.get("temperature", 25.0))))
+                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(home_loc.get("humidity", 60.0))))
+                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(home_loc.get("rainfall", 90.0))))
+                    st.toast(f"Switched context back to My Farm: {home_loc.get('city')}")
                     st.rerun()
 
-        with col_loc_act2:
-            custom_city = st.text_input("Or lookup custom city/region:", placeholder="Type city (e.g. Jaipur, Delhi, Patna, Pune) & press Enter", label_visibility="collapsed", key="custom_city_input")
-        with col_loc_act3:
-            sync_btn = st.button("🔍 Sync Custom City", use_container_width=True)
+            farm_states = [
+                "Select State / Agro-Region...",
+                "Rajasthan (Jaipur / Kota)",
+                "Uttar Pradesh (Lucknow / Kanpur)",
+                "Punjab (Ludhiana / Amritsar)",
+                "Haryana (Karnal / Hisar)",
+                "Maharashtra (Pune / Nashik)",
+                "Madhya Pradesh (Indore / Bhopal)",
+                "Bihar (Patna / Gaya)",
+                "Gujarat (Ahmedabad / Rajkot)",
+                "Karnataka (Bengaluru / Mysuru)",
+                "Tamil Nadu (Coimbatore / Chennai)",
+                "Andhra Pradesh (Guntur / Vijayawada)",
+                "West Bengal (Kolkata / Bardhaman)",
+                "Kerala (Kochi / Palakkad)",
+                "Assam (Guwahati / Jorhat)"
+            ]
+            sel_state = st.selectbox("Or choose your state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
+            if sel_state != "Select State / Agro-Region...":
+                target_city = sel_state.split("(")[1].split("/")[0].strip()
+                if st.session_state.get("_last_selected_state") != sel_state:
+                    st.session_state._last_selected_state = sel_state
+                    with st.spinner(f"Setting farm to {target_city}..."):
+                        new_home = engine_instance.fetch_live_weather(target_city)
+                        st.session_state.my_home_location = new_home
+                        st.session_state.weather_telemetry = new_home
+                        st.session_state.active_location_mode = "home"
+                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
+                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
+                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
+                        st.toast(f"🏡 Farm base updated to {new_home['location']}")
+                        st.rerun()
 
-        # Reactive sync triggered either by Enter key in text box or clicking Sync button
-        last_synced = st.session_state.get("_last_synced_city", "")
-        should_sync = False
-        if sync_btn and custom_city.strip():
-            should_sync = True
-        elif custom_city.strip() and custom_city.strip().lower() != last_synced:
-            should_sync = True
+        with col_ctl_other:
+            st.markdown("<div style='font-size: 0.86rem; font-weight: 700; color: #A78BFA; margin-bottom: 6px;'>🔍 Option 2: Search & Inspect Other Place</div>", unsafe_allow_html=True)
+            col_o1, col_o2 = st.columns([2.0, 1])
+            with col_o1:
+                custom_city = st.text_input(
+                    "Lookup other place:",
+                    placeholder="Type city/country (e.g. Pune, Patna, California) & press Enter",
+                    label_visibility="collapsed",
+                    key="custom_city_input"
+                )
+            with col_o2:
+                sync_btn = st.button("🔍 Analyze Place", use_container_width=True, key="btn_sync_other")
 
-        if should_sync:
-            with st.spinner(f"Querying live weather for {custom_city}..."):
-                custom_w = engine_instance.fetch_live_weather(custom_city.strip())
-                st.session_state.weather_telemetry = custom_w
-                st.session_state._last_synced_city = custom_city.strip().lower()
-                # Update sliders reactively
-                st.session_state["slider_temp"] = max(-10.0, min(55.0, float(custom_w.get("temperature", 26.0))))
-                st.session_state["slider_hum"] = max(5.0, min(100.0, float(custom_w.get("humidity", 65.0))))
-                st.session_state["slider_rain"] = max(0.0, min(500.0, float(custom_w.get("rainfall", 100.0))))
-                st.toast(f"Synchronized weather for {custom_w['location']}: {custom_w.get('condition_icon', '')} {custom_w.get('temperature')}°C, {custom_w.get('condition')}")
-                st.rerun()
+            last_synced = st.session_state.get("_last_synced_other", "")
+            should_sync_other = False
+            if sync_btn and custom_city.strip():
+                should_sync_other = True
+            elif custom_city.strip() and custom_city.strip().lower() != last_synced:
+                should_sync_other = True
 
-        st.write("")
+            if should_sync_other:
+                with st.spinner(f"Querying live weather for other place: {custom_city}..."):
+                    other_w = engine_instance.fetch_live_weather(custom_city.strip())
+                    st.session_state.other_place_location = other_w
+                    st.session_state.weather_telemetry = other_w
+                    st.session_state.active_location_mode = "other"
+                    st.session_state._last_synced_other = custom_city.strip().lower()
+                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(other_w.get("temperature", 25.0))))
+                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(other_w.get("humidity", 60.0))))
+                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(other_w.get("rainfall", 90.0))))
+                    st.toast(f"Analyzing {other_w['location']}: {other_w.get('condition_icon', '')} {other_w.get('temperature')}°C")
+                    st.rerun()
+
+            if other_loc and active_mode == "other":
+                st.caption(f"📍 Currently analyzing: **{other_loc.get('location')}**. Your Home Farm (**{home_loc.get('city')}**) is preserved. Click 'Activate My Farm' on the left anytime to switch back.")
 
         col_input, col_results = st.columns([1.1, 1.4], gap="large")
 
