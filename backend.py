@@ -1229,12 +1229,21 @@ class SparcEngine:
             postcode = ""
             try:
                 nom_url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=14&addressdetails=1"
-                nom_headers = {"User-Agent": "AgrisenseAI/2.0 (Agricultural Intelligence System; agrisense.app)"}
-                nom_resp = requests.get(nom_url, headers=nom_headers, timeout=3.5)
+                nom_headers = {"User-Agent": "SPARC-AgriAI/3.0 (Smart Precision Agriculture Classification; sparc.app)"}
+                nom_resp = requests.get(nom_url, headers=nom_headers, timeout=4.0)
                 if nom_resp.status_code == 200:
                     addr = nom_resp.json().get("address", {})
-                    local_place = addr.get("village") or addr.get("town") or addr.get("suburb") or addr.get("neighbourhood")
-                    broad_city = addr.get("city") or addr.get("county") or addr.get("state_district")
+                    # Exact priority order: village -> town -> suburb -> city_district -> city -> county
+                    local_place = (
+                        addr.get("village") or
+                        addr.get("town") or
+                        addr.get("suburb") or
+                        addr.get("city_district") or
+                        addr.get("neighbourhood") or
+                        addr.get("city") or
+                        addr.get("county")
+                    )
+                    broad_city = addr.get("state_district") or addr.get("county") or addr.get("city")
                     if local_place and broad_city and local_place.lower() != broad_city.lower():
                         city_name = f"{local_place}, {broad_city}"
                     else:
@@ -1367,12 +1376,9 @@ class SparcEngine:
             except Exception:
                 continue
 
-        # 4. Calibrated default baseline for Indian Agriculture (pending user GPS pinpoint)
-        baseline = self.fetch_live_weather("Delhi")
-        if isinstance(baseline, dict):
-            baseline["is_baseline_default"] = True
-            baseline["source"] = "Default Baseline (Click 🛰️ to Pinpoint)"
-        return baseline
+        # 4. If no GPS or reliable IP location detected, return None (do not return fake Delhi fallback)
+        self.db.log_event("INFO", "TELEMETRY", "No exact GPS coordinates available - awaiting client browser GPS signal.", (time.time() - t0) * 1000)
+        return None
 
 
     def fetch_live_weather(self, city_or_preset: str) -> Dict[str, Any]:

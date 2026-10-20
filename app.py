@@ -17,6 +17,13 @@ try:
 except ImportError:
     go = None
 
+import requests
+
+try:
+    from streamlit_js_eval import streamlit_js_eval
+except ImportError:
+    streamlit_js_eval = None
+
 try:
     from streamlit_geolocation import streamlit_geolocation
 except ImportError:
@@ -774,53 +781,308 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SESSION STATE INITIALIZATION & SEAMLESS AUTO-LOCATION SYNC
+# GEOLOCATION, REVERSE-GEOCODING & WEATHER TELEMETRY PIPELINE
 # ─────────────────────────────────────────────────────────────────────────────
-def get_client_telemetry_params():
-    """Extracts client IP, browser timezone, and GPS coordinates if available."""
-    client_ip = None
+def reverse_geocode_nominatim(lat: float, lon: float) -> Dict[str, Any]:
+    """
+    High-accuracy Reverse Geocoding via OpenStreetMap Nominatim API (zoom=14).
+    Extracts the most granular local place name available in priority order:
+    village -> town -> suburb -> city_district -> neighbourhood -> quarter -> city -> county.
+    Combines with district, state, and country.
+    """
+    nom_url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=14&addressdetails=1"
+    headers = {"User-Agent": "SPARC-AgriAI/3.0 (Smart Agriculture Precision System; sparc.app)"}
     try:
-        headers = getattr(st.context, "headers", {}) or {}
-        for h in ["cf-connecting-ip", "x-real-ip", "x-client-ip"]:
-            val = headers.get(h)
-            if val and not str(val).startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
-                client_ip = str(val).strip()
-                break
-        if not client_ip:
-            xff = headers.get("x-forwarded-for")
-            if xff:
-                first = str(xff).split(",")[0].strip()
-                if first and not first.startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
-                    client_ip = first
-        if not client_ip:
-            ip_val = getattr(st.context, "ip_address", None)
-            if ip_val and not str(ip_val).startswith(("127.", "10.", "172.16.", "192.168.", "0.")):
-                client_ip = str(ip_val).strip()
+        resp = requests.get(nom_url, headers=headers, timeout=4.5)
+        if resp.status_code == 200:
+            data = resp.json()
+            addr = data.get("address", {})
+            local_name = (
+                addr.get("village") or
+                addr.get("town") or
+                addr.get("suburb") or
+                addr.get("city_district") or
+                addr.get("neighbourhood") or
+                addr.get("quarter") or
+                addr.get("city") or
+                addr.get("county") or
+                f"Field ({lat:.3f}°N, {lon:.3f}°E)"
+            )
+            district = addr.get("state_district") or addr.get("county") or addr.get("city") or ""
+            state = addr.get("state") or ""
+            country = addr.get("country") or "India"
+            postcode = addr.get("postcode", "")
+
+            # Compose formatted locality string: e.g. "Bais Godam, Jaipur, Rajasthan (India)"
+            components_list = [local_name]
+            if district and district.lower() != local_name.lower():
+                components_list.append(district)
+            if state and state.lower() not in [c.lower() for c in components_list]:
+                components_list.append(state)
+
+            loc_str = ", ".join(components_list)
+            if country:
+                loc_str += f" ({country})"
+
+            return {
+                "city": local_name,
+                "district": district,
+                "state": state,
+                "country": country,
+                "postcode": postcode,
+                "location": loc_str
+            }
     except Exception:
         pass
 
-    timezone = getattr(st.context, "timezone", "Asia/Kolkata")
-    
-    # Check if browser passed GPS coordinates via URL
-    user_lat = None
-    user_lon = None
+    # Tier-2 Fallback: BigDataCloud Client Reverse Geocoder
     try:
-        if "user_lat" in st.query_params and "user_lon" in st.query_params:
-            user_lat = float(st.query_params["user_lat"])
-            user_lon = float(st.query_params["user_lon"])
-            # Remove from query params so it doesn't repeatedly trigger
-            del st.query_params["user_lat"]
-            del st.query_params["user_lon"]
+        geo_url = f"https://api.bigdatacloud.net/data/reverse-geocode-client?latitude={lat}&longitude={lon}&localityLanguage=en"
+        resp = requests.get(geo_url, timeout=3.5)
+        if resp.status_code == 200:
+            g = resp.json()
+            local_name = g.get("locality") or g.get("city") or f"Field ({lat:.3f}°N, {lon:.3f}°E)"
+            district = g.get("city") or g.get("localityInfo", {}).get("administrative", [{}])[-1].get("name", "")
+            state = g.get("principalSubdivision") or ""
+            country = g.get("countryName") or "India"
+            loc_str = f"{local_name}, {state} ({country})" if state else f"{local_name} ({country})"
+            return {
+                "city": local_name,
+                "district": district,
+                "state": state,
+                "country": country,
+                "postcode": "",
+                "location": loc_str
+            }
     except Exception:
         pass
 
-    return client_ip, timezone, user_lat, user_lon
+    return {
+        "city": f"Field ({lat:.3f}°N, {lon:.3f}°E)",
+        "district": "",
+        "state": "",
+        "country": "India",
+        "postcode": "",
+        "location": f"Field Station ({lat:.3f}°N, {lon:.3f}°E)"
+    }
+
+
+def fetch_live_telemetry(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    """
+    Fetches real-time temperature, humidity, rainfall, and weather conditions
+    from Open-Meteo REST API using exact client latitude and longitude.
+    """
+    try:
+        headers = {"User-Agent": "SPARC-AgriAI/3.0 (Smart Agriculture Precision System; sparc.app)"}
+        weather_url = (
+            f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
+            f"&current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,wind_speed_10m"
+            f"&daily=precipitation_sum&timezone=auto"
+        )
+        w_resp = requests.get(weather_url, headers=headers, timeout=5.0)
+        if w_resp.status_code == 200:
+            w_data = w_resp.json()
+            current = w_data.get("current", {})
+            temp = float(current.get("temperature_2m", 25.0))
+            humidity = float(current.get("relative_humidity_2m", 60.0))
+            live_rain = float(current.get("precipitation", 0.0))
+            w_code = int(current.get("weather_code", 0))
+            wind = float(current.get("wind_speed_10m", 8.0))
+
+            wmo_codes = {
+                0: ("Clear Sky", "☀️"), 1: ("Mainly Clear", "🌤️"), 2: ("Partly Cloudy", "⛅"),
+                3: ("Overcast", "☁️"), 45: ("Fog & Mist", "🌫️"), 48: ("Depositing Rime Fog", "🌫️"),
+                51: ("Light Drizzle", "🌦️"), 53: ("Moderate Drizzle", "🌦️"), 55: ("Dense Drizzle", "🌧️"),
+                61: ("Slight Rain", "🌧️"), 63: ("Moderate Rain", "🌧️"), 65: ("Heavy Rain", "🌧️"),
+                71: ("Slight Snow", "🌨️"), 73: ("Moderate Snow", "🌨️"), 75: ("Heavy Snow", "❄️"),
+                80: ("Rain Showers", "🌦️"), 81: ("Moderate Showers", "🌧️"), 82: ("Violent Showers", "⛈️"),
+                95: ("Thunderstorm", "⛈️"), 96: ("Thunderstorm with Hail", "⛈️")
+            }
+            cond_text, cond_icon = wmo_codes.get(w_code, ("Clear Sky", "☀️"))
+            daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [12.0]))
+            est_monthly_rain = max(20.0, min(450.0, float(daily_rain * 6.5 + 20.0)))
+
+            return {
+                "temperature": round(temp, 1),
+                "humidity": round(humidity, 1),
+                "live_rain": round(live_rain, 1),
+                "rainfall": round(est_monthly_rain, 1),
+                "weather_code": w_code,
+                "condition": cond_text,
+                "condition_icon": cond_icon,
+                "wind_speed": round(wind, 1),
+                "latitude": round(lat, 5),
+                "longitude": round(lon, 5),
+                "source": "Open-Meteo Satellite Telemetry",
+                "status": "Live Connected",
+                "is_gps_verified": True
+            }
+    except Exception:
+        pass
+    return None
+
+
+def get_exact_gps_location() -> Optional[Dict[str, Any]]:
+    """
+    Acquires exact real-time GPS coordinates directly from the client browser
+    using HTML5 navigator.geolocation with enableHighAccuracy: True.
+    Reverse-geocodes with Nominatim and fetches live Open-Meteo telemetry.
+    Returns None if the signal is not yet available or permission is pending.
+    """
+    lat = None
+    lon = None
+    accuracy = None
+
+    # Method 1: Client-side JS evaluation via streamlit_js_eval
+    if streamlit_js_eval is not None:
+        try:
+            raw_gps = streamlit_js_eval(
+                js_expressions="""
+                new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        resolve({ error: "Geolocation unsupported by browser", code: 0 });
+                        return;
+                    }
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            resolve({
+                                latitude: pos.coords.latitude,
+                                longitude: pos.coords.longitude,
+                                accuracy: pos.coords.accuracy,
+                                status: "success"
+                            });
+                        },
+                        (err) => {
+                            resolve({
+                                error: err.message,
+                                code: err.code,
+                                status: "error"
+                            });
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 15000,
+                            maximumAge: 0
+                        }
+                    );
+                })
+                """,
+                key="browser_exact_gps_eval"
+            )
+            if raw_gps and isinstance(raw_gps, dict):
+                if raw_gps.get("status") == "success" or (raw_gps.get("latitude") is not None and raw_gps.get("longitude") is not None):
+                    lat = float(raw_gps["latitude"])
+                    lon = float(raw_gps["longitude"])
+                    accuracy = raw_gps.get("accuracy")
+                elif "coords" in raw_gps and raw_gps["coords"].get("latitude") is not None:
+                    lat = float(raw_gps["coords"]["latitude"])
+                    lon = float(raw_gps["coords"]["longitude"])
+                    accuracy = raw_gps["coords"].get("accuracy")
+        except Exception:
+            pass
+
+    # Method 2: Fallback to streamlit_geolocation component
+    if (lat is None or lon is None) and streamlit_geolocation is not None:
+        try:
+            loc_gps = streamlit_geolocation()
+            if loc_gps and loc_gps.get("latitude") is not None and loc_gps.get("longitude") is not None:
+                lat = float(loc_gps["latitude"])
+                lon = float(loc_gps["longitude"])
+                accuracy = loc_gps.get("accuracy")
+        except Exception:
+            pass
+
+    # Method 3: Direct URL query parameters (if redirected from external GPS bridge)
+    if lat is None or lon is None:
+        try:
+            if "user_lat" in st.query_params and "user_lon" in st.query_params:
+                lat = float(st.query_params["user_lat"])
+                lon = float(st.query_params["user_lon"])
+                del st.query_params["user_lat"]
+                del st.query_params["user_lon"]
+        except Exception:
+            pass
+
+    if lat is None or lon is None:
+        return None
+
+    # Merge reverse geocoding and live weather telemetry
+    geo_data = reverse_geocode_nominatim(lat, lon)
+    weather_data = fetch_live_telemetry(lat, lon)
+    if not weather_data:
+        weather_data = engine_instance.fetch_weather_by_coords(lat, lon) or {}
+
+    merged = {**geo_data, **weather_data}
+    merged["latitude"] = round(lat, 5)
+    merged["longitude"] = round(lon, 5)
+    if accuracy:
+        merged["accuracy_meters"] = round(float(accuracy), 1)
+    merged["is_gps_verified"] = True
+    merged["source"] = "Exact Browser GPS (High Accuracy)"
+    return merged
+
+
+def handle_location_state():
+    """
+    Centralized Dual-Mode State Machine managing GPS vs. Custom City Search.
+
+    Session State Schema:
+    - st.session_state.location_mode: "GPS" (default) or "CUSTOM"
+    - st.session_state.farm_base_data: Exact physical GPS location & telemetry (or None if pending)
+    - st.session_state.custom_city_data: Searched city data & telemetry (or None)
+    - st.session_state.active_telemetry: Points to farm_base_data (in GPS mode)
+                                         or custom_city_data (in CUSTOM mode)
+    """
+    if "location_mode" not in st.session_state:
+        st.session_state.location_mode = "GPS"
+
+    if "farm_base_data" not in st.session_state:
+        st.session_state.farm_base_data = None
+
+    if "custom_city_data" not in st.session_state:
+        st.session_state.custom_city_data = None
+
+    # Check for direct client browser GPS signal
+    detected_gps = get_exact_gps_location()
+    if detected_gps:
+        prev_coords = st.session_state.get("_last_synced_gps_coords")
+        curr_coords = (detected_gps["latitude"], detected_gps["longitude"])
+        if prev_coords != curr_coords:
+            st.session_state._last_synced_gps_coords = curr_coords
+            st.session_state.farm_base_data = detected_gps
+
+            # If in GPS mode or first lock, activate immediately
+            if st.session_state.location_mode == "GPS" or st.session_state.get("active_telemetry") is None:
+                st.session_state.location_mode = "GPS"
+                st.session_state.active_telemetry = detected_gps
+                st.session_state["slider_temp"] = max(-10.0, min(55.0, float(detected_gps.get("temperature", 25.0))))
+                st.session_state["slider_hum"] = max(5.0, min(100.0, float(detected_gps.get("humidity", 60.0))))
+                st.session_state["slider_rain"] = max(0.0, min(500.0, float(detected_gps.get("rainfall", 90.0))))
+                st.toast(f"🎯 Pinpoint GPS Locked: {detected_gps['location']}", icon="📍")
+
+    # Resolve active telemetry based on state machine mode
+    if st.session_state.location_mode == "CUSTOM" and st.session_state.custom_city_data:
+        st.session_state.active_telemetry = st.session_state.custom_city_data
+    elif st.session_state.location_mode == "GPS" and st.session_state.farm_base_data:
+        st.session_state.active_telemetry = st.session_state.farm_base_data
+    elif st.session_state.farm_base_data:
+        st.session_state.active_telemetry = st.session_state.farm_base_data
+    elif st.session_state.custom_city_data:
+        st.session_state.active_telemetry = st.session_state.custom_city_data
+    else:
+        st.session_state.active_telemetry = None
+
+    # Maintain backward compatibility aliases for existing tabs & generators
+    st.session_state.my_home_location = st.session_state.farm_base_data
+    st.session_state.other_place_location = st.session_state.custom_city_data
+    st.session_state.active_location_mode = "home" if st.session_state.location_mode == "GPS" else "other"
+    st.session_state.weather_telemetry = st.session_state.active_telemetry
 
 
 def ensure_session_state():
     """
     Guarantees that all necessary session state keys exist for the active user session.
-    Must be called on every script rerun and at the start of any page/function.
+    Invoked on every script rerun and before rendering.
     """
     if "splash_completed" not in st.session_state:
         st.session_state.splash_completed = False
@@ -832,57 +1094,8 @@ def ensure_session_state():
         except Exception:
             st.session_state.current_user = "lead_agronomist"
 
-    # Check for direct GPS coordinate parameters from browser
-    client_ip, client_tz, user_lat, user_lon = get_client_telemetry_params()
-    if user_lat is not None and user_lon is not None:
-        gps_w = engine_instance.fetch_weather_by_coords(user_lat, user_lon)
-        if gps_w:
-            st.session_state.my_home_location = gps_w
-            st.session_state.weather_telemetry = gps_w
-            st.session_state.active_location_mode = "home"
-            st.session_state._last_synced_farm_input = gps_w.get("city", "").lower()
-            st.session_state["slider_temp"] = max(-10.0, min(55.0, float(gps_w.get("temperature", 25.0))))
-            st.session_state["slider_hum"] = max(5.0, min(100.0, float(gps_w.get("humidity", 60.0))))
-            st.session_state["slider_rain"] = max(0.0, min(500.0, float(gps_w.get("rainfall", 90.0))))
-
-    if "user_city" in st.query_params:
-        try:
-            u_city = str(st.query_params["user_city"]).strip()
-            del st.query_params["user_city"]
-            if u_city:
-                city_w = engine_instance.fetch_live_weather(u_city)
-                if city_w:
-                    st.session_state.my_home_location = city_w
-                    st.session_state.weather_telemetry = city_w
-                    st.session_state.active_location_mode = "home"
-                    st.session_state._last_synced_farm_input = city_w.get("city", "").lower()
-                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(city_w.get("temperature", 25.0))))
-                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(city_w.get("humidity", 60.0))))
-                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(city_w.get("rainfall", 90.0))))
-        except Exception:
-            pass
-
-    if "my_home_location" not in st.session_state or not isinstance(st.session_state.my_home_location, dict):
-        try:
-            st.session_state.my_home_location = engine_instance.auto_detect_location_and_weather(
-                client_ip=client_ip,
-                timezone=client_tz,
-                user_lat=user_lat,
-                user_lon=user_lon
-            )
-        except Exception:
-            st.session_state.my_home_location = engine_instance.fetch_live_weather("Delhi")
-
-
-    if "other_place_location" not in st.session_state:
-        st.session_state.other_place_location = None
-
-    if "active_location_mode" not in st.session_state:
-        st.session_state.active_location_mode = "home"
-
-    # Active weather telemetry follows active_location_mode
-    if "weather_telemetry" not in st.session_state or not isinstance(st.session_state.weather_telemetry, dict):
-        st.session_state.weather_telemetry = st.session_state.my_home_location
+    # Execute state controller
+    handle_location_state()
 
     if "chosen_target_crop" not in st.session_state:
         st.session_state.chosen_target_crop = "rice"
@@ -893,8 +1106,8 @@ def ensure_session_state():
     if "last_diagnostics" not in st.session_state:
         st.session_state.last_diagnostics = None
 
-    # Ensure slider state keys are synchronized with telemetry
-    w_curr = st.session_state.get("weather_telemetry") or {}
+    # Ensure slider state keys are synchronized
+    w_curr = st.session_state.get("active_telemetry") or {}
     if "slider_temp" not in st.session_state:
         st.session_state.slider_temp = float(w_curr.get("temperature", 26.0))
     if "slider_hum" not in st.session_state:
@@ -1201,21 +1414,35 @@ def main_dashboard():
         st.session_state.current_user = selected_username
 
         # Current live weather in sidebar
-        w = st.session_state.get("weather_telemetry") or {}
+        w = st.session_state.get("active_telemetry")
         st.markdown("---")
         st.markdown("### 📍 Farm Telemetry")
-        c_icon = w.get('condition_icon', '⛅')
-        c_desc = w.get('condition', 'Fair Weather')
-        live_precip = w.get('live_rain', 0.0)
-        rain_label = f"{live_precip} mm (Live)" if live_precip > 0 else f"{w.get('rainfall', 100.0)} mm (Seasonal)"
+        if w:
+            c_icon = w.get('condition_icon', '⛅')
+            c_desc = w.get('condition', 'Fair Weather')
+            live_precip = w.get('live_rain', 0.0)
+            rain_label = f"{live_precip} mm (Live)" if live_precip > 0 else f"{w.get('rainfall', 100.0)} mm (Seasonal)"
+            loc_label = w.get('location', 'Active Zone')
+            temp_label = f"{w.get('temperature', 25.0)}°C"
+            hum_label = f"{w.get('humidity', 60.0)}%"
+            wind_label = f"{w.get('wind_speed', 8.0)} km/h"
+        else:
+            c_icon = "🛰️"
+            c_desc = "Awaiting GPS Signal"
+            loc_label = "📡 Detecting GPS Coordinates..."
+            temp_label = "-- °C"
+            hum_label = "-- %"
+            rain_label = "-- mm"
+            wind_label = "-- km/h"
+
         st.markdown(f"""
         <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB; background: rgba(16, 28, 22, 0.75); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.25);">
-            <div><strong>Location:</strong> <span style="color: #38BDF8;">{w.get('location', 'Auto-Synced')}</span></div>
+            <div><strong>Location:</strong> <span style="color: #38BDF8;">{loc_label}</span></div>
             <div><strong>Condition:</strong> <span style="color: #F472B6;">{c_icon} {c_desc}</span></div>
-            <div><strong>Temperature:</strong> <span style="color: #FBBF24;">{w.get('temperature', 26.0)}°C</span></div>
-            <div><strong>Humidity:</strong> <span style="color: #34D399;">{w.get('humidity', 60.0)}%</span></div>
+            <div><strong>Temperature:</strong> <span style="color: #FBBF24;">{temp_label}</span></div>
+            <div><strong>Humidity:</strong> <span style="color: #34D399;">{hum_label}</span></div>
             <div><strong>Precipitation:</strong> <span style="color: #60A5FA;">{rain_label}</span></div>
-            <div><strong>Wind Speed:</strong> <span style="color: #A78BFA;">{w.get('wind_speed', 8.0)} km/h</span></div>
+            <div><strong>Wind Speed:</strong> <span style="color: #A78BFA;">{wind_label}</span></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1225,9 +1452,25 @@ def main_dashboard():
             st.rerun()
 
     # ─── TOP APP HEADER BANNER (Streamlined Floating Agro-Tech Header) ───
-    w = st.session_state.get("weather_telemetry") or {}
-    home_loc = st.session_state.get("my_home_location") or {}
-    is_gps = bool(home_loc.get("is_gps_verified"))
+    active_tel = st.session_state.get("active_telemetry")
+    farm_base = st.session_state.get("farm_base_data")
+    loc_mode = st.session_state.get("location_mode", "GPS")
+    is_gps_verified = bool(active_tel and active_tel.get("is_gps_verified") and loc_mode == "GPS")
+
+    if active_tel:
+        city_display = active_tel.get("city", "Active Agricultural Zone")
+        cond_icon = active_tel.get("condition_icon", "☀️")
+        cond_text = active_tel.get("condition", "Clear Sky")
+        temp_text = f"🌡️ {active_tel.get('temperature', 25.0)}°C"
+        hum_text = f"💧 {active_tel.get('humidity', 60.0)}%"
+        rain_text = f"🌧️ {active_tel.get('rainfall', 100.0)} mm"
+    else:
+        city_display = "📡 Acquiring GPS..."
+        cond_icon = "🛰️"
+        cond_text = "Signal Pending"
+        temp_text = "🌡️ --°C"
+        hum_text = "💧 --%"
+        rain_text = "🌧️ -- mm"
 
     st.markdown(f"""
     <div class="agro-floating-header">
@@ -1247,20 +1490,20 @@ def main_dashboard():
                 </div>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <span class="agro-status-pill {'pill-gps' if is_gps else 'pill-loc'}">
-                    {'🎯' if is_gps else '📍'} {w.get('city', 'Local Farm')}
+                <span class="agro-status-pill {'pill-gps' if is_gps_verified else 'pill-loc'}">
+                    {'🎯' if is_gps_verified else '📍'} {city_display}
                 </span>
                 <span class="agro-status-pill pill-sky">
-                    {w.get('condition_icon', '⛅')} {w.get('condition', 'Clear Sky')}
+                    {cond_icon} {cond_text}
                 </span>
                 <span class="agro-status-pill pill-temp">
-                    🌡️ {w.get('temperature', 26.0)}°C
+                    {temp_text}
                 </span>
                 <span class="agro-status-pill pill-hum">
-                    💧 {w.get('humidity', 60.0)}%
+                    {hum_text}
                 </span>
                 <span class="agro-status-pill pill-rain">
-                    🌧️ {w.get('rainfall', 100.0)} mm
+                    {rain_text}
                 </span>
             </div>
         </div>
@@ -1283,48 +1526,112 @@ def main_dashboard():
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     with tab_diagnostics:
         # ── SEAMLESS DUAL-LOCATION & ACTIVE CONTEXT BAR ──
-        home_loc = st.session_state.get("my_home_location") or {}
-        other_loc = st.session_state.get("other_place_location")
-        active_mode = st.session_state.get("active_location_mode", "home")
-        w_active = st.session_state.get("weather_telemetry") or home_loc
+        loc_mode = st.session_state.get("location_mode", "GPS")
+        farm_base = st.session_state.get("farm_base_data")
+        custom_city = st.session_state.get("custom_city_data")
+        active_tel = st.session_state.get("active_telemetry")
 
-        # Clean unindented HTML to prevent Markdown code-block escaping
-        other_badge_snippet = ""
-        if other_loc:
-            other_badge_snippet = f"""<div style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;"><span style="color: #C084FC; font-weight: 600;">🔍 Other Place:</span> <span style="color: #FFFFFF; font-weight: 700;">{other_loc.get('city')} ({other_loc.get('temperature')}°C)</span></div>"""
-
-        is_gps_locked = bool(home_loc.get("is_gps_verified"))
-        is_default_baseline = bool(home_loc.get("is_baseline_default"))
-
-        if is_gps_locked:
-            farm_badge_label = "🎯 Satellite Pinpoint Farm:"
-            farm_badge_style = "background: rgba(16, 185, 129, 0.25); border: 1px solid #10B981;"
-        elif is_default_baseline:
-            farm_badge_label = "⚠️ Default Baseline:"
-            farm_badge_style = "background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.4);"
+        # Pill badges for both Farm Base and Custom Searched City
+        farm_badge_snippet = ""
+        if farm_base:
+            farm_badge_snippet = f"""<div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+<span style="color: #34D399; font-weight: 700;">🏡 My Farm Base:</span> <span style="color: #FFFFFF; font-weight: 700;">{farm_base.get('city', 'Local Farm')} ({farm_base.get('temperature', '--')}°C)</span>
+</div>"""
         else:
-            farm_badge_label = "🏡 My Farm Base:"
-            farm_badge_style = "background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);"
-
-        farm_badge_snippet = f"""<div style="{farm_badge_style} border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-<span style="color: {'#34D399' if is_gps_locked else '#FBBF24' if is_default_baseline else '#6EE7B7'}; font-weight: 600;">{farm_badge_label}</span> <span style="color: #FFFFFF; font-weight: 700;">{home_loc.get('city', 'Local Farm')} ({home_loc.get('temperature', 25.0)}°C)</span>
+            farm_badge_snippet = """<div style="background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+<span style="color: #FBBF24; font-weight: 700;">📡 Farm GPS:</span> <span style="color: #CBD5E1; font-weight: 600;">Acquiring Signal...</span>
 </div>"""
 
-        active_title_prefix = "🎯 SATELLITE PINPOINT: " if w_active.get("is_gps_verified") else ""
+        other_badge_snippet = ""
+        if custom_city:
+            other_badge_snippet = f"""<div style="background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+<span style="color: #C084FC; font-weight: 700;">🔍 Custom City:</span> <span style="color: #FFFFFF; font-weight: 700;">{custom_city.get('city')} ({custom_city.get('temperature')}°C)</span>
+</div>"""
 
-        st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
+        # Render Active Telemetry Context Card
+        if loc_mode == "CUSTOM" and custom_city:
+            # Active mode: Custom Searched City
+            st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(168, 85, 247, 0.5); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(46, 16, 101, 0.35));">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
 <div>
 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-<span style="font-size: 1.1rem;">🛰️</span>
-<span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: {'#34D399' if active_mode == 'home' else '#A78BFA'}; font-weight: 800;">{'🏡 MY FARM LOCATION' if active_mode == 'home' else '🔍 OTHER PLACE (EXPLORATION)'}</span></span>
+<span style="font-size: 1.1rem;">🔍</span>
+<span style="font-size: 0.82rem; color: #C084FC; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #A78BFA; font-weight: 800;">🔍 CUSTOM SEARCHED CITY (EXPLORATION)</span></span>
 </div>
 <div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
-{active_title_prefix}{w_active.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
-<span style='color: #F472B6;'>{w_active.get('condition_icon', '☀️')} {w_active.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
-<span style='color: #34D399;'>{w_active.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
-<span style='color: #FBBF24;'>{w_active.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
-<span style='color: #60A5FA;'>{w_active.get('rainfall', 100.0)} mm Rain</span>
+{custom_city.get('location', 'Searched Region')} &nbsp;·&nbsp;
+<span style='color: #F472B6;'>{custom_city.get('condition_icon', '⛅')} {custom_city.get('condition', 'Fair Weather')}</span> &nbsp;·&nbsp;
+<span style='color: #34D399;'>{custom_city.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
+<span style='color: #FBBF24;'>{custom_city.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
+<span style='color: #60A5FA;'>{custom_city.get('rainfall', 100.0)} mm Rain</span>
+</div>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+{farm_badge_snippet}
+{other_badge_snippet}
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
+
+        elif farm_base and farm_base.get("is_gps_verified"):
+            # Active mode: High-Accuracy GPS Locked
+            st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(6, 78, 59, 0.35));">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+<div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+<span style="font-size: 1.1rem;">🎯</span>
+<span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #34D399; font-weight: 800;">🏡 MY FARM LOCATION (EXACT GPS LOCKED)</span></span>
+</div>
+<div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
+🎯 SATELLITE PINPOINT: {farm_base.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
+<span style='color: #F472B6;'>{farm_base.get('condition_icon', '☀️')} {farm_base.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
+<span style='color: #34D399;'>{farm_base.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
+<span style='color: #FBBF24;'>{farm_base.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
+<span style='color: #60A5FA;'>{farm_base.get('rainfall', 100.0)} mm Rain</span>
+</div>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+{farm_badge_snippet}
+{other_badge_snippet}
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
+
+        elif farm_base:
+            # Active mode: Farm set manually / baseline
+            st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+<div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+<span style="font-size: 1.1rem;">🏡</span>
+<span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #34D399; font-weight: 800;">🏡 MY FARM LOCATION</span></span>
+</div>
+<div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
+{farm_base.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
+<span style='color: #F472B6;'>{farm_base.get('condition_icon', '☀️')} {farm_base.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
+<span style='color: #34D399;'>{farm_base.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
+<span style='color: #FBBF24;'>{farm_base.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
+<span style='color: #60A5FA;'>{farm_base.get('rainfall', 100.0)} mm Rain</span>
+</div>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+{farm_badge_snippet}
+{other_badge_snippet}
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
+
+        else:
+            # Pending GPS signal: clean, honest UI without dummy Delhi data
+            st.markdown(f"""<div class="sparc-card" style="padding: 18px 22px; margin-bottom: 16px; border-color: rgba(234, 179, 8, 0.5); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(40, 25, 5, 0.4));">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+<div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+<span style="font-size: 1.1rem;">📡</span>
+<span style="font-size: 0.82rem; color: #FBBF24; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #FBBF24; font-weight: 800;">🏡 MY FARM LOCATION (AWAITING GPS SIGNAL)</span></span>
+</div>
+<div style="font-size: 1.05rem; font-weight: 700; color: #CBD5E1;">
+📡 Acquiring Exact GPS Signal... Click '📍 Detect Exact Farm Location' below to pinpoint your field.
 </div>
 </div>
 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
@@ -1335,23 +1642,23 @@ def main_dashboard():
 </div>""", unsafe_allow_html=True)
 
         # Comparative Telemetry Bar (Working Progress: Other Place vs My Farm)
-        if other_loc and active_mode == "other":
-            t_diff = round(float(other_loc.get('temperature', 0)) - float(home_loc.get('temperature', 0)), 1)
-            h_diff = round(float(other_loc.get('humidity', 0)) - float(home_loc.get('humidity', 0)), 1)
-            r_diff = round(float(other_loc.get('rainfall', 0)) - float(home_loc.get('rainfall', 0)), 1)
+        if custom_city and farm_base and loc_mode == "CUSTOM":
+            t_diff = round(float(custom_city.get('temperature', 0)) - float(farm_base.get('temperature', 0)), 1)
+            h_diff = round(float(custom_city.get('humidity', 0)) - float(farm_base.get('humidity', 0)), 1)
+            r_diff = round(float(custom_city.get('rainfall', 0)) - float(farm_base.get('rainfall', 0)), 1)
             t_sign = f"+{t_diff}" if t_diff > 0 else f"{t_diff}"
             h_sign = f"+{h_diff}" if h_diff > 0 else f"{h_diff}"
             r_sign = f"+{r_diff}" if r_diff > 0 else f"{r_diff}"
 
             st.markdown(f"""<div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;">
 <div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; margin-bottom: 6px;">
-📊 Comparative Working Progress: {other_loc.get('city')} vs My Home Farm ({home_loc.get('city')})
+📊 Comparative Working Progress: {custom_city.get('city')} vs My Home Farm ({farm_base.get('city')})
 </div>
 <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem;">
-<div>🌡️ <strong>Temp:</strong> <span style="color: #F87171;">{other_loc.get('temperature')}°C</span> vs {home_loc.get('temperature')}°C (<span style="color: {'#34D399' if t_diff < 0 else '#F87171'}; font-weight: 700;">{t_sign}°C</span>)</div>
-<div>💧 <strong>Humidity:</strong> <span style="color: #FBBF24;">{other_loc.get('humidity')}%</span> vs {home_loc.get('humidity')}% (<span style="color: #FBBF24; font-weight: 700;">{h_sign}%</span>)</div>
-<div>🌧️ <strong>Rainfall:</strong> <span style="color: #60A5FA;">{other_loc.get('rainfall')} mm</span> vs {home_loc.get('rainfall')} mm (<span style="color: #60A5FA; font-weight: 700;">{r_sign} mm</span>)</div>
-<div>🌤️ <strong>Sky:</strong> {other_loc.get('condition_icon')} {other_loc.get('condition')}</div>
+<div>🌡️ <strong>Temp:</strong> <span style="color: #F87171;">{custom_city.get('temperature')}°C</span> vs {farm_base.get('temperature')}°C (<span style="color: {'#34D399' if t_diff < 0 else '#F87171'}; font-weight: 700;">{t_sign}°C</span>)</div>
+<div>💧 <strong>Humidity:</strong> <span style="color: #FBBF24;">{custom_city.get('humidity')}%</span> vs {farm_base.get('humidity')}% (<span style="color: #FBBF24; font-weight: 700;">{h_sign}%</span>)</div>
+<div>🌧️ <strong>Rainfall:</strong> <span style="color: #60A5FA;">{custom_city.get('rainfall')} mm</span> vs {farm_base.get('rainfall')} mm (<span style="color: #60A5FA; font-weight: 700;">{r_sign} mm</span>)</div>
+<div>🌤️ <strong>Sky:</strong> {custom_city.get('condition_icon')} {custom_city.get('condition')}</div>
 </div>
 </div>""", unsafe_allow_html=True)
 
@@ -1362,41 +1669,52 @@ def main_dashboard():
             st.markdown("<div style='font-size: 0.92rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location (Home Base)</div>", unsafe_allow_html=True)
 
             # Direct Hardware GPS Satellite Pinpoint Block
-            st.markdown("""<div style='background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.25)); border: 1px solid rgba(52, 211, 153, 0.35); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;'>
+            is_locked = bool(farm_base and farm_base.get("is_gps_verified"))
+            gps_box_bg = "rgba(16, 185, 129, 0.12)" if is_locked else "rgba(234, 179, 8, 0.12)"
+            gps_border = "rgba(52, 211, 153, 0.35)" if is_locked else "rgba(234, 179, 8, 0.35)"
+            gps_title_col = "#34D399" if is_locked else "#FBBF24"
+            gps_status_badge = "EXACT GPS LOCKED" if is_locked else "GPS SIGNAL PENDING"
+            gps_badge_style = "background: rgba(52, 211, 153, 0.2); color: #6EE7B7; border: 1px solid rgba(52, 211, 153, 0.4);" if is_locked else "background: rgba(234, 179, 8, 0.2); color: #FBBF24; border: 1px solid rgba(234, 179, 8, 0.4);"
+
+            if is_locked:
+                gps_desc = f"🎯 Locked: <strong>{farm_base['location']}</strong> ({farm_base.get('latitude', '')}°N, {farm_base.get('longitude', '')}°E)"
+            else:
+                gps_desc = "Click 📍 <strong>Detect Exact Farm Location</strong> below and allow browser location to pinpoint your exact village/town, district, and field coordinates:"
+
+            st.markdown(f"""<div style='background: linear-gradient(135deg, {gps_box_bg}, rgba(6, 78, 59, 0.25)); border: 1px solid {gps_border}; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;'>
 <div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;'>
-    <span style='font-size: 0.88rem; font-weight: 800; color: #34D399;'>🛰️ Satellite GPS Auto-Detector</span>
-    <span style='font-size: 0.70rem; background: rgba(52, 211, 153, 0.2); color: #6EE7B7; border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 12px; padding: 2px 8px; font-weight: 700;'>EXACT DEVICE SENSORS</span>
+    <span style='font-size: 0.88rem; font-weight: 800; color: {gps_title_col};'>🛰️ Satellite GPS Auto-Detector</span>
+    <span style='font-size: 0.70rem; {gps_badge_style} border-radius: 12px; padding: 2px 8px; font-weight: 700;'>{gps_status_badge}</span>
 </div>
 <div style='font-size: 0.80rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 8px;'>
-    Click the 📍 <strong>GPS Pin button</strong> below and allow browser location to pinpoint your exact village/town, district, and field coordinates:
+    {gps_desc}
 </div>
-""", unsafe_allow_html=True)
+</div>""", unsafe_allow_html=True)
 
-            if streamlit_geolocation is not None:
-                loc_gps = streamlit_geolocation()
-                if loc_gps and loc_gps.get("latitude") is not None and loc_gps.get("longitude") is not None:
-                    g_lat = round(float(loc_gps["latitude"]), 4)
-                    g_lon = round(float(loc_gps["longitude"]), 4)
-                    last_g = st.session_state.get("_last_detected_gps")
-                    if last_g != (g_lat, g_lon):
-                        st.session_state._last_detected_gps = (g_lat, g_lon)
-                        with st.spinner(f"🛰️ Pinpointing exact field coordinates ({g_lat}°N, {g_lon}°E)..."):
-                            gps_w = engine_instance.fetch_weather_by_coords(g_lat, g_lon)
-                            if gps_w:
-                                st.session_state.my_home_location = gps_w
-                                st.session_state.weather_telemetry = gps_w
-                                st.session_state.active_location_mode = "home"
-                                st.session_state._last_synced_farm_input = gps_w.get("city", "").lower()
-                                st.session_state["slider_temp"] = max(-10.0, min(55.0, float(gps_w.get("temperature", 25.0))))
-                                st.session_state["slider_hum"] = max(5.0, min(100.0, float(gps_w.get("humidity", 60.0))))
-                                st.session_state["slider_rain"] = max(0.0, min(500.0, float(gps_w.get("rainfall", 90.0))))
-                                st.toast(f"🎯 Pinpoint GPS Acquired: {gps_w['location']}")
-                                st.rerun()
+            col_gps_btn1, col_gps_btn2 = st.columns([1.5, 1])
+            with col_gps_btn1:
+                if st.button("📍 Detect Exact Farm Location", key="btn_detect_gps", use_container_width=True, help="Requests high-accuracy browser HTML5 GPS coordinates"):
+                    st.session_state._last_synced_gps_coords = None
+                    st.session_state.location_mode = "GPS"
+                    st.toast("📡 Acquiring browser GPS signal... Please allow location permission in your browser.", icon="🛰️")
+                    st.rerun()
 
-            st.markdown("</div>", unsafe_allow_html=True)
+            with col_gps_btn2:
+                is_home_active = (loc_mode == "GPS" and farm_base is not None)
+                if st.button("🔄 Activate Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active, help="Switch recommendation engine back to your home farm"):
+                    st.session_state.location_mode = "GPS"
+                    if farm_base:
+                        st.session_state.active_telemetry = farm_base
+                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(farm_base.get("temperature", 25.0))))
+                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(farm_base.get("humidity", 60.0))))
+                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(farm_base.get("rainfall", 90.0))))
+                        st.toast(f"🏡 Switched context back to My Farm: {farm_base.get('city')}")
+                    else:
+                        st.toast("Awaiting browser GPS signal... Click 'Detect Exact Farm Location'.")
+                    st.rerun()
 
             # Manual Farm City / Town / Village / PIN Code text input
-            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #E2E8F0; margin-bottom: 4px;'>📍 Or Type Exact City / Town / Village / PIN Code:</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #E2E8F0; margin-bottom: 4px; margin-top: 8px;'>📍 Or Type Exact City / Town / Village / PIN Code:</div>", unsafe_allow_html=True)
             col_f_in, col_f_btn = st.columns([1.8, 1])
             with col_f_in:
                 farm_input = st.text_input(
@@ -1418,9 +1736,10 @@ def main_dashboard():
             if should_sync_farm:
                 with st.spinner(f"Pinpointing farm location to {farm_input}..."):
                     new_home = engine_instance.fetch_live_weather(farm_input.strip())
-                    st.session_state.my_home_location = new_home
-                    st.session_state.weather_telemetry = new_home
-                    st.session_state.active_location_mode = "home"
+                    new_home["is_gps_verified"] = False
+                    st.session_state.farm_base_data = new_home
+                    st.session_state.location_mode = "GPS"
+                    st.session_state.active_telemetry = new_home
                     st.session_state._last_synced_farm_input = farm_input.strip().lower()
                     st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
                     st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
@@ -1428,65 +1747,56 @@ def main_dashboard():
                     st.toast(f"🏡 Farm location updated to: {new_home['location']}")
                     st.rerun()
 
-            col_h1, col_h2 = st.columns([1, 1])
-            with col_h1:
-                is_home_active = (active_mode == "home")
-                if st.button("🔄 Activate My Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active, help="Switch recommendation engine back to your home farm"):
-                    st.session_state.weather_telemetry = home_loc
-                    st.session_state.active_location_mode = "home"
-                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(home_loc.get("temperature", 25.0))))
-                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(home_loc.get("humidity", 60.0))))
-                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(home_loc.get("rainfall", 90.0))))
-                    st.toast(f"Switched context back to My Farm: {home_loc.get('city')}")
-                    st.rerun()
-            with col_h2:
+            col_res1, col_res2 = st.columns([1, 1])
+            with col_res1:
                 if st.button("🗑️ Reset Saved Farm", key="btn_reset_farm", use_container_width=True, help="Clears stored farm location to re-detect"):
-                    st.session_state.my_home_location = None
-                    st.session_state.weather_telemetry = None
-                    st.session_state._last_detected_gps = None
+                    st.session_state.farm_base_data = None
+                    st.session_state.active_telemetry = st.session_state.custom_city_data
+                    st.session_state._last_synced_gps_coords = None
                     st.session_state._last_synced_farm_input = ""
-                    st.toast("Cleared saved farm. Click GPS button or type city to set your farm.")
+                    st.toast("Cleared saved farm. Click 'Detect Exact Farm Location' to re-detect.")
                     st.rerun()
 
-            farm_states = [
-                "Select State / Agro-Region...",
-                "Delhi (National Capital)",
-                "Rajasthan (Jaipur / Kota)",
-                "Uttar Pradesh (Lucknow / Kanpur)",
-                "Punjab (Ludhiana / Amritsar)",
-                "Haryana (Karnal / Hisar)",
-                "Maharashtra (Pune / Nashik)",
-                "Madhya Pradesh (Indore / Bhopal)",
-                "Bihar (Patna / Gaya)",
-                "Gujarat (Ahmedabad / Rajkot)",
-                "Karnataka (Bengaluru / Mysuru)",
-                "Tamil Nadu (Coimbatore / Chennai)",
-                "Andhra Pradesh (Guntur / Vijayawada)",
-                "West Bengal (Kolkata / Bardhaman)",
-                "Kerala (Kochi / Palakkad)",
-                "Assam (Guwahati / Jorhat)"
-            ]
-            sel_state = st.selectbox("Or choose state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
-            if sel_state != "Select State / Agro-Region...":
-                target_city = sel_state.split("(")[1].split("/")[0].strip()
-                if st.session_state.get("_last_selected_state") != sel_state:
-                    st.session_state._last_selected_state = sel_state
-                    with st.spinner(f"Setting farm to {target_city}..."):
-                        new_home = engine_instance.fetch_live_weather(target_city)
-                        st.session_state.my_home_location = new_home
-                        st.session_state.weather_telemetry = new_home
-                        st.session_state.active_location_mode = "home"
-                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
-                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
-                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
-                        st.toast(f"🏡 Farm base updated to {new_home['location']}")
-                        st.rerun()
+            with col_res2:
+                farm_states = [
+                    "Select State Baseline...",
+                    "Rajasthan (Jaipur / Kota)",
+                    "Uttar Pradesh (Lucknow / Kanpur)",
+                    "Punjab (Ludhiana / Amritsar)",
+                    "Haryana (Karnal / Hisar)",
+                    "Maharashtra (Pune / Nashik)",
+                    "Madhya Pradesh (Indore / Bhopal)",
+                    "Bihar (Patna / Gaya)",
+                    "Gujarat (Ahmedabad / Rajkot)",
+                    "Karnataka (Bengaluru / Mysuru)",
+                    "Tamil Nadu (Coimbatore / Chennai)",
+                    "Andhra Pradesh (Guntur / Vijayawada)",
+                    "West Bengal (Kolkata / Bardhaman)",
+                    "Kerala (Kochi / Palakkad)",
+                    "Assam (Guwahati / Jorhat)"
+                ]
+                sel_state = st.selectbox("Or state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
+                if sel_state != "Select State Baseline...":
+                    target_city = sel_state.split("(")[1].split("/")[0].strip()
+                    if st.session_state.get("_last_selected_state") != sel_state:
+                        st.session_state._last_selected_state = sel_state
+                        with st.spinner(f"Setting farm to {target_city}..."):
+                            new_home = engine_instance.fetch_live_weather(target_city)
+                            new_home["is_gps_verified"] = False
+                            st.session_state.farm_base_data = new_home
+                            st.session_state.location_mode = "GPS"
+                            st.session_state.active_telemetry = new_home
+                            st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
+                            st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
+                            st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
+                            st.toast(f"🏡 Farm base updated to {new_home['location']}")
+                            st.rerun()
 
         with col_ctl_other:
             st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: #A78BFA; margin-bottom: 6px;'>🔍 Option 2: Search & Inspect Other Place (Exploration)</div>", unsafe_allow_html=True)
             col_o1, col_o2 = st.columns([1.8, 1])
             with col_o1:
-                custom_city = st.text_input(
+                custom_city_input = st.text_input(
                     "Lookup other place:",
                     placeholder="Type city/country (e.g. Pune, Patna, California) & press Enter",
                     label_visibility="collapsed",
@@ -1497,26 +1807,27 @@ def main_dashboard():
 
             last_synced = st.session_state.get("_last_synced_other", "")
             should_sync_other = False
-            if sync_btn and custom_city.strip():
+            if sync_btn and custom_city_input.strip():
                 should_sync_other = True
-            elif custom_city.strip() and custom_city.strip().lower() != last_synced:
+            elif custom_city_input.strip() and custom_city_input.strip().lower() != last_synced:
                 should_sync_other = True
 
             if should_sync_other:
-                with st.spinner(f"Querying live weather for other place: {custom_city}..."):
-                    other_w = engine_instance.fetch_live_weather(custom_city.strip())
-                    st.session_state.other_place_location = other_w
-                    st.session_state.weather_telemetry = other_w
-                    st.session_state.active_location_mode = "other"
-                    st.session_state._last_synced_other = custom_city.strip().lower()
+                with st.spinner(f"Querying live weather for other place: {custom_city_input}..."):
+                    other_w = engine_instance.fetch_live_weather(custom_city_input.strip())
+                    st.session_state.custom_city_data = other_w
+                    st.session_state.location_mode = "CUSTOM"
+                    st.session_state.active_telemetry = other_w
+                    st.session_state._last_synced_other = custom_city_input.strip().lower()
                     st.session_state["slider_temp"] = max(-10.0, min(55.0, float(other_w.get("temperature", 25.0))))
                     st.session_state["slider_hum"] = max(5.0, min(100.0, float(other_w.get("humidity", 60.0))))
                     st.session_state["slider_rain"] = max(0.0, min(500.0, float(other_w.get("rainfall", 90.0))))
                     st.toast(f"Analyzing {other_w['location']}: {other_w.get('condition_icon', '')} {other_w.get('temperature')}°C")
                     st.rerun()
 
-            if other_loc and active_mode == "other":
-                st.caption(f"📍 Currently analyzing: **{other_loc.get('location')}**. Your Home Farm (**{home_loc.get('city')}**) is preserved. Click 'Activate My Farm' on the left anytime to switch back.")
+            if custom_city and loc_mode == "CUSTOM":
+                farm_label = farm_base.get('city') if farm_base else "Farm Base"
+                st.caption(f"📍 Currently analyzing: **{custom_city.get('location')}**. Your Home Farm (**{farm_label}**) is preserved. Click 'Activate Farm' on the left anytime to switch back.")
 
         col_input, col_results = st.columns([1.1, 1.4], gap="large")
 
