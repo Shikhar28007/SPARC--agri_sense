@@ -8,7 +8,7 @@ echo   Repository: https://github.com/Shikhar28007/SPARC--agri_sense
 echo =====================================================================
 echo.
 echo Choose an option:
-echo   [1] Sync & Push to GitHub NOW (Immediate Update)
+echo   [1] Sync and Push to GitHub NOW (Immediate Update)
 echo   [2] Start Real-Time Auto-Watcher (Auto-pushes whenever files change)
 echo   [3] Exit
 echo.
@@ -36,14 +36,17 @@ if "!MSG!"=="" (
 )
 
 echo.
-echo [1/3] Staging all files...
+echo [1/4] Staging all files...
 git add -A
 
-echo [2/3] Creating commit: "!MSG!"...
-git commit -m "!MSG!"
+echo [2/4] Creating commit: "!MSG!"...
+git commit -m "!MSG!" 2>nul
 
-echo [3/3] Pushing to GitHub (origin main)...
-git push -u origin main
+echo [3/4] Pulling remote updates with rebase...
+git pull --rebase origin main
+
+echo [4/4] Pushing to GitHub (origin main)...
+git push origin main
 
 if %ERRORLEVEL% EQU 0 (
     echo.
