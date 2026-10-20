@@ -1153,10 +1153,31 @@ body {
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# WIDGET SAFE STATE CALLBACKS
+# ─────────────────────────────────────────────────────────────────────────────
+def apply_soil_baseline_callback(state_name: str):
+    """Safely updates soil slider session state values in pre-run callback to prevent StreamlitWidgetAlreadyInstantiatedError."""
+    try:
+        profile = backend.get_state_soil_profile(state_name)
+        if profile and "baseline_soil" in profile:
+            b = profile["baseline_soil"]
+            st.session_state["slider_n"] = int(b.get("nitrogen", 80))
+            st.session_state["slider_p"] = int(b.get("phosphorus", 45))
+            st.session_state["slider_k"] = int(b.get("potassium", 40))
+            st.session_state["slider_ph"] = float(b.get("ph", 6.5))
+            st.session_state["_toast_notification"] = f"✅ Applied {state_name} baseline soil metrics into main predictor!"
+    except Exception:
+        pass
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # MAIN DASHBOARD INTERFACE
 # ─────────────────────────────────────────────────────────────────────────────
 def main_dashboard():
     ensure_session_state()
+    if st.session_state.get("_toast_notification"):
+        st.toast(st.session_state.pop("_toast_notification"))
+
     # ─── SIDEBAR ───
     with st.sidebar:
         st.markdown("""
@@ -1527,13 +1548,13 @@ def main_dashboard():
                         <div style="color: #9CA3AF; font-size: 0.78rem; margin-top: 3px;"><strong>Common Deficiencies:</strong> {st_profile['micronutrient_deficiencies'][0]}</div>
                     </div>
                     """, unsafe_allow_html=True)
-                    if st.button(f"⚡ Auto-Fill {chosen_state} Soil Baseline", key=f"apply_soil_{chosen_state}", use_container_width=True):
-                        st.session_state["slider_n"] = int(b_soil["nitrogen"])
-                        st.session_state["slider_p"] = int(b_soil["phosphorus"])
-                        st.session_state["slider_k"] = int(b_soil["potassium"])
-                        st.session_state["slider_ph"] = float(b_soil["ph"])
-                        st.toast(f"✅ Loaded {chosen_state} baseline soil metrics!")
-                        st.rerun()
+                    st.button(
+                        f"⚡ Auto-Fill {chosen_state} Soil Baseline",
+                        key=f"apply_soil_{chosen_state}",
+                        on_click=apply_soil_baseline_callback,
+                        args=(chosen_state,),
+                        use_container_width=True
+                    )
 
             # Soil Nutrients
             st.markdown("#### 🧪 Macronutrients (NPK in kg/ha)")
@@ -2188,15 +2209,13 @@ def main_dashboard():
         with col_s_act:
             st.write("")
             st.write("")
-            if st.button(f"⚡ Set {st_choice} as Active Field Baseline", use_container_width=True):
-                chosen_p = backend.get_state_soil_profile(st_choice)
-                if chosen_p:
-                    b_vals = chosen_p["baseline_soil"]
-                    st.session_state["slider_n"] = int(b_vals["nitrogen"])
-                    st.session_state["slider_p"] = int(b_vals["phosphorus"])
-                    st.session_state["slider_k"] = int(b_vals["potassium"])
-                    st.session_state["slider_ph"] = float(b_vals["ph"])
-                    st.toast(f"✅ Set {st_choice} soil baseline into main predictor!")
+            st.button(
+                f"⚡ Set {st_choice} as Active Field Baseline",
+                key="btn_set_active_soil_baseline",
+                on_click=apply_soil_baseline_callback,
+                args=(st_choice,),
+                use_container_width=True
+            )
 
         profile_data = backend.get_state_soil_profile(st_choice)
         if profile_data:
