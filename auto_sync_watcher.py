@@ -1,5 +1,5 @@
 """
-SPARC AgriSense AI - Real-Time Automatic GitHub File Watcher & Sync Engine
+SPARC AI - Real-Time Automatic GitHub File Watcher & Sync Engine
 Watches for file modifications in the workspace and automatically commits and pushes to GitHub.
 Includes a debounce delay (10 seconds) so rapid edits are grouped into clean, single commits.
 """
@@ -48,7 +48,7 @@ def auto_push():
 
 def main():
     print("=" * 65)
-    print("  🌿 SPARC AgriSense AI - Real-Time Automatic GitHub Sync Engine")
+    print("  🌿 SPARC AI - Real-Time Automatic GitHub Sync Engine")
     print("  Listening for local code edits... will auto-push on file save!")
     print("=" * 65)
     last_known = get_last_modified_timestamp()

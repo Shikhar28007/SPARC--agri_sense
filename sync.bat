@@ -1,9 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
-title SPARC AgriSense AI - Real-Time GitHub & Web Sync
+title SPARC AI - Real-Time GitHub & Web Sync
 
 echo =====================================================================
-echo   🌿 SPARC AgriSense AI - GitHub & Live Website Sync Engine
+echo   🌿 SPARC AI - GitHub & Live Website Sync Engine
 echo   Repository: https://github.com/Shikhar28007/SPARC--agri_sense
 echo =====================================================================
 echo.

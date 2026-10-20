@@ -1,4 +1,4 @@
-# SPARC : AgriSense AI
+# SPARC
 
 ## *Smart Python-based Agriculture Recommendation, Classification & Precision Agronomy System*
 
@@ -25,7 +25,7 @@ SPARC (**Smart Python-based Agriculture Recommendation and Classification**) is 
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        SPARC AGRISENSE AI ENGINE                       │
+│                              SPARC AI ENGINE                           │
 ├─────────────────┬──────────────────┬─────────────────┬─────────────────┤
 │   🌾 CROP AI    │  🧪 FERTILIZER   │   🩺 CROP       │   🗺️ INDIAN     │
 │   RECOMMENDER   │   PRESCRIPTIONS  │    DOCTOR       │    SOIL MAP     │
@@ -141,7 +141,7 @@ Simply double-click **[`sync.bat`](sync.bat)** in Windows:
 
 ```text
 =====================================================================
-  🌿 SPARC AgriSense AI - GitHub & Live Website Sync Engine
+  🌿 SPARC AI - GitHub & Live Website Sync Engine
   Repository: https://github.com/Shikhar28007/SPARC--agri_sense
 =====================================================================
 
@@ -205,7 +205,7 @@ SPARC--agri_sense/
 ## Author & Maintainer
 
 **Shikhar** ([@Shikhar28007](https://github.com/Shikhar28007))  
-*Developer & Lead Architect of Project SPARC AgriSense AI*  
+*Developer & Lead Architect of Project SPARC*  
 GitHub: [https://github.com/Shikhar28007/SPARC--agri_sense](https://github.com/Shikhar28007/SPARC--agri_sense)
 
 ---

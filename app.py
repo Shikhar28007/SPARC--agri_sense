@@ -400,7 +400,7 @@ def build_3d_npk_graph(fert_calc: dict, active_crop: str, view_mode: str = "line
 # STREAMLIT PAGE CONFIGURATION
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="AgrisenseAI | Precision Agriculture & Crop Diagnostics",
+    page_title="SPARC | Precision Agriculture & Crop Diagnostics",
     page_icon="🌱",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -1183,8 +1183,8 @@ def main_dashboard():
         st.markdown("""
         <div class="sidebar-brand-box">
             <div style="font-size: 2.1rem; margin-bottom: 6px;">🌱⚡</div>
-            <div style="font-weight: 800; font-size: 1.35rem; letter-spacing: 0.04em; color: #FFFFFF;">AGRISENSE AI</div>
-            <div style="font-size: 0.72rem; color: #34D399; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em;">PRECISION AGRI-TECH</div>
+            <div style="font-weight: 800; font-size: 1.35rem; letter-spacing: 0.04em; color: #FFFFFF;">SPARC</div>
+            <div style="font-size: 0.72rem; color: #34D399; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em;">AUTONOMOUS AGRI-AI</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1237,12 +1237,12 @@ def main_dashboard():
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <h1 style="margin: 0; font-size: 1.65rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.02em;">
-                            Agrisense<span style="color: #10B981;">AI</span>
+                            SPARC<span style="color: #10B981;"> AI</span>
                         </h1>
                         <span class="agro-chip-version">v3.2 PRO</span>
                     </div>
                     <div style="color: #94A3B8; font-size: 0.82rem; margin-top: 2px; font-weight: 500;">
-                        Precision Agronomy • Satellite Micro-Telemetry • Disease Diagnostics • Adaptive Nutrition
+                        Smart Python-Based Agriculture Recommendation & Classification System
                     </div>
                 </div>
             </div>

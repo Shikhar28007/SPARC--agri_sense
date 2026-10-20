@@ -124,7 +124,7 @@ def generate_agrisense_pdf_report(
 
     header_table_data = [
         [
-            Paragraph("<b>SPARC AgriSense AI</b><br/><font size=8 color='#64748B'>Smart Agriculture Recommendation & Precision Agronomy System</font>", style_title),
+            Paragraph("<b>SPARC</b><br/><font size=8 color='#64748B'>Smart Agriculture Recommendation & Precision Agronomy System</font>", style_title),
             Paragraph(f"<b>REPORT REF:</b> {report_id}<br/><b>DATE:</b> {datetime.now().strftime('%d %B %Y, %H:%M')}<br/><b>OPERATOR:</b> {operator}", style_meta_val)
         ]
     ]
