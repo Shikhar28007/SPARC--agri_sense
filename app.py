@@ -22,6 +22,7 @@ import importlib
 import backend
 importlib.reload(backend)
 from backend import db_instance, engine_instance, SUPPORTED_CROPS, REGIONAL_WEATHER_PRESETS
+from pdf_generator import generate_agrisense_pdf_report
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3D FERTILIZER PRESCRIPTION GRAPH GENERATOR (WebGL 3D Engine)
@@ -716,6 +717,23 @@ def ensure_session_state():
     if "last_diagnostics" not in st.session_state:
         st.session_state.last_diagnostics = None
 
+    # Ensure slider state keys are synchronized with telemetry
+    w_curr = st.session_state.get("weather_telemetry") or {}
+    if "slider_temp" not in st.session_state:
+        st.session_state.slider_temp = float(w_curr.get("temperature", 26.0))
+    if "slider_hum" not in st.session_state:
+        st.session_state.slider_hum = float(w_curr.get("humidity", 65.0))
+    if "slider_rain" not in st.session_state:
+        st.session_state.slider_rain = float(w_curr.get("rainfall", 100.0))
+    if "slider_n" not in st.session_state:
+        st.session_state.slider_n = 80
+    if "slider_p" not in st.session_state:
+        st.session_state.slider_p = 45
+    if "slider_k" not in st.session_state:
+        st.session_state.slider_k = 40
+    if "slider_ph" not in st.session_state:
+        st.session_state.slider_ph = 6.5
+
 # Ensure active session state on initial module evaluation
 ensure_session_state()
 
@@ -989,12 +1007,18 @@ def main_dashboard():
         w = st.session_state.get("weather_telemetry") or {}
         st.markdown("---")
         st.markdown("### 📍 Farm Telemetry")
+        c_icon = w.get('condition_icon', '⛅')
+        c_desc = w.get('condition', 'Fair Weather')
+        live_precip = w.get('live_rain', 0.0)
+        rain_label = f"{live_precip} mm (Live)" if live_precip > 0 else f"{w.get('rainfall', 100.0)} mm (Seasonal)"
         st.markdown(f"""
-        <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB;">
+        <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB; background: rgba(255,255,255,0.03); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
             <div><strong>Location:</strong> <span style="color: #38BDF8;">{w.get('location', 'Auto-Synced')}</span></div>
+            <div><strong>Condition:</strong> <span style="color: #F472B6;">{c_icon} {c_desc}</span></div>
             <div><strong>Temperature:</strong> <span style="color: #FBBF24;">{w.get('temperature', 26.0)}°C</span></div>
             <div><strong>Humidity:</strong> <span style="color: #34D399;">{w.get('humidity', 60.0)}%</span></div>
-            <div><strong>Est. Rainfall:</strong> <span style="color: #60A5FA;">{w.get('rainfall', 100.0)} mm</span></div>
+            <div><strong>Precipitation:</strong> <span style="color: #60A5FA;">{rain_label}</span></div>
+            <div><strong>Wind Speed:</strong> <span style="color: #A78BFA;">{w.get('wind_speed', 8.0)} km/h</span></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1017,9 +1041,11 @@ def main_dashboard():
                 </div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <span class="sparc-badge badge-emerald">📍 {w.get('city', 'Local')} Field</span>
-                <span class="sparc-badge badge-cyan">🌡️ {w.get('temperature', 26.0)}°C</span>
-                <span class="sparc-badge badge-amber">🌧️ {w.get('rainfall', 100.0)} mm</span>
+                <span class="sparc-badge badge-emerald">📍 {w.get('city', 'Local')}</span>
+                <span class="sparc-badge badge-cyan">{w.get('condition_icon', '⛅')} {w.get('condition', 'Fair Weather')}</span>
+                <span class="sparc-badge badge-amber">🌡️ {w.get('temperature', 26.0)}°C</span>
+                <span class="sparc-badge badge-emerald">💧 {w.get('humidity', 60.0)}%</span>
+                <span class="sparc-badge badge-cyan">🌧️ {w.get('rainfall', 100.0)} mm</span>
             </div>
         </div>
     </div>
@@ -1050,6 +1076,7 @@ def main_dashboard():
                         <div style="font-size: 0.8rem; color: #38BDF8; font-weight: 600; text-transform: uppercase;">Real-Time Field Telemetry & Geolocation</div>
                         <div style="font-size: 1.05rem; font-weight: 700; color: #FFFFFF;">
         """ + f"{w.get('location', 'Auto-Synced Location')} &nbsp;·&nbsp; "
+        f"<span style='color: #F472B6;'>{w.get('condition_icon', '⛅')} {w.get('condition', 'Fair Weather')}</span> &nbsp;·&nbsp; "
         f"<span style='color: #34D399;'>{w.get('temperature', 26.0)}°C</span> &nbsp;·&nbsp; "
         f"<span style='color: #FBBF24;'>{w.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp; "
         f"<span style='color: #60A5FA;'>{w.get('rainfall', 100.0)} mm Rain</span>" + """
@@ -1068,18 +1095,26 @@ def main_dashboard():
                     else:
                         new_loc = engine_instance.fetch_live_weather("Lucknow, Uttar Pradesh")
                     st.session_state.weather_telemetry = new_loc
-                    st.toast(f"📍 Location detected: {new_loc.get('location', 'Field Synced')}")
+                    # Update sliders reactively
+                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_loc.get("temperature", 26.0))))
+                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_loc.get("humidity", 65.0))))
+                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_loc.get("rainfall", 100.0))))
+                    st.toast(f"📍 Location detected: {new_loc.get('location', 'Field Synced')} ({new_loc.get('condition', '')})")
                     st.rerun()
 
         with col_loc_act2:
-            custom_city = st.text_input("Or lookup custom city/region:", placeholder="e.g. Pune, Jaipur, Patna, Lucknow", label_visibility="collapsed")
+            custom_city = st.text_input("Or lookup custom city/region:", placeholder="e.g. Pune, Jaipur, Patna, Lucknow, London, Tokyo", label_visibility="collapsed")
         with col_loc_act3:
             if st.button("🔍 Sync Custom City", use_container_width=True):
                 if custom_city:
                     with st.spinner(f"Querying weather for {custom_city}..."):
                         custom_w = engine_instance.fetch_live_weather(custom_city)
                         st.session_state.weather_telemetry = custom_w
-                        st.toast(f"Synchronized weather for {custom_w['location']}")
+                        # Update sliders reactively
+                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(custom_w.get("temperature", 26.0))))
+                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(custom_w.get("humidity", 65.0))))
+                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(custom_w.get("rainfall", 100.0))))
+                        st.toast(f"Synchronized weather for {custom_w['location']}: {custom_w.get('condition_icon', '')} {custom_w.get('temperature')}°C, {custom_w.get('condition')}")
                         st.rerun()
 
         st.write("")
@@ -1126,34 +1161,36 @@ def main_dashboard():
             st.markdown("#### 🧪 Macronutrients (NPK in kg/ha)")
             col_n, col_p, col_k = st.columns(3)
             with col_n:
-                n_val = st.slider("Nitrogen (N)", 0, 250, st.session_state.get("slider_n", 80), help="Available soil Nitrogen in kg/ha")
+                n_val = st.slider("Nitrogen (N)", 0, 250, key="slider_n", help="Available soil Nitrogen in kg/ha")
             with col_p:
-                p_val = st.slider("Phosphorus (P)", 5, 180, st.session_state.get("slider_p", 45), help="Available soil Phosphorus in kg/ha")
+                p_val = st.slider("Phosphorus (P)", 5, 180, key="slider_p", help="Available soil Phosphorus in kg/ha")
             with col_k:
-                k_val = st.slider("Potassium (K)", 5, 300, st.session_state.get("slider_k", 40), help="Available soil Potassium in kg/ha")
+                k_val = st.slider("Potassium (K)", 5, 300, key="slider_k", help="Available soil Potassium in kg/ha")
 
             st.markdown("#### 🌡️ Live Environmental Telemetry")
             col_t, col_h = st.columns(2)
             with col_t:
                 temp_val = st.slider(
-                    "Temperature (°C)", 8.0, 48.0,
-                    float(w_curr.get("temperature", 26.0)), step=0.5,
-                    help="Auto-calibrated from your live location"
+                    "Temperature (°C)", -10.0, 55.0,
+                    key="slider_temp", step=0.5,
+                    help="Auto-calibrated from searched city or live location"
                 )
             with col_h:
                 hum_val = st.slider(
-                    "Humidity (%)", 10.0, 100.0,
-                    float(w_curr.get("humidity", 65.0)), step=1.0
+                    "Humidity (%)", 5.0, 100.0,
+                    key="slider_hum", step=1.0,
+                    help="Relative humidity percentage from live weather"
                 )
 
             col_r, col_ph = st.columns(2)
             with col_r:
                 rain_val = st.slider(
-                    "Rainfall (mm)", 15.0, 350.0,
-                    float(w_curr.get("rainfall", 110.0)), step=5.0
+                    "Rainfall (mm)", 0.0, 500.0,
+                    key="slider_rain", step=1.0,
+                    help="Rainfall index calibrated for crop requirement and live telemetry"
                 )
             with col_ph:
-                ph_val = st.slider("Soil pH Level", 3.5, 9.5, float(st.session_state.get("slider_ph", 6.5)), step=0.1)
+                ph_val = st.slider("Soil pH Level", 3.5, 9.5, key="slider_ph", step=0.1)
 
             st.markdown("#### 🎯 Crop You Plan to Cultivate")
             # If target crop was adopted via 1-click alternative
@@ -1302,9 +1339,9 @@ def main_dashboard():
                         else:
                             st.info("Currently Selected")
 
-            # ── COMMIT RECORD TO DATABASE ──
+            # ── COMMIT RECORD TO DATABASE & DOWNLOAD EXECUTIVE PDF REPORT ──
             st.markdown("---")
-            col_save, col_info = st.columns([1.5, 2])
+            col_save, col_pdf = st.columns([1.2, 1.3], gap="medium")
             with col_save:
                 if st.button("💾 Commit Record to Database", use_container_width=True):
                     record_data = {
@@ -1327,8 +1364,41 @@ def main_dashboard():
                     }
                     new_id = db_instance.insert_record(record_data)
                     st.success(f"Saved into SQLite database as Record #{new_id}!")
-            with col_info:
                 st.caption("Saved records are accessible and editable anytime under the Historical Analytics tab.")
+
+            with col_pdf:
+                # Compile comprehensive executive agronomy report
+                fert_calc = None
+                try:
+                    fert_calc = engine_instance.calculate_fertilizers(
+                        inputs.get("n", 80),
+                        inputs.get("p", 45),
+                        inputs.get("k", 40),
+                        inputs.get("ph", 6.5),
+                        diag["target_crop"]
+                    )
+                except Exception:
+                    pass
+
+                try:
+                    pdf_bytes = generate_agrisense_pdf_report(
+                        inputs=inputs,
+                        diagnostics=diag,
+                        weather=w_curr,
+                        fertilizer_calc=fert_calc,
+                        operator=st.session_state.get("current_user", "Lead Agronomist")
+                    )
+                    st.download_button(
+                        label="📄 Download Agronomic Report (PDF)",
+                        data=pdf_bytes,
+                        file_name=f"SPARC_Agronomy_Report_{diag['target_crop'].lower()}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+                        mime="application/pdf",
+                        use_container_width=True,
+                        help="Generate and download a comprehensive, print-ready PDF diagnosis and prescription report."
+                    )
+                    st.caption("Includes target crop viability, rescue roadmap, fertilizer bags/acre, and Crop Doctor pathology advice.")
+                except Exception as ex:
+                    st.error(f"PDF compilation error: {ex}")
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     # TAB 2: CROP DOCTOR - PLANT PATHOLOGY & CURE DIAGNOSTICS
@@ -1689,6 +1759,32 @@ def main_dashboard():
                 f'</div>'
             )
             st.markdown(table_card_html, unsafe_allow_html=True)
+
+            # Export Complete Fertilizer Prescription PDF
+            try:
+                fert_pdf_bytes = generate_agrisense_pdf_report(
+                    inputs=inputs,
+                    diagnostics=st.session_state.get("last_diagnostics") or {
+                        "target_crop": active_crop.capitalize(),
+                        "risk_level": "Low Risk",
+                        "summary": f"Elemental macronutrient calibration and commercial fertilizer schedule for {active_crop.capitalize()}.",
+                        "rescue_roadmap": [],
+                        "top_3_enriched": []
+                    },
+                    weather=st.session_state.get("weather_telemetry") or {},
+                    fertilizer_calc=fert_calc,
+                    operator=st.session_state.get("current_user", "Lead Agronomist")
+                )
+                st.download_button(
+                    label=f"📄 Download {active_crop.capitalize()} Fertilizer Prescription (PDF)",
+                    data=fert_pdf_bytes,
+                    file_name=f"SPARC_Fertilizer_Prescription_{active_crop.lower()}_{datetime.now().strftime('%Y%m%d')}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True,
+                    key="tab3_download_pdf_btn"
+                )
+            except Exception:
+                pass
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     # TAB 4: PLACE-WISE INDIAN SOIL & FERTILIZER PACKAGES

@@ -301,6 +301,38 @@ CROP_AGRONOMIC_PROFILES: Dict[str, Dict[str, Any]] = {
     }
 }
 
+# WMO Weather Interpretation Codes (Open-Meteo standard)
+WMO_WEATHER_CODES: Dict[int, tuple] = {
+    0: ("Clear Sky", "☀️"),
+    1: ("Mainly Clear", "🌤️"),
+    2: ("Partly Cloudy", "⛅"),
+    3: ("Overcast", "☁️"),
+    45: ("Foggy", "🌫️"),
+    48: ("Depositing Rime Fog", "🌫️"),
+    51: ("Light Drizzle", "🌦️"),
+    53: ("Moderate Drizzle", "🌦️"),
+    55: ("Dense Drizzle", "🌧️"),
+    56: ("Freezing Drizzle", "🌨️"),
+    57: ("Dense Freezing Drizzle", "🌨️"),
+    61: ("Slight Rain", "🌧️"),
+    63: ("Moderate Rain", "🌧️"),
+    65: ("Heavy Rain", "⛈️"),
+    66: ("Freezing Rain", "🌨️"),
+    67: ("Heavy Freezing Rain", "🌨️"),
+    71: ("Slight Snow", "❄️"),
+    73: ("Moderate Snow", "❄️"),
+    75: ("Heavy Snow", "❄️"),
+    77: ("Snow Grains", "❄️"),
+    80: ("Slight Rain Showers", "🌦️"),
+    81: ("Moderate Rain Showers", "🌧️"),
+    82: ("Violent Rain Showers", "⛈️"),
+    85: ("Slight Snow Showers", "🌨️"),
+    86: ("Heavy Snow Showers", "🌨️"),
+    95: ("Thunderstorm", "⚡"),
+    96: ("Thunderstorm with Slight Hail", "⛈️"),
+    99: ("Thunderstorm with Heavy Hail", "⛈️")
+}
+
 # Regional climate defaults for instant offline / fallback weather telemetry
 REGIONAL_WEATHER_PRESETS: Dict[str, Dict[str, float]] = {
     "Punjab & Haryana (Northern Plains)": {"temperature": 24.5, "rainfall": 85.0, "humidity": 62.0},
@@ -974,7 +1006,7 @@ class SparcEngine:
     def auto_detect_location_and_weather(self) -> Dict[str, Any]:
         """
         Seamlessly auto-detects user's real-time physical location via IP Geolocation
-        and immediately pulls live temperature, humidity, and rainfall from Open-Meteo.
+        and immediately pulls live temperature, humidity, rainfall, and weather condition from Open-Meteo.
         """
         import unicodedata
         t0 = time.time()
@@ -984,128 +1016,199 @@ class SparcEngine:
                 return ""
             return unicodedata.normalize('NFKD', str(text)).encode('ascii', 'ignore').decode('ascii')
 
-        try:
-            ip_resp = requests.get("http://ip-api.com/json/", timeout=3)
-            if ip_resp.status_code == 200:
-                geo = ip_resp.json()
-                city = sanitize(geo.get("city", "Delhi"))
-                region = sanitize(geo.get("regionName", "National Capital Region"))
-                country = sanitize(geo.get("country", "India"))
-                lat = geo.get("lat", 28.6139)
-                lon = geo.get("lon", 77.2090)
+        # Try multiple geolocation IP endpoints
+        geo_services = [
+            ("https://ipapi.co/json/", lambda d: (d.get("city"), d.get("region"), d.get("country_name"), d.get("latitude"), d.get("longitude"))),
+            ("http://ip-api.com/json/", lambda d: (d.get("city"), d.get("regionName"), d.get("country"), d.get("lat"), d.get("lon"))),
+        ]
 
-                # Query Open-Meteo with exact coordinates
-                w_url = (
-                    f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
-                    f"&current=temperature_2m,relative_humidity_2m,precipitation&daily=precipitation_sum&timezone=auto"
-                )
-                w_resp = requests.get(w_url, timeout=3)
-                if w_resp.status_code == 200:
-                    w_data = w_resp.json()
-                    current = w_data.get("current", {})
-                    temp = float(current.get("temperature_2m", 26.0))
-                    humidity = float(current.get("relative_humidity_2m", 60.0))
-                    daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [10.0]))
-                    est_monthly_rain = max(30.0, min(380.0, float(daily_rain * 6.5 + 20.0)))
+        for s_url, extractor in geo_services:
+            try:
+                ip_resp = requests.get(s_url, timeout=3.5)
+                if ip_resp.status_code == 200:
+                    geo = ip_resp.json()
+                    c, r, co, lat, lon = extractor(geo)
+                    if c and lat and lon:
+                        city = sanitize(c)
+                        region = sanitize(r or "")
+                        country = sanitize(co or "India")
+                        lat = float(lat)
+                        lon = float(lon)
 
-                    elapsed = (time.time() - t0) * 1000
-                    location_label = f"{city}, {region} ({country})"
-                    self.db.log_event("INFO", "TELEMETRY", f"Auto-detected location '{location_label}'", elapsed)
-                    return {
-                        "city": city,
-                        "region": region,
-                        "country": country,
-                        "location": location_label,
-                        "temperature": round(temp, 1),
-                        "rainfall": round(est_monthly_rain, 1),
-                        "humidity": round(humidity, 1),
-                        "source": "Live Auto-Geolocation (IP + Open-Meteo)",
-                        "status": "Auto-Synced"
-                    }
-        except Exception as e:
-            self.db.log_event("WARNING", "TELEMETRY", f"Auto-detect location failed: {e}. Using fallback preset.", 0.0)
+                        # Query Open-Meteo with exact detected coordinates
+                        w_url = (
+                            f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
+                            f"&current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,wind_speed_10m"
+                            f"&daily=precipitation_sum&timezone=auto"
+                        )
+                        w_resp = requests.get(w_url, timeout=3.5)
+                        if w_resp.status_code == 200:
+                            w_data = w_resp.json()
+                            current = w_data.get("current", {})
+                            temp = float(current.get("temperature_2m", 26.0))
+                            humidity = float(current.get("relative_humidity_2m", 60.0))
+                            live_rain = float(current.get("precipitation", 0.0))
+                            w_code = int(current.get("weather_code", 0))
+                            wind = float(current.get("wind_speed_10m", 0.0))
+                            cond_text, cond_icon = WMO_WEATHER_CODES.get(w_code, ("Fair Weather", "🌤️"))
 
-        # Graceful fallback
+                            daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [10.0]))
+                            est_monthly_rain = max(30.0, min(380.0, float(daily_rain * 6.5 + 20.0)))
+
+                            elapsed = (time.time() - t0) * 1000
+                            location_label = f"{city}, {region} ({country})" if region else f"{city}, {country}"
+                            self.db.log_event("INFO", "TELEMETRY", f"Auto-detected location '{location_label}' ({cond_text})", elapsed)
+                            return {
+                                "city": city,
+                                "region": region,
+                                "country": country,
+                                "location": location_label,
+                                "temperature": round(temp, 1),
+                                "humidity": round(humidity, 1),
+                                "live_rain": round(live_rain, 1),
+                                "rainfall": round(est_monthly_rain, 1),
+                                "weather_code": w_code,
+                                "condition": cond_text,
+                                "condition_icon": cond_icon,
+                                "wind_speed": round(wind, 1),
+                                "latitude": round(lat, 4),
+                                "longitude": round(lon, 4),
+                                "source": "Live Auto-Geolocation (IP + Open-Meteo)",
+                                "status": "Live Connected (Open-Meteo)"
+                            }
+            except Exception:
+                continue
+
+        # Graceful fallback if completely offline or blocked
         return {
             "city": "Lucknow",
             "region": "Uttar Pradesh",
             "country": "India",
             "location": "Lucknow, Uttar Pradesh (India)",
-            "temperature": 27.5,
-            "rainfall": 125.0,
+            "temperature": 25.5,
             "humidity": 65.0,
-            "source": "Agro-Telemetry Fallback",
+            "live_rain": 0.0,
+            "rainfall": 120.0,
+            "weather_code": 0,
+            "condition": "Clear Sky",
+            "condition_icon": "☀️",
+            "wind_speed": 6.0,
+            "latitude": 26.8467,
+            "longitude": 80.9462,
+            "source": "Agro-Telemetry Fallback (Offline Mode)",
             "status": "Calibrated Preset"
         }
 
     def fetch_live_weather(self, city_or_preset: str) -> Dict[str, Any]:
-        """Fetches real-time weather via Open-Meteo REST API with offline regional fallback."""
+        """
+        Fetches real-time temperature, humidity, rainfall, and weather condition for any searched
+        city or region globally via Open-Meteo Geocoding & High-Resolution Forecast REST APIs.
+        """
         t0 = time.time()
-        if city_or_preset in REGIONAL_WEATHER_PRESETS:
-            preset = REGIONAL_WEATHER_PRESETS[city_or_preset]
-            elapsed = (time.time() - t0) * 1000
-            self.db.log_event("INFO", "WEATHER_API", f"Loaded regional preset for '{city_or_preset}'", elapsed)
-            return {
-                "city": city_or_preset,
-                "region": city_or_preset,
-                "country": "India",
-                "location": city_or_preset,
-                "temperature": preset["temperature"],
-                "rainfall": preset["rainfall"],
-                "humidity": preset["humidity"],
-                "source": "Regional Agro-Climatic Preset",
-                "status": "Online (Preset Calibrated)"
-            }
+        search_query = city_or_preset.strip()
 
+        # Map preset labels to representative capital cities for live weather querying
+        preset_city_map = {
+            "Punjab & Haryana (Northern Plains)": "Chandigarh",
+            "Indo-Gangetic Basin (Uttar Pradesh / Bihar)": "Lucknow",
+            "Maharashtra / Deccan Plateau (Central India)": "Pune",
+            "Gujarat & Rajasthan (Arid / Semi-Arid)": "Jaipur",
+            "Karnataka / Andhra Pradesh (Southern Plateau)": "Bengaluru",
+            "Kerala & Coastal Tropics": "Kochi",
+            "Assam & North-East Valley": "Guwahati"
+        }
+        query_target = preset_city_map.get(search_query, search_query)
+
+        # 1. Geocode target city
         try:
-            geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city_or_preset.strip()}&count=1&language=en&format=json"
-            geo_resp = requests.get(geo_url, timeout=4)
+            geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={query_target}&count=1&language=en&format=json"
+            geo_resp = requests.get(geo_url, timeout=4.5)
             if geo_resp.status_code == 200:
                 geo_data = geo_resp.json()
                 if "results" in geo_data and len(geo_data["results"]) > 0:
                     first = geo_data["results"][0]
                     lat, lon = first["latitude"], first["longitude"]
-                    city_name = first.get("name", city_or_preset)
+                    city_name = first.get("name", query_target)
+                    admin1 = first.get("admin1", "")
                     country_name = first.get("country", "")
-                    full_name = f"{city_name}, {country_name}"
+                    full_name = f"{city_name}, {admin1} ({country_name})" if admin1 else f"{city_name}, {country_name}"
 
+                    # 2. Fetch live weather telemetry
                     weather_url = (
                         f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
-                        f"&current=temperature_2m,relative_humidity_2m,precipitation&daily=precipitation_sum&timezone=auto"
+                        f"&current=temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,wind_speed_10m"
+                        f"&daily=precipitation_sum&timezone=auto"
                     )
-                    w_resp = requests.get(weather_url, timeout=4)
+                    w_resp = requests.get(weather_url, timeout=4.5)
                     if w_resp.status_code == 200:
                         w_data = w_resp.json()
                         current = w_data.get("current", {})
                         temp = float(current.get("temperature_2m", 25.0))
                         humidity = float(current.get("relative_humidity_2m", 65.0))
+                        live_rain = float(current.get("precipitation", 0.0))
+                        w_code = int(current.get("weather_code", 0))
+                        wind = float(current.get("wind_speed_10m", 0.0))
+                        cond_text, cond_icon = WMO_WEATHER_CODES.get(w_code, ("Fair Weather", "🌤️"))
+
                         daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [15.0]))
                         est_monthly_rain = max(35.0, min(380.0, float(daily_rain * 6.5 + 20.0)))
 
                         elapsed = (time.time() - t0) * 1000
-                        self.db.log_event("INFO", "WEATHER_API", f"Live telemetry fetched for '{full_name}'", elapsed)
+                        self.db.log_event("INFO", "WEATHER_API", f"Live telemetry fetched for '{full_name}': {temp}°C, {humidity}%, {cond_text}", elapsed)
                         return {
                             "city": city_name,
-                            "region": country_name,
+                            "region": admin1 or country_name,
                             "country": country_name,
                             "location": full_name,
                             "temperature": round(temp, 1),
-                            "rainfall": round(est_monthly_rain, 1),
                             "humidity": round(humidity, 1),
-                            "source": "Open-Meteo Telemetry Network",
-                            "status": "Live Connected"
+                            "live_rain": round(live_rain, 1),
+                            "rainfall": round(est_monthly_rain, 1),
+                            "weather_code": w_code,
+                            "condition": cond_text,
+                            "condition_icon": cond_icon,
+                            "wind_speed": round(wind, 1),
+                            "latitude": round(lat, 4),
+                            "longitude": round(lon, 4),
+                            "source": "Open-Meteo Real-Time Telemetry",
+                            "status": "Live Connected (Open-Meteo)"
                         }
         except Exception as e:
-            self.db.log_event("WARNING", "WEATHER_API", f"Live weather lookup timed out ({e}). Using fallback.", 0.0)
+            self.db.log_event("WARNING", "WEATHER_API", f"Live weather lookup timed out for '{query_target}' ({e}). Using fallback.", 0.0)
+
+        # 3. Offline / Preset Fallback
+        if search_query in REGIONAL_WEATHER_PRESETS:
+            preset = REGIONAL_WEATHER_PRESETS[search_query]
+            return {
+                "city": search_query,
+                "region": search_query,
+                "country": "India",
+                "location": search_query,
+                "temperature": preset["temperature"],
+                "humidity": preset["humidity"],
+                "live_rain": 0.0,
+                "rainfall": preset["rainfall"],
+                "weather_code": 0,
+                "condition": "Calibrated Regional Climate",
+                "condition_icon": "⛅",
+                "wind_speed": 7.0,
+                "source": "Regional Agro-Climatic Preset",
+                "status": "Offline (Preset Mode)"
+            }
 
         return {
-            "city": city_or_preset,
-            "region": "Standard Arable",
+            "city": search_query,
+            "region": "Standard Region",
             "country": "India",
-            "location": city_or_preset,
-            "temperature": 26.5,
-            "rainfall": 120.0,
+            "location": search_query,
+            "temperature": 26.0,
             "humidity": 65.0,
+            "live_rain": 0.0,
+            "rainfall": 115.0,
+            "weather_code": 0,
+            "condition": "Standard Climate",
+            "condition_icon": "🌤️",
+            "wind_speed": 6.0,
             "source": "Agro-Telemetry Fallback (Offline Mode)",
             "status": "Offline Safe Mode"
         }
@@ -1139,4 +1242,8 @@ def evaluate_disease_outbreak_risk(crop_name: str, temperature: float, humidity:
 def get_all_disease_crops() -> List[str]:
     """Returns all crops indexed in the Crop Doctor database."""
     return cdd.get_all_crop_names_with_diseases()
+
+def calculate_fertilizers(nitrogen: float, phosphorus: float, potassium: float, ph: float, target_crop: str) -> Dict[str, Any]:
+    """Calculates macro-nutrient deficit and recommended commercial fertilizer schedule."""
+    return engine_instance.calculate_fertilizers(nitrogen, phosphorus, potassium, ph, target_crop)
 
