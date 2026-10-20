@@ -1123,42 +1123,34 @@ def main_dashboard():
         active_mode = st.session_state.get("active_location_mode", "home")
         w_active = st.session_state.get("weather_telemetry") or home_loc
 
-        # Card header showing active telemetry context with dual status
-        st.markdown(f"""
-        <div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-                <div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="font-size: 1.1rem;">🛰️</span>
-                        <span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                            Active Telemetry Context: <span style="color: {'#34D399' if active_mode == 'home' else '#A78BFA'}; font-weight: 800;">
-                                {'🏡 MY FARM LOCATION' if active_mode == 'home' else '🔍 OTHER PLACE (EXPLORATION)'}
-                            </span>
-                        </span>
-                    </div>
-                    <div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
-                        {w_active.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
-                        <span style='color: #F472B6;'>{w_active.get('condition_icon', '☀️')} {w_active.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
-                        <span style='color: #34D399;'>{w_active.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
-                        <span style='color: #FBBF24;'>{w_active.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
-                        <span style='color: #60A5FA;'>{w_active.get('rainfall', 100.0)} mm Rain</span>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-                        <span style="color: #6EE7B7; font-weight: 600;">🏡 My Farm Base:</span>
-                        <span style="color: #FFFFFF; font-weight: 700; margin-left: 4px;">{home_loc.get('city', 'Jaipur')} ({home_loc.get('temperature', 25.0)}°C)</span>
-                    </div>
-                    {f'''
-                    <div style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-                        <span style="color: #C084FC; font-weight: 600;">🔍 Other Place:</span>
-                        <span style="color: #FFFFFF; font-weight: 700; margin-left: 4px;">{other_loc.get('city')} ({other_loc.get('temperature')}°C)</span>
-                    </div>
-                    ''' if other_loc else ''}
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Clean unindented HTML to prevent Markdown code-block escaping
+        other_badge_snippet = ""
+        if other_loc:
+            other_badge_snippet = f"""<div style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;"><span style="color: #C084FC; font-weight: 600;">🔍 Other Place:</span> <span style="color: #FFFFFF; font-weight: 700;">{other_loc.get('city')} ({other_loc.get('temperature')}°C)</span></div>"""
+
+        st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+<div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+<span style="font-size: 1.1rem;">🛰️</span>
+<span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: {'#34D399' if active_mode == 'home' else '#A78BFA'}; font-weight: 800;">{'🏡 MY FARM LOCATION' if active_mode == 'home' else '🔍 OTHER PLACE (EXPLORATION)'}</span></span>
+</div>
+<div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
+{w_active.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
+<span style='color: #F472B6;'>{w_active.get('condition_icon', '☀️')} {w_active.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
+<span style='color: #34D399;'>{w_active.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
+<span style='color: #FBBF24;'>{w_active.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
+<span style='color: #60A5FA;'>{w_active.get('rainfall', 100.0)} mm Rain</span>
+</div>
+</div>
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+<div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
+<span style="color: #6EE7B7; font-weight: 600;">🏡 My Farm Base:</span> <span style="color: #FFFFFF; font-weight: 700;">{home_loc.get('city', 'Local Farm')} ({home_loc.get('temperature', 25.0)}°C)</span>
+</div>
+{other_badge_snippet}
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
 
         # Comparative Telemetry Bar (Working Progress: Other Place vs My Farm)
         if other_loc and active_mode == "other":
@@ -1169,28 +1161,59 @@ def main_dashboard():
             h_sign = f"+{h_diff}" if h_diff > 0 else f"{h_diff}"
             r_sign = f"+{r_diff}" if r_diff > 0 else f"{r_diff}"
 
-            st.markdown(f"""
-            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;">
-                <div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; margin-bottom: 6px;">
-                    📊 Comparative Working Progress: {other_loc.get('city')} vs My Home Farm ({home_loc.get('city')})
-                </div>
-                <div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem;">
-                    <div>🌡️ <strong>Temp:</strong> <span style="color: #F87171;">{other_loc.get('temperature')}°C</span> vs {home_loc.get('temperature')}°C (<span style="color: {'#34D399' if t_diff < 0 else '#F87171'}; font-weight: 700;">{t_sign}°C</span>)</div>
-                    <div>💧 <strong>Humidity:</strong> <span style="color: #FBBF24;">{other_loc.get('humidity')}%</span> vs {home_loc.get('humidity')}% (<span style="color: #FBBF24; font-weight: 700;">{h_sign}%</span>)</div>
-                    <div>🌧️ <strong>Rainfall:</strong> <span style="color: #60A5FA;">{other_loc.get('rainfall')} mm</span> vs {home_loc.get('rainfall')} mm (<span style="color: #60A5FA; font-weight: 700;">{r_sign} mm</span>)</div>
-                    <div>🌤️ <strong>Sky:</strong> {other_loc.get('condition_icon')} {other_loc.get('condition')}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(f"""<div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;">
+<div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; margin-bottom: 6px;">
+📊 Comparative Working Progress: {other_loc.get('city')} vs My Home Farm ({home_loc.get('city')})
+</div>
+<div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem;">
+<div>🌡️ <strong>Temp:</strong> <span style="color: #F87171;">{other_loc.get('temperature')}°C</span> vs {home_loc.get('temperature')}°C (<span style="color: {'#34D399' if t_diff < 0 else '#F87171'}; font-weight: 700;">{t_sign}°C</span>)</div>
+<div>💧 <strong>Humidity:</strong> <span style="color: #FBBF24;">{other_loc.get('humidity')}%</span> vs {home_loc.get('humidity')}% (<span style="color: #FBBF24; font-weight: 700;">{h_sign}%</span>)</div>
+<div>🌧️ <strong>Rainfall:</strong> <span style="color: #60A5FA;">{other_loc.get('rainfall')} mm</span> vs {home_loc.get('rainfall')} mm (<span style="color: #60A5FA; font-weight: 700;">{r_sign} mm</span>)</div>
+<div>🌤️ <strong>Sky:</strong> {other_loc.get('condition_icon')} {other_loc.get('condition')}</div>
+</div>
+</div>""", unsafe_allow_html=True)
 
         # Dual Control Columns: Option 1 (My Farm) vs Option 2 (Other Place)
         col_ctl_home, col_ctl_other = st.columns([1.15, 1.35], gap="large")
 
         with col_ctl_home:
-            st.markdown("<div style='font-size: 0.86rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location</div>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location (Home Base)</div>", unsafe_allow_html=True)
+
+            # Input to set custom home farm city
+            col_f_in, col_f_btn = st.columns([1.8, 1])
+            with col_f_in:
+                farm_input = st.text_input(
+                    "Set Farm City:",
+                    placeholder="Type your farm city (e.g. Delhi, Lucknow, Pune, Patna) & press Enter",
+                    label_visibility="collapsed",
+                    key="farm_city_input"
+                )
+            with col_f_btn:
+                set_farm_btn = st.button("📍 Set Farm", use_container_width=True, key="btn_set_farm")
+
+            last_synced_farm = st.session_state.get("_last_synced_farm_input", "")
+            should_sync_farm = False
+            if set_farm_btn and farm_input.strip():
+                should_sync_farm = True
+            elif farm_input.strip() and farm_input.strip().lower() != last_synced_farm:
+                should_sync_farm = True
+
+            if should_sync_farm:
+                with st.spinner(f"Setting your farm location to {farm_input}..."):
+                    new_home = engine_instance.fetch_live_weather(farm_input.strip())
+                    st.session_state.my_home_location = new_home
+                    st.session_state.weather_telemetry = new_home
+                    st.session_state.active_location_mode = "home"
+                    st.session_state._last_synced_farm_input = farm_input.strip().lower()
+                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
+                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
+                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
+                    st.toast(f"🏡 Farm location updated to: {new_home['location']}")
+                    st.rerun()
+
             col_h1, col_h2 = st.columns([1.1, 1])
             with col_h1:
-                if st.button("📍 Auto-Detect (IP/GPS)", key="btn_detect_ip", use_container_width=True, help="Detects your real physical location using client IP and GPS"):
+                if st.button("🛰️ Auto-Detect (IP/GPS)", key="btn_detect_ip", use_container_width=True, help="Auto-detects physical device location"):
                     with st.spinner("Locating your physical farm..."):
                         c_ip, c_tz, _, _ = get_client_telemetry_params()
                         detected_home = engine_instance.auto_detect_location_and_weather(client_ip=c_ip, timezone=c_tz)
@@ -1215,6 +1238,7 @@ def main_dashboard():
 
             farm_states = [
                 "Select State / Agro-Region...",
+                "Delhi (National Capital)",
                 "Rajasthan (Jaipur / Kota)",
                 "Uttar Pradesh (Lucknow / Kanpur)",
                 "Punjab (Ludhiana / Amritsar)",
@@ -1230,7 +1254,7 @@ def main_dashboard():
                 "Kerala (Kochi / Palakkad)",
                 "Assam (Guwahati / Jorhat)"
             ]
-            sel_state = st.selectbox("Or choose your state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
+            sel_state = st.selectbox("Or choose state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
             if sel_state != "Select State / Agro-Region...":
                 target_city = sel_state.split("(")[1].split("/")[0].strip()
                 if st.session_state.get("_last_selected_state") != sel_state:
@@ -1247,8 +1271,8 @@ def main_dashboard():
                         st.rerun()
 
         with col_ctl_other:
-            st.markdown("<div style='font-size: 0.86rem; font-weight: 700; color: #A78BFA; margin-bottom: 6px;'>🔍 Option 2: Search & Inspect Other Place</div>", unsafe_allow_html=True)
-            col_o1, col_o2 = st.columns([2.0, 1])
+            st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: #A78BFA; margin-bottom: 6px;'>🔍 Option 2: Search & Inspect Other Place (Exploration)</div>", unsafe_allow_html=True)
+            col_o1, col_o2 = st.columns([1.8, 1])
             with col_o1:
                 custom_city = st.text_input(
                     "Lookup other place:",
@@ -1281,6 +1305,23 @@ def main_dashboard():
 
             if other_loc and active_mode == "other":
                 st.caption(f"📍 Currently analyzing: **{other_loc.get('location')}**. Your Home Farm (**{home_loc.get('city')}**) is preserved. Click 'Activate My Farm' on the left anytime to switch back.")
+
+        # Silent client-side GPS helper script
+        components.html("""<script>
+        if (!window.sessionStorage.getItem('agri_gps_checked')) {
+            window.sessionStorage.setItem('agri_gps_checked', '1');
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    var url = new URL(window.parent.location.href);
+                    if (!url.searchParams.has('user_lat') && !url.searchParams.has('user_city')) {
+                        url.searchParams.set('user_lat', pos.coords.latitude.toFixed(4));
+                        url.searchParams.set('user_lon', pos.coords.longitude.toFixed(4));
+                        window.parent.location.href = url.href;
+                    }
+                }, function(err) {}, { timeout: 5000, maximumAge: 60000 });
+            }
+        }
+        </script>""", height=0)
 
         col_input, col_results = st.columns([1.1, 1.4], gap="large")
 
