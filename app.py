@@ -1076,7 +1076,7 @@ def main_dashboard():
                         <div style="font-size: 0.8rem; color: #38BDF8; font-weight: 600; text-transform: uppercase;">Real-Time Field Telemetry & Geolocation</div>
                         <div style="font-size: 1.05rem; font-weight: 700; color: #FFFFFF;">
         """ + f"{w.get('location', 'Auto-Synced Location')} &nbsp;·&nbsp; "
-        f"<span style='color: #F472B6;'>{w.get('condition_icon', '⛅')} {w.get('condition', 'Fair Weather')}</span> &nbsp;·&nbsp; "
+        f"<span style='color: #F472B6;'>{w.get('condition_icon', '☀️')} {w.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp; "
         f"<span style='color: #34D399;'>{w.get('temperature', 26.0)}°C</span> &nbsp;·&nbsp; "
         f"<span style='color: #FBBF24;'>{w.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp; "
         f"<span style='color: #60A5FA;'>{w.get('rainfall', 100.0)} mm Rain</span>" + """
@@ -1089,12 +1089,13 @@ def main_dashboard():
         col_loc_act1, col_loc_act2, col_loc_act3 = st.columns([1.2, 1.8, 1])
         with col_loc_act1:
             if st.button("📍 Auto-Detect My Location", use_container_width=True):
-                with st.spinner("Locating farm via IP & Open-Meteo..."):
+                with st.spinner("Locating farm via IP & Real-Time Weather..."):
                     if hasattr(engine_instance, "auto_detect_location_and_weather"):
                         new_loc = engine_instance.auto_detect_location_and_weather()
                     else:
                         new_loc = engine_instance.fetch_live_weather("Lucknow, Uttar Pradesh")
                     st.session_state.weather_telemetry = new_loc
+                    st.session_state._last_synced_city = new_loc.get("city", "").lower()
                     # Update sliders reactively
                     st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_loc.get("temperature", 26.0))))
                     st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_loc.get("humidity", 65.0))))
@@ -1103,19 +1104,29 @@ def main_dashboard():
                     st.rerun()
 
         with col_loc_act2:
-            custom_city = st.text_input("Or lookup custom city/region:", placeholder="e.g. Pune, Jaipur, Patna, Lucknow, London, Tokyo", label_visibility="collapsed")
+            custom_city = st.text_input("Or lookup custom city/region:", placeholder="Type city (e.g. Jaipur, Delhi, Patna, Pune) & press Enter", label_visibility="collapsed", key="custom_city_input")
         with col_loc_act3:
-            if st.button("🔍 Sync Custom City", use_container_width=True):
-                if custom_city:
-                    with st.spinner(f"Querying weather for {custom_city}..."):
-                        custom_w = engine_instance.fetch_live_weather(custom_city)
-                        st.session_state.weather_telemetry = custom_w
-                        # Update sliders reactively
-                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(custom_w.get("temperature", 26.0))))
-                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(custom_w.get("humidity", 65.0))))
-                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(custom_w.get("rainfall", 100.0))))
-                        st.toast(f"Synchronized weather for {custom_w['location']}: {custom_w.get('condition_icon', '')} {custom_w.get('temperature')}°C, {custom_w.get('condition')}")
-                        st.rerun()
+            sync_btn = st.button("🔍 Sync Custom City", use_container_width=True)
+
+        # Reactive sync triggered either by Enter key in text box or clicking Sync button
+        last_synced = st.session_state.get("_last_synced_city", "")
+        should_sync = False
+        if sync_btn and custom_city.strip():
+            should_sync = True
+        elif custom_city.strip() and custom_city.strip().lower() != last_synced:
+            should_sync = True
+
+        if should_sync:
+            with st.spinner(f"Querying live weather for {custom_city}..."):
+                custom_w = engine_instance.fetch_live_weather(custom_city.strip())
+                st.session_state.weather_telemetry = custom_w
+                st.session_state._last_synced_city = custom_city.strip().lower()
+                # Update sliders reactively
+                st.session_state["slider_temp"] = max(-10.0, min(55.0, float(custom_w.get("temperature", 26.0))))
+                st.session_state["slider_hum"] = max(5.0, min(100.0, float(custom_w.get("humidity", 65.0))))
+                st.session_state["slider_rain"] = max(0.0, min(500.0, float(custom_w.get("rainfall", 100.0))))
+                st.toast(f"Synchronized weather for {custom_w['location']}: {custom_w.get('condition_icon', '')} {custom_w.get('temperature')}°C, {custom_w.get('condition')}")
+                st.rerun()
 
         st.write("")
 
