@@ -34,8 +34,8 @@ SPARC (**Smart Python-based Agriculture Recommendation and Classification**) is 
 ├─────────────────┬──────────────────┬─────────────────┬─────────────────┤
 │   🌾 CROP AI    │  🧪 FERTILIZER   │   🩺 CROP       │   🗺️ INDIAN     │
 │   RECOMMENDER   │   PRESCRIPTIONS  │    DOCTOR       │    SOIL MAP     │
-│  (38 Crops,     │ (Elemental NPK   │ (35+ Pathogens, │ (18 States,     │
-│  99.3% Acc.)    │  Deficit Model)  │  IPM Cures)     │  ICAR Profiles) │
+│  (38 Crops,     │ (Elemental NPK   │ (68+ Pathogens, │ (18 States,     │
+│  99.3% Acc.)    │  Deficit Model)  │  All 38 Crops)  │  ICAR Profiles) │
 ├─────────────────┴──────────────────┴─────────────────┴─────────────────┤
 │         🌐 3D WebGL SPATIAL NUTRIENT INTELLIGENCE (PLOTLY)             │
 │      [Simple 3D Line Comparison • Dual Pillars • 2D Direct View]       │
@@ -74,7 +74,8 @@ SPARC (**Smart Python-based Agriculture Recommendation and Classification**) is 
 - **🏔️ 3D Quadratic Yield Response Landscape:** Agronomic quadratic bivariate yield mountain with floor contour projections.
 
 ### 4. 🩺 Crop Doctor (Plant Pathology & Integrated Pest Management)
-- **35+ Disease Knowledgebase:** Clinical coverage of fungal blights, bacterial wilts, viruses, and insect pests.
+- **100% Crop Coverage (All 38 Crops):** Every single crop in the prediction section is comprehensively covered with tailored diagnostics and treatment protocols.
+- **68+ Pathogen & Pest Clinical Knowledgebase:** Deep coverage of fungal blights, rusts, smuts, bacterial wilts, tospoviruses, geminiviruses, and destructive insect borers.
 - **Real-Time Outbreak Warning:** Cross-references live ambient temperature and relative humidity from Open-Meteo against pathogen incubation thresholds.
 - **Dual-Track Treatment Roadmaps:**
   - 🌿 **Biological Bio-Controls:** *Trichoderma viride*, *Pseudomonas fluorescens*, Neem Kernel Extract (NSKE), and cultural sanitation.
@@ -177,7 +178,7 @@ SPARC--agri_sense/
 ├── agrisense.py             # Dual-entrypoint compatibility bridge
 ├── backend.py               # Service Layer, Scikit-Learn Agronomic Engine & SQLite persistence
 ├── india_soil_fertilizer.py # 18-State Indian soil registry & SAU fertilizer packages
-├── crop_disease_doctor.py   # 35+ disease pathology diagnostic & IPM cure engine
+├── crop_disease_doctor.py   # 68+ disease pathology diagnostic & IPM cure engine across all 38 crops
 ├── crop_data.csv            # 3,800-row expanded agronomic dataset across 38 crops
 ├── crop_model.pkl           # Trained Random Forest Model (99.3% cross-validation accuracy)
 ├── auto_sync_watcher.py     # Real-time file system watcher & automatic GitHub auto-push

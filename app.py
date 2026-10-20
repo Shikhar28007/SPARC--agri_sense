@@ -2012,7 +2012,7 @@ def main_dashboard():
                     <p><strong>2. Agronomic Rescue Protocol:</strong> Multi-tiered physiological stress analysis detailing exact soil amendments, thermal management, irrigation scheduling, and seed treatments if the farmer insists on planting their target crop.</p>
                     <p><strong>3. Top 3 AI Crop Alternatives:</strong> Machine learning confidence rankings across 38 diverse crops with economic outlook, water requirements, and 1-click crop adoption.</p>
                     <p><strong>4. Place-Wise Indian Soil Database:</strong> 18-state comprehensive registry with ICAR-IISS baseline fertility metrics (NPK, pH, OC, EC) and State Agricultural University fertilizer packages.</p>
-                    <p><strong>5. Crop Doctor (Plant Pathology):</strong> Integrated Pest Management (IDM) covering 35+ major crop diseases, real-time weather outbreak risk alerts, biological biocontrols, and CIBRC chemical prescriptions with tank dilution calculators.</p>
+                    <p><strong>5. Crop Doctor (Plant Pathology):</strong> Integrated Pest Management (IPM) covering 68+ major crop diseases across all 38 supported crops, real-time weather outbreak risk alerts, biological biocontrols, and CIBRC chemical prescriptions with tank dilution calculators.</p>
                     <p><strong>6. SQLite Persistence & Full CRUD:</strong> Automated tracking in <code>sparc_records</code> with search, inline note editing, and instant CSV/JSON exports.</p>
                 </div>
             </div>
