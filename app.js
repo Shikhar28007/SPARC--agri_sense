@@ -150,11 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
   async function apiFetch(url, options = {}) {
     try {
       let res = await fetch(url, options);
-      if (res.status === 404) {
+      if (res.status === 404 || res.status === 405) {
         const altUrl = url.startsWith('/api/') ? url.replace('/api/', '/') : (url.startsWith('/') ? '/api' + url : '/api/' + url);
-        console.warn(`[SPARC API] 404 on ${url}, attempting alternate route: ${altUrl}`);
+        console.warn(`[SPARC API] Status ${res.status} on ${url}, attempting alternate route: ${altUrl}`);
         const altRes = await fetch(altUrl, options);
-        if (altRes.ok || altRes.status !== 404) {
+        if (altRes.ok || (altRes.status !== 404 && altRes.status !== 405)) {
           return altRes;
         }
       }
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchLiveTelemetry(query) {
     try {
       telemetryCity.textContent = 'Updating...';
-      const res = await apiFetch(`/api/weather?query=${encodeURIComponent(query)}`);
+      const res = await apiFetch(`/weather?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (data.success && data.telemetry) {
         const t = data.telemetry;
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const res = await apiFetch('/api/predict', {
+      const res = await apiFetch('/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const res = await apiFetch('/api/fertilizer', {
+      const res = await apiFetch('/fertilizer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const crop = doctorCropSelect.value;
     const keyword = doctorSearchInput.value.trim();
 
-    let url = `/api/diseases?temperature=${state.currentWeather.temperature}&humidity=${state.currentWeather.humidity}`;
+    let url = `/diseases?temperature=${state.currentWeather.temperature}&humidity=${state.currentWeather.humidity}`;
     if (crop) url += `&crop=${encodeURIComponent(crop)}`;
     if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
 
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
       statePlaceholder.innerHTML = '<h4>Loading State Profile...</h4>';
       stateContent.classList.add('is-hidden');
 
-      const res = await apiFetch(`/api/soil-profile?state=${encodeURIComponent(stateName)}`);
+      const res = await apiFetch(`/soil-profile?state=${encodeURIComponent(stateName)}`);
       const data = await res.json();
       if (data.success && data.profile) {
         renderStateSoilProfile(data.state, data.profile);
@@ -769,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Fetch supported crops
     try {
-      const res = await apiFetch('/api/crops');
+      const res = await apiFetch('/crops');
       const data = await res.json();
       if (data.crops) {
         state.crops = data.crops;
@@ -783,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Fetch Indian soil states
     try {
-      const res = await apiFetch('/api/soil-states');
+      const res = await apiFetch('/soil-states');
       const data = await res.json();
       if (data.states) {
         state.indianStates = data.states;
