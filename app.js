@@ -145,12 +145,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 3. LIVE WEATHER & TELEMETRY
+  // 3. RESILIENT API FETCH & TELEMETRY
   // ─────────────────────────────────────────────────────────────────────────
+  async function apiFetch(url, options = {}) {
+    try {
+      let res = await fetch(url, options);
+      if (res.status === 404) {
+        const altUrl = url.startsWith('/api/') ? url.replace('/api/', '/') : (url.startsWith('/') ? '/api' + url : '/api/' + url);
+        console.warn(`[SPARC API] 404 on ${url}, attempting alternate route: ${altUrl}`);
+        const altRes = await fetch(altUrl, options);
+        if (altRes.ok || altRes.status !== 404) {
+          return altRes;
+        }
+      }
+      return res;
+    } catch (e) {
+      const altUrl = url.startsWith('/api/') ? url.replace('/api/', '/') : (url.startsWith('/') ? '/api' + url : '/api/' + url);
+      return await fetch(altUrl, options);
+    }
+  }
+
   async function fetchLiveTelemetry(query) {
     try {
       telemetryCity.textContent = 'Updating...';
-      const res = await fetch(`/api/weather?query=${encodeURIComponent(query)}`);
+      const res = await apiFetch(`/api/weather?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (data.success && data.telemetry) {
         const t = data.telemetry;
@@ -304,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const res = await fetch('/api/predict', {
+      const res = await apiFetch('/api/predict', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -424,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const res = await fetch('/api/fertilizer', {
+      const res = await apiFetch('/api/fertilizer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -599,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
 
     try {
-      const res = await fetch(url);
+      const res = await apiFetch(url);
       const data = await res.json();
       if (data.success) {
         renderDiseases(data);
@@ -682,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
       statePlaceholder.innerHTML = '<h4>Loading State Profile...</h4>';
       stateContent.classList.add('is-hidden');
 
-      const res = await fetch(`/api/soil-profile?state=${encodeURIComponent(stateName)}`);
+      const res = await apiFetch(`/api/soil-profile?state=${encodeURIComponent(stateName)}`);
       const data = await res.json();
       if (data.success && data.profile) {
         renderStateSoilProfile(data.state, data.profile);
@@ -751,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Fetch supported crops
     try {
-      const res = await fetch('/api/crops');
+      const res = await apiFetch('/api/crops');
       const data = await res.json();
       if (data.crops) {
         state.crops = data.crops;
@@ -765,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Fetch Indian soil states
     try {
-      const res = await fetch('/api/soil-states');
+      const res = await apiFetch('/api/soil-states');
       const data = await res.json();
       if (data.states) {
         state.indianStates = data.states;

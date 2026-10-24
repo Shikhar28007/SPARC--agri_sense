@@ -1,6 +1,7 @@
 """
 SPARC AI - Vercel Serverless API Interface
 Exposes FastAPI REST endpoints connecting to the Scikit-Learn Agronomic Engine.
+Supports dual-prefix routing (both with and without '/api') for 100% Vercel compatibility.
 """
 
 import os
@@ -13,9 +14,9 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, APIRouter, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 
 import backend
 from backend import (
@@ -46,6 +47,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Normalize Vercel internal function paths
+@app.middleware("http")
+async def vercel_path_normalizer(request: Request, call_next):
+    raw_path = request.scope.get("path", "")
+    for prefix in ["/api/index.py", "/api/index", "/index.py"]:
+        if raw_path.startswith(prefix):
+            new_path = raw_path[len(prefix):]
+            request.scope["path"] = new_path if new_path.startswith("/") else "/" + new_path
+            break
+    return await call_next(request)
+
 # Export ASGI handler for Vercel
 handler = app
 
@@ -71,9 +83,20 @@ class FertilizerRequest(BaseModel):
     state: Optional[str] = None
 
 # ─────────────────────────────────────────────────────────────────────────────
-# API ENDPOINTS
+# ROUTER DEFINITION (Dual-mounted at '' and '/api')
 # ─────────────────────────────────────────────────────────────────────────────
-@app.get("/api/health")
+router = APIRouter()
+
+@router.get("/")
+def api_root():
+    return {
+        "status": "online",
+        "engine": "SPARC Precision AI Agronomy System",
+        "version": "2.0.0",
+        "supported_crops_count": len(SUPPORTED_CROPS)
+    }
+
+@router.get("/health")
 def health_check():
     return {
         "status": "online",
@@ -82,7 +105,7 @@ def health_check():
         "model_loaded": engine_instance.model is not None
     }
 
-@app.get("/api/crops")
+@router.get("/crops")
 def list_crops():
     return {
         "count": len(SUPPORTED_CROPS),
@@ -90,7 +113,7 @@ def list_crops():
         "disease_crops": sorted(get_all_disease_crops())
     }
 
-@app.post("/api/predict")
+@router.post("/predict")
 def predict_crop(req: CropPredictionRequest):
     try:
         raw_predictions = engine_instance.predict_top_crops(
@@ -113,7 +136,6 @@ def predict_crop(req: CropPredictionRequest):
                 "economic_outlook": "Stable regional market demand"
             })
 
-            # Run target diagnostic on this crop
             diag = engine_instance.diagnose_target_crop(
                 target_crop=crop_key,
                 n=req.nitrogen,
@@ -125,7 +147,6 @@ def predict_crop(req: CropPredictionRequest):
                 ph=req.ph
             )
 
-            # Outbreak risk for this crop under provided temp/humidity
             disease_risks = evaluate_disease_outbreak_risk(crop_key, req.temperature, req.humidity)
 
             detailed_results.append({
@@ -149,7 +170,7 @@ def predict_crop(req: CropPredictionRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference error: {str(e)}")
 
-@app.post("/api/fertilizer")
+@router.post("/fertilizer")
 def get_fertilizer_prescription(req: FertilizerRequest):
     try:
         crop_clean = req.target_crop.lower().strip()
@@ -161,8 +182,6 @@ def get_fertilizer_prescription(req: FertilizerRequest):
             target_crop=crop_clean
         )
 
-        # Parse commercial doses in kg/ha
-        # 1 acre = 0.4047 hectare => dose_kg_ha = dose_kg_acre * 2.471
         urea_kg = 0.0
         dap_kg = 0.0
         mop_kg = 0.0
@@ -212,7 +231,7 @@ def get_fertilizer_prescription(req: FertilizerRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Fertilizer calculation error: {str(e)}")
 
-@app.get("/api/diseases")
+@router.get("/diseases")
 def search_diseases(
     crop: Optional[str] = Query(None, description="Crop name"),
     keyword: Optional[str] = Query(None, description="Symptom keyword"),
@@ -235,24 +254,24 @@ def search_diseases(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Disease doctor error: {str(e)}")
 
-@app.get("/api/soil-states")
+@router.get("/soil-states")
 def list_soil_states():
     states = get_indian_soil_states()
     return {"states": states}
 
-@app.get("/api/soil-profile")
+@router.get("/soil-profile")
 def state_soil_profile(state: str = Query(..., description="Indian State name")):
     profile = get_state_soil_profile(state)
     if not profile:
         raise HTTPException(status_code=404, detail="State soil profile not found")
     return {"success": True, "state": state, "profile": profile}
 
-@app.get("/api/weather")
+@router.get("/weather")
 def get_weather(query: str = Query("New Delhi", description="City name or query")):
     telemetry = engine_instance.fetch_live_weather(query)
     return {"success": True, "telemetry": telemetry}
 
-# Mount static frontend for local development
-public_dir = os.path.join(ROOT_DIR, "public")
-if os.path.exists(public_dir):
-    app.mount("/", StaticFiles(directory=public_dir, html=True), name="static")
+# Mount router with BOTH prefix="" and prefix="/api"
+# This guarantees that whether Vercel preserves or strips '/api', the endpoint matches!
+app.include_router(router, prefix="")
+app.include_router(router, prefix="/api")
