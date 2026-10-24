@@ -1,0 +1,13 @@
+# Exclude Streamlit files and root scripts from Vercel function scanner
+app.py
+agrisense.py
+train_model.py
+expand_dataset.py
+auto_sync_watcher.py
+sync.bat
+crop_model.pkl
+requirements-streamlit.txt
+sparc_history.db
+sparc_data.db
+.streamlit/
+scratch/

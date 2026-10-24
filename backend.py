@@ -6,6 +6,7 @@ Architecture: Service Layer + SQLite Persistence + Scikit-Learn Agronomic Engine
 import os
 import sqlite3
 import pickle
+import gzip
 import time
 from datetime import datetime
 from typing import Dict, List, Tuple, Any, Optional
@@ -21,6 +22,7 @@ import crop_disease_doctor as cdd
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "sparc_data.db")
 MODEL_PATH = os.path.join(BASE_DIR, "crop_model.pkl")
+MODEL_GZ_PATH = os.path.join(BASE_DIR, "crop_model.pkl.gz")
 DATASET_PATH = os.path.join(BASE_DIR, "crop_data.csv")
 
 SUPPORTED_CROPS = [
@@ -686,7 +688,12 @@ class SparcEngine:
         """Loads the pre-trained Scikit-Learn Random Forest model or re-trains from dataset."""
         t0 = time.time()
         try:
-            if os.path.exists(MODEL_PATH):
+            if os.path.exists(MODEL_GZ_PATH):
+                with gzip.open(MODEL_GZ_PATH, "rb") as f:
+                    self.model = pickle.load(f)
+                elapsed = (time.time() - t0) * 1000
+                self.db.log_event("INFO", "ENGINE", "Loaded compressed Random Forest model (crop_model.pkl.gz).", elapsed)
+            elif os.path.exists(MODEL_PATH):
                 with open(MODEL_PATH, "rb") as f:
                     self.model = pickle.load(f)
                 elapsed = (time.time() - t0) * 1000

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPARC AI — Smart Precision Agriculture & Agronomic Intelligence</title>
+  <meta name="description" content="AI-powered precision agronomy, crop recommendation, elemental fertilizer prescription, and crop disease doctor for Indian and global agriculture.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Plotly.js for high-performance interactive 2D/3D visualizations -->
+  <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" defer></script>
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
+
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">🌾</div>
+        <div class="brand-text">
+          <h1>SPARC <span class="accent-gold">AI</span></h1>
+          <p class="brand-tagline">Smart Precision Agronomy & Recommendation Classification</p>
+        </div>
+      </div>
+
+      <!-- Live Telemetry Bar -->
+      <div class="telemetry-bar" id="telemetry-bar">
+        <div class="telemetry-badge">
+          <span class="status-dot"></span>
+          <span id="telemetry-city">New Delhi, India</span>
+        </div>
+        <div class="telemetry-metrics">
+          <span class="telemetry-item" title="Current Temperature">🌡️ <strong id="telemetry-temp">28°C</strong></span>
+          <span class="telemetry-item" title="Relative Humidity">💧 <strong id="telemetry-humidity">45%</strong></span>
+          <span class="telemetry-item" title="Recent Rainfall">🌧️ <strong id="telemetry-rain">0 mm</strong></span>
+        </div>
+        <div class="telemetry-actions">
+          <button id="btn-detect-gps" class="btn-icon" title="Detect GPS Location">📍 GPS</button>
+          <button id="btn-change-city" class="btn-icon" title="Change Location">🔍 City</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" aria-label="Main Navigation">
+      <button class="nav-tab active" id="tab-btn-crop" data-tab="crop-recommender">
+        <span class="tab-icon">🌾</span>
+        <span class="tab-label">Crop Recommender</span>
+      </button>
+      <button class="nav-tab" id="tab-btn-fert" data-tab="fertilizer-prescriber">
+        <span class="tab-icon">🧪</span>
+        <span class="tab-label">Fertilizer Prescriber</span>
+      </button>
+      <button class="nav-tab" id="tab-btn-doctor" data-tab="disease-doctor">
+        <span class="tab-icon">🩺</span>
+        <span class="tab-label">Crop Disease Doctor</span>
+      </button>
+      <button class="nav-tab" id="tab-btn-soil" data-tab="soil-registry">
+        <span class="tab-icon">🗺️</span>
+        <span class="tab-label">Indian Soil Registry</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Location Search Modal -->
+  <div class="modal-overlay" id="city-modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Change Agro-Climatic Location</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="search-box">
+          <input type="text" id="city-search-input" placeholder="Type city (e.g. Pune, Ludhiana, Varanasi)...">
+          <button id="city-search-btn" class="btn-primary">Search</button>
+        </div>
+        <div class="city-presets">
+          <span class="preset-label">Quick Presets:</span>
+          <button class="preset-chip" data-city="Ludhiana">Ludhiana (Punjab)</button>
+          <button class="preset-chip" data-city="Nagpur">Nagpur (Vidarbha)</button>
+          <button class="preset-chip" data-city="Varanasi">Varanasi (UP)</button>
+          <button class="preset-chip" data-city="Bengaluru">Bengaluru (Karnataka)</button>
+          <button class="preset-chip" data-city="Jaipur">Jaipur (Rajasthan)</button>
+          <button class="preset-chip" data-city="Kochi">Kochi (Kerala)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+    
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 1: CROP RECOMMENDER                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel active" id="crop-recommender">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>🌾 AI Multi-Crop Recommendation Engine</h2>
+          <p>Trained Scikit-Learn Model (38 Crop Species, 99.3% Accuracy) with Stress & Mitigation Diagnostics</p>
+        </div>
+        <div class="panel-actions">
+          <button id="btn-sync-weather" class="btn-secondary" title="Auto-fill inputs with current telemetry">
+            🛰️ Auto-Fill Live Weather
+          </button>
+        </div>
+      </div>
+
+      <div class="recommender-grid">
+        <!-- Input Form Card -->
+        <div class="card form-card">
+          <div class="card-header">
+            <h3>Soil & Agro-Climatic Parameters</h3>
+            <span class="badge badge-gold">7 Parameters</span>
+          </div>
+
+          <form id="crop-form" class="parameter-form">
+            <!-- Soil Macronutrients -->
+            <div class="form-group-title">Macro-Nutrients (Soil Test Report)</div>
+            
+            <div class="form-row">
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-n">Nitrogen (N) <span class="unit">kg/ha</span></label>
+                  <span class="val-display" id="val-n">90</span>
+                </div>
+                <input type="range" id="slider-n" min="0" max="250" value="90" step="1" title="Soil Nitrogen (N) in kg/ha">
+              </div>
+
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-p">Phosphorus (P) <span class="unit">kg/ha</span></label>
+                  <span class="val-display" id="val-p">42</span>
+                </div>
+                <input type="range" id="slider-p" min="0" max="200" value="42" step="1" title="Soil Phosphorus (P) in kg/ha">
+              </div>
+
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-k">Potassium (K) <span class="unit">kg/ha</span></label>
+                  <span class="val-display" id="val-k">43</span>
+                </div>
+                <input type="range" id="slider-k" min="0" max="350" value="43" step="1" title="Soil Potassium (K) in kg/ha">
+              </div>
+            </div>
+
+            <!-- Climatic & Soil Physical Parameters -->
+            <div class="form-group-title">Climatic Telemetry & Soil Health</div>
+
+            <div class="form-row">
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-temp">Temperature <span class="unit">°C</span></label>
+                  <span class="val-display" id="val-temp">26.5</span>
+                </div>
+                <input type="range" id="slider-temp" min="5" max="50" value="26.5" step="0.5">
+              </div>
+
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-hum">Relative Humidity <span class="unit">%</span></label>
+                  <span class="val-display" id="val-hum">65</span>
+                </div>
+                <input type="range" id="slider-hum" min="10" max="100" value="65" step="1">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-ph">Soil Reaction (pH)</label>
+                  <span class="val-display" id="val-ph">6.5</span>
+                </div>
+                <input type="range" id="slider-ph" min="3.5" max="9.5" value="6.5" step="0.1">
+              </div>
+
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-rain">Rainfall / Irrigation <span class="unit">mm</span></label>
+                  <span class="val-display" id="val-rain">110</span>
+                </div>
+                <input type="range" id="slider-rain" min="10" max="500" value="110" step="5">
+              </div>
+            </div>
+
+            <div class="quick-presets-box">
+              <span class="preset-label">Agro-Ecological Presets:</span>
+              <div class="chips-container">
+                <button type="button" class="agro-preset-btn" data-preset="punjab">🌾 Indo-Gangetic Wheat</button>
+                <button type="button" class="agro-preset-btn" data-preset="blackcotton">🌱 Deccan Black Cotton</button>
+                <button type="button" class="agro-preset-btn" data-preset="kerala">🌴 Coastal Spice / Paddy</button>
+                <button type="button" class="agro-preset-btn" data-preset="millet">☀️ Arid Super-Millet</button>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-predict-crops" class="btn-primary btn-large">
+              <span class="btn-text">⚡ Compute Precision Recommendations</span>
+              <span class="spinner" id="predict-spinner" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Output / Results Section -->
+        <div class="card results-card" id="crop-results-container">
+          <div class="card-header">
+            <h3>Agronomic AI Diagnostic Report</h3>
+            <span class="badge badge-emerald" id="results-status">Ready</span>
+          </div>
+
+          <div class="results-placeholder" id="crop-placeholder">
+            <div class="placeholder-icon">🌱</div>
+            <h4>Configure Parameters & Run AI Analysis</h4>
+            <p>Your tailored crop suitability rank, stress diagnostics, water demands, and rescue protocols will render here.</p>
+          </div>
+
+          <!-- Dynamic Results Container -->
+          <div class="recommendations-list is-hidden" id="recommendations-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 2: FERTILIZER PRESCRIBER                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="fertilizer-prescriber">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>🧪 Precision Soil Health & Fertilizer Prescriber</h2>
+          <p>Converts Elemental Deficits (ΔN, ΔP, ΔK) into Exact Commercial Doses (Urea, DAP, MOP)</p>
+        </div>
+      </div>
+
+      <div class="recommender-grid">
+        <div class="card form-card">
+          <div class="card-header">
+            <h3>Crop & Field Soil Chemistry</h3>
+          </div>
+
+          <form id="fert-form" class="parameter-form">
+            <div class="form-row">
+              <div class="input-control full-width">
+                <label for="fert-crop-select">Target Planned Crop</label>
+                <select id="fert-crop-select" class="form-select">
+                  <!-- Populated via API -->
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="input-control full-width">
+                <label for="fert-state-select">Indian State (Optional SAU Guidance)</label>
+                <select id="fert-state-select" class="form-select">
+                  <option value="">General Indian Benchmark</option>
+                  <!-- Populated via API -->
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group-title">Current Field Soil Test</div>
+
+            <div class="form-row">
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-fert-n">Current Soil N <span class="unit">kg/ha</span></label>
+                  <span class="val-display" id="val-fert-n">40</span>
+                </div>
+                <input type="range" id="slider-fert-n" min="0" max="250" value="40" title="Current Soil Nitrogen (N) in kg/ha">
+              </div>
+
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-fert-p">Current Soil P <span class="unit">kg/ha</span></label>
+                  <span class="val-display" id="val-fert-p">20</span>
+                </div>
+                <input type="range" id="slider-fert-p" min="0" max="200" value="20" title="Current Soil Phosphorus (P) in kg/ha">
+              </div>
+
+              <div class="input-control">
+                <div class="label-row">
+                  <label for="slider-fert-k">Current Soil K <span class="unit">kg/ha</span></label>
+                  <span class="val-display" id="val-fert-k">30</span>
+                </div>
+                <input type="range" id="slider-fert-k" min="0" max="350" value="30" title="Current Soil Potassium (K) in kg/ha">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="input-control full-width">
+                <div class="label-row">
+                  <label for="slider-fert-ph">Soil pH Level</label>
+                  <span class="val-display" id="val-fert-ph">6.8</span>
+                </div>
+                <input type="range" id="slider-fert-ph" min="4.0" max="9.0" value="6.8" step="0.1" title="Current Soil pH Level">
+              </div>
+            </div>
+
+            <button type="submit" id="btn-calc-fert" class="btn-primary btn-large">
+              <span class="btn-text">🧪 Compute Fertilizer Prescription</span>
+              <span class="spinner" id="fert-spinner" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Fertilizer Output Results -->
+        <div class="card results-card" id="fert-results-container">
+          <div class="card-header">
+            <h3>Prescription & Commercial Doses</h3>
+            <span class="badge badge-gold" id="fert-badge">Awaiting Calculation</span>
+          </div>
+
+          <div class="results-placeholder" id="fert-placeholder">
+            <div class="placeholder-icon">⚖️</div>
+            <h4>Select Target Crop & Input Soil Chemistry</h4>
+            <p>Calculations for Urea, DAP, MOP commercial bags, elemental deficits, and stage-wise application will appear here.</p>
+          </div>
+
+          <div id="fert-content" class="is-hidden">
+            <!-- Commercial Bags Cards Grid -->
+            <div class="fert-metric-grid">
+              <div class="fert-metric-card urea-card">
+                <div class="metric-top">
+                  <span class="fert-name">Urea (46% N)</span>
+                  <span class="fert-icon">⚪</span>
+                </div>
+                <div class="fert-val" id="metric-urea">0 <span class="sub-unit">kg/ha</span></div>
+                <div class="fert-bags" id="metric-urea-bags">≈ 0 standard 50kg bags</div>
+              </div>
+
+              <div class="fert-metric-card dap-card">
+                <div class="metric-top">
+                  <span class="fert-name">DAP (18% N, 46% P₂O₅)</span>
+                  <span class="fert-icon">🟤</span>
+                </div>
+                <div class="fert-val" id="metric-dap">0 <span class="sub-unit">kg/ha</span></div>
+                <div class="fert-bags" id="metric-dap-bags">≈ 0 standard 50kg bags</div>
+              </div>
+
+              <div class="fert-metric-card mop-card">
+                <div class="metric-top">
+                  <span class="fert-name">MOP (60% K₂O)</span>
+                  <span class="fert-icon">🔴</span>
+                </div>
+                <div class="fert-val" id="metric-mop">0 <span class="sub-unit">kg/ha</span></div>
+                <div class="fert-bags" id="metric-mop-bags">≈ 0 standard 50kg bags</div>
+              </div>
+            </div>
+
+            <!-- Interactive 3D / 2D Comparison Chart Container -->
+            <div class="chart-wrapper">
+              <div class="chart-header">
+                <h4>Interactive NPK Deficit & Target Profile</h4>
+                <div class="chart-controls">
+                  <button type="button" class="btn-chip active" id="btn-chart-bar">Bar Comparison</button>
+                  <button type="button" class="btn-chip" id="btn-chart-3d">3D WebGL</button>
+                </div>
+              </div>
+              <div id="fert-plotly-chart" class="plotly-chart-box"></div>
+            </div>
+
+            <!-- Application Schedule -->
+            <div class="schedule-box" id="fert-schedule-box">
+              <h4>📅 Agronomic Split-Dose Schedule</h4>
+              <div class="timeline" id="fert-timeline"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 3: CROP DISEASE DOCTOR                                            -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="disease-doctor">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>🩺 Plant Pathology & Crop Disease Doctor</h2>
+          <p>68+ Pathogens with Biological Cures, Fungicides, and Live Telemetry Outbreak Risk Alerts</p>
+        </div>
+      </div>
+
+      <div class="doctor-filter-bar">
+        <div class="filter-item">
+          <label for="doctor-crop-select">Filter by Crop:</label>
+          <select id="doctor-crop-select" class="form-select">
+            <option value="">All 38 Crops</option>
+            <!-- Populated via API -->
+          </select>
+        </div>
+
+        <div class="filter-item grow">
+          <label for="doctor-search-input">Search Symptoms or Disease Name:</label>
+          <input type="text" id="doctor-search-input" placeholder="e.g. blast, rot, blight, spots, powdery...">
+        </div>
+
+        <button id="btn-search-disease" class="btn-primary">
+          <span>Search Pathology</span>
+        </button>
+      </div>
+
+      <!-- Live Weather Risk Banner -->
+      <div class="risk-banner is-hidden" id="doctor-risk-banner">
+        <div class="risk-icon">⚠️</div>
+        <div class="risk-info">
+          <h4>Live Agro-Climatic Outbreak Warning for <span id="risk-crop-name">Selected Crop</span></h4>
+          <div id="risk-items-list"></div>
+        </div>
+      </div>
+
+      <!-- Disease Cards Grid -->
+      <div class="disease-grid" id="disease-results-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 4: INDIAN SOIL REGISTRY                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="tab-panel" id="soil-registry">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>🗺️ Indian State Soil Health & ICAR Benchmark Registry</h2>
+          <p>Standardized Agro-Ecological Profiles, Soil Types, and University Recommended Fertilizer Schedules</p>
+        </div>
+      </div>
+
+      <div class="soil-state-selector">
+        <label for="state-dropdown">Select Indian State:</label>
+        <select id="state-dropdown" class="form-select">
+          <!-- Populated via API -->
+        </select>
+      </div>
+
+      <div class="soil-state-details" id="state-details-card">
+        <div class="results-placeholder" id="state-placeholder">
+          <div class="placeholder-icon">🏛️</div>
+          <h4>Loading State Soil Profiles...</h4>
+        </div>
+
+        <div id="state-content" class="is-hidden">
+          <!-- Dynamically populated state profile -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p><strong>SPARC AI (AgrisenseAI)</strong> — High-Performance Precision Agronomy Platform</p>
+      <p class="footer-sub">Vercel Serverless Architecture • Scikit-Learn 99.3% Accuracy • Open-Meteo REST Telemetry</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
