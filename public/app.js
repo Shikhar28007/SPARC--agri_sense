@@ -287,7 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
     punjab: { n: 130, p: 55, k: 45, temp: 22.0, hum: 60, ph: 7.2, rain: 85 },
     blackcotton: { n: 80, p: 40, k: 60, temp: 28.5, hum: 70, ph: 7.8, rain: 130 },
     kerala: { n: 90, p: 35, k: 120, temp: 29.0, hum: 85, ph: 5.5, rain: 240 },
-    millet: { n: 45, p: 25, k: 30, temp: 34.0, hum: 35, ph: 8.0, rain: 45 }
+    millet: { n: 45, p: 25, k: 30, temp: 34.0, hum: 35, ph: 8.0, rain: 45 },
+    sandy_poor: { n: 40, p: 20, k: 25, temp: 28.0, hum: 45, ph: 6.2, rain: 70 },
+    medium_loam: { n: 85, p: 40, k: 45, temp: 26.5, hum: 65, ph: 6.8, rain: 110 },
+    clay_fertile: { n: 135, p: 60, k: 75, temp: 25.0, hum: 75, ph: 7.4, rain: 150 }
   };
 
   document.querySelectorAll('.agro-preset-btn').forEach(btn => {
@@ -416,6 +419,67 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // ── Speech Synthesis & WhatsApp Kisan Helpers ──
+  let activeSpeakingBtn = null;
+
+  function toggleSpeech(text, btnElement) {
+    if (!('speechSynthesis' in window)) {
+      alert('Voice audio is not supported in this browser. Please use Chrome or Edge.');
+      return;
+    }
+
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      if (activeSpeakingBtn) {
+        activeSpeakingBtn.classList.remove('is-speaking');
+        activeSpeakingBtn.innerHTML = '🔊 सुनिए / Listen';
+      }
+      if (activeSpeakingBtn === btnElement) {
+        activeSpeakingBtn = null;
+        return;
+      }
+    }
+
+    const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/[*_#]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const regionalVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('en-IN') || v.lang.includes('IN'));
+    if (regionalVoice) {
+      utterance.voice = regionalVoice;
+    }
+
+    btnElement.classList.add('is-speaking');
+    btnElement.innerHTML = '⏹️ रोकिए / Stop';
+    activeSpeakingBtn = btnElement;
+
+    utterance.onend = () => {
+      btnElement.classList.remove('is-speaking');
+      btnElement.innerHTML = '🔊 सुनिए / Listen';
+      activeSpeakingBtn = null;
+    };
+
+    utterance.onerror = () => {
+      btnElement.classList.remove('is-speaking');
+      btnElement.innerHTML = '🔊 सुनिए / Listen';
+      activeSpeakingBtn = null;
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function shareOnWhatsApp(cropName, details) {
+    const text = `🌾 *SPARC AI Kisan Advisory*\n` +
+      `--------------------------------\n` +
+      `🌱 *Crop:* ${cropName}\n` +
+      `${details}\n\n` +
+      `✅ *Generated via SPARC Precision AI:* https://sparc-agri-sense-omega.vercel.app`;
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  }
+
   function renderRecommendations(data) {
     cropPlaceholder.classList.add('is-hidden');
     recommendationsList.classList.remove('is-hidden');
@@ -471,7 +535,26 @@ document.addEventListener('DOMContentLoaded', () => {
         ${stressHtml}
         ${rescueHtml}
         ${diseaseHtml}
+
+        <div class="card-action-bar">
+          <button type="button" class="btn-voice-readout btn-voice-target">🔊 सुनिए / Listen</button>
+          <button type="button" class="btn-whatsapp-share btn-whatsapp-target">📲 WhatsApp पर भेजें / Share</button>
+        </div>
       `;
+
+      const voiceBtn = targetCard.querySelector('.btn-voice-target');
+      if (voiceBtn) {
+        const primaryRescue = targetDiag.rescue_roadmap && targetDiag.rescue_roadmap[0] ? targetDiag.rescue_roadmap[0].action : 'उचित प्रबंधन करें.';
+        const speechText = `फसल सलाह: ${targetDiag.crop}. कम्पैटिबिलिटी स्कोर ${score} प्रतिशत. रिस्क स्टेटस: ${riskLvl}. ${targetDiag.summary || ''}. मुख्य सुधार उपाय: ${primaryRescue}`;
+        voiceBtn.addEventListener('click', () => toggleSpeech(speechText, voiceBtn));
+      }
+
+      const waBtn = targetCard.querySelector('.btn-whatsapp-target');
+      if (waBtn) {
+        const primaryRescue = targetDiag.rescue_roadmap && targetDiag.rescue_roadmap[0] ? targetDiag.rescue_roadmap[0].action : 'Standard management';
+        const waDetails = `📊 *Compatibility:* ${score}%\n⚠️ *Risk Level:* ${riskLvl}\n\n📝 *Summary:* ${targetDiag.summary || ''}\n\n🛡️ *Key Rescue Step:* ${primaryRescue}`;
+        waBtn.addEventListener('click', () => shareOnWhatsApp(targetDiag.crop, waDetails));
+      }
 
       recommendationsList.appendChild(targetCard);
     }
@@ -528,7 +611,24 @@ document.addEventListener('DOMContentLoaded', () => {
         ${stressHtml}
         ${rescueHtml}
         ${diseaseHtml}
+
+        <div class="card-action-bar">
+          <button type="button" class="btn-voice-readout btn-voice-rec">🔊 सुनिए / Listen</button>
+          <button type="button" class="btn-whatsapp-share btn-whatsapp-rec">📲 WhatsApp पर भेजें / Share</button>
+        </div>
       `;
+
+      const voiceBtn = card.querySelector('.btn-voice-rec');
+      if (voiceBtn) {
+        const speechText = `सिफारिश फसल: ${item.crop}, रैंक ${item.rank}, मैच ${item.confidence} प्रतिशत. फसल चक्र: ${item.profile.cycle_days || 'मौसमी'}. पानी की जरूरत: ${item.profile.water_demand || 'मध्यम'}. आर्थिक आउटलुक: ${item.profile.economic_outlook || 'अच्छा बाजार भाव'}.`;
+        voiceBtn.addEventListener('click', () => toggleSpeech(speechText, voiceBtn));
+      }
+
+      const waBtn = card.querySelector('.btn-whatsapp-rec');
+      if (waBtn) {
+        const waDetails = `🏆 *Rank:* #${item.rank}\n📊 *Match Confidence:* ${item.confidence}%\n⏱️ *Cycle:* ${item.profile.cycle_days || 'Seasonal'}\n💧 *Water Demand:* ${item.profile.water_demand || 'Moderate'}\n📈 *Economic Outlook:* ${item.profile.economic_outlook || 'Strong demand'}`;
+        waBtn.addEventListener('click', () => shareOnWhatsApp(item.crop, waDetails));
+      }
 
       recommendationsList.appendChild(card);
     });
@@ -595,6 +695,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('metric-mop').innerHTML = `${mopKg.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
     document.getElementById('metric-mop-bags').textContent = `≈ ${(mopKg / 50).toFixed(1)} standard 50kg bags`;
 
+    // 🚜 Kisan Commercial Bag Purchase for Farmer Land Size
+    const landSizeInput = document.getElementById('input-fert-land-size');
+    const landUnitSelect = document.getElementById('select-fert-land-unit');
+    const landSize = parseFloat(landSizeInput ? landSizeInput.value : 1.0) || 1.0;
+    const landUnit = landUnitSelect ? landUnitSelect.value : 'acre';
+
+    let acreMultiplier = 1.0;
+    if (landUnit === 'bigha') acreMultiplier = 0.62;
+    else if (landUnit === 'hectare') acreMultiplier = 2.471;
+    else if (landUnit === 'guntha') acreMultiplier = 0.025;
+
+    const totalAcres = Math.max(0.01, landSize * acreMultiplier);
+    // Convert kg/ha to kg/acre (1 ha = 2.471 acres)
+    const ureaPerAcre = ureaKg / 2.471;
+    const dapPerAcre = dapKg / 2.471;
+    const mopPerAcre = mopKg / 2.471;
+
+    // Commercial bag calculations: Neem-Coated Urea (45 kg), DAP (50 kg), MOP (50 kg)
+    const totalUreaBags = Math.ceil((ureaPerAcre * totalAcres) / 45);
+    const totalDapBags = Math.ceil((dapPerAcre * totalAcres) / 50);
+    const totalMopBags = Math.ceil((mopPerAcre * totalAcres) / 50);
+
+    const landBadge = document.getElementById('kisan-land-badge');
+    if (landBadge) {
+      landBadge.textContent = `For ${landSize} ${landUnit.toUpperCase()} (~${totalAcres.toFixed(2)} Acres)`;
+    }
+    const uEl = document.getElementById('kisan-urea-bags');
+    if (uEl) uEl.textContent = `${totalUreaBags}`;
+    const dEl = document.getElementById('kisan-dap-bags');
+    if (dEl) dEl.textContent = `${totalDapBags}`;
+    const mEl = document.getElementById('kisan-mop-bags');
+    if (mEl) mEl.textContent = `${totalMopBags}`;
+
     // Timeline Schedule
     const timeline = document.getElementById('fert-timeline');
     timeline.innerHTML = '';
@@ -619,6 +752,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render Chart
     renderFertilizerChart(p, state.activeChartMode);
+  }
+
+  // Real-time update when land size changes
+  const landSizeEl = document.getElementById('input-fert-land-size');
+  const landUnitEl = document.getElementById('select-fert-land-unit');
+  if (landSizeEl) {
+    landSizeEl.addEventListener('input', () => {
+      if (state.lastFertData) renderFertilizerResults(state.lastFertData);
+    });
+  }
+  if (landUnitEl) {
+    landUnitEl.addEventListener('change', () => {
+      if (state.lastFertData) renderFertilizerResults(state.lastFertData);
+    });
   }
 
   // Plotly Chart Generator
@@ -744,6 +891,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   doctorCropSelect.addEventListener('change', searchDiseases);
 
+  // Symptom Quick Filter Chips ("Tap What You See")
+  document.querySelectorAll('.symptom-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const kw = chip.dataset.keyword;
+      const isAct = chip.classList.contains('active');
+      document.querySelectorAll('.symptom-chip').forEach(c => c.classList.remove('active'));
+      if (isAct) {
+        doctorSearchInput.value = '';
+      } else {
+        chip.classList.add('active');
+        doctorSearchInput.value = kw;
+      }
+      searchDiseases();
+    });
+  });
+
   function renderDiseases(data) {
     diseaseResultsContainer.innerHTML = '';
 
@@ -777,7 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <div class="disease-header">
           <div>
-            <div class="disease-name">${d.disease_name || d.disease}</div>
+            <div class="disease-name">${d.disease_name || d.name || d.disease}</div>
             <span class="disease-crop-tag">🌱 ${d.crop}</span>
           </div>
           <span class="badge badge-coral">${d.pathogen_type || 'Pathogen'}</span>
@@ -797,7 +960,29 @@ document.addEventListener('DOMContentLoaded', () => {
           <h5>Chemical Fungicide / Treatment</h5>
           <p>${d.chemical_cure || d.fungicide || 'Targeted chemical spray'}</p>
         </div>
+
+        <div class="card-action-bar">
+          <button type="button" class="btn-voice-readout btn-voice-disease">🔊 लक्षण व दवा सुनिए / Listen</button>
+          <button type="button" class="btn-whatsapp-share btn-whatsapp-disease">📲 WhatsApp पर भेजें</button>
+        </div>
       `;
+
+      const vBtn = card.querySelector('.btn-voice-disease');
+      if (vBtn) {
+        const dName = d.disease_name || d.name || d.disease;
+        const sym = d.symptoms || '';
+        const cure = d.chemical_cure || d.fungicide || d.organic_control || 'उचित दवा का छिड़काव करें.';
+        const speechText = `रोग का नाम: ${dName}. फसल: ${d.crop}. प्रमुख लक्षण: ${sym}. अनुशंसित उपचार व दवा: ${cure}`;
+        vBtn.addEventListener('click', () => toggleSpeech(speechText, vBtn));
+      }
+
+      const waBtn = card.querySelector('.btn-whatsapp-disease');
+      if (waBtn) {
+        const dName = d.disease_name || d.name || d.disease;
+        const waDetails = `🩺 *Pathogen:* ${dName} (${d.pathogen_type || 'Disease'})\n\n🔍 *Symptoms:* ${d.symptoms || 'Visual lesions'}\n\n🧪 *Chemical Remedy:* ${d.chemical_cure || d.fungicide || 'Inspect crop'}\n\n🌿 *Organic Control:* ${d.organic_control || d.biological_cure || 'Bio-fungicide'}`;
+        waBtn.addEventListener('click', () => shareOnWhatsApp(`${dName} (${d.crop})`, waDetails));
+      }
+
       diseaseResultsContainer.appendChild(card);
     });
   }

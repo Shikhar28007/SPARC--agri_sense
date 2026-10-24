@@ -251,6 +251,14 @@
                 <button type="button" class="agro-preset-btn" data-preset="kerala">🌴 Coastal Spice / Paddy</button>
                 <button type="button" class="agro-preset-btn" data-preset="millet">☀️ Arid Super-Millet</button>
               </div>
+              <div class="shc-helper-container">
+                <span class="preset-label-shc">🧪 No Lab Soil Test? Quick Select Field Quality:</span>
+                <div class="chips-container">
+                  <button type="button" class="agro-preset-btn shc-preset-btn" data-preset="sandy_poor">🏜️ Sandy / Low Fertility</button>
+                  <button type="button" class="agro-preset-btn shc-preset-btn" data-preset="medium_loam">🌿 Standard Loam (Medium)</button>
+                  <button type="button" class="agro-preset-btn shc-preset-btn" data-preset="clay_fertile">🌾 Clay / High Fertility</button>
+                </div>
+              </div>
             </div>
 
             <button type="submit" id="btn-predict-crops" class="btn-primary btn-large">
@@ -316,6 +324,24 @@
               </div>
             </div>
 
+            <!-- Farm Land Size for Commercial Bags -->
+            <div class="form-group-title">🚜 Your Farm Land Size (For Commercial Bag Count)</div>
+            <div class="form-row">
+              <div class="input-control">
+                <label for="input-fert-land-size">Farm Land Area:</label>
+                <input type="number" id="input-fert-land-size" min="0.25" max="500" step="0.25" value="1.0" class="form-input">
+              </div>
+              <div class="input-control">
+                <label for="select-fert-land-unit">Area Unit:</label>
+                <select id="select-fert-land-unit" class="form-select">
+                  <option value="acre" selected>Acre (एकड़)</option>
+                  <option value="bigha">Bigha (बीघा - 0.62 Acre)</option>
+                  <option value="hectare">Hectare (हेक्टेयर - 2.47 Acre)</option>
+                  <option value="guntha">Guntha (गुंठा - 0.025 Acre)</option>
+                </select>
+              </div>
+            </div>
+
             <div class="form-group-title">Current Field Soil Test</div>
 
             <div class="form-row">
@@ -375,6 +401,28 @@
           </div>
 
           <div id="fert-content" class="is-hidden">
+            <!-- Commercial Bags Summary for Farmer Land Size -->
+            <div class="kisan-bag-summary" id="kisan-bag-summary">
+              <div class="kisan-bag-header">
+                <span class="kisan-bag-title">🎒 Total Commercial Bags to Buy From Mandi / Shop</span>
+                <span class="badge badge-gold" id="kisan-land-badge">For 1.0 Acre Land</span>
+              </div>
+              <div class="kisan-bag-items">
+                <div class="kisan-bag-box urea-box">
+                  <div class="kisan-bag-count" id="kisan-urea-bags">0</div>
+                  <div class="kisan-bag-label">Bags Urea (45 kg)</div>
+                </div>
+                <div class="kisan-bag-box dap-box">
+                  <div class="kisan-bag-count" id="kisan-dap-bags">0</div>
+                  <div class="kisan-bag-label">Bags DAP (50 kg)</div>
+                </div>
+                <div class="kisan-bag-box mop-box">
+                  <div class="kisan-bag-count" id="kisan-mop-bags">0</div>
+                  <div class="kisan-bag-label">Bags MOP (50 kg)</div>
+                </div>
+              </div>
+            </div>
+
             <!-- Commercial Bags Cards Grid -->
             <div class="fert-metric-grid">
               <div class="fert-metric-card urea-card">
@@ -454,7 +502,19 @@
 
         <button id="btn-search-disease" class="btn-primary">
           <span>Search Pathology</span>
-        </button>
+      </div>
+
+      <!-- Visual Symptom Quick Filter Chips ("Tap What You See") -->
+      <div class="symptom-quick-bar">
+        <span class="symptom-label">👀 Tap What You See on the Plant (लक्षण चुनिए):</span>
+        <div class="symptom-chips">
+          <button type="button" class="symptom-chip" data-keyword="yellow">🟡 Yellowing Leaves (पीली पत्तियां)</button>
+          <button type="button" class="symptom-chip" data-keyword="spot">🟤 Brown Spots & Blight (धब्बे व झुलसा)</button>
+          <button type="button" class="symptom-chip" data-keyword="wilt">🥀 Wilting & Drooping (मुरझाना व सूखना)</button>
+          <button type="button" class="symptom-chip" data-keyword="rot">🪵 Stem / Root Rot (सड़न व गलन)</button>
+          <button type="button" class="symptom-chip" data-keyword="powdery">⚪ White Powdery Coating (सफेद चूर्ण फफूंद)</button>
+          <button type="button" class="symptom-chip" data-keyword="borer">🐛 Worms / Stem Holes (कीट व छेदक)</button>
+        </div>
       </div>
 
       <!-- Live Weather Risk Banner -->

@@ -1190,6 +1190,231 @@ input[type="range"]:hover::-webkit-slider-thumb {
   line-height: 1.4;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   KISAN COMPETENCE & RELIABILITY EXTENSIONS
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* SHC Qualitative Helper */
+.shc-helper-container {
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border-glass);
+}
+
+.preset-label-shc {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--gold-primary);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.shc-preset-btn {
+  background: rgba(245, 158, 11, 0.08) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #FDE68A !important;
+}
+
+.shc-preset-btn:hover {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: var(--gold-primary) !important;
+}
+
+/* Commercial Bag Purchase Summary Card */
+.kisan-bag-summary {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.kisan-bag-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.kisan-bag-title {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.kisan-bag-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .kisan-bag-items {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kisan-bag-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kisan-bag-box:hover {
+  transform: translateY(-2px);
+}
+
+.kisan-bag-box.urea-box {
+  border-left: 4px solid var(--cyan-primary);
+}
+
+.kisan-bag-box.dap-box {
+  border-left: 4px solid var(--gold-primary);
+}
+
+.kisan-bag-box.mop-box {
+  border-left: 4px solid #F87171;
+}
+
+.kisan-bag-count {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.kisan-bag-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Visual Disease Symptom Matching Bar */
+.symptom-quick-bar {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.symptom-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cyan-glow);
+  margin-bottom: 0.6rem;
+}
+
+.symptom-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.symptom-chip {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-pill);
+  padding: 0.35rem 0.75rem;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.symptom-chip:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: var(--cyan-primary);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.symptom-chip.active {
+  background: var(--cyan-primary);
+  border-color: var(--cyan-glow);
+  color: #042F2E;
+  font-weight: 700;
+}
+
+/* Action Bar for Crop Diagnosis Cards: Voice Readout & WhatsApp */
+.card-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-voice-readout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  color: var(--cyan-glow);
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-voice-readout:hover {
+  background: var(--cyan-primary);
+  color: #042F2E;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.btn-voice-readout.is-speaking {
+  background: #EF4444;
+  border-color: #F87171;
+  color: #FFFFFF;
+  animation: pulse-audio 1.2s infinite;
+}
+
+@keyframes pulse-audio {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.btn-whatsapp-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(37, 211, 102, 0.15);
+  border: 1px solid rgba(37, 211, 102, 0.4);
+  color: #4ADE80;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-whatsapp-share:hover {
+  background: #25D366;
+  color: #064E3B;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+}
+
 /* Visibility helper */
 .is-hidden {
   display: none !important;
