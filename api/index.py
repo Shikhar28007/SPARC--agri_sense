@@ -73,6 +73,7 @@ class CropPredictionRequest(BaseModel):
     ph: float = Field(..., ge=1, le=14, description="Soil pH Level")
     rainfall: float = Field(..., ge=0, le=2500, description="Annual/Seasonal Rainfall in mm")
     top_k: int = Field(3, ge=1, le=10)
+    target_crop: Optional[str] = Field(None, description="The crop the farmer wants to cultivate")
 
 class FertilizerRequest(BaseModel):
     nitrogen: float = Field(..., ge=0)
@@ -162,9 +163,43 @@ def predict_crop(req: CropPredictionRequest):
                 "disease_risks": disease_risks
             })
 
+        # Evaluate target crop if farmer selected a crop they plan to cultivate
+        target_diag_result = None
+        target_crop_key = (req.target_crop or "").lower().strip()
+        if target_crop_key:
+            target_diag = engine_instance.diagnose_target_crop(
+                target_crop=target_crop_key,
+                n=req.nitrogen,
+                p=req.phosphorus,
+                k=req.potassium,
+                temperature=req.temperature,
+                rainfall=req.rainfall,
+                humidity=req.humidity,
+                ph=req.ph
+            )
+            target_disease_risks = evaluate_disease_outbreak_risk(target_crop_key, req.temperature, req.humidity)
+            target_profile = CROP_AGRONOMIC_PROFILES.get(target_crop_key, {
+                "cycle_days": "100 - 130 days",
+                "water_demand": "Moderate",
+                "soil_type": "Loamy to sandy loam",
+                "benefits": ["Key commercial and regional crop"],
+                "economic_outlook": "Stable regional market demand"
+            })
+            target_diag_result = {
+                "crop": target_crop_key.capitalize(),
+                "profile": target_profile,
+                "risk_level": target_diag.get("risk_level", "LOW RISK"),
+                "compatibility_score": target_diag.get("compatibility_score", 95),
+                "issues": target_diag.get("issues", []),
+                "rescue_roadmap": target_diag.get("rescue_roadmap", []),
+                "summary": target_diag.get("summary", ""),
+                "disease_risks": target_disease_risks
+            }
+
         return {
             "success": True,
             "inputs": req.dict(),
+            "target_diagnosis": target_diag_result,
             "recommendations": detailed_results
         }
     except Exception as e:

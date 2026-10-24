@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Forms & Actions
   const cropForm = document.getElementById('crop-form');
+  const selectTargetCrop = document.getElementById('select-target-crop');
   const predictSpinner = document.getElementById('predict-spinner');
   const cropPlaceholder = document.getElementById('crop-placeholder');
   const recommendationsList = document.getElementById('recommendations-list');
@@ -318,7 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
       humidity: parseFloat(sliders.hum.value),
       ph: parseFloat(sliders.ph.value),
       rainfall: parseFloat(sliders.rain.value),
-      top_k: 3
+      top_k: 3,
+      target_crop: selectTargetCrop && selectTargetCrop.value ? selectTargetCrop.value : null
     };
 
     try {
@@ -330,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await res.json();
       if (data.success && data.recommendations) {
-        renderRecommendations(data.recommendations);
+        renderRecommendations(data);
         resultsStatus.textContent = 'AI Classified (99.3%)';
       } else {
         alert(data.detail || 'Prediction failed.');
@@ -343,46 +345,153 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function renderRecommendations(recs) {
+  // ── Helper Diagnostic & Mitigation Formatters (100% Object-Safe) ──
+  function formatIssues(issues, riskLevel) {
+    if (!issues || issues.length === 0) return '';
+    const itemsHtml = issues.map(iss => {
+      if (typeof iss === 'object' && iss !== null) {
+        const title = iss.param ? `${iss.param} [${iss.status || 'Alert'}]` : (iss.status || 'Physiological Stress');
+        const detail = iss.detail || '';
+        return `<div class="stress-item">• <strong>${title}:</strong> ${detail}</div>`;
+      }
+      return `<div class="stress-item">• ${iss}</div>`;
+    }).join('');
+
+    return `
+      <div class="stress-box">
+        <strong>⚠️ Physiological Diagnostics (${riskLevel || 'FIELD ALERT'}):</strong>
+        ${itemsHtml}
+      </div>
+    `;
+  }
+
+  function formatRescueRoadmap(roadmap) {
+    if (!roadmap || roadmap.length === 0) return '';
+    const itemsHtml = roadmap.map(a => {
+      if (typeof a === 'object' && a !== null) {
+        const category = a.category || a.issue || 'Actionable Protocol';
+        const action = a.action || a.solution || a.detail || '';
+        const impact = a.impact ? `<div class="rescue-impact"><em>Agronomic Impact:</em> ${a.impact}</div>` : '';
+        return `
+          <div class="rescue-item">
+            <div class="rescue-category">🌱 ${category}</div>
+            <div class="rescue-action"><strong>Action:</strong> ${action}</div>
+            ${impact}
+          </div>
+        `;
+      }
+      return `<div class="rescue-item"><div class="rescue-action">• ${a}</div></div>`;
+    }).join('');
+
+    return `
+      <div class="rescue-box">
+        <strong>🛡️ "How to Grow Anyway" Actionable Mitigation & Rescue Roadmap:</strong>
+        ${itemsHtml}
+      </div>
+    `;
+  }
+
+  function formatDiseaseRisks(risks, cropName) {
+    if (!risks || risks.length === 0) return '';
+    const itemsHtml = risks.map(d => {
+      if (typeof d === 'object' && d !== null) {
+        const name = d.disease_name || d.name || d.disease || 'Plant Disease';
+        const sev = d.severity || 'Risk Watch';
+        const cond = d.condition || '';
+        const remedy = d.immediate_remedy ? ` <em>Immediate Remedy:</em> <strong>${d.immediate_remedy}</strong>` : '';
+        return `
+          <div class="disease-risk-item">
+            • <strong style="color: #F87171;">${name} (${sev}):</strong> ${cond}${remedy}
+          </div>
+        `;
+      }
+      return `<div class="disease-risk-item">• ${d}</div>`;
+    }).join('');
+
+    return `
+      <div class="disease-risk-box">
+        <strong>⚠️ Pathogen & Disease Incubation Watch for ${cropName || 'Selected Crop'}:</strong>
+        ${itemsHtml}
+      </div>
+    `;
+  }
+
+  function renderRecommendations(data) {
     cropPlaceholder.classList.add('is-hidden');
     recommendationsList.classList.remove('is-hidden');
     recommendationsList.innerHTML = '';
 
+    const targetDiag = data.target_diagnosis;
+    const recs = data.recommendations || [];
+
+    // 1. RENDER PLANNED TARGET CROP CARD IF SELECTED
+    if (targetDiag) {
+      const targetCard = document.createElement('div');
+      targetCard.className = 'target-crop-card';
+
+      const riskLvl = targetDiag.risk_level || 'Moderate Risk';
+      const riskBadgeClass = riskLvl.toLowerCase().includes('low') ? 'badge-emerald' : (riskLvl.toLowerCase().includes('severe') || riskLvl.toLowerCase().includes('high') ? 'badge-rose' : 'badge-amber');
+      const score = targetDiag.compatibility_score || 85;
+
+      const stressHtml = formatIssues(targetDiag.issues, riskLvl);
+      const rescueHtml = formatRescueRoadmap(targetDiag.rescue_roadmap);
+      const diseaseHtml = formatDiseaseRisks(targetDiag.disease_risks, targetDiag.crop);
+
+      targetCard.innerHTML = `
+        <div class="target-card-header">
+          <div class="target-title-group">
+            <h3>🎯 Planned Crop: ${targetDiag.crop}</h3>
+            <span style="font-size: 0.85rem; color: var(--gold-primary);">Your Designated Intended Crop</span>
+          </div>
+          <div class="target-badges">
+            <span class="badge ${riskBadgeClass}">Status: ${riskLvl}</span>
+            <span class="badge badge-gold">${score}% Compatibility</span>
+          </div>
+        </div>
+
+        <div class="target-summary">
+          ${targetDiag.summary || `Agronomic diagnostic evaluation for cultivating ${targetDiag.crop} under current field parameters.`}
+        </div>
+
+        <div class="crop-meta-grid" style="margin-bottom: 1rem;">
+          <div class="meta-item">
+            <strong>Cycle Duration:</strong> <span>${targetDiag.profile?.cycle_days || 'Seasonal'}</span>
+          </div>
+          <div class="meta-item">
+            <strong>Water Demand:</strong> <span>${targetDiag.profile?.water_demand || 'Moderate'}</span>
+          </div>
+          <div class="meta-item">
+            <strong>Preferred Soil:</strong> <span>${targetDiag.profile?.soil_type || 'Loamy'}</span>
+          </div>
+          <div class="meta-item">
+            <strong>Commercial Outlook:</strong> <span>${targetDiag.profile?.economic_outlook || 'High market demand'}</span>
+          </div>
+        </div>
+
+        ${stressHtml}
+        ${rescueHtml}
+        ${diseaseHtml}
+      `;
+
+      recommendationsList.appendChild(targetCard);
+    }
+
+    // Section title for AI Alternatives
+    const recsHeader = document.createElement('div');
+    recsHeader.className = 'recs-section-header';
+    recsHeader.innerHTML = targetDiag 
+      ? `<span>🌾 AI Recommended Alternative Crops (Scikit-Learn 99.3% Accuracy)</span>` 
+      : `<span>🌾 Top AI Crop Suitability Recommendations</span>`;
+    recommendationsList.appendChild(recsHeader);
+
+    // 2. RENDER TOP 3 RECOMMENDED CROPS
     recs.forEach(item => {
       const card = document.createElement('div');
       card.className = 'crop-card';
 
-      // Stress & Soil / Climate Issues
-      let stressHtml = '';
-      if (item.issues && item.issues.length > 0) {
-        stressHtml = `
-          <div class="stress-box">
-            <strong>⚠️ Physiological Diagnostics (${item.risk_level || 'FIELD ALERT'}):</strong>
-            ${item.issues.map(r => `<div>• ${r}</div>`).join('')}
-          </div>
-        `;
-      }
-
-      // Rescue protocols
-      let rescueHtml = '';
-      if (item.rescue_roadmap && item.rescue_roadmap.length > 0) {
-        rescueHtml = `
-          <div class="rescue-box">
-            <strong>🛡️ "How to Grow Anyway" Actionable Mitigation:</strong>
-            ${item.rescue_roadmap.map(a => `<div>• <strong>${a.issue || 'Mitigation'}:</strong> ${a.solution || a}</div>`).join('')}
-          </div>
-        `;
-      }
-
-      // Disease risk indicator
-      let diseaseRiskHtml = '';
-      if (item.disease_risks && item.disease_risks.length > 0) {
-        diseaseRiskHtml = `
-          <div style="font-size: 0.78rem; color: #F59E0B; margin-top: 0.5rem;">
-            ⚠️ Pathogen watch in current climate: <strong>${item.disease_risks.map(d => d.disease).join(', ')}</strong>
-          </div>
-        `;
-      }
+      const stressHtml = formatIssues(item.issues, item.risk_level);
+      const rescueHtml = formatRescueRoadmap(item.rescue_roadmap);
+      const diseaseHtml = formatDiseaseRisks(item.disease_risks, item.crop);
 
       card.innerHTML = `
         <div class="crop-card-header">
@@ -418,12 +527,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ${stressHtml}
         ${rescueHtml}
-        ${diseaseRiskHtml}
+        ${diseaseHtml}
       `;
 
       recommendationsList.appendChild(card);
     });
   }
+
+
 
   // ─────────────────────────────────────────────────────────────────────────
   // 6. FERTILIZER PRESCRIBER SUBMIT & CHART
@@ -773,6 +884,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       if (data.crops) {
         state.crops = data.crops;
+        if (selectTargetCrop) {
+          const currentVal = selectTargetCrop.value || 'rice';
+          selectTargetCrop.innerHTML = '<option value="">-- Let AI Recommend Top Suitable Crops --</option>' +
+            data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+          selectTargetCrop.value = currentVal;
+        }
         fertCropSelect.innerHTML = data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
         doctorCropSelect.innerHTML = `<option value="">All 38 Crops</option>` + data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
         fertCropSelect.value = 'rice';

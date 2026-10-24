@@ -1059,7 +1059,132 @@ input[type="range"]:hover::-webkit-slider-thumb {
   margin-top: 0.35rem;
 }
 
+/* Planned Target Crop Card & Detailed Mitigation */
+.target-crop-card {
+  background: linear-gradient(135deg, rgba(20, 26, 36, 0.98), rgba(13, 17, 25, 0.98));
+  border: 1px solid var(--gold-primary);
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.12);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.target-crop-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold-primary), var(--emerald-primary));
+}
+
+.target-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.target-title-group h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.target-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.target-summary {
+  font-size: 0.92rem;
+  color: var(--text-main);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--cyan-primary);
+}
+
+.rescue-item {
+  margin-top: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--emerald-primary);
+}
+
+.rescue-category {
+  color: var(--emerald-glow);
+  font-weight: 700;
+  font-size: 0.84rem;
+  margin-bottom: 0.25rem;
+}
+
+.rescue-action {
+  color: var(--text-main);
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+.rescue-impact {
+  color: var(--text-muted);
+  font-size: 0.77rem;
+  margin-top: 0.35rem;
+  font-style: italic;
+}
+
+.stress-item {
+  margin-top: 0.45rem;
+  color: var(--text-main);
+  line-height: 1.4;
+  padding-left: 0.25rem;
+}
+
+.disease-risk-box {
+  background: rgba(245, 158, 11, 0.08);
+  border-left: 3px solid #F59E0B;
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius-sm);
+  margin-top: 0.85rem;
+  font-size: 0.82rem;
+}
+
+.disease-risk-box strong {
+  color: #FCD34D;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.disease-risk-item {
+  margin-top: 0.4rem;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.recs-section-header {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: #FFFFFF;
+  margin: 1.5rem 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Visibility helper */
 .is-hidden {
   display: none !important;
 }
+
