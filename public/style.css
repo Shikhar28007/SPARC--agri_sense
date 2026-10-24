@@ -1183,8 +1183,16 @@ input[type="range"]:hover::-webkit-slider-thumb {
   gap: 0.5rem;
 }
 
+.input-hint {
+  font-size: 0.76rem;
+  color: var(--text-dim);
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
 /* Visibility helper */
 .is-hidden {
   display: none !important;
 }
+
 
