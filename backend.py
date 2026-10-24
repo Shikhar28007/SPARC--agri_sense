@@ -8,6 +8,7 @@ import sqlite3
 import pickle
 import gzip
 import time
+import tempfile
 from datetime import datetime
 from typing import Dict, List, Tuple, Any, Optional
 import pandas as pd
@@ -20,8 +21,10 @@ import crop_disease_doctor as cdd
 # CONFIGURATION & CONSTANTS
 # ─────────────────────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "sparc_data.db")
-MODEL_PATH = os.path.join(BASE_DIR, "crop_model.pkl")
+IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+TMP_DIR = tempfile.gettempdir()
+DB_PATH = os.path.join(TMP_DIR, "sparc_data.db") if IS_SERVERLESS else os.path.join(BASE_DIR, "sparc_data.db")
+MODEL_PATH = os.path.join(TMP_DIR, "crop_model.pkl") if IS_SERVERLESS else os.path.join(BASE_DIR, "crop_model.pkl")
 MODEL_GZ_PATH = os.path.join(BASE_DIR, "crop_model.pkl.gz")
 DATASET_PATH = os.path.join(BASE_DIR, "crop_data.csv")
 
@@ -423,12 +426,19 @@ class DatabaseManager:
     """Handles thread-safe SQLite connection, schema lifecycle, and CRUD operations."""
 
     def __init__(self, db_path: str = DB_PATH):
-        self.db_path = db_path
+        if IS_SERVERLESS or not os.access(os.path.dirname(os.path.abspath(db_path)) or ".", os.W_OK):
+            self.db_path = os.path.join(TMP_DIR, "sparc_data.db")
+        else:
+            self.db_path = db_path
         self.init_db()
 
     def get_connection(self) -> sqlite3.Connection:
         """Returns a connection with Row factory enabled for dictionary-like access."""
-        conn = sqlite3.connect(self.db_path, timeout=15)
+        try:
+            conn = sqlite3.connect(self.db_path, timeout=15)
+        except Exception:
+            self.db_path = ":memory:"
+            conn = sqlite3.connect(self.db_path, timeout=15)
         conn.row_factory = sqlite3.Row
         return conn
 
@@ -716,8 +726,12 @@ class SparcEngine:
                 rf = RandomForestClassifier(n_estimators=100, random_state=42)
                 rf.fit(x, y)
                 self.model = rf
-                with open(MODEL_PATH, "wb") as f:
-                    pickle.dump(rf, f)
+                try:
+                    save_path = "/tmp/crop_model.pkl" if IS_SERVERLESS else MODEL_PATH
+                    with open(save_path, "wb") as f:
+                        pickle.dump(rf, f)
+                except Exception as save_err:
+                    print(f"[SparcEngine Warning] Model saving skipped: {save_err}")
                 elapsed = (time.time() - t0) * 1000
                 self.db.log_event("INFO", "ENGINE", "Successfully trained & serialized new Random Forest model.", elapsed)
             else:

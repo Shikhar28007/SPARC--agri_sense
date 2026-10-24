@@ -9,7 +9,7 @@ import time
 import subprocess
 from datetime import datetime
 
-WATCH_EXTENSIONS = {'.py', '.csv', '.toml', '.md', '.txt', '.bat', '.json'}
+WATCH_EXTENSIONS = {'.py', '.csv', '.toml', '.md', '.txt', '.bat', '.json', '.html', '.css', '.js'}
 IGNORE_DIRS = {'.git', '__pycache__', '.streamlit', '.gemini', 'venv', '.venv'}
 DEBOUNCE_SECONDS = 10
 
