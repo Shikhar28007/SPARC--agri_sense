@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     diseaseCrops: [],
     indianStates: [],
     lastFertData: null,
-    activeChartMode: 'bar'
+    activeChartMode: 'bar',
+    language: localStorage.getItem('agrisense_lang') || 'hi',
+    lastRecommendationsData: null
   };
 
   // ── DOM References ──
@@ -456,8 +458,114 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 5. CROPS METADATA & STYLING ENGINE
+  // 5. MULTI-LANGUAGE TRANSLATIONS & CROPS METADATA ENGINE
   // ─────────────────────────────────────────────────────────────────────────
+  const TRANSLATIONS = {
+    en: {
+      navAdvisory: 'Advisory',
+      navWeather: 'Weather Alerts',
+      navSoil: 'Soil Health',
+      navDoctor: 'Pest Doctor',
+      navMandi: 'Mandi Rates',
+      advisorBadge: 'Kharif 2025 Advisory Cycle • ICAR-KVK Validated Algorithm',
+      advisorTitle: 'Farmer’s Crop Advisor <span class="hindi-sub">| Precision Soil Intelligence</span>',
+      advisorSubtitle: 'Tailored agronomic guidance rooted in real-time district weather baselines, rainfall patterns, and lab-tested N-P-K soil health indicators.',
+      fieldDiagnosticsTitle: 'Field Climate & Soil Diagnostics',
+      fieldDiagnosticsSubtitle: 'Field Climate & Soil Diagnostics',
+      btnDefaults: 'Defaults',
+      btnRecommend: 'Get Best Crop Recommendations',
+      btnRecommendSub: 'Recommended under National Mission for Sustainable Agriculture (NMSA) parameters.',
+      recCropsTitle: 'Recommended Crops',
+      recCropsSub: 'Ranked based on Soil N-P-K match, thermal safety, and moisture indices.',
+      tabOverview: 'Overview',
+      tabMatrix: 'Agronomic Matrix',
+      helplineBannerTitle: 'Need Help Reading Your Soil Card or Sowing Calendar?',
+      helplineBannerDesc: 'Talk directly with a government agronomist in your native language (English, Hindi, Marathi). Free Toll-Free Service.',
+      locateKvkBtn: 'Locate Nearest KVK Centre',
+      btnFertCalc: '🧪 Compute Fertilizer Prescription',
+      searchPathologyBtn: 'Search Pathology',
+      diseaseFilterCrop: 'Filter by Crop:'
+    },
+    hi: {
+      navAdvisory: 'Advisory',
+      navWeather: 'मौसम अलर्ट',
+      navSoil: 'मिट्टी स्वास्थ्य',
+      navDoctor: 'कीट डॉक्टर',
+      navMandi: 'मंडी भाव',
+      advisorBadge: 'खरीफ 2025 कृषि सलाह चक्र • ICAR-KVK मान्य एल्गोरिथम',
+      advisorTitle: 'Farmer’s Crop Advisor <span class="hindi-sub">| फसल और मिट्टी सलाहकार</span>',
+      advisorSubtitle: 'वास्तविक समय जिला मौसम, वर्षा पैटर्न और प्रयोगशाला-परीक्षणित N-P-K मिट्टी संकेतकों पर आधारित सटीक मार्गदर्शन।',
+      fieldDiagnosticsTitle: 'खेती और मिट्टी की जानकारी',
+      fieldDiagnosticsSubtitle: 'फील्ड जलवायु और मिट्टी निदान',
+      btnDefaults: 'डिफ़ॉल्ट',
+      btnRecommend: 'सर्वोत्तम फसल सिफारिशें प्राप्त करें',
+      btnRecommendSub: 'राष्ट्रीय सतत कृषि मिशन (NMSA) मानकों के तहत अनुशंसित।',
+      recCropsTitle: 'अनुशंसित फसलें (Recommended Crops)',
+      recCropsSub: 'मिट्टी N-P-K मिलान, तापीय सुरक्षा और नमी सूचकांकों के आधार पर रैंक किया गया।',
+      tabOverview: 'अवलोकन',
+      tabMatrix: 'कृषि मैट्रिक्स',
+      helplineBannerTitle: 'क्या आपको मृदा स्वास्थ्य कार्ड या बुवाई कैलेंडर समझने में मदद चाहिए?',
+      helplineBannerDesc: 'अपनी मातृभाषा (हिंदी, मराठी, अंग्रेजी) में सीधे सरकारी कृषि विशेषज्ञ से बात करें। निःशुल्क सेवा।',
+      locateKvkBtn: 'निकटतम KVK केंद्र खोजें',
+      btnFertCalc: '🧪 Compute Fertilizer Prescription',
+      searchPathologyBtn: 'Search Pathology',
+      diseaseFilterCrop: 'फसल अनुसार चुनें:'
+    },
+    mr: {
+      navAdvisory: 'पीक सल्ला',
+      navWeather: 'हवामान अंदाज',
+      navSoil: 'मृदा आरोग्य',
+      navDoctor: 'कीड व रोग डॉक्टर',
+      navMandi: 'बाजार भाव',
+      advisorBadge: 'खरीप २०२५ कृषी सल्ला चक्र • ICAR-KVK प्रमाणित प्रणाली',
+      advisorTitle: 'शेतकरी पीक सल्लागार <span class="hindi-sub">| माती व हवामान आधारित मार्गदर्शन</span>',
+      advisorSubtitle: 'रिअल-टाइम जिल्हा हवामान, पावसाचे प्रमाण आणि लॅब-चाचणी N-P-K माती घटकांवर आधारित परिपूर्ण कृषी सल्ला.',
+      fieldDiagnosticsTitle: 'शेती आणि मातीची माहिती',
+      fieldDiagnosticsSubtitle: 'स्थानिक हवामान आणि माती परीक्षण',
+      btnDefaults: 'मूळ स्थिती',
+      btnRecommend: 'योग्य पीक शिफारसी मिळवा',
+      btnRecommendSub: 'राष्ट्रीय शाश्वत शेती अभियान (NMSA) मानकांनुसार शिफारस केलेले.',
+      recCropsTitle: 'शिफारस केलेली पिके (Recommended Crops)',
+      recCropsSub: 'मातीतील N-P-K घटक, उष्णता सुरक्षा आणि ओलावा निर्देशांकाच्या आधारे क्रमवारी.',
+      tabOverview: 'आढावा',
+      tabMatrix: 'कृषी मॅट्रिक्स',
+      helplineBannerTitle: 'मृदा आरोग्य पत्रिका किंवा पेरणी दिनदर्शिका समजून घेण्यासाठी मदत हवी आहे का?',
+      helplineBannerDesc: 'आपल्या स्वतःच्या भाषेत (मराठी, हिंदी, इंग्रजी) थेट सरकारी कृषी तज्ज्ञांशी बोला. मोफत टोल-फ्री सेवा.',
+      locateKvkBtn: 'जवळचे KVK केंद्र शोधा',
+      btnFertCalc: '🧪 अचूक खत मात्रा तपासा',
+      searchPathologyBtn: 'रोगाचे निदान शोधा',
+      diseaseFilterCrop: 'पिकानुसार फिल्टर करा:'
+    }
+  };
+
+  const CROP_TRANSLATIONS = {
+    rice: {
+      en: { name: 'Paddy (Indica Wet)', rationale: (n, rain) => `Your soil Nitrogen levels (${n} kg/ha) with regular monsoon rainfall (${rain} mm) provide exceptional conditions for rapid tillering and robust grain formation.` },
+      hi: { name: 'धान / Paddy (Indica Wet)', rationale: (n, rain) => `आपका उच्च मिट्टी नाइट्रोजन स्तर (${n} kg/ha) और नियमित मानसूनी वर्षा (${rain} mm) धान के कल्ले फूटने और दाना भराव के लिए सर्वोत्तम परिस्थितियाँ प्रदान करते हैं।` },
+      mr: { name: 'भात / धान (Indica Wet)', rationale: (n, rain) => `आपल्या शेतातील नत्राचे प्रमाण (${n} kg/ha) आणि मान्सून पाऊस (${rain} mm) भाताच्या फुटवे वाढीसाठी आणि दाणे भरण्यासाठी अत्यंत अनुकूल आहे.` }
+    },
+    cotton: {
+      en: { name: 'Cotton (Bt Hybrid)', rationale: (n, rain) => `Ideal for well-drained Black Cotton soil. Highly responsive to available potassium for fiber strength and superior boll weight.` },
+      hi: { name: 'कपास / Cotton (Bt Hybrid)', rationale: (n, rain) => `अच्छी जल निकासी वाली काली कपास मिट्टी के लिए आदर्श। रेशे की मजबूती और गूलर के वजन के लिए पोटाश के प्रति अत्यधिक उत्तरदायी।` },
+      mr: { name: 'कापूस / Cotton (Bt Hybrid)', rationale: (n, rain) => `चांगला निचरा होणाऱ्या काळ्या कसदार मातीसाठी आदर्श. धाग्याची मजबुती आणि बोंडाचे वजन वाढवण्यासाठी पोटॅशियम अत्यंत फायदेशीर ठरते.` }
+    },
+    maize: {
+      en: { name: 'Maize (Hybrid Feed)', rationale: (n, rain) => `Resilient crop choice with fast turnaround (90–105 days). Lower overall water risk if monsoon weakens midway.` },
+      hi: { name: 'मक्का / Maize (Hybrid Feed)', rationale: (n, rain) => `कम अवधि (90-105 दिन) वाली लचीली फसल। यदि मानसून बीच में कमजोर भी पड़ता है, तो भी फसल सुरक्षित रहती है।` },
+      mr: { name: 'मका / Maize (Hybrid Feed)', rationale: (n, rain) => `कमी कालावधीत (९०-१०५ दिवस) येणारे लवचिक पीक. मान्सूनमध्ये खंड पडला तरी पाण्याचा ताण सहज सहन करू शकते.` }
+    },
+    wheat: {
+      en: { name: 'Wheat (HD-2967)', rationale: (n, rain) => `Thrives in balanced loam soils with moderate soil fertility and structured irrigation schedules.` },
+      hi: { name: 'गेहूं / Wheat (HD-2967)', rationale: (n, rain) => `मध्यम उर्वरता और संरचित सिंचाई कार्यक्रम के साथ संतुलित दोमट मिट्टी में उत्कृष्ट पैदावार देता है।` },
+      mr: { name: 'गहू / Wheat (HD-2967)', rationale: (n, rain) => `मध्यम सुपीकता आणि वेळेवर पाणी व्यवस्थापनासह चांगल्या निचऱ्याच्या पोयटा जमिनीत उत्कृष्ट उत्पादन देते.` }
+    },
+    sugarcane: {
+      en: { name: 'Sugarcane (Co-86032)', rationale: (n, rain) => `Exceptional biomass potential under heavy clay soils with assured drainage and balanced NPK nourishment.` },
+      hi: { name: 'गन्ना / Sugarcane (Co-86032)', rationale: (n, rain) => `सुनिश्चित जल निकासी और संतुलित NPK पोषण के साथ भारी मिट्टी में असाधारण बायोमास और उच्च मिठास क्षमता।` },
+      mr: { name: 'ऊस / Sugarcane (Co-86032)', rationale: (n, rain) => `योग्य निचरा आणि संतुलित खत व्यवस्थापनासह भारी काळ्या जमिनीत भरघोस उत्पादन व उच्च साखर उतारा देणारे पीक.` }
+    }
+  };
+
   const AGRONOMIC_METADATA = {
     rice: {
       fullName: 'Paddy / धान (Indica Wet)',
@@ -521,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     sugarcane: {
       fullName: 'Sugarcane / गन्ना (Co-86032)',
-      seasonBadge: 'Annual Heavy',
+      seasonBadge: 'Perennial Cash',
       varieties: 'Co-86032 (Nira), Co-0265 (Phule 265)',
       yield: '110 – 130 Tons/Ha',
       yieldSub: 'High Cane Recovery',
@@ -538,12 +646,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getCropMeta(cropKey, fallbackProfile = {}) {
     const key = (cropKey || '').toLowerCase();
+    const lang = state.language || 'hi';
+    const ct = CROP_TRANSLATIONS[key] ? (CROP_TRANSLATIONS[key][lang] || CROP_TRANSLATIONS[key]['hi']) : null;
+    const base = AGRONOMIC_METADATA[key] || {};
+
     if (AGRONOMIC_METADATA[key]) {
-      return AGRONOMIC_METADATA[key];
+      return {
+        ...base,
+        fullName: ct ? ct.name : base.fullName,
+        rationale: ct ? ct.rationale : base.rationale
+      };
     }
     const cleanName = cropKey.charAt(0).toUpperCase() + cropKey.slice(1);
     return {
-      fullName: `${cleanName} / फसल (${fallbackProfile.cycle_days || 'Standard'})`,
+      fullName: ct ? ct.name : `${cleanName} / फसल (${fallbackProfile.cycle_days || 'Standard'})`,
       seasonBadge: 'Agro Recommended',
       varieties: `Certified Regional Varieties (${cleanName})`,
       yield: '30 – 40 Q/Ha',
@@ -555,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
       duration: fallbackProfile.cycle_days || '90 – 120 Days',
       durationSub: 'Season Duration',
       basalDose: 'Apply balanced NPK dose as per University guidelines.',
-      rationale: (n, rain) => `Strong agronomic fit for current field conditions with balanced soil test indices.`
+      rationale: ct ? ct.rationale : ((n, rain) => `Strong agronomic fit for current field conditions with balanced soil test indices.`)
     };
   }
 
@@ -568,11 +684,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const lang = state.language || 'hi';
+    const listenLabel = lang === 'en' ? '🔊 Listen' : (lang === 'mr' ? '🔊 ऐका / Listen' : '🔊 सुनिए / Listen');
+    const stopLabel = lang === 'en' ? '⏹️ Stop' : (lang === 'mr' ? '⏹️ थांबा / Stop' : '⏹️ रोकिए / Stop');
+
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
       if (activeSpeakingBtn) {
         activeSpeakingBtn.classList.remove('is-speaking');
-        activeSpeakingBtn.innerHTML = '🔊 सुनिए / Listen';
+        activeSpeakingBtn.innerHTML = listenLabel;
       }
       if (activeSpeakingBtn === btnElement) {
         activeSpeakingBtn = null;
@@ -585,27 +705,32 @@ document.addEventListener('DOMContentLoaded', () => {
     utterance.rate = 0.95;
     utterance.pitch = 1.0;
 
+    utterance.lang = lang === 'mr' ? 'mr-IN' : (lang === 'hi' ? 'hi-IN' : 'en-IN');
     const voices = window.speechSynthesis.getVoices();
-    const regionalVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('en-IN') || v.lang.includes('IN'));
+    let regionalVoice = null;
+    if (lang === 'mr') {
+      regionalVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi') || v.lang.includes('IN'));
+    } else if (lang === 'hi') {
+      regionalVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN'));
+    } else {
+      regionalVoice = voices.find(v => v.lang.includes('en-IN') || v.lang.includes('en-GB') || v.lang.includes('en-US'));
+    }
     if (regionalVoice) {
       utterance.voice = regionalVoice;
     }
 
     btnElement.classList.add('is-speaking');
-    btnElement.innerHTML = '⏹️ रोकिए / Stop';
+    btnElement.innerHTML = stopLabel;
     activeSpeakingBtn = btnElement;
 
-    utterance.onend = () => {
+    const resetBtn = () => {
       btnElement.classList.remove('is-speaking');
-      btnElement.innerHTML = '🔊 सुनिए / Listen';
+      btnElement.innerHTML = listenLabel;
       activeSpeakingBtn = null;
     };
 
-    utterance.onerror = () => {
-      btnElement.classList.remove('is-speaking');
-      btnElement.innerHTML = '🔊 सुनिए / Listen';
-      activeSpeakingBtn = null;
-    };
+    utterance.onend = resetBtn;
+    utterance.onerror = resetBtn;
 
     window.speechSynthesis.speak(utterance);
   }
@@ -624,7 +749,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const staticVoiceBtn = document.getElementById('best-voice-btn');
   if (staticVoiceBtn) {
     staticVoiceBtn.addEventListener('click', () => {
-      toggleSpeech('सिफारिश फसल: धान Indica Wet. मैच 94 प्रतिशत. अनुशंसित किस्में: MTU-1010, इंद्रायणी, या PKV-HMT. अपेक्षित उपज: 44 से 48 क्विंटल प्रति हेक्टेयर.', staticVoiceBtn);
+      const lang = state.language || 'hi';
+      const speech = lang === 'en'
+        ? 'Recommended Crop: Paddy Indica Wet. Suitability Match 94 percent. Recommended varieties: MTU-1010, Indrayani, or PKV-HMT. Expected yield: 44 to 48 Quintals per Hectare.'
+        : (lang === 'mr'
+          ? 'शिफारस केलेले पीक: भात Indica Wet. मॅच ९४ टक्के. शिफारस केलेले वाण: MTU-१०१०, इंद्रायणी किंवा PKV-HMT. अपेक्षित उत्पादन: ४४ ते ४८ क्विंटल प्रति हेक्टर.'
+          : 'सिफारिश फसल: धान Indica Wet. मैच 94 प्रतिशत. अनुशंसित किस्में: MTU-1010, इंद्रायणी, या PKV-HMT. अपेक्षित उपज: 44 से 48 क्विंटल प्रति हेक्टेयर.');
+      toggleSpeech(speech, staticVoiceBtn);
     });
   }
 
@@ -638,14 +769,130 @@ document.addEventListener('DOMContentLoaded', () => {
   const alt1VoiceBtn = document.getElementById('alt-1-voice-btn');
   if (alt1VoiceBtn) {
     alt1VoiceBtn.addEventListener('click', () => {
-      toggleSpeech('वैकल्पिक फसल 1: कपास Bt Hybrid. मैच 82 प्रतिशत. काली मिट्टी के लिए उपयुक्त. पानी की जरूरत 500 से 700 मिलीमीटर.', alt1VoiceBtn);
+      const lang = state.language || 'hi';
+      const speech = lang === 'en'
+        ? 'Alternative crop 1: Cotton Bt Hybrid. Match 82 percent. Ideal for well-drained Black Cotton soil.'
+        : (lang === 'mr'
+          ? 'पर्यायी पीक १: कापूस Bt Hybrid. मॅच ८२ टक्के. काळ्या कसदार मातीसाठी योग्य.'
+          : 'वैकल्पिक फसल 1: कपास Bt Hybrid. मैच 82 प्रतिशत. काली मिट्टी के लिए उपयुक्त.');
+      toggleSpeech(speech, alt1VoiceBtn);
     });
   }
 
   const alt2VoiceBtn = document.getElementById('alt-2-voice-btn');
   if (alt2VoiceBtn) {
     alt2VoiceBtn.addEventListener('click', () => {
-      toggleSpeech('वैकल्पिक फसल 2: मक्का Hybrid Feed. मैच 74 प्रतिशत. 90 से 105 दिनों में तैयार.', alt2VoiceBtn);
+      const lang = state.language || 'hi';
+      const speech = lang === 'en'
+        ? 'Alternative crop 2: Maize Hybrid Feed. Match 74 percent. Fast turnaround in 90 to 105 days.'
+        : (lang === 'mr'
+          ? 'पर्यायी पीक २: मका Hybrid Feed. मॅच ७४ टक्के. ९० ते १०५ दिवसांत तयार होणारे पीक.'
+          : 'वैकल्पिक फसल 2: मक्का Hybrid Feed. मैच 74 प्रतिशत. 90 से 105 दिनों में तैयार.');
+      toggleSpeech(speech, alt2VoiceBtn);
+    });
+  }
+
+  // ── Language Switcher Controller ──
+  const langSelect = document.getElementById('lang-select');
+
+  function applyLanguage(lang) {
+    if (!TRANSLATIONS[lang]) lang = 'hi';
+    state.language = lang;
+    localStorage.setItem('agrisense_lang', lang);
+    if (langSelect && langSelect.value !== lang) {
+      langSelect.value = lang;
+    }
+
+    const t = TRANSLATIONS[lang];
+
+    // Navigation Tabs
+    const tabCrop = document.getElementById('tab-btn-crop');
+    const tabWeather = document.getElementById('tab-btn-weather');
+    const tabFert = document.getElementById('tab-btn-fert');
+    const tabDoctor = document.getElementById('tab-btn-doctor');
+    const tabSoil = document.getElementById('tab-btn-soil');
+    if (tabCrop) tabCrop.textContent = t.navAdvisory;
+    if (tabWeather) tabWeather.textContent = t.navWeather;
+    if (tabFert) tabFert.textContent = t.navSoil;
+    if (tabDoctor) tabDoctor.textContent = t.navDoctor;
+    if (tabSoil) tabSoil.textContent = t.navMandi;
+
+    // Hero Section
+    const heroTitle = document.querySelector('.hero-title');
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    const heroBadge = document.querySelector('.hero-cycle-badge');
+    if (heroTitle) heroTitle.innerHTML = t.advisorTitle;
+    if (heroSubtitle) heroSubtitle.textContent = t.advisorSubtitle;
+    if (heroBadge) heroBadge.innerHTML = `<span class="leaf-dot">🌱</span> ${t.advisorBadge}`;
+
+    // Field Card
+    const fieldTitle = document.querySelector('.field-card-title');
+    const fieldSub = document.querySelector('.field-card-sub');
+    const btnReset = document.getElementById('btn-reset-defaults');
+    if (fieldTitle) fieldTitle.textContent = t.fieldDiagnosticsTitle;
+    if (fieldSub) fieldSub.textContent = t.fieldDiagnosticsSubtitle;
+    if (btnReset) {
+      btnReset.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg> ${t.btnDefaults}`;
+    }
+
+    // Recommend Button
+    const btnPredict = document.getElementById('btn-predict-crops');
+    if (btnPredict) {
+      const btnText = btnPredict.querySelector('.btn-text');
+      if (btnText) btnText.textContent = t.btnRecommend;
+    }
+    const nmsaDisc = document.querySelector('.nmsa-disclaimer');
+    if (nmsaDisc) nmsaDisc.textContent = t.btnRecommendSub;
+
+    // Results Header
+    const resultsHeading = document.querySelector('.results-heading');
+    const resultsSub = document.querySelector('.results-subheading');
+    if (resultsHeading) resultsHeading.innerHTML = `<span class="live-bullet">●</span> ${t.recCropsTitle}`;
+    if (resultsSub) resultsSub.textContent = t.recCropsSub;
+
+    // View Pills
+    const viewOverview = document.getElementById('view-overview-btn');
+    const viewMatrix = document.getElementById('view-matrix-btn');
+    if (viewOverview) viewOverview.innerHTML = `<span>⊞</span> ${t.tabOverview}`;
+    if (viewMatrix) viewMatrix.innerHTML = `<span>☷</span> ${t.tabMatrix}`;
+
+    // Helpline Banner
+    const helplineTitle = document.querySelector('.helpline-text h4');
+    const helplineDesc = document.querySelector('.helpline-text p');
+    const locateBtn = document.querySelector('.helpline-locate-btn');
+    if (helplineTitle) helplineTitle.textContent = t.helplineBannerTitle;
+    if (helplineDesc) helplineDesc.textContent = t.helplineBannerDesc;
+    if (locateBtn) locateBtn.textContent = t.locateKvkBtn;
+
+    // Fertilizer Calc Button
+    const fertBtn = document.getElementById('btn-calc-fert');
+    if (fertBtn) {
+      const bText = fertBtn.querySelector('.btn-text');
+      if (bText) bText.textContent = t.btnFertCalc;
+    }
+
+    // Disease Doctor Button
+    const btnSearchDis = document.getElementById('btn-search-disease');
+    if (btnSearchDis) btnSearchDis.textContent = t.searchPathologyBtn;
+    const docCropLbl = document.querySelector('label[for="doctor-crop-select"]');
+    if (docCropLbl) docCropLbl.textContent = t.diseaseFilterCrop;
+
+    // Voice button labels
+    document.querySelectorAll('.btn-voice-readout').forEach(btn => {
+      if (!btn.classList.contains('is-speaking')) {
+        btn.innerHTML = lang === 'en' ? '🔊 Listen' : (lang === 'mr' ? '🔊 ऐका / Listen' : '🔊 सुनिए / Listen');
+      }
+    });
+
+    // Re-render recommendations if loaded
+    if (state.lastRecommendationsData) {
+      renderRecommendations(state.lastRecommendationsData);
+    }
+  }
+
+  if (langSelect) {
+    langSelect.addEventListener('change', (e) => {
+      applyLanguage(e.target.value);
     });
   }
 
@@ -700,6 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function renderRecommendations(data, currentN = 92, currentRain = 210) {
+    state.lastRecommendationsData = data;
     const recs = data.recommendations || [];
     if (recs.length === 0) return;
 
@@ -1344,6 +1592,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 10. BOOTSTRAP INITIALIZATION
   // ─────────────────────────────────────────────────────────────────────────
   async function initApp() {
+    applyLanguage(state.language);
     // 1. Fetch crops list
     try {
       const res = await apiFetch('/crops');

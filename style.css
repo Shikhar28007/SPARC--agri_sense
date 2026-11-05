@@ -211,15 +211,53 @@ button {
 .lang-selector {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-body);
   background: var(--bg-subtle);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
-  padding: 6px 10px;
+  padding: 3px 8px;
   cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.lang-selector:hover,
+.lang-selector:focus-within {
+  border-color: var(--pine-primary);
+  background: #FFFFFF;
+  box-shadow: 0 1px 4px rgba(28, 74, 50, 0.08);
+}
+
+.lang-icon {
+  font-weight: 700;
+  color: var(--pine-primary);
+  font-size: 13px;
+  user-select: none;
+}
+
+.lang-dropdown {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 2px 2px;
+}
+
+.lang-dropdown:focus {
+  outline: none;
+}
+
+.lang-dropdown option {
+  background: #FFFFFF;
+  color: #1A2C22;
+  font-weight: 500;
+  padding: 6px 10px;
 }
 
 .helpline-card {

@@ -46,8 +46,13 @@
 
       <!-- Right Utility Controls -->
       <div class="header-actions">
-        <div class="lang-selector" title="Language selection">
-          <span class="lang-icon">文A</span> English / हिंदी / मराठी
+        <div class="lang-selector" title="Select Language / भाषा चुनें / भाषा निवडा">
+          <span class="lang-icon" aria-hidden="true">文A</span>
+          <select id="lang-select" class="lang-dropdown" aria-label="Select Language" title="Select Language">
+            <option value="en">English</option>
+            <option value="hi" selected>हिंदी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+          </select>
         </div>
         <div class="helpline-card">
           <div class="helpline-info">
