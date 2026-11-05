@@ -234,6 +234,7 @@ button {
   font-weight: 700;
   color: var(--pine-primary);
   font-size: 13px;
+  -webkit-user-select: none;
   user-select: none;
 }
 
