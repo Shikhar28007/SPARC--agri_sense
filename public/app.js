@@ -426,41 +426,156 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // GPS Geolocation
-  if (btnDetectGps) {
-    btnDetectGps.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
-        return;
+  // ─────────────────────────────────────────────────────────────────────────
+  // AUTOMATIC LIVE WEATHER & GPS RESOLUTION ENGINE
+  // ─────────────────────────────────────────────────────────────────────────
+  async function autoDetectWeather(isUserAction = false) {
+    if (isUserAction && btnDetectGps) {
+      btnDetectGps.innerHTML = '<span class="gps-dot is-pulsing"></span> 📡 Locating...';
+    }
+
+    const setWeatherData = (city, region, lat, lon, temp, humidity, rainfall, conditionIcon = '☀️', conditionText = 'Normal') => {
+      state.currentCity = city;
+      state.currentWeather = { temperature: temp, humidity, rainfall };
+
+      // Update Floating Zone Box
+      if (zoneLabel) {
+        zoneLabel.textContent = region ? `Agro-Climatic Zone: ${city}, ${region} (${lat ? lat.toFixed(2) + '° N, ' + lon.toFixed(2) + '° E' : ''})` : `Agro-Climatic Zone: ${city}`;
       }
-      if (zoneLabel) zoneLabel.textContent = 'Detecting GPS Coordinates...';
+      if (telemetryTemp) telemetryTemp.textContent = `${temp.toFixed(1)}°C`;
+      if (zoneMonsoonText) zoneMonsoonText.textContent = `${Math.round(rainfall)} mm`;
+      
+      const weatherIconEl = document.querySelector('.zone-weather-icon');
+      if (weatherIconEl) weatherIconEl.textContent = conditionIcon;
+
+      // Update Form Sliders & Badges
+      if (sliders.temp) {
+        sliders.temp.value = temp;
+        if (displays.temp) displays.temp.textContent = temp.toFixed(1);
+      }
+      if (sliders.rain) {
+        sliders.rain.value = rainfall;
+        if (displays.rain) displays.rain.textContent = Math.round(rainfall);
+      }
+      if (sliders.hum) {
+        sliders.hum.value = humidity;
+        const valHum = document.getElementById('val-hum');
+        if (valHum) valHum.textContent = Math.round(humidity);
+      }
+
+      updateConditionPill(temp);
+
+      // If state matches one of the soil registry states, auto-sync soil dropdown
+      if (stateDropdown && region) {
+        for (let i = 0; i < stateDropdown.options.length; i++) {
+          if (stateDropdown.options[i].value.toLowerCase().includes(region.toLowerCase()) || region.toLowerCase().includes(stateDropdown.options[i].value.toLowerCase())) {
+            stateDropdown.selectedIndex = i;
+            loadSoilStateProfile(stateDropdown.options[i].value);
+            break;
+          }
+        }
+      }
+
+      // Add or update Auto chip in district row
+      const districtChipsContainer = document.getElementById('district-chips');
+      if (districtChipsContainer && city) {
+        let existingAutoChip = document.getElementById('auto-district-chip');
+        if (!existingAutoChip) {
+          existingAutoChip = document.createElement('button');
+          existingAutoChip.type = 'button';
+          existingAutoChip.id = 'auto-district-chip';
+          existingAutoChip.className = 'dist-chip active';
+          districtChipsContainer.insertBefore(existingAutoChip, districtChipsContainer.firstChild);
+        }
+        existingAutoChip.textContent = `📍 ${city}`;
+        existingAutoChip.dataset.city = city;
+        existingAutoChip.dataset.temp = temp;
+        existingAutoChip.dataset.rain = rainfall;
+        existingAutoChip.dataset.zone = region ? `${city}, ${region}` : city;
+
+        districtChips.forEach(c => {
+          if (c !== existingAutoChip) c.classList.remove('active');
+        });
+      }
+
+      if (btnDetectGps) {
+        btnDetectGps.innerHTML = '<span class="gps-dot"></span> 📡 Auto GPS';
+      }
+    };
+
+    // 1. Try Browser HTML5 Geolocation
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
           const { latitude, longitude } = pos.coords;
           try {
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation`);
-            const data = await res.json();
-            if (data && data.current) {
-              const temp = data.current.temperature_2m;
-              const rain = data.current.precipitation || 0;
-              if (telemetryTemp) telemetryTemp.textContent = `${temp.toFixed(1)}°C`;
-              if (sliders.temp) {
-                sliders.temp.value = temp;
-                if (displays.temp) displays.temp.textContent = temp.toFixed(1);
-              }
-              if (zoneLabel) zoneLabel.textContent = `GPS: Lat ${latitude.toFixed(2)}°, Lon ${longitude.toFixed(2)}°`;
-              updateConditionPill(temp);
+            // High-resolution forecast from Open-Meteo
+            const omUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=precipitation_sum&timezone=auto`;
+            const omPromise = fetch(omUrl).then(r => r.json());
+            
+            // Client reverse geocoding via BigDataCloud
+            const geoUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`;
+            const geoPromise = fetch(geoUrl).then(r => r.json()).catch(() => null);
+
+            const [omData, geoData] = await Promise.all([omPromise, geoPromise]);
+
+            let cityName = (geoData && (geoData.city || geoData.locality || geoData.principalSubdivision)) || 'Local Field';
+            let regionName = (geoData && geoData.principalSubdivision) || '';
+
+            if (omData && omData.current) {
+              const temp = omData.current.temperature_2m;
+              const hum = omData.current.relative_humidity_2m || 70;
+              const wCode = omData.current.weather_code || 0;
+              
+              // Calibrated seasonal monsoon rainfall calculation
+              const dailyRainSum = (omData.daily && omData.daily.precipitation_sum) ? omData.daily.precipitation_sum.reduce((a, b) => a + (b || 0), 0) : 10;
+              const seasonalRain = Math.max(75, Math.min(380, Math.round(dailyRainSum * 6.5 + 40)));
+
+              const icon = (wCode >= 51 && wCode <= 67) ? '🌧️' : (wCode >= 1 && wCode <= 3 ? '⛅' : (wCode >= 95 ? '⛈️' : '☀️'));
+
+              setWeatherData(cityName, regionName, latitude, longitude, temp, hum, seasonalRain, icon, 'Live GPS');
+              return;
             }
           } catch (e) {
-            if (zoneLabel) zoneLabel.textContent = 'Agro-Climatic Zone: Western Maharashtra (Zone IX)';
+            console.warn('GPS weather resolution error:', e);
           }
         },
-        (err) => {
-          alert('Could not access location. Please check browser permissions.');
-          if (zoneLabel) zoneLabel.textContent = 'Agro-Climatic Zone: Western Maharashtra (Zone IX)';
-        }
+        async (err) => {
+          // 2. Geolocation denied or unavailable -> Fall back to IP-based Geolocation
+          try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            const ipData = await ipRes.json();
+            if (ipData && ipData.city) {
+              const lat = ipData.latitude;
+              const lon = ipData.longitude;
+              const city = ipData.city;
+              const region = ipData.region;
+              
+              const omUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code&daily=precipitation_sum&timezone=auto`;
+              const omRes = await fetch(omUrl);
+              const omData = await omRes.json();
+
+              if (omData && omData.current) {
+                const temp = omData.current.temperature_2m;
+                const hum = omData.current.relative_humidity_2m || 65;
+                const dailySum = (omData.daily && omData.daily.precipitation_sum) ? omData.daily.precipitation_sum.reduce((a, b) => a + (b || 0), 0) : 12;
+                const rain = Math.max(70, Math.min(380, Math.round(dailySum * 6.5 + 40)));
+                setWeatherData(city, region, lat, lon, temp, hum, rain, '⛅', 'IP Auto');
+                return;
+              }
+            }
+          } catch (e2) {
+            // Default to Pune fallback silently
+          }
+          if (btnDetectGps) btnDetectGps.innerHTML = '<span class="gps-dot"></span> 📡 Auto GPS';
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
       );
-    });
+    }
+  }
+
+  if (btnDetectGps) {
+    btnDetectGps.addEventListener('click', () => autoDetectWeather(true));
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -670,6 +785,402 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'आपल्या शोधाशी जुळणारा कोणताही रोग आढळला नाही. कृपया इतर पीक निवडा किंवा वेगळे लक्षण शोधा.',
       listenBtnText: '🔊 ऐका / Listen',
       shareBtnText: '📲 WhatsApp शेअर'
+    },
+    pa: {
+      navAdvisory: 'ਫਸਲ ਸਲਾਹ (Advisory)',
+      navWeather: 'ਮੌਸਮ ਚੇਤਾਵਨੀ',
+      navSoil: 'ਖਾਦ ਸਿਫਾਰਸ਼ (Fertilizer)',
+      navDoctor: 'ਕੀਟ ਡਾਕਟਰ (Pest Doctor)',
+      navMandi: 'ਮਿੱਟੀ ਸਿਹਤ ਰਜਿਸਟਰੀ',
+      advisorBadge: 'ਖਰੀਫ਼ 2025 ਖੇਤੀ ਸਲਾਹ • ICAR-KVK ਪ੍ਰਮਾਣਿਤ',
+      advisorTitle: 'ਕਿਸਾਨ ਫਸਲ ਸਲਾਹਕਾਰ <span class="hindi-sub">| ਮਿੱਟੀ ਅਤੇ ਮੌਸਮ ਆਧਾਰਿਤ ਖੇਤੀ</span>',
+      advisorSubtitle: 'ਤੁਹਾਡੇ ਖੇਤ ਦੀ ਮਿੱਟੀ ਦੇ N-P-K ਟੈਸਟ, ਤਾਪਮਾਨ ਅਤੇ ਮੀਂਹ ਦੇ ਆਧਾਰ ਤੇ ਸਭ ਤੋਂ ਵਧੀਆ ਫਸਲ ਸਲਾਹ।',
+      fieldDiagnosticsTitle: 'ਖੇਤ ਅਤੇ ਮਿੱਟੀ ਦੀ ਜਾਣਕਾਰੀ',
+      fieldDiagnosticsSubtitle: 'ਜ਼ਮੀਨ ਦੀ ਜਾਂਚ ਅਤੇ ਮੌਸਮ ਨਿਦਾਨ',
+      btnDefaults: 'ਮੂਲ ਸਥਿਤੀ',
+      btnRecommend: 'ਸਰਵੋਤਮ ਫਸਲ ਸਿਫਾਰਸ਼ਾਂ ਪ੍ਰਾਪਤ ਕਰੋ',
+      btnRecommendSub: 'ਨੈਸ਼ਨਲ ਮਿਸ਼ਨ ਫਾਰ ਸਸਟੇਨੇਬਲ ਐਗਰੀਕਲਚਰ (NMSA) ਅਨੁਸਾਰ।',
+      recCropsTitle: 'ਸਿਫਾਰਸ਼ ਕੀਤੀਆਂ ਫਸਲਾਂ (Recommended Crops)',
+      recCropsSub: 'ਮਿੱਟੀ N-P-K ਮੇਲ ਅਤੇ ਮੌਸਮ ਅਨੁਸਾਰ ਦਰਜਾਬੰਦੀ।',
+      tabOverview: 'ਸੰਖੇਪ',
+      tabMatrix: 'ਖੇਤੀ ਮੈਟ੍ਰਿਕਸ',
+      helplineBannerTitle: 'ਕੀ ਤੁਹਾਨੂੰ ਮਿੱਟੀ ਕਾਰਡ ਜਾਂ ਬਿਜਾਈ ਕੈਲੰਡਰ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਚਾਹੀਦੀ ਹੈ?',
+      helplineBannerDesc: 'ਸਰਕਾਰੀ ਖੇਤੀਬਾੜੀ ਮਾਹਿਰ ਨਾਲ ਆਪਣੀ ਮਾਤ ਭਾਸ਼ਾ (ਪੰਜਾਬੀ, ਹਿੰਦੀ, ਅੰਗਰੇਜ਼ੀ) ਵਿੱਚ ਗੱਲ ਕਰੋ। ਮੁਫ਼ਤ ਟੋਲ-ਫ੍ਰੀ ਸੇਵਾ।',
+      locateKvkBtn: 'ਨੇੜਲਾ KVK ਕੇਂਦਰ ਲੱਭੋ',
+      btnFertCalc: '🧪 ਖਾਦ ਦੀ ਮਾਤਰਾ ਗਿਣੋ',
+      searchPathologyBtn: 'ਬਿਮਾਰੀ ਦਾ ਹੱਲ ਲੱਭੋ',
+      diseaseFilterCrop: 'ਫਸਲ ਅਨੁਸਾਰ ਚੁਣੋ:',
+      subtabAdvisory: 'ਖੇਤੀ ਮਾਹਿਰ ਸਲਾਹ (Agro Advisory)',
+      subtabSpectrum: 'NPK ਮਿੱਟੀ ਸਿਹਤ ਸਪੈਕਟ੍ਰਮ',
+      subtabRecords: 'ਪਿਛਲੇ ਸੀਜ਼ਨ ਦੇ ਰਿਕਾਰਡ',
+      lblTargetCrop: '🎯 ਤੁਸੀਂ ਕਿਹੜੀ ਫਸਲ ਉਗਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ? (ਇੱਛਤ ਫਸਲ)',
+      badgeTargetCropOpt: 'ਵਿਕਲਪਿਕ / AI ਜਾਂਚ',
+      hintTargetCrop: 'ਜੇ ਤੁਹਾਡੇ ਮਨ ਵਿੱਚ ਕੋਈ ਖਾਸ ਫਸਲ ਹੈ ਤਾਂ ਚੁਣੋ। SPARC AI ਜਾਂਚੇਗਾ ਕਿ ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਇਸਦੇ ਅਨੁਕੂਲ ਹੈ ਜਾਂ ਨਹੀਂ।',
+      optAutoRecommend: '✨ ਸਭ ਤੋਂ ਵਧੀਆ AI ਸਿਫਾਰਸ਼ (Auto-Recommend)',
+      targetViableTitle: '✅ ਖੇਤੀ ਲਈ ਢੁਕਵਾਂ: ਤੁਹਾਡੀ ਜ਼ਮੀਨ {crop} ਦੀ ਖੇਤੀ ਲਈ ਬਿਲਕੁਲ ਸਹੀ ਹੈ!',
+      targetRiskyTitle: '⚠️ ਖੇਤੀ ਜੋਖਮ ਚੇਤਾਵਨੀ: ਇਸ ਖੇਤ ਵਿੱਚ {crop} ਦੀ ਕਾਸ਼ਤ ਵਿੱਚ ਵੱਡਾ ਜੋਖਮ ਹੈ',
+      preferredHeader: '🌟 ਸਿਫਾਰਸ਼ ਕੀਤੀ ਬਿਹਤਰ ਫਸਲ (Recommended Preferred Crop):',
+      preferredWhyLabel: '💡 ਇਹ ਫਸਲ ਕਿਉਂ ਬਿਹਤਰ ਹੈ:',
+      rescueToggleLabel: '🛠️ ਜੇਕਰ ਤੁਸੀਂ ਫਿਰ ਵੀ {crop} ਲਗਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ: ਬਚਾਅ ਉਪਾਅ ਦੇਖੋ ▼',
+      heroChoiceBadge: '⭐ #1 ਤੁਹਾਡੇ ਖੇਤ ਲਈ ਸਭ ਤੋਂ ਵਧੀਆ ਚੋਣ (Best Choice)',
+      heroConfidenceChip: 'ਉੱਚ ਸ਼ੁੱਧਤਾ (High Confidence)',
+      recVarietiesPrefix: 'ਸਿਫਾਰਸ਼ ਕੀਤੀਆਂ ਉੱਨਤ ਕਿਸਮਾਂ: ',
+      gaugeMatch: 'ਮੇਲ ਪ੍ਰਤੀਸ਼ਤ',
+      gaugeFit: 'ਖੇਤ ਲਈ ਬਿਲਕੁਲ ਢੁਕਵਾਂ',
+      whyFitsTitle: 'ਇਹ ਫਸਲ ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਲਈ ਕਿਉਂ ਸਹੀ ਹੈ:',
+      lblYield: '🌾 ਅਨੁਮਾਨਿਤ ਝਾੜ',
+      lblWater: '💧 ਪਾਣੀ ਦੀ ਲੋੜ',
+      lblPrice: '₹ ਮੰਡੀ ਭਾਅ ਅੰਦਾਜ਼ਾ',
+      lblDuration: '⏱️ ਪੱਕਣ ਦਾ ਸਮਾਂ',
+      lblBasalDose: 'ਬਿਜਾਈ ਵੇਲੇ ਖਾਦ:',
+      calendarLink: 'ਬਿਜਾਈ ਅਤੇ ਖਾਦ ਕੈਲੰਡਰ ਦੇਖੋ →',
+      altTag1: 'ਬਦਲਵੀਂ ਫਸਲ #1',
+      altTag2: 'ਬਦਲਵੀਂ ਫਸਲ #2',
+      altMatchText: 'ਮੇਲ',
+      altLblWater: '💧 ਪਾਣੀ ਦੀ ਲੋੜ:',
+      altLblYield: '🌾 ਅਨੁਮਾਨਿਤ ਝਾੜ:',
+      altLblRisk: '📈 ਮੰਡੀ ਜੋਖਮ:',
+      altFertLink: 'ਖਾਦ ਪੈਕੇਜ >',
+      pestDoctorTitle: '🩺 ਪੌਦਿਆਂ ਦੀਆਂ ਬਿਮਾਰੀਆਂ ਦਾ ਡਾਕਟਰ (Pest Doctor)',
+      pestDoctorSub: 'ਜੈਵਿਕ ਕੰਟਰੋਲ, ਕੀਟਨਾਸ਼ਕ ਅਤੇ ਲਾਈਵ ਮੌਸਮ ਚੇਤਾਵਨੀਆਂ ਸਹਿਤ 68+ ਬਿਮਾਰੀਆਂ ਦਾ ਹੱਲ',
+      symptomTapLabel: '👀 ਪੌਦੇ ਤੇ ਕੀ ਲੱਛਣ ਦਿਖ ਰਹੇ ਹਨ? (ਚੁਣੋ):',
+      diagSymptoms: 'ਬਿਮਾਰੀ ਦੇ ਲੱਛਣ (Diagnostic Symptoms)',
+      bioControl: 'ਜੈਵਿਕ ਅਤੇ ਕੁਦਰਤੀ ਕੰਟਰੋਲ (Biological Control)',
+      chemControl: 'ਰਸਾਇਣਕ ਉਪਚਾਰ (Chemical Treatment)',
+      noPathogensTitle: 'ਕੋਈ ਬਿਮਾਰੀ ਨਹੀਂ ਮਿਲੀ',
+      noPathogensDesc: 'ਤੁਹਾਡੀ ਖੋਜ ਨਾਲ ਕੋਈ ਬਿਮਾਰੀ ਮੇਲ ਨਹੀਂ ਖਾਂਦੀ।',
+      listenBtnText: '🔊 ਸੁਣੋ / Listen',
+      shareBtnText: '📲 WhatsApp ਸ਼ੇਅਰ'
+    },
+    gu: {
+      navAdvisory: 'પાક સલાહ (Advisory)',
+      navWeather: 'હવામાન ચેતવણી',
+      navSoil: 'ખાતર ભલામણ (Fertilizer)',
+      navDoctor: 'જીવાત-રોગ ડોક્ટર (Pest Doctor)',
+      navMandi: 'જમીન આરોગ્ય રજિસ્ટ્રી',
+      advisorBadge: 'ખરીફ 2025 કૃષિ સલાહ • ICAR-KVK માન્ય',
+      advisorTitle: 'ખેડૂત પાક સલાહકાર <span class="hindi-sub">| જમીન અને હવામાન આધારિત માર્ગદર્શન</span>',
+      advisorSubtitle: 'રીઅલ-ટાઇમ હવામાન અને N-P-K જમીન ચકાસણી પર આધારિત ચોક્કસ કૃષિ માર્ગદર્શન.',
+      fieldDiagnosticsTitle: 'ખેતર અને જમીનની વિગતો',
+      fieldDiagnosticsSubtitle: 'જમીન ચકાસણી અને હવામાન નિદાન',
+      btnDefaults: 'મૂળ સ્થિતિ',
+      btnRecommend: 'શ્રેષ્ઠ પાક ભલામણો મેળવો',
+      btnRecommendSub: 'રાષ્ટ્રીય ટકાઉ કૃષિ મિશન (NMSA) ધોરણો મુજબ ભલામણ.',
+      recCropsTitle: 'ભલામણ કરેલ પાકો (Recommended Crops)',
+      recCropsSub: 'જમીન N-P-K ઘટકો અને ભેજના આધારે ક્રમ.',
+      tabOverview: 'વિહંગાવલોકન',
+      tabMatrix: 'કૃષિ મેટ્રિક્સ',
+      helplineBannerTitle: 'સોઇલ હેલ્થ કાર્ડ અથવા વાવણી કેલેન્ડરમાં મદદ જોઈએ છે?',
+      helplineBannerDesc: 'તમારી પોતાની ભાષામાં સરકારી કૃષિ નિષ્ણાત સાથે સીધી વાત કરો. મફત ટોલ-ફ્રી સેવા.',
+      locateKvkBtn: 'નજીકનું KVK કેન્દ્ર શોધો',
+      btnFertCalc: '🧪 ખાતર માત્રા ગણતરી કરો',
+      searchPathologyBtn: 'રોગ નિદાન શોધો',
+      diseaseFilterCrop: 'પાક અનુસાર પસંદ કરો:',
+      subtabAdvisory: 'કૃષિ નિષ્ણાત સલાહ (Agro Advisory)',
+      subtabSpectrum: 'NPK જમીન આરોગ્ય સ્પેક્ટ્રમ',
+      subtabRecords: 'પાછલી સિઝનના રેકોર્ડ્સ',
+      lblTargetCrop: '🎯 તમે કયો પાક વાવવા માંગો છો? (ઇચ્છિત પાક)',
+      badgeTargetCropOpt: 'વૈકલ્પિક / AI ચકાસણી',
+      hintTargetCrop: 'જો તમારા મનમાં કોઈ ચોક્કસ પાક હોય તો તે પસંદ કરો. SPARC AI તપાસશે કે જમીન તેના માટે યોગ્ય છે કે નહીં.',
+      optAutoRecommend: '✨ શ્રેષ્ઠ AI ભલામણ (Auto-Recommend)',
+      targetViableTitle: '✅ ખેતી માટે યોગ્ય: આપની જમીન {crop} ની ખેતી માટે એકદમ અનુકૂળ છે!',
+      targetRiskyTitle: '⚠️ પાક જોખમ ચેતવણી: આ ખેતરમાં {crop} ના વાવેતરમાં મોટો જોખમ રહેલો છે',
+      preferredHeader: '🌟 ભલામણ કરેલ પસંદગીનો ઉત્તમ પાક (Preferred Choice):',
+      preferredWhyLabel: '💡 આ પાક કેમ વધુ સારો વિકલ્પ છે:',
+      rescueToggleLabel: '🛠️ જો આપ છતાં પણ {crop} વાવવા માંગો છો: બચાવ ઉપાયો જુઓ ▼',
+      heroChoiceBadge: '⭐ #1 આપના ખેતર માટે શ્રેષ્ઠ પસંદગી (Best Choice)',
+      heroConfidenceChip: 'ઉચ્ચ ચોકસાઈ (High Confidence)',
+      recVarietiesPrefix: 'ભલામણ કરેલ સુધારેલી જાતો: ',
+      gaugeMatch: 'મેળ ખાવાની ટકાવારી',
+      gaugeFit: 'ખેતર માટે સંપૂર્ણ અનુકૂળ',
+      whyFitsTitle: 'આ પાક તમારી જમીન માટે કેમ યોગ્ય છે:',
+      lblYield: '🌾 અપેક્ષિત ઉત્પાદન',
+      lblWater: '💧 પાણીની જરૂરિયાત',
+      lblPrice: '₹ બજાર ભાવ અંદાજ',
+      lblDuration: '⏱️ પાકનો સમયગાળો',
+      lblBasalDose: 'વાવણી વખતે ખાતર:',
+      calendarLink: 'વાવણી અને ખાતર કેલેન્ડર જુઓ →',
+      altTag1: 'વૈકલ્પિક પાક #1',
+      altTag2: 'વૈકલ્પિક પાક #2',
+      altMatchText: 'મેચ',
+      altLblWater: '💧 પાણીની જરૂરિયાત:',
+      altLblYield: '🌾 અંદાજિત ઉત્પાદન:',
+      altLblRisk: '📈 બજાર જોખમ:',
+      altFertLink: 'ખાતર પેકેજ >',
+      pestDoctorTitle: '🩺 જીવાત-રોગ ડોક્ટર (Pest Doctor)',
+      pestDoctorSub: 'જૈવિક નિયંત્રણ અને ફૂગનાશક સહિત 68+ પાક રોગોનું નિદાન',
+      symptomTapLabel: '👀 છોડ પર કયા લક્ષણો દેખાય છે? (પસંદ કરો):',
+      diagSymptoms: 'રોગના લક્ષણો (Diagnostic Symptoms)',
+      bioControl: 'જૈવિક અને કુદરતી નિયંત્રણ (Biological Control)',
+      chemControl: 'રાસાયણિક દવા અને ઉપચાર (Chemical Treatment)',
+      noPathogensTitle: 'કોઈ રોગ મળ્યો નથી',
+      noPathogensDesc: 'આપના શોધ માપદંડ સાથે કોઈ રોગ મળ્યો નથી.',
+      listenBtnText: '🔊 સાંભળો / Listen',
+      shareBtnText: '📲 WhatsApp શેર'
+    },
+    te: {
+      navAdvisory: 'పంట సలహా (Advisory)',
+      navWeather: 'వాతావరణ హెచ్చరికలు',
+      navSoil: 'ఎరువుల ప్రిస్క్రిప్షన్ (Fertilizer)',
+      navDoctor: 'తెగుళ్ల డాక్టర్ (Pest Doctor)',
+      navMandi: 'నేల ఆరోగ్య రిజిస్ట్రీ',
+      advisorBadge: 'ఖరీఫ్ 2025 వ్యవసాయ చక్రం • ICAR-KVK ప్రామాణికం',
+      advisorTitle: 'రైతు పంట సలహాదారు <span class="hindi-sub">| నేల & వాతావరణ మార్గదర్శి</span>',
+      advisorSubtitle: 'నిజ-సమయ వాతావరణం మరియు N-P-K నేల పరీక్ష ఫలితాల ఆధారంగా శాస్త్రీయ మార్గదర్శకత్వం.',
+      fieldDiagnosticsTitle: 'పొలం మరియు నేల సమాచారం',
+      fieldDiagnosticsSubtitle: 'భూమి పరీక్ష & వాతావరణ విశ్లేషణ',
+      btnDefaults: 'డిఫాల్ట్',
+      btnRecommend: 'ఉత్తమ పంట సిఫార్సులను పొందండి',
+      btnRecommendSub: 'జాతీయ స్థిరమైన వ్యవసాయ మిషన్ (NMSA) ప్రమాణాల ప్రకారం.',
+      recCropsTitle: 'సిఫార్సు చేయబడిన పంటలు (Recommended Crops)',
+      recCropsSub: 'నేల N-P-K పోషకాలు & తేమ సూచికల ఆధారంగా ర్యాంకింగ్.',
+      tabOverview: 'సమీక్ష',
+      tabMatrix: 'వ్యవసాయ మాత్రిక',
+      helplineBannerTitle: 'మట్టి కార్డు లేదా విత్తన క్యాలెండర్‌లో సహాయం కావాలా?',
+      helplineBannerDesc: 'మీ మాతృభాషలో ప్రభుత్వ వ్యవసాయ నిపుణులతో నేరుగా మాట్లాడండి. ఉచిత టోల్-ఫ్రీ సేవ.',
+      locateKvkBtn: 'సమీప KVK కేంద్రాన్ని కనుగొనండి',
+      btnFertCalc: '🧪 ఎరువుల లెక్కించండి',
+      searchPathologyBtn: 'వ్యాధి నివారణ శోధించండి',
+      diseaseFilterCrop: 'పంట ప్రకారం ఎంచుకోండి:',
+      subtabAdvisory: 'వ్యవసాయ నిపుణుల సలహా (Agro Advisory)',
+      subtabSpectrum: 'NPK నేల ఆరోగ్య స్పెక్ట్రమ్',
+      subtabRecords: 'గత సీజన్ రికార్డులు',
+      lblTargetCrop: '🎯 మీరు ఏ పంట సాగు చేయాలనుకుంటున్నారు? (ఇష్టపడే పంట)',
+      badgeTargetCropOpt: 'ఐచ్ఛికం / AI తనిఖీ',
+      hintTargetCrop: 'మీ మనస్సులో ఏదైనా నిర్దిష్ట పంట ఉంటే ఎంచుకోండి. SPARC AI మీ భూమి సరిపోతుందో లేదో తనిఖీ చేస్తుంది.',
+      optAutoRecommend: '✨ ఉత్తమ AI సిఫార్సు (Auto-Recommend)',
+      targetViableTitle: '✅ సాగుకు అనుకూలం: మీ భూమి {crop} సాగుకు సంపూర్ణంగా అనుకూలంగా ఉంది!',
+      targetRiskyTitle: '⚠️ పంట ప్రమాద హెచ్చరిక: ఈ పొలంలో {crop} సాగు చేయడం చాలా ప్రమాదకరం',
+      preferredHeader: '🌟 సిఫార్సు చేయబడిన ఉత్తమ ప్రత్యామ్నాయ పంట (Preferred Choice):',
+      preferredWhyLabel: '💡 ఈ పంట ఎందుకు మంచి ఎంపిక:',
+      rescueToggleLabel: '🛠️ మీరు ఇప్పటికీ {crop} సాగు చేయాలనుకుంటే: రక్షణ చర్యలను చూడండి ▼',
+      heroChoiceBadge: '⭐ #1 మీ పొలానికి ఉత్తమ ఎంపిక (Best Choice)',
+      heroConfidenceChip: 'అధిక ఖచ్చితత్వం (High Confidence)',
+      recVarietiesPrefix: 'సిఫార్సు చేసిన రకాలు: ',
+      gaugeMatch: 'సరిపోలిక శాతం',
+      gaugeFit: 'పొలానికి అత్యంత అనుకూలం',
+      whyFitsTitle: 'ఈ పంట మీ నేలకు ఎందుకు సరిపోతుంది:',
+      lblYield: '🌾 ఆశించిన దిగుబడి',
+      lblWater: '💧 నీటి అవసరం',
+      lblPrice: '₹ మార్కెట్ ధర అంచనా',
+      lblDuration: '⏱️ పంట కాలం',
+      lblBasalDose: 'విత్తే సమయంలో ఎరువులు:',
+      calendarLink: 'విత్తన & ఎరువుల క్యాలెండర్ చూడండి →',
+      altTag1: 'ప్రత్యామ్నాయ పంట #1',
+      altTag2: 'ప్రత్యామ్నాయ పంట #2',
+      altMatchText: 'మ్యాచ్',
+      altLblWater: '💧 నీటి అవసరం:',
+      altLblYield: '🌾 అంచనా దిగుబడి:',
+      altLblRisk: '📈 మార్కెట్ రిస్క్:',
+      altFertLink: 'ఎరువుల ప్యాకేజీ >',
+      pestDoctorTitle: '🩺 తెగుళ్ల & పంట వ్యాధుల డాక్టర్ (Pest Doctor)',
+      pestDoctorSub: 'జీవ నియంత్రణ మరియు శిలీంద్రనాశకాలతో 68+ పంట వ్యాధుల నివారణ',
+      symptomTapLabel: '👀 మొక్కపై ఏ లక్షణాలు కనిపిస్తున్నాయి? (ఎంచుకోండి):',
+      diagSymptoms: 'వ్యాధి లక్షణాలు (Diagnostic Symptoms)',
+      bioControl: 'జీవ మరియు సేంద్రీయ నియంత్రణ (Biological Control)',
+      chemControl: 'రసాయన మందులు & నివారణ (Chemical Treatment)',
+      noPathogensTitle: 'ఎలాంటి వ్యాధి కనుగొనబడలేదు',
+      noPathogensDesc: 'మీ శోధన ప్రమాణాలకు సరిపోలే వ్యాధులు ఏవీ లేవు.',
+      listenBtnText: '🔊 వినండి / Listen',
+      shareBtnText: '📲 WhatsApp షేర్'
+    },
+    ta: {
+      navAdvisory: 'பயிர் ஆலோசனை (Advisory)',
+      navWeather: 'வானிலை எச்சரிக்கை',
+      navSoil: 'உர பரிந்துரை (Fertilizer)',
+      navDoctor: 'பூச்சி & நோய் மருத்துவர் (Pest Doctor)',
+      navMandi: 'மண் வளப் பதிவேடு',
+      advisorBadge: 'கரீப் 2025 வேளாண் வழிகாட்டுதல் • ICAR-KVK அங்கீகாரம்',
+      advisorTitle: 'விவசாயி பயிர் ஆலோசகர் <span class="hindi-sub">| மண் & வானிலை நுண்ணறிவு</span>',
+      advisorSubtitle: 'மண் N-P-K சத்துக்கள் மற்றும் நேரலை வானிலை அடிப்படையிலான விவசாய வழிகாட்டுதல்.',
+      fieldDiagnosticsTitle: 'வயல் மற்றும் மண் தகவல்',
+      fieldDiagnosticsSubtitle: 'மண் பரிசோதனை & காலநிலை பகுப்பாய்வு',
+      btnDefaults: 'இயல்புநிலை',
+      btnRecommend: 'சிறந்த பயிர் பரிந்துரைகளைப் பெறுங்கள்',
+      btnRecommendSub: 'தேசிய நிலையான விவசாய இயக்கத்தின் (NMSA) வழிகாட்டுதல்படி.',
+      recCropsTitle: 'பரிந்துரைக்கப்பட்ட பயிர்கள் (Recommended Crops)',
+      recCropsSub: 'மண் N-P-K பொருத்தம் மற்றும் ஈரப்பதம் அடிப்படையில் தரவரிசை.',
+      tabOverview: 'கண்ணோட்டம்',
+      tabMatrix: 'விவசாய மேட்ரிக்ஸ்',
+      helplineBannerTitle: 'மண் அட்டை அல்லது விதைப்பு காலண்டரில் உதவி தேவையா?',
+      helplineBannerDesc: 'உங்கள் தாய்மொழியில் அரசு வேளாண் வல்லுநர்களுடன் நேரடியாகப் பேசுங்கள். இலவச சேவை.',
+      locateKvkBtn: 'அருகிலுள்ள KVK மையம் கண்டறியவும்',
+      btnFertCalc: '🧪 உர அளவைக் கணக்கிடுங்கள்',
+      searchPathologyBtn: 'நோய் தீர்வு தேடுங்கள்',
+      diseaseFilterCrop: 'பயிர் வாரியாக தேர்ந்தெடுக்கவும்:',
+      subtabAdvisory: 'வேளாண் நிபுணர் ஆலோசனை (Agro Advisory)',
+      subtabSpectrum: 'NPK மண் ஆரோக்கிய ஸ்பெக்ட்ரம்',
+      subtabRecords: 'கடந்த பருவ பதிவுகள்',
+      lblTargetCrop: '🎯 நீங்கள் பயிரிட விரும்பும் பயிர் எது? (விருப்பப் பயிர்)',
+      badgeTargetCropOpt: 'விருப்பமானது / AI சரிபார்ப்பு',
+      hintTargetCrop: 'உங்கள் மனதில் குறிப்பிட்ட பயிர் இருந்தால் தேர்ந்தெடுக்கவும். உங்கள் நிலத்திற்கு உகந்ததா என SPARC AI சரிபார்க்கும்.',
+      optAutoRecommend: '✨ சிறந்த AI பரிந்துரை (Auto-Recommend)',
+      targetViableTitle: '✅ பயிரிட உகந்தது: உங்கள் நிலம் {crop} சாகுபடிக்கு மிகவும் பொருத்தமானது!',
+      targetRiskyTitle: '⚠️ பயிர் ஆபத்து எச்சரிக்கை: இந்த நிலத்தில் {crop} பயிரிடுவதில் அதிக ஆபத்து உள்ளது',
+      preferredHeader: '🌟 பரிந்துரைக்கப்படும் சிறந்த மாற்றுப் பயிர் (Preferred Choice):',
+      preferredWhyLabel: '💡 இந்த பயிர் ஏன் சிறந்த தேர்வு:',
+      rescueToggleLabel: '🛠️ நீங்கள் இன்னும் {crop} பயிரிட விரும்பினால்: மீட்பு வழிமுறைகளைக் காண்க ▼',
+      heroChoiceBadge: '⭐ #1 உங்கள் நிலத்திற்கு சிறந்த தேர்வு (Best Choice)',
+      heroConfidenceChip: 'அதிக துல்லியம் (High Confidence)',
+      recVarietiesPrefix: 'பரிந்துரைக்கப்பட்ட ரகங்கள்: ',
+      gaugeMatch: 'பொருத்தம் சதவீதம்',
+      gaugeFit: 'வயலுக்கு மிகவும் உகந்தது',
+      whyFitsTitle: 'இந்த பயிர் உங்கள் நிலத்திற்கு ஏன் ஏற்றது:',
+      lblYield: '🌾 எதிர்பார்க்கப்படும் மகசூல்',
+      lblWater: '💧 நீர் தேவை',
+      lblPrice: '₹ சந்தை விலை எதிர்பார்ப்பு',
+      lblDuration: '⏱️ பயிர் காலம்',
+      lblBasalDose: 'விதைப்பு உர அளவு:',
+      calendarLink: 'விதைப்பு மற்றும் உர காலண்டர் பார்க்க →',
+      altTag1: 'மாற்றுப் பயிர் #1',
+      altTag2: 'மாற்றுப் பயிர் #2',
+      altMatchText: 'பொருத்தம்',
+      altLblWater: '💧 நீர் தேவை:',
+      altLblYield: '🌾 எதிர்பார்க்கப்படும் மகசூல்:',
+      altLblRisk: '📈 சந்தை ஆபத்து:',
+      altFertLink: 'உரத் திட்டம் >',
+      pestDoctorTitle: '🩺 பயிர் நோய் மருத்துவர் (Pest Doctor)',
+      pestDoctorSub: 'உயிரியல் கட்டுப்பாடு மற்றும் பூஞ்சாணக்கொல்லிகளுடன் 68+ பயிர் நோய்கள் தீர்வு',
+      symptomTapLabel: '👀 பயிரில் என்ன அறிகுறிகள் தெரிகின்றன? (தேர்ந்தெடுக்கவும்):',
+      diagSymptoms: 'நோய் அறிகுறிகள் (Diagnostic Symptoms)',
+      bioControl: 'உயிரியல் & இயற்கை கட்டுப்பாடு (Biological Control)',
+      chemControl: 'ரசாயன பூஞ்சாணக்கொல்லி & சிகிச்சை',
+      noPathogensTitle: 'எந்த நோயும் கண்டறியப்படவில்லை',
+      noPathogensDesc: 'உங்கள் தேடலுக்குரிய நோய்கள் எதுவும் கண்டறியப்படவில்லை.',
+      listenBtnText: '🔊 கேளுங்கள் / Listen',
+      shareBtnText: '📲 WhatsApp பகிர்'
+    },
+    bn: {
+      navAdvisory: 'ফসল পরামর্শ (Advisory)',
+      navWeather: 'আবহাওয়া সতর্কতা',
+      navSoil: 'সার নির্দেশিকা (Fertilizer)',
+      navDoctor: 'কীটপতঙ্গ ও রোগ ডাক্তার (Pest Doctor)',
+      navMandi: 'মাটি স্বাস্থ্য রেজিস্ট্রি',
+      advisorBadge: 'খরিফ ২০২৫ কৃষি চক্র • ICAR-KVK অনুমোদিত',
+      advisorTitle: 'কৃষক ফসল উপদেষ্টা <span class="hindi-sub">| মৃত্তিকা ও আবহাওয়া বিশ্লেষণ</span>',
+      advisorSubtitle: 'রিয়েল-টাইম আবহাওয়া এবং N-P-K মাটির পুষ্টি উপাদানের উপর ভিত্তি করে নিখুঁত কৃষি পরামর্শ।',
+      fieldDiagnosticsTitle: 'জমি ও মাটির বিবরণ',
+      fieldDiagnosticsSubtitle: 'মাটি পরীক্ষা ও আবহাওয়া নির্ণয়',
+      btnDefaults: 'মূল অবস্থা',
+      btnRecommend: 'সেরা ফসলের সুপারিশ পান',
+      btnRecommendSub: 'জাতীয় টেকসই কৃষি মিশন (NMSA) মান অনুযায়ী প্রস্তাবিত।',
+      recCropsTitle: 'সুপারিশকৃত ফসল (Recommended Crops)',
+      recCropsSub: 'মাটির N-P-K উপাদান ও আদ্রতার ভিত্তিতে ক্রমবিন্যাস।',
+      tabOverview: 'সারসংক্ষেপ',
+      tabMatrix: 'কৃষি মেট্রিক্স',
+      helplineBannerTitle: 'মাটি স্বাস্থ্য কার্ড বা বপন ক্যালেন্ডার বুঝতে সাহায্য চান?',
+      helplineBannerDesc: 'আপনার মাতৃভাষায় সরকারি কৃষি বিশেষজ্ঞদের সাথে সরাসরি কথা বলুন। সম্পূর্ণ বিনামূল্যে।',
+      locateKvkBtn: 'নিকটতম KVK কেন্দ্র খুঁজুন',
+      btnFertCalc: '🧪 সারের পরিমাণ গণনা করুন',
+      searchPathologyBtn: 'রোগের প্রতিকার খুঁজুন',
+      diseaseFilterCrop: 'ফসল অনুযায়ী বেছে নিন:',
+      subtabAdvisory: 'কৃষি বিশেষজ্ঞ পরামর্শ (Agro Advisory)',
+      subtabSpectrum: 'NPK মাটি স্বাস্থ্য বর্ণালী',
+      subtabRecords: 'গত মরশুমের রেকর্ড',
+      lblTargetCrop: '🎯 আপনি কোন ফসল চাষ করতে চান? (কাঙ্ক্ষিত ফসল)',
+      badgeTargetCropOpt: 'ঐচ্ছিক / AI যাচাই',
+      hintTargetCrop: 'আপনার কোনো নির্দিষ্ট ফসলের পরিকল্পনা থাকলে বেছে নিন। SPARC AI পরীক্ষা করে সঠিক বিকল্প জানাবে।',
+      optAutoRecommend: '✨ সেরা AI সুপারিশ (Auto-Recommend)',
+      targetViableTitle: '✅ চাষের জন্য উপযোগী: আপনার জমি {crop} চাষের জন্য সম্পূর্ণ অনুকূল!',
+      targetRiskyTitle: '⚠️ ফসল ঝুঁকি সতর্কতা: এই জমিতে {crop} চাষে ব্যর্থতার ঝুঁকি রয়েছে',
+      preferredHeader: '🌟 সুপারিশকৃত বিকল্প উত্তম ফসল (Preferred Choice):',
+      preferredWhyLabel: '💡 এই ফসলটি কেন বেশি লাভজনক:',
+      rescueToggleLabel: '🛠️ তবুও যদি {crop} চাষ করতে চান: জমি শোধন ও সুরক্ষা ব্যবস্থা দেখুন ▼',
+      heroChoiceBadge: '⭐ #১ আপনার জমির জন্য সেরা পছন্দ (Best Choice)',
+      heroConfidenceChip: 'উচ্চ নির্ভুলতা (High Confidence)',
+      recVarietiesPrefix: 'প্রস্তাবিত উন্নত জাত: ',
+      gaugeMatch: 'উপযোগিতা শতাংশ',
+      gaugeFit: 'জমির জন্য সম্পূর্ণ মানানসই',
+      whyFitsTitle: 'এই ফসলটি আপনার জমির জন্য কেন উপযুক্ত:',
+      lblYield: '🌾 প্রত্যাশিত ফলন',
+      lblWater: '💧 জলের প্রয়োজনীয়তা',
+      lblPrice: '₹ বাজার দর পূর্বাভাস',
+      lblDuration: '⏱️ ফসলের সময়কাল',
+      lblBasalDose: 'বপনকালীন সার প্রয়োগ:',
+      calendarLink: 'বপন ও সার প্রয়োগ ক্যালেন্ডার দেখুন →',
+      altTag1: 'বিকল্প ফসল #১',
+      altTag2: 'বিকল্প ফসল #২',
+      altMatchText: 'ম্যাচ',
+      altLblWater: '💧 জলের প্রয়োজন:',
+      altLblYield: '🌾 সম্ভাব্য ফলন:',
+      altLblRisk: '📈 বাজার ঝুঁকি:',
+      altFertLink: 'সার প্যাকেজ >',
+      pestDoctorTitle: '🩺 উদ্ভিদ রোগ ও পোকা ডাক্তার (Pest Doctor)',
+      pestDoctorSub: 'জৈব নিয়ন্ত্রণ এবং ছত্রাকনাশক সহ ৬৮+ ফসলের রোগ নির্ণয়',
+      symptomTapLabel: '👀 গাছে কী লক্ষণ দেখা যাচ্ছে? (বেছে নিন):',
+      diagSymptoms: 'রোগের লক্ষণ (Diagnostic Symptoms)',
+      bioControl: 'জৈব ও প্রাকৃতিক নিয়ন্ত্রণ (Biological Control)',
+      chemControl: 'রাসায়নিক ছত্রাকনাশক ও প্রতিকার',
+      noPathogensTitle: 'কোনো রোগ পাওয়া যায়নি',
+      noPathogensDesc: 'আপনার অনুসন্ধানের সাথে মেলে এমন কোনো রোগ মেলেনি।',
+      listenBtnText: '🔊 শুনুন / Listen',
+      shareBtnText: '📲 WhatsApp শেয়ার'
+    },
+    kn: {
+      navAdvisory: 'ಬೆಳೆ ಸಲಹೆ (Advisory)',
+      navWeather: 'ಹವಾಮಾನ ಮುನ್ಸೂಚನೆ',
+      navSoil: 'ಗೊಬ್ಬರ ಶಿಫಾರಸು (Fertilizer)',
+      navDoctor: 'ಕೀಟ & ರೋಗ ಡಾಕ್ಟರ್ (Pest Doctor)',
+      navMandi: 'ಮಣ್ಣಿನ ಆರೋಗ್ಯ ನೋಂದಣಿ',
+      advisorBadge: 'ಖಾರೀಫ್ 2025 ಕೃಷಿ ಸಲಹೆ • ICAR-KVK ಪ್ರಮಾಣೀಕೃತ',
+      advisorTitle: 'ರೈತ ಬೆಳೆ ಸಲಹೆಗಾರ <span class="hindi-sub">| ಮಣ್ಣು & ಹವಾಮಾನ ಆಧಾರಿತ ಕೃಷಿ</span>',
+      advisorSubtitle: 'ನಿಜಾವಧಿಯ ಹವಾಮಾನ ಮತ್ತು N-P-K ಮಣ್ಣಿನ ಪರೀಕ್ಷೆಯ ಆಧಾರದ ಮೇಲೆ ನಿಖರವಾದ ಕೃಷಿ ಮಾರ್ಗದರ್ಶನ.',
+      fieldDiagnosticsTitle: 'ಹೊಲ ಮತ್ತು ಮಣ್ಣಿನ ಮಾಹಿತಿ',
+      fieldDiagnosticsSubtitle: 'ಮಣ್ಣು ಪರೀಕ್ಷೆ & ಹವಾಮಾನ ವಿಶ್ಲೇಷಣೆ',
+      btnDefaults: 'ಮೂಲ ಸ್ಥಿತಿ',
+      btnRecommend: 'ಉತ್ತಮ ಬೆಳೆ ಶಿಫಾರಸುಗಳನ್ನು ಪಡೆಯಿರಿ',
+      btnRecommendSub: 'ರಾಷ್ಟ್ರೀಯ ಸುಸ್ಥಿರ ಕೃಷಿ ಅಭಿಯಾನದ (NMSA) ಮಾನದಂಡಗಳ ಪ್ರಕಾರ.',
+      recCropsTitle: 'ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆಗಳು (Recommended Crops)',
+      recCropsSub: 'ಮಣ್ಣಿನ N-P-K ಪೋಷಕಾಂಶಗಳು ಮತ್ತು ತೇವಾಂಶದ ಆಧಾರದ ಮೇಲೆ ಶ್ರೇಯಾಂಕ.',
+      tabOverview: 'ಅವಲೋಕನ',
+      tabMatrix: 'ಕೃಷಿ ಮ್ಯಾಟ್ರಿಕ್ಸ್',
+      helplineBannerTitle: 'ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಅಥವಾ ಬಿತ್ತನೆ ಕ್ಯಾಲೆಂಡರ್‌ನಲ್ಲಿ ಸಹಾಯ ಬೇಕೇ?',
+      helplineBannerDesc: 'ನಿಮ್ಮ ಮಾತೃಭಾಷೆಯಲ್ಲಿ ಸರ್ಕಾರಿ ಕೃಷಿ ತಜ್ಞರೊಂದಿಗೆ ನೇರವಾಗಿ ಮಾತನಾಡಿ. ಉಚಿತ ಟೋಲ್-ಫ್ರೀ ಸೇವೆ.',
+      locateKvkBtn: 'ಹತ್ತಿರದ KVK ಕೇಂದ್ರ ಹುಡುಕಿ',
+      btnFertCalc: '🧪 ಗೊಬ್ಬರದ ಪ್ರಮಾಣ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ',
+      searchPathologyBtn: 'ರೋಗ ಪರಿಹಾರ ಹುಡುಕಿ',
+      diseaseFilterCrop: 'ಬೆಳೆ ಪ್ರಕಾರ ಆಯ್ಕೆಮಾಡಿ:',
+      subtabAdvisory: 'ಕೃಷಿ ತಜ್ಞರ ಸಲಹೆ (Agro Advisory)',
+      subtabSpectrum: 'NPK ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಸ್ಪೆಕ್ಟ್ರಮ್',
+      subtabRecords: 'ಹಿಂದಿನ ಋತುವಿನ ದಾಖಲೆಗಳು',
+      lblTargetCrop: '🎯 ನೀವು ಯಾವ ಬೆಳೆ ಬೆಳೆಯಲು ಬಯಸುತ್ತೀರಿ? (ಉದ್ದೇಶಿತ ಬೆಳೆ)',
+      badgeTargetCropOpt: 'ಐಚ್ಛಿಕ / AI ತಪಾಸಣೆ',
+      hintTargetCrop: 'ನಿಮ್ಮ ಮನಸ್ಸಿನಲ್ಲಿ ನಿರ್ದಿಷ್ಟ ಬೆಳೆಯ ಯೋಜನೆ ಇದ್ದರೆ ಆಯ್ಕೆಮಾಡಿ. SPARC AI ನಿಮ್ಮ ಮಣ್ಣು ಸೂಕ್ತವೇ ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ.',
+      optAutoRecommend: '✨ ಅತ್ಯುತ್ತಮ AI ಶಿಫಾರಸು (Auto-Recommend)',
+      targetViableTitle: '✅ ಕೃಷಿಗೆ ಸೂಕ್ತ: ನಿಮ್ಮ ಭೂಮಿಯು {crop} ಬೆಳೆಯಲು ಸಂಪೂರ್ಣವಾಗಿ ಅನುಕೂಲಕರವಾಗಿದೆ!',
+      targetRiskyTitle: '⚠️ ಬೆಳೆ ಅಪಾಯದ ಎಚ್ಚರಿಕೆ: ಈ ಹೊಲದಲ್ಲಿ {crop} ಬೆಳೆಯುವುದರಿಂದ ನಷ್ಟದ ಅಪಾಯವಿದೆ',
+      preferredHeader: '🌟 ಶಿಫಾರಸು ಮಾಡಿದ ಪರ್ಯಾಯ ಉತ್ತಮ ಬೆಳೆ (Preferred Choice):',
+      preferredWhyLabel: '💡 ಈ ಬೆಳೆ ಏಕೆ ಉತ್ತಮ ಆಯ್ಕೆ:',
+      rescueToggleLabel: '🛠️ ನೀವು ಇನ್ನೂ {crop} ಬೆಳೆಯಲು ಬಯಸಿದರೆ: ರಕ್ಷಣಾ ಕ್ರಮಗಳನ್ನು ನೋಡಿ ▼',
+      heroChoiceBadge: '⭐ #1 ನಿಮ್ಮ ಜಮೀನಿಗೆ ಅತ್ಯುತ್ತಮ ಆಯ್ಕೆ (Best Choice)',
+      heroConfidenceChip: 'ಹೆಚ್ಚಿನ ನಿಖರತೆ (High Confidence)',
+      recVarietiesPrefix: 'ಶಿಫಾರಸು ಮಾಡಿದ ಸುಧಾರಿತ ತಳಿಗಳು: ',
+      gaugeMatch: 'ಹೊಂದಾಣಿಕೆ ಶೇಕಡಾವಾರು',
+      gaugeFit: 'ಹೊಲಕ್ಕೆ ಅತ್ಯಂತ ಸೂಕ್ತ',
+      whyFitsTitle: 'ಈ ಬೆಳೆ ನಿಮ್ಮ ಜಮೀನಿಗೆ ಏಕೆ ಸೂಕ್ತವಾಗಿದೆ:',
+      lblYield: '🌾 ನಿರೀಕ್ಷಿತ ಇಳುವರಿ',
+      lblWater: '💧 ನೀರಿನ ಅವಶ್ಯಕತೆ',
+      lblPrice: '₹ ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಅಂದಾಜು',
+      lblDuration: '⏱️ ಬೆಳೆಯ ಅವಧಿ',
+      lblBasalDose: 'ಬಿತ್ತನೆ ಕಾಲದ ರಸಗೊಬ್ಬರ:',
+      calendarLink: 'ಬಿತ್ತನೆ ಮತ್ತು ರಸಗೊಬ್ಬರ ಕ್ಯಾಲೆಂಡರ್ ನೋಡಿ →',
+      altTag1: 'ಪರ್ಯಾಯ ಬೆಳೆ #1',
+      altTag2: 'ಪರ್ಯಾಯ ಬೆಳೆ #2',
+      altMatchText: 'ಹೊಂದಾಣಿಕೆ',
+      altLblWater: '💧 ನೀರಿನ ಅವಶ್ಯಕತೆ:',
+      altLblYield: '🌾 ಅಂದಾಜು ಇಳುವರಿ:',
+      altLblRisk: '📈 ಮಾರುಕಟ್ಟೆ ಅಪಾಯ:',
+      altFertLink: 'ಗೊಬ್ಬರ ಯೋಜನೆ >',
+      pestDoctorTitle: '🩺 ಸಸ್ಯ ರೋಗ & ಕೀಟ ಡಾಕ್ಟರ್ (Pest Doctor)',
+      pestDoctorSub: 'ಜೈವಿಕ ನಿಯಂತ್ರಣ ಮತ್ತು ಶಿಲೀಂಧ್ರನಾಶಕಗಳೊಂದಿಗೆ 68+ ಬೆಳೆ ರೋಗಗಳ ನಿವಾರಣೆ',
+      symptomTapLabel: '👀 ಸಸ್ಯದ ಮೇಲೆ ಯಾವ ಲಕ್ಷಣಗಳು ಕಾಣಿಸುತ್ತಿವೆ? (ಆಯ್ಕೆಮಾಡಿ):',
+      diagSymptoms: 'ರೋಗದ ಲಕ್ಷಣಗಳು (Diagnostic Symptoms)',
+      bioControl: 'ಜೈವಿಕ & ನೈಸರ್ಗಿಕ ನಿಯಂತ್ರಣ (Biological Control)',
+      chemControl: 'ರಾಸಾಯನಿಕ ಶಿಲೀಂಧ್ರನಾಶಕ & ಚಿಕಿತ್ಸೆ',
+      noPathogensTitle: 'ಯಾವುದೇ ರೋಗ ಕಂಡುಬಂದಿಲ್ಲ',
+      noPathogensDesc: 'ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ರೋಗಗಳು ಹೊಂದಿಕೆಯಾಗಿಲ್ಲ.',
+      listenBtnText: '🔊 ಆಲಿಸಿ / Listen',
+      shareBtnText: '📲 WhatsApp ಹಂಚಿಕೊಳ್ಳಿ'
     }
   };
 
@@ -1363,30 +1874,270 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const TARGET_CROP_OPTIONS = [
-    { value: '', label: { en: '✨ AI Auto-Recommend (Best Match for Soil)', hi: '✨ सर्वोत्तम AI अनुशंसा (खेत के लिए सबसे उपयुक्त)', mr: '✨ सर्वोत्तम AI शिफारस (शेतीसाठी सर्वात योग्य)' } },
-    { value: 'rice', label: { en: 'Paddy / Rice (धान / भात)', hi: 'धान / Paddy (Rice)', mr: 'भात / धान (Paddy)' } },
-    { value: 'wheat', label: { en: 'Wheat (गेहूं / गहू)', hi: 'गेहूं (Wheat)', mr: 'गहू (Wheat)' } },
-    { value: 'cotton', label: { en: 'Cotton (कपास / कापूस)', hi: 'कपास (Cotton)', mr: 'कापूस (Cotton)' } },
-    { value: 'maize', label: { en: 'Maize (मक्का / मका)', hi: 'मक्का (Maize)', mr: 'मका (Maize)' } },
-    { value: 'sugarcane', label: { en: 'Sugarcane (गन्ना / ऊस)', hi: 'गन्ना (Sugarcane)', mr: 'ऊस (Sugarcane)' } },
-    { value: 'soybean', label: { en: 'Soybean (सोयाबीन)', hi: 'सोयाबीन (Soybean)', mr: 'सोयाबीन (Soybean)' } },
-    { value: 'groundnut', label: { en: 'Groundnut (मूंगफली / भुईमूग)', hi: 'मूंगफली (Groundnut)', mr: 'भुईमूग (Groundnut)' } },
-    { value: 'mustard', label: { en: 'Mustard (सरसों / मोहरी)', hi: 'सरसों (Mustard)', mr: 'मोहरी (Mustard)' } },
-    { value: 'chickpea', label: { en: 'Chickpea / Gram (चना / हरभरा)', hi: 'चना (Gram / Chickpea)', mr: 'हरभरा / चना (Gram)' } },
-    { value: 'onion', label: { en: 'Onion (प्याज / कांदा)', hi: 'प्याज (Onion)', mr: 'कांदा (Onion)' } },
-    { value: 'potato', label: { en: 'Potato (आलू / बटाटा)', hi: 'आलू (Potato)', mr: 'बटाटा (Potato)' } },
-    { value: 'tomato', label: { en: 'Tomato (टमाटर / टोमॅटो)', hi: 'टमाटर (Tomato)', mr: 'टोमॅटो (Tomato)' } },
-    { value: 'chilli', label: { en: 'Chilli (मिर्च / मिरची)', hi: 'मिर्च (Chilli)', mr: 'मिरची (Chilli)' } },
-    { value: 'banana', label: { en: 'Banana (केला / केळी)', hi: 'केला (Banana)', mr: 'केळी (Banana)' } },
-    { value: 'apple', label: { en: 'Apple (सेब / सफरचंद)', hi: 'सेब (Apple)', mr: 'सफरचंद (Apple)' } },
-    { value: 'grapes', label: { en: 'Grapes (अंगूर / द्राक्षे)', hi: 'अंगूर (Grapes)', mr: 'द्राक्षे (Grapes)' } },
-    { value: 'papaya', label: { en: 'Papaya (पपीता / पपई)', hi: 'पपीता (Papaya)', mr: 'पपई (Papaya)' } },
-    { value: 'watermelon', label: { en: 'Watermelon (तरबूज / कलिंगड)', hi: 'तरबूज (Watermelon)', mr: 'कलिंगड (Watermelon)' } },
-    { value: 'jute', label: { en: 'Jute (पटसन / ताग)', hi: 'पटसन / जूट (Jute)', mr: 'ताग / ज्यूट (Jute)' } },
-    { value: 'pigeonpeas', label: { en: 'Pigeonpeas / Arhar (अरहर / तूर)', hi: 'अरहर / तुअर (Arhar)', mr: 'तूर (Arhar / Tur)' } },
-    { value: 'blackgram', label: { en: 'Blackgram / Urad (उड़द / उडीद)', hi: 'उड़द (Urad / Blackgram)', mr: 'उडीद (Urad)' } },
-    { value: 'mungbean', label: { en: 'Mungbean (मूंग / मूग)', hi: 'मूंग (Moong / Mungbean)', mr: 'मूग (Moong)' } },
-    { value: 'lentil', label: { en: 'Lentil / Masoor (मसूर)', hi: 'मसूर (Lentil)', mr: 'मसूर (Lentil)' } }
+    { value: '', label: {
+      en: '✨ AI Auto-Recommend (Best Match for Soil)',
+      hi: '✨ सर्वोत्तम AI अनुशंसा (खेत के लिए सबसे उपयुक्त)',
+      mr: '✨ सर्वोत्तम AI शिफारस (शेतीसाठी सर्वात योग्य)',
+      pa: '✨ ਸਭ ਤੋਂ ਵਧੀਆ AI ਸਿਫਾਰਸ਼ (ਖੇਤ ਲਈ ਸਰਵੋਤਮ)',
+      gu: '✨ શ્રેષ્ઠ AI ભલામણ (ખેતર માટે સૌથી યોગ્ય)',
+      te: '✨ ఉత్తమ AI సిఫార్సు (పొలానికి అత్యంత అనుకూలం)',
+      ta: '✨ சிறந்த AI பரிந்துரை (நிலத்திற்கு மிகவும் ஏற்றது)',
+      bn: '✨ সেরা AI সুপারিশ (জমির জন্য সর্বোত্তম)',
+      kn: '✨ ಅತ್ಯುತ್ತಮ AI ಶಿಫಾರಸು (ಹೊಲಕ್ಕೆ ಸೂಕ್ತವಾದ ಬೆಳೆ)'
+    } },
+    { value: 'rice', label: {
+      en: 'Paddy / Rice (धान / भात)',
+      hi: 'धान / Paddy (Rice)',
+      mr: 'भात / धान (Paddy)',
+      pa: 'ਝੋਨਾ / ਧਾਨ (Rice)',
+      gu: 'ડાંગર / ચોખા (Paddy)',
+      te: 'వరి / ధాన్యం (Rice)',
+      ta: 'நெல் / அரிசி (Rice)',
+      bn: 'ধান / চাল (Paddy)',
+      kn: 'ಭತ್ತ / ಅಕ್ಕಿ (Paddy)'
+    } },
+    { value: 'wheat', label: {
+      en: 'Wheat (गेहूं / गहू)',
+      hi: 'गेहूं (Wheat)',
+      mr: 'गहू (Wheat)',
+      pa: 'ਕਣਕ (Wheat)',
+      gu: 'ઘઉં (Wheat)',
+      te: 'గోధుమలు (Wheat)',
+      ta: 'கோதுமை (Wheat)',
+      bn: 'গম (Wheat)',
+      kn: 'ಗೋಧಿ (Wheat)'
+    } },
+    { value: 'cotton', label: {
+      en: 'Cotton (कपास / कापूस)',
+      hi: 'कपास (Cotton)',
+      mr: 'कापूस (Cotton)',
+      pa: 'ਕਪਾਹ / ਨਰਮਾ (Cotton)',
+      gu: 'કપાસ (Cotton)',
+      te: 'ప్రత్తి (Cotton)',
+      ta: 'பருத்தி (Cotton)',
+      bn: 'তুলা (Cotton)',
+      kn: 'ಹತ್ತಿ (Cotton)'
+    } },
+    { value: 'maize', label: {
+      en: 'Maize (मक्का / मका)',
+      hi: 'मक्का (Maize)',
+      mr: 'मका (Maize)',
+      pa: 'ਮੱਕੀ (Maize)',
+      gu: 'મકાઈ (Maize)',
+      te: 'మొక్కజొన్న (Maize)',
+      ta: 'மக்காச்சோளம் (Maize)',
+      bn: 'ভুট্টা (Maize)',
+      kn: 'ಮೆಕ್ಕೆಜೋಳ (Maize)'
+    } },
+    { value: 'sugarcane', label: {
+      en: 'Sugarcane (गन्ना / ऊस)',
+      hi: 'गन्ना (Sugarcane)',
+      mr: 'ऊस (Sugarcane)',
+      pa: 'ਗੰਨਾ (Sugarcane)',
+      gu: 'શેરડી (Sugarcane)',
+      te: 'చెరకు (Sugarcane)',
+      ta: 'கரும்பு (Sugarcane)',
+      bn: 'আখ (Sugarcane)',
+      kn: 'ಕಬ್ಬು (Sugarcane)'
+    } },
+    { value: 'soybean', label: {
+      en: 'Soybean (सोयाबीन)',
+      hi: 'सोयाबीन (Soybean)',
+      mr: 'सोयाबीन (Soybean)',
+      pa: 'ਸੋਇਆਬੀਨ (Soybean)',
+      gu: 'સોયાબીન (Soybean)',
+      te: 'సోయాబీన్ (Soybean)',
+      ta: 'சோயாபீன் (Soybean)',
+      bn: 'সয়াবিন (Soybean)',
+      kn: 'ಸೋಯಾಬೀನ್ (Soybean)'
+    } },
+    { value: 'groundnut', label: {
+      en: 'Groundnut (मूंगफली / भुईमूग)',
+      hi: 'मूंगफली (Groundnut)',
+      mr: 'भुईमूग (Groundnut)',
+      pa: 'ਮੂੰਗਫਲੀ (Groundnut)',
+      gu: 'મગફળી (Groundnut)',
+      te: 'వేరుశనగ (Groundnut)',
+      ta: 'வேர்க்கடலை (Groundnut)',
+      bn: 'চিনাবাদাম (Groundnut)',
+      kn: 'ಕಡಲೆಕಾಯಿ (Groundnut)'
+    } },
+    { value: 'mustard', label: {
+      en: 'Mustard (सरसों / मोहरी)',
+      hi: 'सरसों (Mustard)',
+      mr: 'मोहरी (Mustard)',
+      pa: 'ਸਰ੍ਹੋਂ (Mustard)',
+      gu: 'રાયડો / સરસવ (Mustard)',
+      te: 'ఆవాలు (Mustard)',
+      ta: 'கடுகு (Mustard)',
+      bn: 'সরিষা (Mustard)',
+      kn: 'ಸಾಸಿವೆ (Mustard)'
+    } },
+    { value: 'chickpea', label: {
+      en: 'Chickpea / Gram (चना / हरभरा)',
+      hi: 'चना (Gram / Chickpea)',
+      mr: 'हरभरा / चना (Gram)',
+      pa: 'ਛੋਲੇ (Chickpea)',
+      gu: 'ચણા (Chickpea)',
+      te: 'శనగలు (Chickpea)',
+      ta: 'கொண்டைக்கடலை (Chickpea)',
+      bn: 'ছোলা (Chickpea)',
+      kn: 'ಕಡಲೆ (Chickpea)'
+    } },
+    { value: 'onion', label: {
+      en: 'Onion (प्याज / कांदा)',
+      hi: 'प्याज (Onion)',
+      mr: 'कांदा (Onion)',
+      pa: 'ਪਿਆਜ਼ (Onion)',
+      gu: 'ડુંગળી (Onion)',
+      te: 'ఉల్లిపాయ (Onion)',
+      ta: 'வெங்காயம் (Onion)',
+      bn: 'পেঁয়াজ (Onion)',
+      kn: 'ಈರುಳ್ಳಿ (Onion)'
+    } },
+    { value: 'potato', label: {
+      en: 'Potato (आलू / बटाटा)',
+      hi: 'आलू (Potato)',
+      mr: 'बटाटा (Potato)',
+      pa: 'ਆਲੂ (Potato)',
+      gu: 'બટાકા (Potato)',
+      te: 'బంగాళాదుంప (Potato)',
+      ta: 'உருளைக்கிழங்கு (Potato)',
+      bn: 'আলু (Potato)',
+      kn: 'ಆಲೂಗಡ್ಡೆ (Potato)'
+    } },
+    { value: 'tomato', label: {
+      en: 'Tomato (टमाटर / टोमॅटो)',
+      hi: 'टमाटर (Tomato)',
+      mr: 'टोमॅटो (Tomato)',
+      pa: 'ਟਮਾਟਰ (Tomato)',
+      gu: 'ટામેટા (Tomato)',
+      te: 'టమోటా (Tomato)',
+      ta: 'தக்காளி (Tomato)',
+      bn: 'টমেটো (Tomato)',
+      kn: 'ಟೊಮ್ಯಾಟೊ (Tomato)'
+    } },
+    { value: 'chilli', label: {
+      en: 'Chilli (मिर्च / मिरची)',
+      hi: 'मिर्च (Chilli)',
+      mr: 'मिरची (Chilli)',
+      pa: 'ਮਿਰਚ (Chilli)',
+      gu: 'મરચાં (Chilli)',
+      te: 'మిరపకాయ (Chilli)',
+      ta: 'மிளகாய் (Chilli)',
+      bn: 'মরিচ (Chilli)',
+      kn: 'ಮೆಣಸಿನಕಾಯಿ (Chilli)'
+    } },
+    { value: 'banana', label: {
+      en: 'Banana (केला / केळी)',
+      hi: 'केला (Banana)',
+      mr: 'केळी (Banana)',
+      pa: 'ਕੇਲਾ (Banana)',
+      gu: 'કેળાં (Banana)',
+      te: 'అరటి (Banana)',
+      ta: 'வாழைப்பழம் (Banana)',
+      bn: 'কলা (Banana)',
+      kn: 'ಬಾಳೆಹಣ್ಣು (Banana)'
+    } },
+    { value: 'apple', label: {
+      en: 'Apple (सेब / सफरचंद)',
+      hi: 'सेब (Apple)',
+      mr: 'सफरचंद (Apple)',
+      pa: 'ਸੇਬ (Apple)',
+      gu: 'સફરજન (Apple)',
+      te: 'ఆపిల్ (Apple)',
+      ta: 'ஆப்பிள் (Apple)',
+      bn: 'আপেল (Apple)',
+      kn: 'ಸೇಬು (Apple)'
+    } },
+    { value: 'grapes', label: {
+      en: 'Grapes (अंगूर / द्राक्षे)',
+      hi: 'अंगूर (Grapes)',
+      mr: 'द्राक्षे (Grapes)',
+      pa: 'ਅੰਗੂਰ (Grapes)',
+      gu: 'દ્રાક્ષ (Grapes)',
+      te: 'ద్రాక్ష (Grapes)',
+      ta: 'திராட்சை (Grapes)',
+      bn: 'আঙুর (Grapes)',
+      kn: 'ದ್ರಾಕ್ಷಿ (Grapes)'
+    } },
+    { value: 'papaya', label: {
+      en: 'Papaya (पपीता / पपई)',
+      hi: 'पपीता (Papaya)',
+      mr: 'पपई (Papaya)',
+      pa: 'ਪਪੀਤਾ (Papaya)',
+      gu: 'પપૈયા (Papaya)',
+      te: 'బొప్పాయి (Papaya)',
+      ta: 'பப்பாளி (Papaya)',
+      bn: 'পেঁপে (Papaya)',
+      kn: 'ಪಪ್ಪಾಯಿ (Papaya)'
+    } },
+    { value: 'watermelon', label: {
+      en: 'Watermelon (तरबूज / कलिंगड)',
+      hi: 'तरबूज (Watermelon)',
+      mr: 'कलिंगड (Watermelon)',
+      pa: 'ਤਰਬੂਜ਼ (Watermelon)',
+      gu: 'તરબૂચ (Watermelon)',
+      te: 'పుచ్చకాయ (Watermelon)',
+      ta: 'தர்பூசணி (Watermelon)',
+      bn: 'তরমুজ (Watermelon)',
+      kn: 'ಕಲ್ಲಂಗಡಿ (Watermelon)'
+    } },
+    { value: 'jute', label: {
+      en: 'Jute (पटसन / ताग)',
+      hi: 'पटसन / जूट (Jute)',
+      mr: 'ताग / ज्यूट (Jute)',
+      pa: 'ਪਟਸਨ (Jute)',
+      gu: 'શણ (Jute)',
+      te: 'జనపనార (Jute)',
+      ta: 'சணல் (Jute)',
+      bn: 'পাট (Jute)',
+      kn: 'ಸೆಣಬು (Jute)'
+    } },
+    { value: 'pigeonpeas', label: {
+      en: 'Pigeonpeas / Arhar (अरहर / तूर)',
+      hi: 'अरहर / तुअर (Arhar)',
+      mr: 'तूर (Arhar / Tur)',
+      pa: 'ਅਰਹਰ (Arhar)',
+      gu: 'તુવેર (Tuver)',
+      te: 'కందులు (Red Gram)',
+      ta: 'துவரம்பருப்பு (Toor)',
+      bn: 'অরহর (Arhar)',
+      kn: 'ತೊಗರಿ (Tur)'
+    } },
+    { value: 'blackgram', label: {
+      en: 'Blackgram / Urad (उड़द / उडीद)',
+      hi: 'उड़द (Urad / Blackgram)',
+      mr: 'उडीद (Urad)',
+      pa: 'ਮਾਂਹ / ਉੜਦ (Urad)',
+      gu: 'અડદ (Urad)',
+      te: 'మినుములు (Black Gram)',
+      ta: 'உளுந்து (Urad)',
+      bn: 'মাষকলাই (Urad)',
+      kn: 'ಉದ್ದು (Urad)'
+    } },
+    { value: 'mungbean', label: {
+      en: 'Mungbean (मूंग / मूग)',
+      hi: 'मूंग (Moong / Mungbean)',
+      mr: 'मूग (Moong)',
+      pa: 'ਮੂੰਗੀ (Moong)',
+      gu: 'મગ (Moong)',
+      te: 'పెసలు (Green Gram)',
+      ta: 'பாசிப்பயறு (Moong)',
+      bn: 'মুগ (Moong)',
+      kn: 'ಹೆಸರು ಕಾಳು (Moong)'
+    } },
+    { value: 'lentil', label: {
+      en: 'Lentil / Masoor (मसूर)',
+      hi: 'मसूर (Lentil)',
+      mr: 'मसूर (Lentil)',
+      pa: 'ਮਸਰ (Lentil)',
+      gu: 'મસૂર (Lentil)',
+      te: 'మైసూర్ పప్పు (Lentil)',
+      ta: 'மைசூர் பருப்பு (Lentil)',
+      bn: 'মসুর (Lentil)',
+      kn: 'ಮಸೂರ (Lentil)'
+    } }
   ];
 
   function populateTargetCrops(lang) {
@@ -1514,8 +2265,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const lang = state.language || 'hi';
-    const listenLabel = lang === 'en' ? '🔊 Listen' : (lang === 'mr' ? '🔊 ऐका / Listen' : '🔊 सुनिए / Listen');
-    const stopLabel = lang === 'en' ? '⏹️ Stop' : (lang === 'mr' ? '⏹️ थांबा / Stop' : '⏹️ रोकिए / Stop');
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+    const listenLabel = t.listenBtnText || '🔊 Listen';
+    const stopLabel = '⏹️ Stop';
 
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
@@ -1534,7 +2286,12 @@ document.addEventListener('DOMContentLoaded', () => {
     utterance.rate = 0.95;
     utterance.pitch = 1.0;
 
-    utterance.lang = lang === 'mr' ? 'mr-IN' : (lang === 'hi' ? 'hi-IN' : 'en-IN');
+    const langVoiceMap = {
+      en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN',
+      pa: 'pa-IN', gu: 'gu-IN', te: 'te-IN',
+      ta: 'ta-IN', bn: 'bn-IN', kn: 'kn-IN'
+    };
+    utterance.lang = langVoiceMap[lang] || 'hi-IN';
     const voices = window.speechSynthesis.getVoices();
     let regionalVoice = null;
     if (lang === 'mr') {
@@ -2664,6 +3421,9 @@ ${loc.symptoms.substring(0, 180)}...
 
     // 3. Search initial disease pathology
     searchDiseases();
+
+    // 4. Auto-Detect Weather & Field Location (GPS / IP Telemetry)
+    autoDetectWeather(false);
   }
 
   initApp();
