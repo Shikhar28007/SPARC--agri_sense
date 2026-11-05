@@ -50,12 +50,33 @@ app.add_middleware(
 # Normalize Vercel internal function paths
 @app.middleware("http")
 async def vercel_path_normalizer(request: Request, call_next):
+    # 1. Check if Vercel rewrite passed __path__ parameter
+    path_param = request.query_params.get("__path__")
+    if path_param:
+        clean_path = "/" + path_param.lstrip("/")
+        if "?" in clean_path:
+            clean_path = clean_path.split("?")[0]
+        request.scope["path"] = clean_path
+        return await call_next(request)
+
+    # 2. Check Vercel routing headers
+    orig_path = request.headers.get("x-matched-path") or request.headers.get("x-invoke-path") or ""
+    if orig_path:
+        for prefix in ["/api/index.py", "/api/index", "/api", "/index.py"]:
+            if orig_path.startswith(prefix):
+                orig_path = orig_path[len(prefix):]
+                break
+        if orig_path and orig_path != "/":
+            request.scope["path"] = orig_path if orig_path.startswith("/") else "/" + orig_path
+            return await call_next(request)
+
     raw_path = request.scope.get("path", "")
     for prefix in ["/api/index.py", "/api/index", "/index.py"]:
         if raw_path.startswith(prefix):
             new_path = raw_path[len(prefix):]
-            request.scope["path"] = new_path if new_path.startswith("/") else "/" + new_path
-            break
+            if new_path:
+                request.scope["path"] = new_path if new_path.startswith("/") else "/" + new_path
+                break
     return await call_next(request)
 
 # Export ASGI handler for Vercel

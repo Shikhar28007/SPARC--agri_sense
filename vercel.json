@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=$1"
     },
     {
       "source": "/(predict|fertilizer-calc|fertilizer|crops|soil-states|soil-profile|weather|diseases)(.*)",
-      "destination": "/api/index.py"
+      "destination": "/api/index.py?__path__=$1$2"
     }
   ]
 }
