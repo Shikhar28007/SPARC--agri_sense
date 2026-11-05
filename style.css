@@ -1770,12 +1770,56 @@ button {
 /* Disease Doctor */
 .doctor-filter-bar {
   display: flex;
+  align-items: flex-end;
   gap: 12px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
-.grow {
-  flex-grow: 1;
+.doctor-filter-bar .filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doctor-filter-bar .filter-item label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-body);
+}
+
+.doctor-filter-bar .filter-item.grow {
+  flex: 1 1 320px;
+  min-width: 250px;
+}
+
+.doctor-filter-bar input[type="text"],
+.doctor-filter-bar select {
+  height: 42px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-input);
+  background: var(--bg-input);
+  font-size: 13.5px;
+  color: var(--text-main);
+  outline: none;
+  width: 100%;
+}
+
+.doctor-filter-bar input[type="text"]:focus,
+.doctor-filter-bar select:focus {
+  border-color: var(--pine-primary);
+  background: #FFFFFF;
+}
+
+.btn-search-disease-action {
+  width: auto !important;
+  min-width: 160px;
+  flex-shrink: 0;
+  height: 42px;
+  padding: 0 20px;
+  margin-top: auto;
+  white-space: nowrap;
 }
 
 .symptom-quick-bar {

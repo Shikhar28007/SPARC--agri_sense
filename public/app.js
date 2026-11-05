@@ -963,12 +963,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   async function searchDiseases() {
     const crop = doctorCropSelect ? doctorCropSelect.value : '';
-    const q = doctorSearchInput ? doctorSearchInput.value : '';
+    const q = doctorSearchInput ? doctorSearchInput.value.trim() : '';
 
     try {
-      const res = await apiFetch(`/diseases?crop=${encodeURIComponent(crop)}&symptom=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      if (data.success) {
+      let res = await apiFetch(`/diseases?crop=${encodeURIComponent(crop)}&keyword=${encodeURIComponent(q)}&symptom=${encodeURIComponent(q)}&q=${encodeURIComponent(q)}`);
+      let data = await res.json();
+
+      // If specific crop filter had 0 results for this symptom, fall back to searching all crops
+      if ((!data.diseases || data.diseases.length === 0) && crop && q) {
+        const fallbackRes = await apiFetch(`/diseases?keyword=${encodeURIComponent(q)}&symptom=${encodeURIComponent(q)}&q=${encodeURIComponent(q)}`);
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData && fallbackData.diseases && fallbackData.diseases.length > 0) {
+          if (doctorCropSelect) doctorCropSelect.value = '';
+          data = fallbackData;
+        }
+      }
+
+      if (data && data.success) {
         renderDiseases(data);
       }
     } catch (e) {
@@ -1031,12 +1042,40 @@ document.addEventListener('DOMContentLoaded', () => {
     data.diseases.forEach(d => {
       const card = document.createElement('div');
       card.className = 'disease-card';
-      const dName = d.disease_name || d.name || d.disease;
+      const dName = d.name || d.disease_name || d.disease || 'Plant Disease';
+
+      // Biological control text
+      let bioText = 'Bio-fungicide protocol';
+      if (Array.isArray(d.biological_cures) && d.biological_cures.length > 0) {
+        bioText = d.biological_cures.map(c => `• ${c}`).join('<br>');
+      } else if (d.organic_control || d.biological_cure) {
+        bioText = d.organic_control || d.biological_cure;
+      }
+
+      // Chemical remedies text
+      let chemText = 'Targeted chemical spray';
+      let speechChem = 'उचित दवा का छिड़काव करें';
+      if (Array.isArray(d.chemical_remedies) && d.chemical_remedies.length > 0) {
+        chemText = d.chemical_remedies.map(r => {
+          if (typeof r === 'object' && r !== null) {
+            const ing = r.active_ingredient || '';
+            const dose = r.dosage ? ` (${r.dosage})` : '';
+            const app = r.application ? `: ${r.application}` : '';
+            return `• <strong>${ing}</strong>${dose}${app}`;
+          }
+          return `• ${r}`;
+        }).join('<br>');
+        speechChem = typeof d.chemical_remedies[0] === 'object' ? d.chemical_remedies[0].active_ingredient : d.chemical_remedies[0];
+      } else if (d.chemical_cure || d.fungicide) {
+        chemText = d.chemical_cure || d.fungicide;
+        speechChem = chemText;
+      }
+
       card.innerHTML = `
         <div class="disease-header">
           <div>
             <div class="disease-name">${dName}</div>
-            <span class="disease-crop-tag">🌱 ${d.crop}</span>
+            <span class="disease-crop-tag">🌱 ${d.crop ? d.crop.toUpperCase() : 'ALL CROPS'}</span>
           </div>
           <span class="badge-coral">${d.pathogen_type || 'Pathogen'}</span>
         </div>
@@ -1045,12 +1084,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <p>${d.symptoms || 'Visual lesion details'}</p>
         </div>
         <div class="disease-section">
-          <h5>Biological Control</h5>
-          <p>${d.organic_control || d.biological_cure || 'Bio-fungicide protocol'}</p>
+          <h5>Biological & Organic Control</h5>
+          <p>${bioText}</p>
         </div>
         <div class="disease-section">
           <h5>Chemical Fungicide / Treatment</h5>
-          <p>${d.chemical_cure || d.fungicide || 'Targeted chemical spray'}</p>
+          <p>${chemText}</p>
         </div>
         <div class="card-action-bar">
           <button type="button" class="btn-voice-readout btn-voice-disease">🔊 सुनिए / Listen</button>
@@ -1060,15 +1099,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const vBtn = card.querySelector('.btn-voice-disease');
       if (vBtn) {
-        const cure = d.chemical_cure || d.fungicide || d.organic_control || 'उचित दवा का छिड़काव करें.';
-        const speechText = `रोग का नाम: ${dName}. फसल: ${d.crop}. प्रमुख लक्षण: ${d.symptoms || ''}. उपचार: ${cure}`;
+        const speechText = `रोग का नाम: ${dName}. फसल: ${d.crop || ''}. प्रमुख लक्षण: ${d.symptoms || ''}. अनुशंसित दवा: ${speechChem}`;
         vBtn.addEventListener('click', () => toggleSpeech(speechText, vBtn));
       }
 
       const waBtn = card.querySelector('.btn-whatsapp-disease');
       if (waBtn) {
-        const waDetails = `🩺 *Pathogen:* ${dName} (${d.pathogen_type || 'Disease'})\n🔍 *Symptoms:* ${d.symptoms || 'Visual lesions'}\n🧪 *Chemical Remedy:* ${d.chemical_cure || d.fungicide || 'Inspect crop'}\n🌿 *Organic Control:* ${d.organic_control || d.biological_cure || 'Bio-fungicide'}`;
-        waBtn.addEventListener('click', () => shareOnWhatsApp(`${dName} (${d.crop})`, waDetails));
+        const waDetails = `🩺 *Pathogen:* ${dName} (${d.pathogen_type || 'Disease'})
+🌱 *Crop:* ${d.crop ? d.crop.toUpperCase() : 'General'}
+🔍 *Symptoms:* ${d.symptoms || 'Visual lesions'}
+🧪 *Chemical Remedy:* ${speechChem}`;
+        waBtn.addEventListener('click', () => shareOnWhatsApp(`${dName} (${d.crop || ''})`, waDetails));
       }
 
       diseaseResultsContainer.appendChild(card);

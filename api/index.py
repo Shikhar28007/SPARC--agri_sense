@@ -270,18 +270,24 @@ def get_fertilizer_prescription(req: FertilizerRequest):
 def search_diseases(
     crop: Optional[str] = Query(None, description="Crop name"),
     keyword: Optional[str] = Query(None, description="Symptom keyword"),
+    symptom: Optional[str] = Query(None, description="Alternate symptom keyword"),
+    q: Optional[str] = Query(None, description="General search query"),
     temperature: Optional[float] = Query(None),
     humidity: Optional[float] = Query(None)
 ):
     try:
-        results = search_crop_diseases(crop_name=crop, keyword=keyword)
+        search_kw = keyword or symptom or q
+        if search_kw:
+            search_kw = search_kw.strip()
+        crop_clean = crop.strip() if crop else None
+        results = search_crop_diseases(crop_name=crop_clean, keyword=search_kw)
         outbreak_risk = []
-        if crop and temperature is not None and humidity is not None:
-            outbreak_risk = evaluate_disease_outbreak_risk(crop.lower().strip(), temperature, humidity)
+        if crop_clean and temperature is not None and humidity is not None:
+            outbreak_risk = evaluate_disease_outbreak_risk(crop_clean.lower(), temperature, humidity)
 
         return {
             "success": True,
-            "crop": crop,
+            "crop": crop_clean,
             "count": len(results),
             "diseases": results,
             "outbreak_risk": outbreak_risk
