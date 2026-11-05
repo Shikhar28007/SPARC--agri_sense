@@ -1764,7 +1764,11 @@ button {
 }
 
 .plotly-chart-box {
-  min-height: 280px;
+  width: 100%;
+  height: 340px;
+  min-height: 300px;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Disease Doctor */

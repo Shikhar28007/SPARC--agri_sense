@@ -906,7 +906,10 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
-    renderFertPlotlyChart(data);
+    // Schedule initial chart render after DOM reflow
+    setTimeout(() => {
+      renderFertPlotlyChart(data, state.activeChartMode || 'bar');
+    }, 60);
   }
 
   function recalcFarmerBags(f) {
@@ -942,54 +945,168 @@ document.addEventListener('DOMContentLoaded', () => {
   if (landSizeIn) landSizeIn.addEventListener('input', () => { if (state.lastFertData) recalcFarmerBags(state.lastFertData.fertilizers); });
   if (landUnitSel) landUnitSel.addEventListener('change', () => { if (state.lastFertData) recalcFarmerBags(state.lastFertData.fertilizers); });
 
-  function renderFertPlotlyChart(data) {
+  function renderFertPlotlyChart(data, mode = 'bar') {
     if (!window.Plotly) return;
     const chartDiv = document.getElementById('fert-plotly-chart');
     if (!chartDiv) return;
 
-    let d = data.deficits;
-    if (!d && data.prescription) {
-      const p = data.prescription;
-      const tnpk = p.target_npk || {};
-      d = {
-        target_n: tnpk.N || 120,
-        target_p: tnpk.P || 60,
-        target_k: tnpk.K || 40,
-        current_n: data.inputs?.nitrogen || 92,
-        current_p: data.inputs?.phosphorus || 46,
-        current_k: data.inputs?.potassium || 44
-      };
+    let targetN = 120, targetP = 60, targetK = 40;
+    let currentN = 92, currentP = 46, currentK = 44;
+
+    if (data.deficits) {
+      if (typeof data.deficits.target_n === 'number') targetN = data.deficits.target_n;
+      if (typeof data.deficits.target_p === 'number') targetP = data.deficits.target_p;
+      if (typeof data.deficits.target_k === 'number') targetK = data.deficits.target_k;
+      if (typeof data.deficits.current_n === 'number') currentN = data.deficits.current_n;
+      if (typeof data.deficits.current_p === 'number') currentP = data.deficits.current_p;
+      if (typeof data.deficits.current_k === 'number') currentK = data.deficits.current_k;
+    } else if (data.prescription) {
+      const tnpk = data.prescription.target_npk || {};
+      const cnpk = data.prescription.current_npk || {};
+      if (typeof tnpk.N === 'number') targetN = tnpk.N;
+      if (typeof tnpk.P === 'number') targetP = tnpk.P;
+      if (typeof tnpk.K === 'number') targetK = tnpk.K;
+      if (typeof cnpk.N === 'number') currentN = cnpk.N;
+      if (typeof cnpk.P === 'number') currentP = cnpk.P;
+      if (typeof cnpk.K === 'number') currentK = cnpk.K;
     }
-    d = d || {};
-    const trace1 = {
-      x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
-      y: [d.target_n || 120, d.target_p || 60, d.target_k || 40],
-      name: 'Crop Optimum Target',
-      type: 'bar',
-      marker: { color: '#2D6A4F' }
-    };
 
-    const trace2 = {
-      x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
-      y: [d.current_n || 92, d.current_p || 46, d.current_k || 44],
-      name: 'Current Field Soil Test',
-      type: 'bar',
-      marker: { color: '#E59B2E' }
-    };
+    if (data.inputs) {
+      if (typeof data.inputs.nitrogen === 'number') currentN = data.inputs.nitrogen;
+      if (typeof data.inputs.phosphorus === 'number') currentP = data.inputs.phosphorus;
+      if (typeof data.inputs.potassium === 'number') currentK = data.inputs.potassium;
+    }
 
-    const layout = {
-      barmode: 'group',
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      font: { family: 'Plus Jakarta Sans, sans-serif', color: '#1A2C22', size: 12 },
-      margin: { t: 30, r: 20, l: 40, b: 40 },
-      yaxis: { title: 'Nutrient (kg/ha)', gridcolor: '#ECE7DD' },
-      xaxis: { gridcolor: 'transparent' },
-      legend: { orientation: 'h', y: 1.15 }
-    };
+    if (mode === '3d') {
+      const traceCurrent = {
+        type: 'scatter3d',
+        mode: 'lines+markers+text',
+        x: [0, 1, 2],
+        y: [0, 0, 0],
+        z: [currentN, currentP, currentK],
+        text: [`N: ${currentN}`, `P: ${currentP}`, `K: ${currentK}`],
+        textposition: 'top center',
+        line: { color: '#E59B2E', width: 6 },
+        marker: { size: 6, color: '#E59B2E' },
+        name: 'Current Field Soil'
+      };
 
-    window.Plotly.newPlot(chartDiv, [trace1, trace2], layout, { responsive: true, displayModeBar: false });
+      const traceTarget = {
+        type: 'scatter3d',
+        mode: 'lines+markers+text',
+        x: [0, 1, 2],
+        y: [1, 1, 1],
+        z: [targetN, targetP, targetK],
+        text: [`N: ${targetN}`, `P: ${targetP}`, `K: ${targetK}`],
+        textposition: 'top center',
+        line: { color: '#1C4A32', width: 6 },
+        marker: { size: 6, color: '#1C4A32' },
+        name: 'Crop Optimum Target'
+      };
+
+      const layout3d = {
+        paper_bgcolor: 'transparent',
+        margin: { t: 20, r: 10, l: 10, b: 20 },
+        scene: {
+          xaxis: { title: 'Nutrients', tickvals: [0, 1, 2], ticktext: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'] },
+          yaxis: { title: 'Reference', tickvals: [0, 1], ticktext: ['Field Soil', 'Crop Target'] },
+          zaxis: { title: 'kg/ha' },
+          camera: { eye: { x: 1.5, y: -1.6, z: 1.2 } }
+        },
+        legend: { orientation: 'h', x: 0, y: 1.15 }
+      };
+
+      window.Plotly.newPlot(chartDiv, [traceCurrent, traceTarget], layout3d, { responsive: true, displayModeBar: false });
+    } else {
+      const trace1 = {
+        x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+        y: [targetN, targetP, targetK],
+        name: 'Crop Optimum Target',
+        type: 'bar',
+        marker: { color: '#1C4A32' }
+      };
+
+      const trace2 = {
+        x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+        y: [currentN, currentP, currentK],
+        name: 'Current Field Soil Test',
+        type: 'bar',
+        marker: { color: '#E59B2E' }
+      };
+
+      const layout = {
+        barmode: 'group',
+        bargap: 0.35,
+        bargroupgap: 0.12,
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        font: { family: 'Plus Jakarta Sans, sans-serif', color: '#1A2C22', size: 12 },
+        margin: { t: 36, r: 24, l: 56, b: 60 },
+        dragmode: false,
+        hovermode: 'closest',
+        yaxis: {
+          title: { text: 'Nutrient (kg/ha)', standoff: 8 },
+          gridcolor: '#ECE7DD',
+          rangemode: 'tozero',
+          fixedrange: true,
+          zerolinecolor: '#D4CBBF'
+        },
+        xaxis: {
+          type: 'category',
+          gridcolor: 'transparent',
+          fixedrange: true,
+          automargin: true,
+          tickfont: { size: 12, family: 'Plus Jakarta Sans, sans-serif', color: '#1A2C22' }
+        },
+        legend: {
+          orientation: 'h',
+          x: 0,
+          y: 1.18,
+          font: { size: 12, family: 'Plus Jakarta Sans, sans-serif' }
+        }
+      };
+
+      window.Plotly.newPlot(chartDiv, [trace1, trace2], layout, {
+        responsive: true,
+        displayModeBar: false,
+        staticPlot: false,
+        scrollZoom: false
+      });
+    }
   }
+
+  // Chart Toggle Buttons (Bar Comparison vs 3D WebGL)
+  const btnChartBar = document.getElementById('btn-chart-bar');
+  const btnChart3d = document.getElementById('btn-chart-3d');
+
+  if (btnChartBar) {
+    btnChartBar.addEventListener('click', () => {
+      btnChartBar.classList.add('active');
+      if (btnChart3d) btnChart3d.classList.remove('active');
+      state.activeChartMode = 'bar';
+      if (state.lastFertData) renderFertPlotlyChart(state.lastFertData, 'bar');
+    });
+  }
+
+  if (btnChart3d) {
+    btnChart3d.addEventListener('click', () => {
+      btnChart3d.classList.add('active');
+      if (btnChartBar) btnChartBar.classList.remove('active');
+      state.activeChartMode = '3d';
+      if (state.lastFertData) renderFertPlotlyChart(state.lastFertData, '3d');
+    });
+  }
+
+  // Window resize handler for Plotly
+  let fertResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(fertResizeTimer);
+    fertResizeTimer = setTimeout(() => {
+      if (window.Plotly && document.getElementById('fert-plotly-chart') && state.lastFertData) {
+        window.Plotly.Plots.resize('fert-plotly-chart');
+      }
+    }, 120);
+  });
 
   // ─────────────────────────────────────────────────────────────────────────
   // 8. DISEASE DOCTOR
