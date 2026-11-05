@@ -2791,3 +2791,143 @@ button {
   color: var(--text-dim);
   margin-top: 2px;
 }
+
+
+/* Specific Geolocation Header */
+.zone-location-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.location-pin-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.specific-location-name {
+  font-family: var(--font-heading);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--pine-primary);
+  letter-spacing: -0.2px;
+}
+
+/* Agronomic Decision Comparison Matrix */
+.agronomic-matrix-container {
+  background: #FFFFFF;
+  border: 1.5px solid #D1E5D4;
+  border-radius: var(--radius-xl);
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  overflow-x: auto;
+  transition: all 0.2s ease;
+}
+
+.matrix-table-wrap {
+  min-width: 640px;
+  overflow-x: auto;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.matrix-table th {
+  background: #F4F8F4;
+  color: var(--pine-primary);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 2px solid #D1E5D4;
+  white-space: nowrap;
+}
+
+.matrix-table td {
+  padding: 14px;
+  border-bottom: 1px solid #EAEAEA;
+  vertical-align: top;
+}
+
+.matrix-table tr:hover td {
+  background: #FBFDFB;
+}
+
+.matrix-rank-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.matrix-crop-title {
+  font-weight: 700;
+  color: var(--text-heading);
+  font-size: 14px;
+}
+
+.matrix-crop-varieties {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+.matrix-match-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.matrix-match-bar {
+  width: 60px;
+  height: 6px;
+  background: #E8ECE8;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.matrix-match-fill {
+  height: 100%;
+  background: var(--pine-primary);
+  border-radius: 4px;
+}
+
+.matrix-match-pct {
+  font-weight: 700;
+  color: var(--pine-primary);
+}
+
+.matrix-stat-val {
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.matrix-stat-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: block;
+}
+
+.matrix-fert-btn {
+  display: inline-block;
+  background: var(--pine-primary);
+  color: #FFFFFF;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.matrix-fert-btn:hover {
+  background: var(--pine-hover);
+}

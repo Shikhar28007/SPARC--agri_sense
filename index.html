@@ -124,7 +124,11 @@
 
         <!-- Floating Agro-Climatic Telemetry Box -->
         <div class="agro-zone-box" id="agro-zone-box">
-          <div class="zone-label" id="zone-label">Agro-Climatic Zone: Western Maharashtra (Zone IX)</div>
+          <div class="zone-location-header">
+            <span class="location-pin-icon" aria-hidden="true">📍</span>
+            <strong class="specific-location-name" id="specific-location-val">Prayagraj, Uttar Pradesh</strong>
+          </div>
+          <div class="zone-label" id="zone-label">Agro-Climatic Region: Middle Gangetic Plain • Lat 25.45° N, Lon 81.85° E</div>
           <div class="zone-metrics-row">
             <span class="zone-weather-icon">☀️</span>
             <span class="zone-temp-val" id="telemetry-temp">27.4°C</span>
@@ -582,6 +586,11 @@
 
             </div>
           </div>
+
+          <!-- Agronomic Decision Comparison Matrix View -->
+          <div class="agronomic-matrix-container is-hidden" id="agronomic-matrix-container">
+            <!-- Dynamically populated by renderAgronomicMatrix -->
+          </div>
         </div>
       </div>
 
@@ -589,7 +598,7 @@
       <div class="advisory-bottom-section">
         <div class="section-nav-bar">
           <div class="section-pills-row">
-            <button type="button" class="section-pill active" id="btn-subtab-advisory" data-subtab="advisory">Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)</button>
+            <button type="button" class="section-pill active" id="btn-subtab-advisory" data-subtab="advisory">Agro-Expert Advisory</button>
             <button type="button" class="section-pill" id="btn-subtab-spectrum" data-subtab="spectrum">NPK Soil Health Spectrum</button>
             <button type="button" class="section-pill" id="btn-subtab-records" data-subtab="records">Past Season Records</button>
           </div>
