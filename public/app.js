@@ -1,17 +1,19 @@
 /**
- * SPARC AI — Modern Interactive Client Controller
- * Connects Vercel Web UI to FastAPI Serverless Endpoints & Plotly WebGL Engine
+ * SPARC AI — Precision Agronomic Client Controller
+ * Connects Vercel Web UI to FastAPI Agronomic Intelligence Endpoints & Plotly Visualizations
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   // ── Global State ──
   const state = {
-    currentCity: 'New Delhi',
+    currentCity: 'Pune',
+    currentZone: 'Western Maharashtra (Zone IX)',
     currentWeather: {
-      temperature: 28.0,
-      humidity: 45.0,
-      rainfall: 0.0,
+      temperature: 26.5,
+      humidity: 76.0,
+      rainfall: 210.0,
     },
+    soilTexture: 'black',
     crops: [],
     diseaseCrops: [],
     indianStates: [],
@@ -20,11 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // ── DOM References ──
-  // Navigation Tabs
   const navTabs = document.querySelectorAll('.nav-tab');
   const tabPanels = document.querySelectorAll('.tab-panel');
 
-  // Sliders & Value Displays (Crop Recommender)
+  // Sliders & Value Displays
   const sliders = {
     n: document.getElementById('slider-n'),
     p: document.getElementById('slider-p'),
@@ -45,7 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
     rain: document.getElementById('val-rain'),
   };
 
-  // Fertilizer Sliders
+  // Inputs for Steppers
+  const inputs = {
+    n: document.getElementById('input-n'),
+    p: document.getElementById('input-p'),
+    k: document.getElementById('input-k'),
+  };
+
+  // Fertilizer Inputs
   const fertSliders = {
     n: document.getElementById('slider-fert-n'),
     p: document.getElementById('slider-fert-p'),
@@ -61,13 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Telemetry DOM
-  const telemetryCity = document.getElementById('telemetry-city');
   const telemetryTemp = document.getElementById('telemetry-temp');
   const telemetryHumidity = document.getElementById('telemetry-humidity');
   const telemetryRain = document.getElementById('telemetry-rain');
+  const zoneLabel = document.getElementById('zone-label');
+  const zoneMonsoonText = document.getElementById('zone-monsoon-text');
+  const zoneConditionPill = document.getElementById('zone-condition-pill');
   const btnDetectGps = document.getElementById('btn-detect-gps');
   const btnChangeCity = document.getElementById('btn-change-city');
   const btnSyncWeather = document.getElementById('btn-sync-weather');
+  const btnResetDefaults = document.getElementById('btn-reset-defaults');
 
   // City Modal DOM
   const cityModal = document.getElementById('city-modal');
@@ -75,6 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const citySearchInput = document.getElementById('city-search-input');
   const citySearchBtn = document.getElementById('city-search-btn');
   const cityPresetChips = document.querySelectorAll('.preset-chip');
+
+  // District Quick Chips
+  const districtChips = document.querySelectorAll('.dist-chip');
 
   // Forms & Actions
   const cropForm = document.getElementById('crop-form');
@@ -110,33 +124,83 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
+      const targetTab = tab.dataset.tab;
+      if (targetTab === 'weather-alerts') {
+        if (cityModal) cityModal.classList.add('open');
+        return;
+      }
+
       navTabs.forEach(t => t.classList.remove('active'));
       tabPanels.forEach(p => p.classList.remove('active'));
 
       tab.classList.add('active');
-      const targetPanel = document.getElementById(tab.dataset.tab);
+      const targetPanel = document.getElementById(targetTab);
       if (targetPanel) {
         targetPanel.classList.add('active');
       }
 
-      // If switching to fertilizer tab with existing chart, trigger resize
-      if (tab.dataset.tab === 'fertilizer-prescriber' && state.lastFertData && window.Plotly) {
+      if (targetTab === 'fertilizer-prescriber' && state.lastFertData && window.Plotly) {
         setTimeout(() => window.Plotly.Plots.resize('fert-plotly-chart'), 100);
       }
     });
   });
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 2. SLIDER & VALUE SYNC
+  // 2. SLIDERS & STEPPERS SYNC
   // ─────────────────────────────────────────────────────────────────────────
-  Object.keys(sliders).forEach(key => {
-    if (sliders[key] && displays[key]) {
-      sliders[key].addEventListener('input', (e) => {
-        displays[key].textContent = e.target.value;
+  // Stepper [+] and [-] buttons
+  document.querySelectorAll('.stepper-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      const isInc = btn.classList.contains('btn-inc');
+      const inputEl = inputs[target];
+      const sliderEl = sliders[target];
+      if (!inputEl) return;
+
+      let val = parseInt(inputEl.value, 10) || 0;
+      val = isInc ? val + 2 : val - 2;
+      if (val < 0) val = 0;
+      if (val > 300) val = 300;
+
+      inputEl.value = val;
+      if (sliderEl) sliderEl.value = val;
+      if (displays[target]) displays[target].textContent = val;
+      updateNutrientStatusPill(target, val);
+    });
+  });
+
+  // Direct typing into stepper input
+  Object.keys(inputs).forEach(key => {
+    const inputEl = inputs[key];
+    if (inputEl) {
+      inputEl.addEventListener('input', (e) => {
+        let val = parseInt(e.target.value, 10) || 0;
+        if (sliders[key]) sliders[key].value = val;
+        if (displays[key]) displays[key].textContent = val;
+        updateNutrientStatusPill(key, val);
       });
     }
   });
 
+  // Range Sliders (Temperature & Rainfall)
+  if (sliders.temp) {
+    sliders.temp.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value).toFixed(1);
+      if (displays.temp) displays.temp.textContent = val;
+      if (telemetryTemp) telemetryTemp.textContent = `${val}°C`;
+      updateConditionPill(val);
+    });
+  }
+
+  if (sliders.rain) {
+    sliders.rain.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      if (displays.rain) displays.rain.textContent = val;
+      if (zoneMonsoonText) zoneMonsoonText.textContent = `${val} mm`;
+    });
+  }
+
+  // Fertilizer sliders
   Object.keys(fertSliders).forEach(key => {
     if (fertSliders[key] && fertDisplays[key]) {
       fertSliders[key].addEventListener('input', (e) => {
@@ -145,15 +209,136 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function updateConditionPill(temp) {
+    if (!zoneConditionPill) return;
+    const t = parseFloat(temp);
+    if (t > 32) {
+      zoneConditionPill.textContent = 'Hot / Semi-Arid';
+      zoneConditionPill.style.background = '#FEF3C7';
+      zoneConditionPill.style.color = '#92400E';
+    } else if (t < 20) {
+      zoneConditionPill.textContent = 'Cool / Temperate';
+      zoneConditionPill.style.background = '#E0F2FE';
+      zoneConditionPill.style.color = '#0369A1';
+    } else {
+      zoneConditionPill.textContent = 'Humid';
+      zoneConditionPill.style.background = '#E8F6ED';
+      zoneConditionPill.style.color = '#1D643B';
+    }
+  }
+
+  function updateNutrientStatusPill(nutrient, val) {
+    const row = inputs[nutrient]?.closest('.nutrient-row-item');
+    if (!row) return;
+    const markers = row.querySelectorAll('.nut-marker');
+    if (markers.length < 3) return;
+
+    markers.forEach(m => m.classList.remove('active-pill'));
+    if (nutrient === 'n') {
+      if (val < 50) markers[0].classList.add('active-pill');
+      else if (val <= 140) markers[1].classList.add('active-pill');
+      else markers[2].classList.add('active-pill');
+    } else if (nutrient === 'p') {
+      if (val < 20) markers[0].classList.add('active-pill');
+      else if (val <= 80) markers[1].classList.add('active-pill');
+      else markers[2].classList.add('active-pill');
+    } else if (nutrient === 'k') {
+      if (val < 25) markers[0].classList.add('active-pill');
+      else if (val <= 90) markers[1].classList.add('active-pill');
+      else markers[2].classList.add('active-pill');
+    }
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
-  // 3. RESILIENT API FETCH & TELEMETRY
+  // 3. DISTRICT PRESETS & DEFAULTS
+  // ─────────────────────────────────────────────────────────────────────────
+  function applyDistrictData(btn) {
+    districtChips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+
+    const city = btn.dataset.city;
+    const temp = parseFloat(btn.dataset.temp);
+    const rain = parseInt(btn.dataset.rain, 10);
+    const n = parseInt(btn.dataset.n, 10);
+    const p = parseInt(btn.dataset.p, 10);
+    const k = parseInt(btn.dataset.k, 10);
+    const zone = btn.dataset.zone;
+
+    state.currentCity = city;
+    state.currentZone = zone;
+
+    if (sliders.temp) {
+      sliders.temp.value = temp;
+      if (displays.temp) displays.temp.textContent = temp;
+      if (telemetryTemp) telemetryTemp.textContent = `${temp}°C`;
+    }
+
+    if (sliders.rain) {
+      sliders.rain.value = rain;
+      if (displays.rain) displays.rain.textContent = rain;
+      if (zoneMonsoonText) zoneMonsoonText.textContent = `${rain} mm`;
+    }
+
+    if (inputs.n && sliders.n) {
+      inputs.n.value = n;
+      sliders.n.value = n;
+      if (displays.n) displays.n.textContent = n;
+      updateNutrientStatusPill('n', n);
+    }
+
+    if (inputs.p && sliders.p) {
+      inputs.p.value = p;
+      sliders.p.value = p;
+      if (displays.p) displays.p.textContent = p;
+      updateNutrientStatusPill('p', p);
+    }
+
+    if (inputs.k && sliders.k) {
+      inputs.k.value = k;
+      sliders.k.value = k;
+      if (displays.k) displays.k.textContent = k;
+      updateNutrientStatusPill('k', k);
+    }
+
+    if (zoneLabel) {
+      zoneLabel.textContent = `Agro-Climatic Zone: ${zone}`;
+    }
+
+    updateConditionPill(temp);
+  }
+
+  districtChips.forEach(btn => {
+    btn.addEventListener('click', () => applyDistrictData(btn));
+  });
+
+  if (btnResetDefaults) {
+    btnResetDefaults.addEventListener('click', () => {
+      const puneBtn = document.querySelector('.dist-chip[data-city="Pune"]');
+      if (puneBtn) applyDistrictData(puneBtn);
+    });
+  }
+
+  // Soil Texture Radios
+  document.querySelectorAll('.texture-radio-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.texture-radio-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const radio = card.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+        state.soilTexture = radio.value;
+      }
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 4. RESILIENT API FETCH & TELEMETRY
   // ─────────────────────────────────────────────────────────────────────────
   async function apiFetch(url, options = {}) {
     try {
       let res = await fetch(url, options);
       if (res.status === 404 || res.status === 405) {
         const altUrl = url.startsWith('/api/') ? url.replace('/api/', '/') : (url.startsWith('/') ? '/api' + url : '/api/' + url);
-        console.warn(`[SPARC API] Status ${res.status} on ${url}, attempting alternate route: ${altUrl}`);
         const altRes = await fetch(altUrl, options);
         if (altRes.ok || (altRes.status !== 404 && altRes.status !== 405)) {
           return altRes;
@@ -168,7 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchLiveTelemetry(query) {
     try {
-      telemetryCity.textContent = 'Updating...';
       const res = await apiFetch(`/weather?query=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (data.success && data.telemetry) {
@@ -180,61 +364,53 @@ document.addEventListener('DOMContentLoaded', () => {
           rainfall: t.rainfall || 0
         };
 
-        telemetryCity.textContent = `${t.city || query}, ${t.country || 'India'}`;
-        telemetryTemp.textContent = `${t.temperature.toFixed(1)}°C`;
-        telemetryHumidity.textContent = `${t.humidity.toFixed(0)}%`;
-        telemetryRain.textContent = `${(t.rainfall || 0).toFixed(0)} mm`;
+        if (telemetryTemp) telemetryTemp.textContent = `${t.temperature.toFixed(1)}°C`;
+        if (zoneMonsoonText && t.rainfall) zoneMonsoonText.textContent = `${t.rainfall.toFixed(0)} mm`;
+        if (zoneLabel) zoneLabel.textContent = `Agro-Climatic Zone: ${t.city || query} District`;
+        if (sliders.temp) {
+          sliders.temp.value = t.temperature;
+          if (displays.temp) displays.temp.textContent = t.temperature.toFixed(1);
+        }
+        updateConditionPill(t.temperature);
       }
     } catch (err) {
-      console.warn('Telemetry fetch error, using fallback:', err);
-      telemetryCity.textContent = query;
+      console.warn('Telemetry fetch error:', err);
     }
   }
 
-  // Auto-sync live weather into sliders
-  btnSyncWeather.addEventListener('click', () => {
-    sliders.temp.value = state.currentWeather.temperature;
-    displays.temp.textContent = state.currentWeather.temperature;
-
-    sliders.hum.value = state.currentWeather.humidity;
-    displays.hum.textContent = state.currentWeather.humidity;
-
-    if (state.currentWeather.rainfall > 0) {
-      sliders.rain.value = state.currentWeather.rainfall;
-      displays.rain.textContent = state.currentWeather.rainfall;
-    }
-
-    btnSyncWeather.textContent = '✅ Synced with Live Weather';
-    setTimeout(() => {
-      btnSyncWeather.textContent = '🛰️ Auto-Fill Live Weather';
-    }, 2000);
-  });
-
   // Modal Controls
-  btnChangeCity.addEventListener('click', () => {
-    cityModal.classList.add('open');
-    citySearchInput.focus();
-  });
+  if (btnChangeCity) {
+    btnChangeCity.addEventListener('click', () => {
+      cityModal.classList.add('open');
+      citySearchInput.focus();
+    });
+  }
 
-  modalCloseBtn.addEventListener('click', () => {
-    cityModal.classList.remove('open');
-  });
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', () => cityModal.classList.remove('open'));
+  }
 
-  cityModal.addEventListener('click', (e) => {
-    if (e.target === cityModal) cityModal.classList.remove('open');
-  });
+  if (cityModal) {
+    cityModal.addEventListener('click', (e) => {
+      if (e.target === cityModal) cityModal.classList.remove('open');
+    });
+  }
 
-  citySearchBtn.addEventListener('click', () => {
-    const val = citySearchInput.value.trim();
-    if (val) {
-      fetchLiveTelemetry(val);
-      cityModal.classList.remove('open');
-    }
-  });
+  if (citySearchBtn) {
+    citySearchBtn.addEventListener('click', () => {
+      const val = citySearchInput.value.trim();
+      if (val) {
+        fetchLiveTelemetry(val);
+        cityModal.classList.remove('open');
+      }
+    });
+  }
 
-  citySearchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') citySearchBtn.click();
-  });
+  if (citySearchInput) {
+    citySearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') citySearchBtn.click();
+    });
+  }
 
   cityPresetChips.forEach(chip => {
     chip.addEventListener('click', () => {
@@ -244,179 +420,145 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // HTML5 GPS Geolocation
-  btnDetectGps.addEventListener('click', () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
-      return;
-    }
-    telemetryCity.textContent = 'Detecting GPS...';
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        try {
-          // Open-Meteo reverse weather telemetry
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation`);
-          const data = await res.json();
-          if (data && data.current) {
-            state.currentWeather = {
-              temperature: data.current.temperature_2m,
-              humidity: data.current.relative_humidity_2m,
-              rainfall: data.current.precipitation || 0
-            };
-            telemetryCity.textContent = `GPS (${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°)`;
-            telemetryTemp.textContent = `${state.currentWeather.temperature.toFixed(1)}°C`;
-            telemetryHumidity.textContent = `${state.currentWeather.humidity.toFixed(0)}%`;
-            telemetryRain.textContent = `${state.currentWeather.rainfall.toFixed(0)} mm`;
-          }
-        } catch (e) {
-          telemetryCity.textContent = 'GPS Active';
-        }
-      },
-      (err) => {
-        telemetryCity.textContent = state.currentCity;
-        alert('Could not access location. Please check your browser permissions.');
+  // GPS Geolocation
+  if (btnDetectGps) {
+    btnDetectGps.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        return;
       }
-    );
-  });
+      if (zoneLabel) zoneLabel.textContent = 'Detecting GPS Coordinates...';
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          try {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation`);
+            const data = await res.json();
+            if (data && data.current) {
+              const temp = data.current.temperature_2m;
+              const rain = data.current.precipitation || 0;
+              if (telemetryTemp) telemetryTemp.textContent = `${temp.toFixed(1)}°C`;
+              if (sliders.temp) {
+                sliders.temp.value = temp;
+                if (displays.temp) displays.temp.textContent = temp.toFixed(1);
+              }
+              if (zoneLabel) zoneLabel.textContent = `GPS: Lat ${latitude.toFixed(2)}°, Lon ${longitude.toFixed(2)}°`;
+              updateConditionPill(temp);
+            }
+          } catch (e) {
+            if (zoneLabel) zoneLabel.textContent = 'Agro-Climatic Zone: Western Maharashtra (Zone IX)';
+          }
+        },
+        (err) => {
+          alert('Could not access location. Please check browser permissions.');
+          if (zoneLabel) zoneLabel.textContent = 'Agro-Climatic Zone: Western Maharashtra (Zone IX)';
+        }
+      );
+    });
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 4. AGRO-ECOLOGICAL PRESETS
+  // 5. CROPS METADATA & STYLING ENGINE
   // ─────────────────────────────────────────────────────────────────────────
-  const agroPresets = {
-    punjab: { n: 130, p: 55, k: 45, temp: 22.0, hum: 60, ph: 7.2, rain: 85 },
-    blackcotton: { n: 80, p: 40, k: 60, temp: 28.5, hum: 70, ph: 7.8, rain: 130 },
-    kerala: { n: 90, p: 35, k: 120, temp: 29.0, hum: 85, ph: 5.5, rain: 240 },
-    millet: { n: 45, p: 25, k: 30, temp: 34.0, hum: 35, ph: 8.0, rain: 45 },
-    sandy_poor: { n: 40, p: 20, k: 25, temp: 28.0, hum: 45, ph: 6.2, rain: 70 },
-    medium_loam: { n: 85, p: 40, k: 45, temp: 26.5, hum: 65, ph: 6.8, rain: 110 },
-    clay_fertile: { n: 135, p: 60, k: 75, temp: 25.0, hum: 75, ph: 7.4, rain: 150 }
+  const AGRONOMIC_METADATA = {
+    rice: {
+      fullName: 'Paddy / धान (Indica Wet)',
+      seasonBadge: 'Kharif Prime',
+      varieties: 'MTU-1010, Indrayani, or PKV-HMT',
+      yield: '44 – 48 Q/Ha',
+      yieldSub: 'Top Tier Harvest',
+      water: 'High',
+      waterSub: 'Canal / Submerged',
+      price: '₹2,300 – ₹2,550',
+      priceSub: 'MSP Protected',
+      duration: '120 – 135 Days',
+      durationSub: 'Mid-duration crop',
+      basalDose: '50% N + 100% P + 100% K at transplanting.',
+      rationale: (n, rain) => `Your high soil Nitrogen levels (${n} kg/ha) combined with regular monsoon rainfall (${rain} mm) provide exceptional conditions for rapid tillering and robust grain formation.`
+    },
+    cotton: {
+      fullName: 'Cotton / कपास (Bt Hybrid)',
+      seasonBadge: 'Kharif Cash',
+      varieties: 'RCH-659, Ankur-3028, or Ajit-155',
+      yield: '22 – 28 Quintals/Ha',
+      yieldSub: 'High Boll Load',
+      water: 'Moderate (500–700mm)',
+      waterSub: 'Deep Root Tap',
+      price: '₹7,120 – ₹7,520',
+      priceSub: 'MSP Grade-A',
+      duration: '150 – 165 Days',
+      durationSub: 'Extended Picking',
+      basalDose: '20% N + 100% P + 100% K at planting, split N at 30 & 60 DAS.',
+      rationale: (n, rain) => `Ideal for well-drained Black Cotton soil. Highly responsive to available potassium for fiber strength and superior boll weight.`
+    },
+    maize: {
+      fullName: 'Maize / मक्का (Hybrid Feed)',
+      seasonBadge: 'Kharif Fast',
+      varieties: 'DKC-9108, Pioneer-P3501, or Bio-9681',
+      yield: '55 – 65 Quintals/Ha',
+      yieldSub: 'Heavy Cob Biomass',
+      water: 'Low to Moderate (Drip ready)',
+      waterSub: 'Tolerant to breaks',
+      price: '₹2,090 – ₹2,225',
+      priceSub: 'Steady Poultry Demand',
+      duration: '90 – 105 Days',
+      durationSub: 'Fast Turnaround',
+      basalDose: '25% N + 100% P + 100% K basal, remainder N at knee-high and tasseling.',
+      rationale: (n, rain) => `Resilient crop choice with fast turnaround (90–105 days). Lower overall water risk if monsoon weakens midway.`
+    },
+    wheat: {
+      fullName: 'Wheat / गेहूं (HD-2967)',
+      seasonBadge: 'Rabi Sovereign',
+      varieties: 'HD-2967, PBW-343, or GW-322',
+      yield: '48 – 54 Q/Ha',
+      yieldSub: 'Prime Milling Grade',
+      water: 'Moderate',
+      waterSub: '4–5 Critical Irrigations',
+      price: '₹2,275 – ₹2,450',
+      priceSub: 'MSP Guaranteed',
+      duration: '115 – 125 Days',
+      durationSub: 'Timely Sown',
+      basalDose: '50% N + 100% P + 100% K at crown root initiation.',
+      rationale: (n, rain) => `Thrives in balanced loam soils with moderate soil fertility and structured irrigation schedules.`
+    },
+    sugarcane: {
+      fullName: 'Sugarcane / गन्ना (Co-86032)',
+      seasonBadge: 'Annual Heavy',
+      varieties: 'Co-86032 (Nira), Co-0265 (Phule 265)',
+      yield: '110 – 130 Tons/Ha',
+      yieldSub: 'High Cane Recovery',
+      water: 'High (1500–2500mm)',
+      waterSub: 'Assured Furrow/Drip',
+      price: '₹3,150 / Ton',
+      priceSub: 'FRP Mandated',
+      duration: '12 – 14 Months',
+      durationSub: 'Full Agronomic Cycle',
+      basalDose: '10% N + 100% P + 50% K at furrow planting.',
+      rationale: (n, rain) => `Exceptional biomass potential under heavy clay soils with assured drainage and balanced NPK nourishment.`
+    }
   };
 
-  document.querySelectorAll('.agro-preset-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const p = agroPresets[btn.dataset.preset];
-      if (!p) return;
-      Object.keys(p).forEach(k => {
-        if (sliders[k] && displays[k]) {
-          sliders[k].value = p[k];
-          displays[k].textContent = p[k];
-        }
-      });
-    });
-  });
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // 5. CROP RECOMMENDATION SUBMIT
-  // ─────────────────────────────────────────────────────────────────────────
-  cropForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    predictSpinner.style.display = 'inline-block';
-    resultsStatus.textContent = 'Analyzing...';
-
-    const payload = {
-      nitrogen: parseFloat(sliders.n.value),
-      phosphorus: parseFloat(sliders.p.value),
-      potassium: parseFloat(sliders.k.value),
-      temperature: parseFloat(sliders.temp.value),
-      humidity: parseFloat(sliders.hum.value),
-      ph: parseFloat(sliders.ph.value),
-      rainfall: parseFloat(sliders.rain.value),
-      top_k: 3,
-      target_crop: selectTargetCrop && selectTargetCrop.value ? selectTargetCrop.value : null
-    };
-
-    try {
-      const res = await apiFetch('/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      if (data.success && data.recommendations) {
-        renderRecommendations(data);
-        resultsStatus.textContent = 'AI Classified (99.3%)';
-      } else {
-        alert(data.detail || 'Prediction failed.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Network error connecting to API.');
-    } finally {
-      predictSpinner.style.display = 'none';
+  function getCropMeta(cropKey, fallbackProfile = {}) {
+    const key = (cropKey || '').toLowerCase();
+    if (AGRONOMIC_METADATA[key]) {
+      return AGRONOMIC_METADATA[key];
     }
-  });
-
-  // ── Helper Diagnostic & Mitigation Formatters (100% Object-Safe) ──
-  function formatIssues(issues, riskLevel) {
-    if (!issues || issues.length === 0) return '';
-    const itemsHtml = issues.map(iss => {
-      if (typeof iss === 'object' && iss !== null) {
-        const title = iss.param ? `${iss.param} [${iss.status || 'Alert'}]` : (iss.status || 'Physiological Stress');
-        const detail = iss.detail || '';
-        return `<div class="stress-item">• <strong>${title}:</strong> ${detail}</div>`;
-      }
-      return `<div class="stress-item">• ${iss}</div>`;
-    }).join('');
-
-    return `
-      <div class="stress-box">
-        <strong>⚠️ Physiological Diagnostics (${riskLevel || 'FIELD ALERT'}):</strong>
-        ${itemsHtml}
-      </div>
-    `;
-  }
-
-  function formatRescueRoadmap(roadmap) {
-    if (!roadmap || roadmap.length === 0) return '';
-    const itemsHtml = roadmap.map(a => {
-      if (typeof a === 'object' && a !== null) {
-        const category = a.category || a.issue || 'Actionable Protocol';
-        const action = a.action || a.solution || a.detail || '';
-        const impact = a.impact ? `<div class="rescue-impact"><em>Agronomic Impact:</em> ${a.impact}</div>` : '';
-        return `
-          <div class="rescue-item">
-            <div class="rescue-category">🌱 ${category}</div>
-            <div class="rescue-action"><strong>Action:</strong> ${action}</div>
-            ${impact}
-          </div>
-        `;
-      }
-      return `<div class="rescue-item"><div class="rescue-action">• ${a}</div></div>`;
-    }).join('');
-
-    return `
-      <div class="rescue-box">
-        <strong>🛡️ "How to Grow Anyway" Actionable Mitigation & Rescue Roadmap:</strong>
-        ${itemsHtml}
-      </div>
-    `;
-  }
-
-  function formatDiseaseRisks(risks, cropName) {
-    if (!risks || risks.length === 0) return '';
-    const itemsHtml = risks.map(d => {
-      if (typeof d === 'object' && d !== null) {
-        const name = d.disease_name || d.name || d.disease || 'Plant Disease';
-        const sev = d.severity || 'Risk Watch';
-        const cond = d.condition || '';
-        const remedy = d.immediate_remedy ? ` <em>Immediate Remedy:</em> <strong>${d.immediate_remedy}</strong>` : '';
-        return `
-          <div class="disease-risk-item">
-            • <strong style="color: #F87171;">${name} (${sev}):</strong> ${cond}${remedy}
-          </div>
-        `;
-      }
-      return `<div class="disease-risk-item">• ${d}</div>`;
-    }).join('');
-
-    return `
-      <div class="disease-risk-box">
-        <strong>⚠️ Pathogen & Disease Incubation Watch for ${cropName || 'Selected Crop'}:</strong>
-        ${itemsHtml}
-      </div>
-    `;
+    const cleanName = cropKey.charAt(0).toUpperCase() + cropKey.slice(1);
+    return {
+      fullName: `${cleanName} / फसल (${fallbackProfile.cycle_days || 'Standard'})`,
+      seasonBadge: 'Agro Recommended',
+      varieties: `Certified Regional Varieties (${cleanName})`,
+      yield: '30 – 40 Q/Ha',
+      yieldSub: 'Optimal Management',
+      water: fallbackProfile.water_demand || 'Moderate',
+      waterSub: fallbackProfile.soil_type || 'Loamy Soils',
+      price: fallbackProfile.economic_outlook ? fallbackProfile.economic_outlook.split(' ')[0] : 'High Liquidity',
+      priceSub: 'Active Mandi Trade',
+      duration: fallbackProfile.cycle_days || '90 – 120 Days',
+      durationSub: 'Season Duration',
+      basalDose: 'Apply balanced NPK dose as per University guidelines.',
+      rationale: (n, rain) => `Strong agronomic fit for current field conditions with balanced soil test indices.`
+    };
   }
 
   // ── Speech Synthesis & WhatsApp Kisan Helpers ──
@@ -480,168 +622,198 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(url, '_blank');
   }
 
-  function renderRecommendations(data) {
-    cropPlaceholder.classList.add('is-hidden');
-    recommendationsList.classList.remove('is-hidden');
-    recommendationsList.innerHTML = '';
-
-    const targetDiag = data.target_diagnosis;
-    const recs = data.recommendations || [];
-
-    // 1. RENDER PLANNED TARGET CROP CARD IF SELECTED
-    if (targetDiag) {
-      const targetCard = document.createElement('div');
-      targetCard.className = 'target-crop-card';
-
-      const riskLvl = targetDiag.risk_level || 'Moderate Risk';
-      const riskBadgeClass = riskLvl.toLowerCase().includes('low') ? 'badge-emerald' : (riskLvl.toLowerCase().includes('severe') || riskLvl.toLowerCase().includes('high') ? 'badge-rose' : 'badge-amber');
-      const score = targetDiag.compatibility_score || 85;
-
-      const stressHtml = formatIssues(targetDiag.issues, riskLvl);
-      const rescueHtml = formatRescueRoadmap(targetDiag.rescue_roadmap);
-      const diseaseHtml = formatDiseaseRisks(targetDiag.disease_risks, targetDiag.crop);
-
-      targetCard.innerHTML = `
-        <div class="target-card-header">
-          <div class="target-title-group">
-            <h3>🎯 Planned Crop: ${targetDiag.crop}</h3>
-            <span style="font-size: 0.85rem; color: var(--gold-primary);">Your Designated Intended Crop</span>
-          </div>
-          <div class="target-badges">
-            <span class="badge ${riskBadgeClass}">Status: ${riskLvl}</span>
-            <span class="badge badge-gold">${score}% Compatibility</span>
-          </div>
-        </div>
-
-        <div class="target-summary">
-          ${targetDiag.summary || `Agronomic diagnostic evaluation for cultivating ${targetDiag.crop} under current field parameters.`}
-        </div>
-
-        <div class="crop-meta-grid" style="margin-bottom: 1rem;">
-          <div class="meta-item">
-            <strong>Cycle Duration:</strong> <span>${targetDiag.profile?.cycle_days || 'Seasonal'}</span>
-          </div>
-          <div class="meta-item">
-            <strong>Water Demand:</strong> <span>${targetDiag.profile?.water_demand || 'Moderate'}</span>
-          </div>
-          <div class="meta-item">
-            <strong>Preferred Soil:</strong> <span>${targetDiag.profile?.soil_type || 'Loamy'}</span>
-          </div>
-          <div class="meta-item">
-            <strong>Commercial Outlook:</strong> <span>${targetDiag.profile?.economic_outlook || 'High market demand'}</span>
-          </div>
-        </div>
-
-        ${stressHtml}
-        ${rescueHtml}
-        ${diseaseHtml}
-
-        <div class="card-action-bar">
-          <button type="button" class="btn-voice-readout btn-voice-target">🔊 सुनिए / Listen</button>
-          <button type="button" class="btn-whatsapp-share btn-whatsapp-target">📲 WhatsApp पर भेजें / Share</button>
-        </div>
-      `;
-
-      const voiceBtn = targetCard.querySelector('.btn-voice-target');
-      if (voiceBtn) {
-        const primaryRescue = targetDiag.rescue_roadmap && targetDiag.rescue_roadmap[0] ? targetDiag.rescue_roadmap[0].action : 'उचित प्रबंधन करें.';
-        const speechText = `फसल सलाह: ${targetDiag.crop}. कम्पैटिबिलिटी स्कोर ${score} प्रतिशत. रिस्क स्टेटस: ${riskLvl}. ${targetDiag.summary || ''}. मुख्य सुधार उपाय: ${primaryRescue}`;
-        voiceBtn.addEventListener('click', () => toggleSpeech(speechText, voiceBtn));
-      }
-
-      const waBtn = targetCard.querySelector('.btn-whatsapp-target');
-      if (waBtn) {
-        const primaryRescue = targetDiag.rescue_roadmap && targetDiag.rescue_roadmap[0] ? targetDiag.rescue_roadmap[0].action : 'Standard management';
-        const waDetails = `📊 *Compatibility:* ${score}%\n⚠️ *Risk Level:* ${riskLvl}\n\n📝 *Summary:* ${targetDiag.summary || ''}\n\n🛡️ *Key Rescue Step:* ${primaryRescue}`;
-        waBtn.addEventListener('click', () => shareOnWhatsApp(targetDiag.crop, waDetails));
-      }
-
-      recommendationsList.appendChild(targetCard);
-    }
-
-    // Section title for AI Alternatives
-    const recsHeader = document.createElement('div');
-    recsHeader.className = 'recs-section-header';
-    recsHeader.innerHTML = targetDiag 
-      ? `<span>🌾 AI Recommended Alternative Crops (Scikit-Learn 99.3% Accuracy)</span>` 
-      : `<span>🌾 Top AI Crop Suitability Recommendations</span>`;
-    recommendationsList.appendChild(recsHeader);
-
-    // 2. RENDER TOP 3 RECOMMENDED CROPS
-    recs.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'crop-card';
-
-      const stressHtml = formatIssues(item.issues, item.risk_level);
-      const rescueHtml = formatRescueRoadmap(item.rescue_roadmap);
-      const diseaseHtml = formatDiseaseRisks(item.disease_risks, item.crop);
-
-      card.innerHTML = `
-        <div class="crop-card-header">
-          <div class="crop-name-group">
-            <span class="crop-rank">#${item.rank}</span>
-            <span class="crop-title">${item.crop}</span>
-          </div>
-          <span class="badge ${item.rank === 1 ? 'badge-gold' : 'badge-emerald'}">
-            ${item.confidence}% Match
-          </span>
-        </div>
-
-        <div class="confidence-bar-wrapper">
-          <div class="confidence-bar-bg">
-            <div class="confidence-fill" style="width: ${item.confidence}%;"></div>
-          </div>
-        </div>
-
-        <div class="crop-meta-grid">
-          <div class="meta-item">
-            <strong>Crop Cycle:</strong> <span>${item.profile.cycle_days || 'Seasonal'}</span>
-          </div>
-          <div class="meta-item">
-            <strong>Water Demand:</strong> <span>${item.profile.water_demand || 'Moderate'}</span>
-          </div>
-          <div class="meta-item">
-            <strong>Preferred Soil:</strong> <span>${item.profile.soil_type || 'Loamy'}</span>
-          </div>
-          <div class="meta-item">
-            <strong>Economic Outlook:</strong> <span>${item.profile.economic_outlook || 'High liquidity'}</span>
-          </div>
-        </div>
-
-        ${stressHtml}
-        ${rescueHtml}
-        ${diseaseHtml}
-
-        <div class="card-action-bar">
-          <button type="button" class="btn-voice-readout btn-voice-rec">🔊 सुनिए / Listen</button>
-          <button type="button" class="btn-whatsapp-share btn-whatsapp-rec">📲 WhatsApp पर भेजें / Share</button>
-        </div>
-      `;
-
-      const voiceBtn = card.querySelector('.btn-voice-rec');
-      if (voiceBtn) {
-        const speechText = `सिफारिश फसल: ${item.crop}, रैंक ${item.rank}, मैच ${item.confidence} प्रतिशत. फसल चक्र: ${item.profile.cycle_days || 'मौसमी'}. पानी की जरूरत: ${item.profile.water_demand || 'मध्यम'}. आर्थिक आउटलुक: ${item.profile.economic_outlook || 'अच्छा बाजार भाव'}.`;
-        voiceBtn.addEventListener('click', () => toggleSpeech(speechText, voiceBtn));
-      }
-
-      const waBtn = card.querySelector('.btn-whatsapp-rec');
-      if (waBtn) {
-        const waDetails = `🏆 *Rank:* #${item.rank}\n📊 *Match Confidence:* ${item.confidence}%\n⏱️ *Cycle:* ${item.profile.cycle_days || 'Seasonal'}\n💧 *Water Demand:* ${item.profile.water_demand || 'Moderate'}\n📈 *Economic Outlook:* ${item.profile.economic_outlook || 'Strong demand'}`;
-        waBtn.addEventListener('click', () => shareOnWhatsApp(item.crop, waDetails));
-      }
-
-      recommendationsList.appendChild(card);
+  // Initial attach for static listeners in Paddy hero card
+  const staticVoiceBtn = document.getElementById('best-voice-btn');
+  if (staticVoiceBtn) {
+    staticVoiceBtn.addEventListener('click', () => {
+      toggleSpeech('सिफारिश फसल: धान Indica Wet. मैच 94 प्रतिशत. अनुशंसित किस्में: MTU-1010, इंद्रायणी, या PKV-HMT. अपेक्षित उपज: 44 से 48 क्विंटल प्रति हेक्टेयर.', staticVoiceBtn);
     });
   }
 
+  const staticWaBtn = document.getElementById('best-whatsapp-btn');
+  if (staticWaBtn) {
+    staticWaBtn.addEventListener('click', () => {
+      shareOnWhatsApp('Paddy / धान (Indica Wet)', '📊 Suitability: 94%\n🌾 Expected Yield: 44-48 Q/Ha\n💧 Water Need: High\n⏱️ Duration: 120-135 Days');
+    });
+  }
 
+  const alt1VoiceBtn = document.getElementById('alt-1-voice-btn');
+  if (alt1VoiceBtn) {
+    alt1VoiceBtn.addEventListener('click', () => {
+      toggleSpeech('वैकल्पिक फसल 1: कपास Bt Hybrid. मैच 82 प्रतिशत. काली मिट्टी के लिए उपयुक्त. पानी की जरूरत 500 से 700 मिलीमीटर.', alt1VoiceBtn);
+    });
+  }
+
+  const alt2VoiceBtn = document.getElementById('alt-2-voice-btn');
+  if (alt2VoiceBtn) {
+    alt2VoiceBtn.addEventListener('click', () => {
+      toggleSpeech('वैकल्पिक फसल 2: मक्का Hybrid Feed. मैच 74 प्रतिशत. 90 से 105 दिनों में तैयार.', alt2VoiceBtn);
+    });
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 6. FERTILIZER PRESCRIBER SUBMIT & CHART
+  // 6. CROP RECOMMENDATION SUBMIT & RENDER
+  // ─────────────────────────────────────────────────────────────────────────
+  cropForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (predictSpinner) predictSpinner.style.display = 'inline-block';
+    if (resultsStatus) resultsStatus.textContent = 'Analyzing...';
+
+    const nVal = inputs.n ? parseFloat(inputs.n.value) : parseFloat(sliders.n.value);
+    const pVal = inputs.p ? parseFloat(inputs.p.value) : parseFloat(sliders.p.value);
+    const kVal = inputs.k ? parseFloat(inputs.k.value) : parseFloat(sliders.k.value);
+    const tempVal = parseFloat(sliders.temp.value);
+    const rainVal = parseFloat(sliders.rain.value);
+    const humVal = parseFloat(sliders.hum ? sliders.hum.value : 76);
+    const phVal = parseFloat(sliders.ph ? sliders.ph.value : 6.8);
+
+    const payload = {
+      nitrogen: nVal,
+      phosphorus: pVal,
+      potassium: kVal,
+      temperature: tempVal,
+      humidity: humVal,
+      ph: phVal,
+      rainfall: rainVal,
+      top_k: 3,
+      target_crop: selectTargetCrop && selectTargetCrop.value ? selectTargetCrop.value : null
+    };
+
+    try {
+      const res = await apiFetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.success && data.recommendations) {
+        renderRecommendations(data, nVal, rainVal);
+        if (resultsStatus) resultsStatus.textContent = 'AI Classified (99.3%)';
+      } else {
+        alert(data.detail || 'Prediction failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error connecting to Agronomic Intelligence API.');
+    } finally {
+      if (predictSpinner) predictSpinner.style.display = 'none';
+    }
+  });
+
+  function renderRecommendations(data, currentN = 92, currentRain = 210) {
+    const recs = data.recommendations || [];
+    if (recs.length === 0) return;
+
+    // #1 Best Choice Crop
+    const best = recs[0];
+    const bestMeta = getCropMeta(best.crop, best.profile);
+
+    const bestCard = document.getElementById('best-crop-card');
+    const bestCropName = document.getElementById('best-crop-name');
+    const bestSeason = document.getElementById('best-crop-season');
+    const bestVarieties = document.getElementById('best-crop-varieties');
+    const bestGaugeVal = document.getElementById('best-gauge-val');
+    const bestGaugeFill = document.getElementById('best-gauge-fill');
+    const bestRationale = document.getElementById('best-crop-rationale');
+    const bestStatYield = document.getElementById('best-stat-yield');
+    const bestStatYieldSub = document.getElementById('best-stat-yield-sub');
+    const bestStatWater = document.getElementById('best-stat-water');
+    const bestStatWaterSub = document.getElementById('best-stat-water-sub');
+    const bestStatPrice = document.getElementById('best-stat-price');
+    const bestStatPriceSub = document.getElementById('best-stat-price-sub');
+    const bestStatDuration = document.getElementById('best-stat-duration');
+    const bestStatDurationSub = document.getElementById('best-stat-duration-sub');
+
+    if (bestCropName) bestCropName.textContent = bestMeta.fullName;
+    if (bestSeason) bestSeason.textContent = bestMeta.seasonBadge;
+    if (bestVarieties) bestVarieties.textContent = `Recommended Varieties: ${bestMeta.varieties}`;
+    if (bestGaugeVal) bestGaugeVal.textContent = `${best.confidence}%`;
+    if (bestGaugeFill) {
+      // 2 * PI * 34 = 213.6
+      const offset = 213.6 - (213.6 * best.confidence / 100);
+      bestGaugeFill.setAttribute('stroke-dashoffset', offset.toFixed(1));
+    }
+    if (bestRationale) {
+      bestRationale.textContent = bestMeta.rationale(currentN, currentRain);
+    }
+    if (bestStatYield) bestStatYield.textContent = bestMeta.yield;
+    if (bestStatYieldSub) bestStatYieldSub.textContent = bestMeta.yieldSub;
+    if (bestStatWater) bestStatWater.textContent = bestMeta.water;
+    if (bestStatWaterSub) bestStatWaterSub.textContent = bestMeta.waterSub;
+    if (bestStatPrice) bestStatPrice.textContent = bestMeta.price;
+    if (bestStatPriceSub) bestStatPriceSub.textContent = bestMeta.priceSub;
+    if (bestStatDuration) bestStatDuration.textContent = bestMeta.duration;
+    if (bestStatDurationSub) bestStatDurationSub.textContent = bestMeta.durationSub;
+
+    // Attach Voice & WhatsApp to new Best Choice
+    const dynamicBestVoice = document.getElementById('best-voice-btn');
+    if (dynamicBestVoice) {
+      const spText = `शीर्ष अनुशंसित फसल: ${bestMeta.fullName}. मैच आत्मविश्वास ${best.confidence} प्रतिशत. अपेक्षित उपज: ${bestMeta.yield}. जल आवश्यकता: ${bestMeta.water}. फसल अवधि: ${bestMeta.duration}.`;
+      dynamicBestVoice.onclick = () => toggleSpeech(spText, dynamicBestVoice);
+    }
+
+    const dynamicBestWa = document.getElementById('best-whatsapp-btn');
+    if (dynamicBestWa) {
+      const waDet = `📊 *Match:* ${best.confidence}%\n🌾 *Yield:* ${bestMeta.yield}\n💧 *Water:* ${bestMeta.water}\n⏱️ *Duration:* ${bestMeta.duration}\n💰 *Mandi:* ${bestMeta.price}`;
+      dynamicBestWa.onclick = () => shareOnWhatsApp(bestMeta.fullName, waDet);
+    }
+
+    // Alternative #1 (Index 1)
+    if (recs.length > 1) {
+      const alt1 = recs[1];
+      const alt1Meta = getCropMeta(alt1.crop, alt1.profile);
+      const alt1Score = document.getElementById('alt-1-score');
+      const alt1Title = document.getElementById('alt-1-title');
+      const alt1Desc = document.getElementById('alt-1-desc');
+      const alt1Water = document.getElementById('alt-1-water');
+      const alt1Yield = document.getElementById('alt-1-yield');
+      const alt1Risk = document.getElementById('alt-1-risk');
+
+      if (alt1Score) alt1Score.textContent = `${alt1.confidence}% Match`;
+      if (alt1Title) alt1Title.textContent = alt1Meta.fullName;
+      if (alt1Desc) alt1Desc.textContent = alt1Meta.rationale(currentN, currentRain);
+      if (alt1Water) alt1Water.textContent = alt1Meta.water;
+      if (alt1Yield) alt1Yield.textContent = alt1Meta.yield;
+      if (alt1Risk) alt1Risk.textContent = alt1Meta.priceSub;
+
+      const alt1V = document.getElementById('alt-1-voice-btn');
+      if (alt1V) {
+        alt1V.onclick = () => toggleSpeech(`वैकल्पिक फसल 1: ${alt1Meta.fullName}. मैच ${alt1.confidence} प्रतिशत.`, alt1V);
+      }
+    }
+
+    // Alternative #2 (Index 2)
+    if (recs.length > 2) {
+      const alt2 = recs[2];
+      const alt2Meta = getCropMeta(alt2.crop, alt2.profile);
+      const alt2Score = document.getElementById('alt-2-score');
+      const alt2Title = document.getElementById('alt-2-title');
+      const alt2Desc = document.getElementById('alt-2-desc');
+      const alt2Water = document.getElementById('alt-2-water');
+      const alt2Yield = document.getElementById('alt-2-yield');
+      const alt2Risk = document.getElementById('alt-2-risk');
+
+      if (alt2Score) alt2Score.textContent = `${alt2.confidence}% Match`;
+      if (alt2Title) alt2Title.textContent = alt2Meta.fullName;
+      if (alt2Desc) alt2Desc.textContent = alt2Meta.rationale(currentN, currentRain);
+      if (alt2Water) alt2Water.textContent = alt2Meta.water;
+      if (alt2Yield) alt2Yield.textContent = alt2Meta.yield;
+      if (alt2Risk) alt2Risk.textContent = alt2Meta.priceSub;
+
+      const alt2V = document.getElementById('alt-2-voice-btn');
+      if (alt2V) {
+        alt2V.onclick = () => toggleSpeech(`वैकल्पिक फसल 2: ${alt2Meta.fullName}. मैच ${alt2.confidence} प्रतिशत.`, alt2V);
+      }
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 7. FERTILIZER PRESCRIBER & BAG CALCULATOR
   // ─────────────────────────────────────────────────────────────────────────
   fertForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    fertSpinner.style.display = 'inline-block';
+    if (fertSpinner) fertSpinner.style.display = 'inline-block';
 
     const payload = {
       nitrogen: parseFloat(fertSliders.n.value),
@@ -653,245 +825,167 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const res = await apiFetch('/fertilizer', {
+      const res = await apiFetch('/fertilizer-calc', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
       const data = await res.json();
-      if (data.success && data.prescription) {
-        state.lastFertData = data;
-        renderFertilizerResults(data);
+      if (data.success && data.fertilizers) {
+        renderFertilizers(data);
       } else {
         alert(data.detail || 'Fertilizer calculation failed.');
       }
     } catch (err) {
       console.error(err);
-      alert('Error calculating fertilizer.');
+      alert('Error connecting to fertilizer calculation endpoint.');
     } finally {
-      fertSpinner.style.display = 'none';
+      if (fertSpinner) fertSpinner.style.display = 'none';
     }
   });
 
-  function renderFertilizerResults(data) {
-    fertPlaceholder.classList.add('is-hidden');
-    fertContent.classList.remove('is-hidden');
+  function renderFertilizers(data) {
+    if (fertPlaceholder) fertPlaceholder.classList.add('is-hidden');
+    if (fertContent) fertContent.classList.remove('is-hidden');
 
-    const p = data.prescription;
-    const comm = p.commercial_doses || {};
+    state.lastFertData = data;
+    const f = data.fertilizers;
 
-    // Metric Cards
-    const ureaKg = comm.urea_kg || 0;
-    const dapKg = comm.dap_kg || 0;
-    const mopKg = comm.mop_kg || 0;
+    const metricUrea = document.getElementById('metric-urea');
+    const metricDap = document.getElementById('metric-dap');
+    const metricMop = document.getElementById('metric-mop');
 
-    document.getElementById('metric-urea').innerHTML = `${ureaKg.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
-    document.getElementById('metric-urea-bags').textContent = `≈ ${(ureaKg / 50).toFixed(1)} standard 50kg bags`;
+    if (metricUrea) metricUrea.innerHTML = `${f.urea_kg_ha.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
+    if (metricDap) metricDap.innerHTML = `${f.dap_kg_ha.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
+    if (metricMop) metricMop.innerHTML = `${f.mop_kg_ha.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
 
-    document.getElementById('metric-dap').innerHTML = `${dapKg.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
-    document.getElementById('metric-dap-bags').textContent = `≈ ${(dapKg / 50).toFixed(1)} standard 50kg bags`;
+    // Bags for 1 Hectare base
+    const uBags = (f.urea_kg_ha / 45).toFixed(1);
+    const dBags = (f.dap_kg_ha / 50).toFixed(1);
+    const mBags = (f.mop_kg_ha / 50).toFixed(1);
 
-    document.getElementById('metric-mop').innerHTML = `${mopKg.toFixed(1)} <span class="sub-unit">kg/ha</span>`;
-    document.getElementById('metric-mop-bags').textContent = `≈ ${(mopKg / 50).toFixed(1)} standard 50kg bags`;
+    const ureaBagsEl = document.getElementById('metric-urea-bags');
+    const dapBagsEl = document.getElementById('metric-dap-bags');
+    const mopBagsEl = document.getElementById('metric-mop-bags');
 
-    // 🚜 Kisan Commercial Bag Purchase for Farmer Land Size
-    const landSizeInput = document.getElementById('input-fert-land-size');
-    const landUnitSelect = document.getElementById('select-fert-land-unit');
-    const landSize = parseFloat(landSizeInput ? landSizeInput.value : 1.0) || 1.0;
-    const landUnit = landUnitSelect ? landUnitSelect.value : 'acre';
+    if (ureaBagsEl) ureaBagsEl.textContent = `≈ ${uBags} standard 45kg bags/ha`;
+    if (dapBagsEl) dapBagsEl.textContent = `≈ ${dBags} standard 50kg bags/ha`;
+    if (mopBagsEl) mopBagsEl.textContent = `≈ ${mBags} standard 50kg bags/ha`;
 
-    let acreMultiplier = 1.0;
-    if (landUnit === 'bigha') acreMultiplier = 0.62;
-    else if (landUnit === 'hectare') acreMultiplier = 2.471;
-    else if (landUnit === 'guntha') acreMultiplier = 0.025;
+    // Calculate Commercial Bags for Custom Land Size
+    recalcFarmerBags(f);
 
-    const totalAcres = Math.max(0.01, landSize * acreMultiplier);
-    // Convert kg/ha to kg/acre (1 ha = 2.471 acres)
-    const ureaPerAcre = ureaKg / 2.471;
-    const dapPerAcre = dapKg / 2.471;
-    const mopPerAcre = mopKg / 2.471;
-
-    // Commercial bag calculations: Neem-Coated Urea (45 kg), DAP (50 kg), MOP (50 kg)
-    const totalUreaBags = Math.ceil((ureaPerAcre * totalAcres) / 45);
-    const totalDapBags = Math.ceil((dapPerAcre * totalAcres) / 50);
-    const totalMopBags = Math.ceil((mopPerAcre * totalAcres) / 50);
-
-    const landBadge = document.getElementById('kisan-land-badge');
-    if (landBadge) {
-      landBadge.textContent = `For ${landSize} ${landUnit.toUpperCase()} (~${totalAcres.toFixed(2)} Acres)`;
-    }
-    const uEl = document.getElementById('kisan-urea-bags');
-    if (uEl) uEl.textContent = `${totalUreaBags}`;
-    const dEl = document.getElementById('kisan-dap-bags');
-    if (dEl) dEl.textContent = `${totalDapBags}`;
-    const mEl = document.getElementById('kisan-mop-bags');
-    if (mEl) mEl.textContent = `${totalMopBags}`;
-
-    // Timeline Schedule
-    const timeline = document.getElementById('fert-timeline');
-    timeline.innerHTML = '';
-    const stages = p.application_schedule || [
-      { stage: "Basal Application (At Sowing)", advice: `Apply 100% DAP (${dapKg.toFixed(0)} kg), 100% MOP (${mopKg.toFixed(0)} kg), and 33% Urea (${(ureaKg*0.33).toFixed(0)} kg).` },
-      { stage: "Vegetative / Tillering Stage", advice: `Top-dress 33% Urea (${(ureaKg*0.33).toFixed(0)} kg) with irrigation.` },
-      { stage: "Panicle / Flowering Stage", advice: `Top-dress remaining 33% Urea (${(ureaKg*0.34).toFixed(0)} kg) for robust grain filling.` }
-    ];
-
-    stages.forEach(st => {
-      const step = document.createElement('div');
-      step.className = 'timeline-step';
-      step.innerHTML = `
-        <div class="step-marker"></div>
-        <div>
-          <strong style="color: #FFFFFF;">${st.stage}:</strong>
-          <div style="color: var(--text-muted); margin-top: 0.15rem;">${st.advice}</div>
+    // Render Timeline Schedule
+    const timelineEl = document.getElementById('fert-timeline');
+    if (timelineEl) {
+      timelineEl.innerHTML = `
+        <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-body);">
+          <div style="margin-bottom: 6px;">🌱 <strong>Basal Application (बुवाई/रोपाई के समय):</strong> 100% DAP (${f.dap_kg_ha.toFixed(0)} kg/ha), 100% MOP (${f.mop_kg_ha.toFixed(0)} kg/ha), and 33% Urea.</div>
+          <div style="margin-bottom: 6px;">🌿 <strong>First Top Dressing (25–30 दिन बाद):</strong> 33% Urea during active tillering/vegetative phase.</div>
+          <div>🌾 <strong>Second Top Dressing (50–55 दिन बाद):</strong> Remaining 34% Urea before panicle initiation/flowering.</div>
         </div>
       `;
-      timeline.appendChild(step);
-    });
-
-    // Render Chart
-    renderFertilizerChart(p, state.activeChartMode);
-  }
-
-  // Real-time update when land size changes
-  const landSizeEl = document.getElementById('input-fert-land-size');
-  const landUnitEl = document.getElementById('select-fert-land-unit');
-  if (landSizeEl) {
-    landSizeEl.addEventListener('input', () => {
-      if (state.lastFertData) renderFertilizerResults(state.lastFertData);
-    });
-  }
-  if (landUnitEl) {
-    landUnitEl.addEventListener('change', () => {
-      if (state.lastFertData) renderFertilizerResults(state.lastFertData);
-    });
-  }
-
-  // Plotly Chart Generator
-  function renderFertilizerChart(p, mode) {
-    if (!window.Plotly) return;
-
-    const cur = p.current_npk || {};
-    const tar = p.target_npk || {};
-
-    const curVals = [cur.N || 0, cur.P || 0, cur.K || 0];
-    const tarVals = [tar.N || 0, tar.P || 0, tar.K || 0];
-
-    if (mode === '3d') {
-      const traceCurrent = {
-        type: 'scatter3d',
-        mode: 'lines+markers+text',
-        x: [0, 1, 2],
-        y: [0, 0, 0],
-        z: curVals,
-        text: ['Current N', 'Current P', 'Current K'],
-        line: { color: '#06B6D4', width: 8 },
-        marker: { size: 6, color: '#06B6D4' },
-        name: 'Field Current'
-      };
-
-      const traceTarget = {
-        type: 'scatter3d',
-        mode: 'lines+markers+text',
-        x: [0, 1, 2],
-        y: [1, 1, 1],
-        z: tarVals,
-        text: ['Target N', 'Target P', 'Target K'],
-        line: { color: '#F59E0B', width: 8 },
-        marker: { size: 6, color: '#F59E0B' },
-        name: 'Target Requirement'
-      };
-
-      const layout = {
-        paper_bgcolor: 'transparent',
-        plot_bgcolor: 'transparent',
-        margin: { l: 0, r: 0, b: 0, t: 20 },
-        scene: {
-          xaxis: { title: 'Nutrient', tickvals: [0, 1, 2], ticktext: ['N', 'P', 'K'], color: '#9CA3AF' },
-          yaxis: { title: 'Profile', tickvals: [0, 1], ticktext: ['Current', 'Target'], color: '#9CA3AF' },
-          zaxis: { title: 'kg/ha', color: '#9CA3AF' }
-        },
-        legend: { font: { color: '#F3F4F6' } }
-      };
-
-      Plotly.newPlot('fert-plotly-chart', [traceCurrent, traceTarget], layout, { responsive: true, displayModeBar: false });
-    } else {
-      // 2D Clustered Bar
-      const trace1 = {
-        x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
-        y: curVals,
-        name: 'Current Soil',
-        type: 'bar',
-        marker: { color: '#06B6D4' }
-      };
-
-      const trace2 = {
-        x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
-        y: tarVals,
-        name: 'Required Target',
-        type: 'bar',
-        marker: { color: '#F59E0B' }
-      };
-
-      const layout = {
-        barmode: 'group',
-        paper_bgcolor: 'transparent',
-        plot_bgcolor: 'transparent',
-        margin: { l: 40, r: 20, b: 40, t: 20 },
-        xaxis: { color: '#9CA3AF' },
-        yaxis: { title: 'kg/ha', color: '#9CA3AF', gridcolor: 'rgba(255,255,255,0.08)' },
-        legend: { font: { color: '#F3F4F6' } }
-      };
-
-      Plotly.newPlot('fert-plotly-chart', [trace1, trace2], layout, { responsive: true, displayModeBar: false });
     }
+
+    renderFertPlotlyChart(data);
   }
 
-  // Chart Toggle Buttons
-  document.getElementById('btn-chart-bar').addEventListener('click', () => {
-    document.getElementById('btn-chart-bar').classList.add('active');
-    document.getElementById('btn-chart-3d').classList.remove('active');
-    state.activeChartMode = 'bar';
-    if (state.lastFertData) renderFertilizerChart(state.lastFertData.prescription, 'bar');
-  });
+  function recalcFarmerBags(f) {
+    if (!f) return;
+    const landSizeInput = document.getElementById('input-fert-land-size');
+    const landUnitSelect = document.getElementById('select-fert-land-unit');
+    const kisanLandBadge = document.getElementById('kisan-land-badge');
+    const kUrea = document.getElementById('kisan-urea-bags');
+    const kDap = document.getElementById('kisan-dap-bags');
+    const kMop = document.getElementById('kisan-mop-bags');
 
-  document.getElementById('btn-chart-3d').addEventListener('click', () => {
-    document.getElementById('btn-chart-3d').classList.add('active');
-    document.getElementById('btn-chart-bar').classList.remove('active');
-    state.activeChartMode = '3d';
-    if (state.lastFertData) renderFertilizerChart(state.lastFertData.prescription, '3d');
-  });
+    const area = parseFloat(landSizeInput?.value) || 1.0;
+    const unit = landUnitSelect?.value || 'acre';
+
+    let factorToHectare = 0.404686;
+    if (unit === 'hectare') factorToHectare = 1.0;
+    else if (unit === 'bigha') factorToHectare = 0.25;
+    else if (unit === 'guntha') factorToHectare = 0.010117;
+
+    const totalHa = area * factorToHectare;
+    const bagsUrea = Math.ceil((f.urea_kg_ha * totalHa) / 45);
+    const bagsDap = Math.ceil((f.dap_kg_ha * totalHa) / 50);
+    const bagsMop = Math.ceil((f.mop_kg_ha * totalHa) / 50);
+
+    if (kUrea) kUrea.textContent = bagsUrea;
+    if (kDap) kDap.textContent = bagsDap;
+    if (kMop) kMop.textContent = bagsMop;
+    if (kisanLandBadge) kisanLandBadge.textContent = `For ${area} ${unit.toUpperCase()}`;
+  }
+
+  const landSizeIn = document.getElementById('input-fert-land-size');
+  const landUnitSel = document.getElementById('select-fert-land-unit');
+  if (landSizeIn) landSizeIn.addEventListener('input', () => { if (state.lastFertData) recalcFarmerBags(state.lastFertData.fertilizers); });
+  if (landUnitSel) landUnitSel.addEventListener('change', () => { if (state.lastFertData) recalcFarmerBags(state.lastFertData.fertilizers); });
+
+  function renderFertPlotlyChart(data) {
+    if (!window.Plotly) return;
+    const chartDiv = document.getElementById('fert-plotly-chart');
+    if (!chartDiv) return;
+
+    const d = data.deficits || {};
+    const trace1 = {
+      x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+      y: [d.target_n || 120, d.target_p || 60, d.target_k || 40],
+      name: 'Crop Optimum Target',
+      type: 'bar',
+      marker: { color: '#2D6A4F' }
+    };
+
+    const trace2 = {
+      x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
+      y: [d.current_n || 92, d.current_p || 46, d.current_k || 44],
+      name: 'Current Field Soil Test',
+      type: 'bar',
+      marker: { color: '#E59B2E' }
+    };
+
+    const layout = {
+      barmode: 'group',
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      font: { family: 'Plus Jakarta Sans, sans-serif', color: '#1A2C22', size: 12 },
+      margin: { t: 30, r: 20, l: 40, b: 40 },
+      yaxis: { title: 'Nutrient (kg/ha)', gridcolor: '#ECE7DD' },
+      xaxis: { gridcolor: 'transparent' },
+      legend: { orientation: 'h', y: 1.15 }
+    };
+
+    window.Plotly.newPlot(chartDiv, [trace1, trace2], layout, { responsive: true, displayModeBar: false });
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 7. CROP DISEASE DOCTOR SEARCH
+  // 8. DISEASE DOCTOR
   // ─────────────────────────────────────────────────────────────────────────
   async function searchDiseases() {
-    const crop = doctorCropSelect.value;
-    const keyword = doctorSearchInput.value.trim();
-
-    let url = `/diseases?temperature=${state.currentWeather.temperature}&humidity=${state.currentWeather.humidity}`;
-    if (crop) url += `&crop=${encodeURIComponent(crop)}`;
-    if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+    const crop = doctorCropSelect ? doctorCropSelect.value : '';
+    const q = doctorSearchInput ? doctorSearchInput.value : '';
 
     try {
-      const res = await apiFetch(url);
+      const res = await apiFetch(`/diseases?crop=${encodeURIComponent(crop)}&symptom=${encodeURIComponent(q)}`);
       const data = await res.json();
       if (data.success) {
         renderDiseases(data);
       }
     } catch (e) {
-      console.error(e);
+      console.warn('Disease search error:', e);
     }
   }
 
-  btnSearchDisease.addEventListener('click', searchDiseases);
-  doctorSearchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') searchDiseases();
-  });
-  doctorCropSelect.addEventListener('change', searchDiseases);
+  if (btnSearchDisease) btnSearchDisease.addEventListener('click', searchDiseases);
+  if (doctorCropSelect) doctorCropSelect.addEventListener('change', searchDiseases);
+  if (doctorSearchInput) {
+    doctorSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') searchDiseases();
+    });
+  }
 
-  // Symptom Quick Filter Chips ("Tap What You See")
   document.querySelectorAll('.symptom-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const kw = chip.dataset.keyword;
@@ -908,26 +1002,28 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function renderDiseases(data) {
+    if (!diseaseResultsContainer) return;
     diseaseResultsContainer.innerHTML = '';
 
-    // Live outbreak risk banner
-    if (data.outbreak_risk && data.outbreak_risk.length > 0) {
+    if (data.outbreak_risk && data.outbreak_risk.length > 0 && doctorRiskBanner) {
       doctorRiskBanner.classList.remove('is-hidden');
-      riskCropName.textContent = data.crop || 'Monitored Crop';
-      riskItemsList.innerHTML = data.outbreak_risk.map(r => `
-        <div style="font-size: 0.85rem; color: #FFFFFF; margin-top: 0.25rem;">
-          • <strong>${r.disease}:</strong> ${r.risk_reason} (${r.risk_level} Risk)
-        </div>
-      `).join('');
-    } else {
+      if (riskCropName) riskCropName.textContent = data.crop || 'Monitored Crop';
+      if (riskItemsList) {
+        riskItemsList.innerHTML = data.outbreak_risk.map(r => `
+          <div style="font-size: 0.85rem; color: #1A2C22; margin-top: 0.25rem;">
+            • <strong>${r.disease}:</strong> ${r.risk_reason} (${r.risk_level} Risk)
+          </div>
+        `).join('');
+      }
+    } else if (doctorRiskBanner) {
       doctorRiskBanner.classList.add('is-hidden');
     }
 
     if (!data.diseases || data.diseases.length === 0) {
       diseaseResultsContainer.innerHTML = `
-        <div class="results-placeholder" style="grid-column: 1 / -1;">
-          <div class="placeholder-icon">🩺</div>
-          <h4>No Pathogens Found</h4>
+        <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-dim);">
+          <div style="font-size: 2rem;">🩺</div>
+          <h4 style="margin: 8px 0; color: var(--text-main);">No Pathogens Found</h4>
           <p>No diseases matched your search criteria. Try a different crop or broader symptom keyword.</p>
         </div>
       `;
@@ -937,49 +1033,43 @@ document.addEventListener('DOMContentLoaded', () => {
     data.diseases.forEach(d => {
       const card = document.createElement('div');
       card.className = 'disease-card';
+      const dName = d.disease_name || d.name || d.disease;
       card.innerHTML = `
         <div class="disease-header">
           <div>
-            <div class="disease-name">${d.disease_name || d.name || d.disease}</div>
+            <div class="disease-name">${dName}</div>
             <span class="disease-crop-tag">🌱 ${d.crop}</span>
           </div>
-          <span class="badge badge-coral">${d.pathogen_type || 'Pathogen'}</span>
+          <span class="badge-coral">${d.pathogen_type || 'Pathogen'}</span>
         </div>
-
         <div class="disease-section">
           <h5>Diagnostic Symptoms</h5>
           <p>${d.symptoms || 'Visual lesion details'}</p>
         </div>
-
         <div class="disease-section">
-          <h5>Biological & Organic Treatment</h5>
+          <h5>Biological Control</h5>
           <p>${d.organic_control || d.biological_cure || 'Bio-fungicide protocol'}</p>
         </div>
-
         <div class="disease-section">
           <h5>Chemical Fungicide / Treatment</h5>
           <p>${d.chemical_cure || d.fungicide || 'Targeted chemical spray'}</p>
         </div>
-
         <div class="card-action-bar">
-          <button type="button" class="btn-voice-readout btn-voice-disease">🔊 लक्षण व दवा सुनिए / Listen</button>
-          <button type="button" class="btn-whatsapp-share btn-whatsapp-disease">📲 WhatsApp पर भेजें</button>
+          <button type="button" class="btn-voice-readout btn-voice-disease">🔊 सुनिए / Listen</button>
+          <button type="button" class="btn-whatsapp-share btn-whatsapp-disease">📲 WhatsApp Share</button>
         </div>
       `;
 
       const vBtn = card.querySelector('.btn-voice-disease');
       if (vBtn) {
-        const dName = d.disease_name || d.name || d.disease;
-        const sym = d.symptoms || '';
         const cure = d.chemical_cure || d.fungicide || d.organic_control || 'उचित दवा का छिड़काव करें.';
-        const speechText = `रोग का नाम: ${dName}. फसल: ${d.crop}. प्रमुख लक्षण: ${sym}. अनुशंसित उपचार व दवा: ${cure}`;
+        const speechText = `रोग का नाम: ${dName}. फसल: ${d.crop}. प्रमुख लक्षण: ${d.symptoms || ''}. उपचार: ${cure}`;
         vBtn.addEventListener('click', () => toggleSpeech(speechText, vBtn));
       }
 
       const waBtn = card.querySelector('.btn-whatsapp-disease');
       if (waBtn) {
-        const dName = d.disease_name || d.name || d.disease;
-        const waDetails = `🩺 *Pathogen:* ${dName} (${d.pathogen_type || 'Disease'})\n\n🔍 *Symptoms:* ${d.symptoms || 'Visual lesions'}\n\n🧪 *Chemical Remedy:* ${d.chemical_cure || d.fungicide || 'Inspect crop'}\n\n🌿 *Organic Control:* ${d.organic_control || d.biological_cure || 'Bio-fungicide'}`;
+        const waDetails = `🩺 *Pathogen:* ${dName} (${d.pathogen_type || 'Disease'})\n🔍 *Symptoms:* ${d.symptoms || 'Visual lesions'}\n🧪 *Chemical Remedy:* ${d.chemical_cure || d.fungicide || 'Inspect crop'}\n🌿 *Organic Control:* ${d.organic_control || d.biological_cure || 'Bio-fungicide'}`;
         waBtn.addEventListener('click', () => shareOnWhatsApp(`${dName} (${d.crop})`, waDetails));
       }
 
@@ -988,12 +1078,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 8. INDIAN SOIL REGISTRY
+  // 9. INDIAN SOIL REGISTRY
   // ─────────────────────────────────────────────────────────────────────────
   async function loadSoilStateProfile(stateName) {
+    if (!statePlaceholder || !stateContent) return;
     try {
       statePlaceholder.classList.remove('is-hidden');
-      statePlaceholder.innerHTML = '<h4>Loading State Profile...</h4>';
       stateContent.classList.add('is-hidden');
 
       const res = await apiFetch(`/soil-profile?state=${encodeURIComponent(stateName)}`);
@@ -1011,97 +1101,102 @@ document.addEventListener('DOMContentLoaded', () => {
     stateContent.classList.remove('is-hidden');
 
     const npk = p.baseline_soil_test || {};
-
     stateContent.innerHTML = `
-      <div class="crop-card" style="margin-top: 1.5rem;">
-        <div class="crop-card-header">
+      <div class="card" style="margin-top: 1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
           <div>
-            <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: #FFFFFF;">${name}</h3>
-            <span style="color: var(--gold-primary); font-size: 0.85rem; font-weight: 600;">Dominant Soil: ${p.dominant_soil_types || 'Alluvial & Loamy'}</span>
+            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--text-main);">${name}</h3>
+            <span style="color: var(--leaf-green); font-size: 0.85rem; font-weight: 600;">Dominant Soil: ${p.dominant_soil_types || 'Alluvial & Loamy'}</span>
           </div>
-          <span class="badge badge-gold">ICAR-IISS Benchmark</span>
+          <span class="choice-star-badge">ICAR-IISS Benchmark</span>
         </div>
 
-        <div class="crop-meta-grid" style="margin-top: 1rem;">
-          <div class="meta-item">
-            <strong>Nitrogen Rating:</strong> <span>${npk.nitrogen_status || 'Medium'}</span>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1rem;">
+          <div class="stat-card">
+            <span class="stat-label">Nitrogen Status</span>
+            <div class="stat-value" style="font-size: 1rem;">${npk.nitrogen_status || 'Medium'}</div>
           </div>
-          <div class="meta-item">
-            <strong>Phosphorus Rating:</strong> <span>${npk.phosphorus_status || 'Low to Medium'}</span>
+          <div class="stat-card">
+            <span class="stat-label">Phosphorus Status</span>
+            <div class="stat-value" style="font-size: 1rem;">${npk.phosphorus_status || 'Low to Medium'}</div>
           </div>
-          <div class="meta-item">
-            <strong>Potassium Rating:</strong> <span>${npk.potassium_status || 'High'}</span>
+          <div class="stat-card">
+            <span class="stat-label">Potassium Status</span>
+            <div class="stat-value" style="font-size: 1rem;">${npk.potassium_status || 'High'}</div>
           </div>
-          <div class="meta-item">
-            <strong>Organic Carbon:</strong> <span>${npk.organic_carbon || '0.45 - 0.75%'}</span>
+          <div class="stat-card">
+            <span class="stat-label">Organic Carbon</span>
+            <div class="stat-value" style="font-size: 1rem;">${npk.organic_carbon || '0.45 - 0.75%'}</div>
           </div>
         </div>
 
-        <div class="stress-box" style="margin-top: 1rem; border-color: var(--cyan-primary); background: rgba(6, 182, 212, 0.08);">
-          <strong style="color: var(--cyan-primary);">🌾 Recommended Commercial Crops:</strong>
-          <p style="color: var(--text-main); margin-top: 0.25rem;">${p.staple_crops || 'Paddy, Wheat, Sugarcane, Pulses'}</p>
+        <div class="why-fits-callout" style="margin-bottom: 1rem;">
+          <strong style="color: var(--pine-primary);">🌾 Recommended Staple & Commercial Crops:</strong>
+          <p style="color: var(--text-body); margin-top: 0.25rem;">${p.staple_crops || 'Paddy, Wheat, Sugarcane, Pulses'}</p>
         </div>
 
-        <div class="rescue-box" style="margin-top: 1rem;">
-          <strong>🏛️ State Agricultural University (SAU) Fertilizer Advisory:</strong>
-          <p style="color: var(--text-main); margin-top: 0.25rem;">${p.sau_advisory || 'Balanced application with FYM and Micronutrient zinc enhancement.'}</p>
+        <div class="why-fits-callout" style="border-left-color: #E59B2E; background: #FEF9EE;">
+          <strong style="color: #8C6219;">🏛️ State Agricultural University (SAU) Fertilizer Advisory:</strong>
+          <p style="color: #4A3E2C; margin-top: 0.25rem;">${p.sau_advisory || 'Balanced application with FYM and Micronutrient zinc enhancement.'}</p>
         </div>
       </div>
     `;
   }
 
-  stateDropdown.addEventListener('change', () => {
-    if (stateDropdown.value) {
-      loadSoilStateProfile(stateDropdown.value);
-    }
-  });
+  if (stateDropdown) {
+    stateDropdown.addEventListener('change', () => {
+      if (stateDropdown.value) {
+        loadSoilStateProfile(stateDropdown.value);
+      }
+    });
+  }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 9. INITIALIZATION & DATA BOOTSTRAP
+  // 10. BOOTSTRAP INITIALIZATION
   // ─────────────────────────────────────────────────────────────────────────
   async function initApp() {
-    // 1. Fetch live weather for default city
-    fetchLiveTelemetry('New Delhi');
-
-    // 2. Fetch supported crops
+    // 1. Fetch crops list
     try {
       const res = await apiFetch('/crops');
       const data = await res.json();
       if (data.crops) {
         state.crops = data.crops;
         if (selectTargetCrop) {
-          const currentVal = selectTargetCrop.value || 'rice';
-          selectTargetCrop.innerHTML = '<option value="">-- Let AI Recommend Top Suitable Crops --</option>' +
+          selectTargetCrop.innerHTML = '<option value="">-- Auto Best --</option>' +
             data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-          selectTargetCrop.value = currentVal;
         }
-        fertCropSelect.innerHTML = data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-        doctorCropSelect.innerHTML = `<option value="">All 38 Crops</option>` + data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-        fertCropSelect.value = 'rice';
+        if (fertCropSelect) {
+          fertCropSelect.innerHTML = data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+          fertCropSelect.value = 'rice';
+        }
+        if (doctorCropSelect) {
+          doctorCropSelect.innerHTML = `<option value="">All Supported Crops</option>` + data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+        }
       }
     } catch (e) {
-      console.warn('Crops bootstrap failed:', e);
+      console.warn('Crops bootstrap error:', e);
     }
 
-    // 3. Fetch Indian soil states
+    // 2. Fetch Indian soil states
     try {
       const res = await apiFetch('/soil-states');
       const data = await res.json();
-      if (data.states) {
+      if (data.states && stateDropdown) {
         state.indianStates = data.states;
         stateDropdown.innerHTML = data.states.map(s => `<option value="${s}">${s}</option>`).join('');
-        fertStateSelect.innerHTML = `<option value="">General Indian Benchmark</option>` + data.states.map(s => `<option value="${s}">${s}</option>`).join('');
-
+        if (fertStateSelect) {
+          fertStateSelect.innerHTML = `<option value="">Maharashtra (MPKV Rahuri)</option>` + data.states.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
         if (data.states.length > 0) {
-          stateDropdown.value = data.states[0];
-          loadSoilStateProfile(data.states[0]);
+          stateDropdown.value = 'Maharashtra';
+          loadSoilStateProfile('Maharashtra');
         }
       }
     } catch (e) {
-      console.warn('Soil states bootstrap failed:', e);
+      console.warn('Soil states bootstrap error:', e);
     }
 
-    // 4. Initial disease list
+    // 3. Search initial disease pathology
     searchDiseases();
   }
 

@@ -3,305 +3,643 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPARC AI — Smart Precision Agriculture & Agronomic Intelligence</title>
-  <meta name="description" content="AI-powered precision agronomy, crop recommendation, elemental fertilizer prescription, and crop disease doctor for Indian and global agriculture.">
+  <title>SPARC — Smart Crop Advisory & Recommendation | फसल और मिट्टी सलाहकार</title>
+  <meta name="description" content="AI-powered precision agronomy, crop recommendation, elemental fertilizer prescription, and crop disease doctor rooted in real-time district weather and ICAR-KVK validated models.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- Plotly.js for high-performance interactive 2D/3D visualizations -->
+  <!-- Plotly.js for interactive visualizations -->
   <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" defer></script>
 </head>
 <body>
-  <!-- Ambient background glow elements -->
-  <div class="ambient-glow glow-1" aria-hidden="true"></div>
-  <div class="ambient-glow glow-2" aria-hidden="true"></div>
 
-  <!-- Header / Navigation -->
+  <!-- Top App Navigation Bar -->
   <header class="app-header">
     <div class="header-container">
-      <div class="brand">
-        <div class="brand-icon">🌾</div>
-        <div class="brand-text">
-          <h1>SPARC <span class="accent-gold">AI</span></h1>
-          <p class="brand-tagline">Smart Precision Agronomy & Recommendation Classification</p>
+      <!-- Left Branding -->
+      <div class="brand-group">
+        <div class="brand-logo">
+          <svg class="leaf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+          <span class="brand-title">SPARC</span>
+        </div>
+        <div class="brand-badge-box">
+          <span class="brand-badge-top">Smart Crop Advisory & Recommendation</span>
+          <span class="brand-badge-bottom">Empowering Farmer Decisions Daily</span>
+        </div>
+        <div class="season-badge">
+          <span class="season-dot"></span> Kharif / Rabi Season Guidance
         </div>
       </div>
 
-      <!-- Live Telemetry Bar -->
-      <div class="telemetry-bar" id="telemetry-bar">
-        <div class="telemetry-badge">
-          <span class="status-dot"></span>
-          <span id="telemetry-city">New Delhi, India</span>
+      <!-- Center Navigation Tabs -->
+      <nav class="nav-tabs" aria-label="Main Navigation">
+        <button class="nav-tab active" id="tab-btn-crop" data-tab="crop-recommender">Advisory</button>
+        <button class="nav-tab" id="tab-btn-weather" data-tab="weather-alerts">Weather Alerts</button>
+        <button class="nav-tab" id="tab-btn-fert" data-tab="fertilizer-prescriber">Soil Health</button>
+        <button class="nav-tab" id="tab-btn-doctor" data-tab="disease-doctor">Pest Doctor</button>
+        <button class="nav-tab" id="tab-btn-soil" data-tab="soil-registry">Mandi Rates</button>
+      </nav>
+
+      <!-- Right Utility Controls -->
+      <div class="header-actions">
+        <div class="lang-selector" title="Language selection">
+          <span class="lang-icon">文A</span> English / हिंदी / मराठी
         </div>
-        <div class="telemetry-metrics">
-          <span class="telemetry-item" title="Current Temperature">🌡️ <strong id="telemetry-temp">28°C</strong></span>
-          <span class="telemetry-item" title="Relative Humidity">💧 <strong id="telemetry-humidity">45%</strong></span>
-          <span class="telemetry-item" title="Recent Rainfall">🌧️ <strong id="telemetry-rain">0 mm</strong></span>
-        </div>
-        <div class="telemetry-actions">
-          <button id="btn-detect-gps" class="btn-icon" title="Detect GPS Location">📍 GPS</button>
-          <button id="btn-change-city" class="btn-icon" title="Change Location">🔍 City</button>
+        <div class="helpline-card">
+          <div class="helpline-info">
+            <span class="helpline-title">Kisan Helpline:</span>
+            <a href="tel:18001801551" class="helpline-number">📞 1800-180-1551</a>
+          </div>
+          <div class="helpline-avatar" title="Farmer Support">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- Navigation Tabs -->
-    <nav class="nav-tabs" aria-label="Main Navigation">
-      <button class="nav-tab active" id="tab-btn-crop" data-tab="crop-recommender">
-        <span class="tab-icon">🌾</span>
-        <span class="tab-label">Crop Recommender</span>
-      </button>
-      <button class="nav-tab" id="tab-btn-fert" data-tab="fertilizer-prescriber">
-        <span class="tab-icon">🧪</span>
-        <span class="tab-label">Fertilizer Prescriber</span>
-      </button>
-      <button class="nav-tab" id="tab-btn-doctor" data-tab="disease-doctor">
-        <span class="tab-icon">🩺</span>
-        <span class="tab-label">Crop Disease Doctor</span>
-      </button>
-      <button class="nav-tab" id="tab-btn-soil" data-tab="soil-registry">
-        <span class="tab-icon">🗺️</span>
-        <span class="tab-label">Indian Soil Registry</span>
-      </button>
-    </nav>
   </header>
 
-  <!-- Location Search Modal -->
+  <!-- Location / City Modal -->
   <div class="modal-overlay" id="city-modal" aria-hidden="true">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Change Agro-Climatic Location</h3>
+        <h3>Agro-Climatic District & Telemetry</h3>
         <button class="modal-close" id="modal-close-btn">&times;</button>
       </div>
       <div class="modal-body">
         <div class="search-box">
-          <input type="text" id="city-search-input" placeholder="Type city (e.g. Pune, Ludhiana, Varanasi)...">
+          <input type="text" id="city-search-input" placeholder="Type district or city (e.g. Pune, Nashik, Nagpur)...">
           <button id="city-search-btn" class="btn-primary">Search</button>
         </div>
         <div class="city-presets">
-          <span class="preset-label">Quick Presets:</span>
-          <button class="preset-chip" data-city="Ludhiana">Ludhiana (Punjab)</button>
+          <span class="preset-label">Quick Select District:</span>
+          <button class="preset-chip" data-city="Pune">Pune (Maharashtra)</button>
+          <button class="preset-chip" data-city="Nashik">Nashik (Maharashtra)</button>
           <button class="preset-chip" data-city="Nagpur">Nagpur (Vidarbha)</button>
+          <button class="preset-chip" data-city="Indore">Indore (Madhya Pradesh)</button>
+          <button class="preset-chip" data-city="Kolhapur">Kolhapur (Maharashtra)</button>
+          <button class="preset-chip" data-city="Ludhiana">Ludhiana (Punjab)</button>
           <button class="preset-chip" data-city="Varanasi">Varanasi (UP)</button>
-          <button class="preset-chip" data-city="Bengaluru">Bengaluru (Karnataka)</button>
-          <button class="preset-chip" data-city="Jaipur">Jaipur (Rajasthan)</button>
-          <button class="preset-chip" data-city="Kochi">Kochi (Kerala)</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main Content Container -->
+  <!-- Main App Canvas -->
   <main class="main-container">
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 1: CROP RECOMMENDER                                               -->
+    <!-- TAB 1: CROP ADVISORY (Core Screen Matching Target Design)              -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section class="tab-panel active" id="crop-recommender">
-      <div class="panel-header">
-        <div class="panel-title-group">
-          <h2>🌾 AI Multi-Crop Recommendation Engine</h2>
-          <p>Trained Scikit-Learn Model (38 Crop Species, 99.3% Accuracy) with Stress & Mitigation Diagnostics</p>
+      
+      <!-- Hero Banner -->
+      <div class="advisor-hero">
+        <div class="hero-content">
+          <div class="hero-cycle-badge">
+            <span class="leaf-dot">🌱</span> Kharif 2025 Advisory Cycle • ICAR-KVK Validated Algorithm
+          </div>
+          <h1 class="hero-title">Farmer’s Crop Advisor <span class="hindi-sub">| फसल और मिट्टी सलाहकार</span></h1>
+          <p class="hero-subtitle">
+            Tailored agronomic guidance rooted in real-time district weather baselines, rainfall patterns, and lab-tested N-P-K soil health indicators.
+          </p>
         </div>
-        <div class="panel-actions">
-          <button id="btn-sync-weather" class="btn-secondary" title="Auto-fill inputs with current telemetry">
-            🛰️ Auto-Fill Live Weather
-          </button>
+
+        <!-- Floating Agro-Climatic Telemetry Box -->
+        <div class="agro-zone-box" id="agro-zone-box">
+          <div class="zone-label" id="zone-label">Agro-Climatic Zone: Western Maharashtra (Zone IX)</div>
+          <div class="zone-metrics-row">
+            <span class="zone-weather-icon">☀️</span>
+            <span class="zone-temp-val" id="telemetry-temp">27.4°C</span>
+            <span class="zone-status-pill" id="zone-condition-pill">Humid</span>
+          </div>
+          <div class="zone-sub-info">
+            Expected Monsoon: <strong id="zone-monsoon-text">215 mm</strong>
+            <span class="zone-gps-trigger" id="btn-change-city" title="Change district">⚙️ Change</span>
+          </div>
+          <!-- Hidden telemetry items for legacy JS compatibility -->
+          <span id="telemetry-city" style="display:none;">Pune</span>
+          <span id="telemetry-humidity" style="display:none;">76%</span>
+          <span id="telemetry-rain" style="display:none;">215 mm</span>
         </div>
       </div>
 
-      <div class="recommender-grid">
-        <!-- Input Form Card -->
-        <div class="card form-card">
-          <div class="card-header">
-            <h3>Soil & Agro-Climatic Parameters</h3>
-            <span class="badge badge-gold">7 Parameters</span>
-          </div>
-
-          <form id="crop-form" class="parameter-form">
-            <!-- Soil Macronutrients -->
-            <div class="form-group-title">Macro-Nutrients (Soil Test Report)</div>
+      <!-- Main Two-Column Advisory Grid -->
+      <div class="advisor-main-grid">
+        
+        <!-- LEFT COLUMN: Field Climate & Soil Diagnostics Form -->
+        <div class="form-column">
+          <div class="card field-card">
             
-            <div class="form-row">
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-n">Nitrogen (N) <span class="unit">kg/ha</span></label>
-                  <span class="val-display" id="val-n">90</span>
+            <div class="card-top-bar">
+              <div class="card-title-group">
+                <div class="title-icon-box">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  </svg>
                 </div>
-                <input type="range" id="slider-n" min="0" max="250" value="90" step="1" title="Soil Nitrogen (N) in kg/ha">
-              </div>
-
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-p">Phosphorus (P) <span class="unit">kg/ha</span></label>
-                  <span class="val-display" id="val-p">42</span>
+                <div>
+                  <h3 class="field-card-title">खेती और मिट्टी की जानकारी</h3>
+                  <span class="field-card-sub">Field Climate & Soil Diagnostics</span>
                 </div>
-                <input type="range" id="slider-p" min="0" max="200" value="42" step="1" title="Soil Phosphorus (P) in kg/ha">
               </div>
-
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-k">Potassium (K) <span class="unit">kg/ha</span></label>
-                  <span class="val-display" id="val-k">43</span>
-                </div>
-                <input type="range" id="slider-k" min="0" max="350" value="43" step="1" title="Soil Potassium (K) in kg/ha">
-              </div>
+              <button type="button" class="btn-defaults" id="btn-reset-defaults" title="Reset to Pune Agro-Climatic Defaults">
+                ↺ Defaults
+              </button>
             </div>
 
-            <!-- Climatic & Soil Physical Parameters -->
-            <div class="form-group-title">Climatic Telemetry & Soil Health</div>
-
-            <div class="form-row">
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-temp">Temperature <span class="unit">°C</span></label>
-                  <span class="val-display" id="val-temp">26.5</span>
+            <form id="crop-form" class="diagnostics-form">
+              
+              <!-- District Selector -->
+              <div class="form-section">
+                <div class="section-label-row">
+                  <label class="section-label">Select District / जिला</label>
+                  <button type="button" class="btn-auto-gps" id="btn-detect-gps">
+                    <span class="gps-dot"></span> 📡 Auto GPS
+                  </button>
                 </div>
-                <input type="range" id="slider-temp" min="5" max="50" value="26.5" step="0.5">
+                <div class="district-chips-row" id="district-chips">
+                  <button type="button" class="dist-chip active" data-city="Pune" data-temp="26.5" data-rain="210" data-n="92" data-p="46" data-k="44" data-zone="Western Maharashtra (Zone IX)">Pune</button>
+                  <button type="button" class="dist-chip" data-city="Nashik" data-temp="25.0" data-rain="185" data-n="85" data-p="42" data-k="50" data-zone="Western Maharashtra Ghat Zone">Nashik</button>
+                  <button type="button" class="dist-chip" data-city="Nagpur" data-temp="29.0" data-rain="240" data-n="78" data-p="38" data-k="62" data-zone="Vidarbha Central Plateau">Nagpur</button>
+                  <button type="button" class="dist-chip" data-city="Indore" data-temp="27.5" data-rain="195" data-n="82" data-p="40" data-k="48" data-zone="Malwa Agro-Climatic Zone">Indore</button>
+                  <button type="button" class="dist-chip" data-city="Kolhapur" data-temp="26.0" data-rain="310" data-n="95" data-p="50" data-k="54" data-zone="Sub-Montane Sugarcane Belt">Kolhapur</button>
+                </div>
               </div>
 
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-hum">Relative Humidity <span class="unit">%</span></label>
-                  <span class="val-display" id="val-hum">65</span>
+              <!-- Avg Temperature Slider -->
+              <div class="metric-slider-box">
+                <div class="slider-header-row">
+                  <label for="slider-temp" class="slider-title">
+                    🌡️ Avg. Temperature (तापमान)
+                  </label>
+                  <span class="slider-live-badge"><span id="val-temp">26.5</span>°C</span>
                 </div>
-                <input type="range" id="slider-hum" min="10" max="100" value="65" step="1">
+                <div class="range-wrap">
+                  <input type="range" id="slider-temp" min="10" max="45" value="26.5" step="0.5" class="custom-range">
+                </div>
+                <div class="slider-markers-row">
+                  <span class="marker-item">Cool (15°C)</span>
+                  <span class="marker-item highlight">Optimal Growing (24–28°C)</span>
+                  <span class="marker-item">Warm Summer (42°C)</span>
+                </div>
               </div>
-            </div>
 
-            <div class="form-row">
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-ph">Soil Reaction (pH)</label>
-                  <span class="val-display" id="val-ph">6.5</span>
+              <!-- Seasonal Rainfall Slider -->
+              <div class="metric-slider-box">
+                <div class="slider-header-row">
+                  <label for="slider-rain" class="slider-title">
+                    🌧️ Seasonal Rainfall (वर्षा)
+                  </label>
+                  <span class="slider-live-badge"><span id="val-rain">210</span> mm</span>
                 </div>
-                <input type="range" id="slider-ph" min="3.5" max="9.5" value="6.5" step="0.1">
+                <div class="range-wrap">
+                  <input type="range" id="slider-rain" min="20" max="500" value="210" step="5" class="custom-range">
+                </div>
+                <div class="slider-markers-row">
+                  <span class="marker-item">&lt;100mm Low</span>
+                  <span class="marker-item highlight">150–300mm Normal Monsoon</span>
+                  <span class="marker-item">&gt;350mm Heavy</span>
+                </div>
               </div>
 
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="slider-rain">Rainfall / Irrigation <span class="unit">mm</span></label>
-                  <span class="val-display" id="val-rain">110</span>
+              <!-- Soil Nutrients Section -->
+              <div class="nutrients-section">
+                <div class="section-label-row">
+                  <span class="section-label">🔬 Soil Nutrients / मिट्टी के पोषक तत्व</span>
+                  <span class="shc-sublink" id="btn-sync-weather" title="Preset from official Soil Health Card benchmark">From Soil Health Card</span>
                 </div>
-                <input type="range" id="slider-rain" min="10" max="500" value="110" step="5">
-              </div>
-            </div>
 
-            <!-- Planned Crop Selection Area -->
-            <div class="form-group-title">🎯 Crop You Plan to Cultivate</div>
-            <div class="form-row single-control">
-              <div class="input-control">
-                <div class="label-row">
-                  <label for="select-target-crop">Select Intended Crop</label>
-                  <span class="badge badge-emerald" id="target-crop-badge">38 Crops Supported</span>
+                <!-- Nitrogen Row -->
+                <div class="nutrient-row-item">
+                  <div class="nutrient-control-bar">
+                    <div class="nutrient-name-tag">
+                      <span class="nutrient-symbol-badge badge-n">N</span>
+                      <span class="nutrient-full-name">Nitrogen (नाइट्रोजन)</span>
+                    </div>
+                    <div class="stepper-box">
+                      <button type="button" class="stepper-btn btn-dec" data-target="n">−</button>
+                      <input type="number" id="input-n" value="92" min="0" max="300" class="stepper-val-input">
+                      <button type="button" class="stepper-btn btn-inc" data-target="n">+</button>
+                      <span class="stepper-unit">kg/ha</span>
+                    </div>
+                  </div>
+                  <input type="range" id="slider-n" min="0" max="250" value="92" class="hidden-sync-slider" tabindex="-1">
+                  <span id="val-n" style="display:none;">92</span>
+                  <div class="nutrient-markers-row">
+                    <span class="nut-marker">Deficient (&lt;50)</span>
+                    <span class="nut-marker active-pill">Optimal for Grain Production</span>
+                    <span class="nut-marker">Surplus (&gt;140)</span>
+                  </div>
                 </div>
-                <select id="select-target-crop" class="form-select">
-                  <option value="">-- Let AI Recommend Top Suitable Crops --</option>
-                  <option value="rice" selected>RICE (Paddy)</option>
-                  <option value="wheat">WHEAT</option>
-                  <option value="maize">MAIZE (Corn)</option>
-                  <option value="cotton">COTTON</option>
-                  <option value="sugarcane">SUGARCANE</option>
-                  <option value="chickpea">CHICKPEA (Gram)</option>
-                  <option value="kidneybeans">KIDNEY BEANS (Rajma)</option>
-                  <option value="pigeonpeas">PIGEON PEAS (Arhar/Tur)</option>
-                  <option value="mothbeans">MOTH BEANS</option>
-                  <option value="mungbean">MUNGBEAN (Moong)</option>
-                  <option value="blackgram">BLACKGRAM (Urad)</option>
-                  <option value="lentil">LENTIL (Masoor)</option>
-                  <option value="pomegranate">POMEGRANATE</option>
-                  <option value="banana">BANANA</option>
-                  <option value="mango">MANGO</option>
-                  <option value="grapes">GRAPES</option>
-                  <option value="watermelon">WATERMELON</option>
-                  <option value="muskmelon">MUSKMELON</option>
-                  <option value="apple">APPLE</option>
-                  <option value="orange">ORANGE</option>
-                  <option value="papaya">PAPAYA</option>
-                  <option value="coconut">COCONUT</option>
-                  <option value="jute">JUTE</option>
-                  <option value="coffee">COFFEE</option>
-                  <option value="tea">TEA</option>
-                  <option value="soybean">SOYBEAN</option>
-                  <option value="mustard">MUSTARD</option>
-                  <option value="groundnut">GROUNDNUT (Peanut)</option>
-                  <option value="tomato">TOMATO</option>
-                  <option value="potato">POTATO</option>
-                  <option value="onion">ONION</option>
-                  <option value="garlic">GARLIC</option>
-                  <option value="ginger">GINGER</option>
-                  <option value="turmeric">TURMERIC</option>
-                  <option value="chilli">CHILLI</option>
-                  <option value="bajra">BAJRA (Pearl Millet)</option>
-                  <option value="jowar">JOWAR (Sorghum)</option>
-                  <option value="barley">BARLEY</option>
-                </select>
-                <p class="input-hint">
-                  Choose the crop you plan or wish to grow. SPARC will analyze its compatibility with your current soil telemetry and formulate an actionable rescue roadmap if conditions are challenging.
+
+                <!-- Phosphorus Row -->
+                <div class="nutrient-row-item">
+                  <div class="nutrient-control-bar">
+                    <div class="nutrient-name-tag">
+                      <span class="nutrient-symbol-badge badge-p">P</span>
+                      <span class="nutrient-full-name">Phosphorus (फास्फोरस)</span>
+                    </div>
+                    <div class="stepper-box">
+                      <button type="button" class="stepper-btn btn-dec" data-target="p">−</button>
+                      <input type="number" id="input-p" value="46" min="0" max="250" class="stepper-val-input">
+                      <button type="button" class="stepper-btn btn-inc" data-target="p">+</button>
+                      <span class="stepper-unit">kg/ha</span>
+                    </div>
+                  </div>
+                  <input type="range" id="slider-p" min="0" max="200" value="46" class="hidden-sync-slider" tabindex="-1">
+                  <span id="val-p" style="display:none;">46</span>
+                  <div class="nutrient-markers-row">
+                    <span class="nut-marker">Low (&lt;20)</span>
+                    <span class="nut-marker active-pill">Adequate for Root Sturdiness</span>
+                    <span class="nut-marker">High (&gt;80)</span>
+                  </div>
+                </div>
+
+                <!-- Potassium Row -->
+                <div class="nutrient-row-item">
+                  <div class="nutrient-control-bar">
+                    <div class="nutrient-name-tag">
+                      <span class="nutrient-symbol-badge badge-k">K</span>
+                      <span class="nutrient-full-name">Potassium (पोटाश)</span>
+                    </div>
+                    <div class="stepper-box">
+                      <button type="button" class="stepper-btn btn-dec" data-target="k">−</button>
+                      <input type="number" id="input-k" value="44" min="0" max="400" class="stepper-val-input">
+                      <button type="button" class="stepper-btn btn-inc" data-target="k">+</button>
+                      <span class="stepper-unit">kg/ha</span>
+                    </div>
+                  </div>
+                  <input type="range" id="slider-k" min="0" max="350" value="44" class="hidden-sync-slider" tabindex="-1">
+                  <span id="val-k" style="display:none;">44</span>
+                  <div class="nutrient-markers-row">
+                    <span class="nut-marker">Low (&lt;25)</span>
+                    <span class="nut-marker active-pill">Balanced Disease Immunity</span>
+                    <span class="nut-marker">High (&gt;90)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dominant Soil Texture (Radio Matrix) -->
+              <div class="form-section soil-texture-section">
+                <label class="section-label">🧱 Dominant Soil Texture (मिट्टी का प्रकार)</label>
+                <div class="texture-radio-grid">
+                  <label class="texture-radio-card active">
+                    <input type="radio" name="soil_texture" value="black" checked>
+                    <span class="radio-dot"></span>
+                    <span class="texture-label-text">Black Cotton Soil (काली)</span>
+                  </label>
+                  <label class="texture-radio-card">
+                    <input type="radio" name="soil_texture" value="alluvial">
+                    <span class="radio-dot"></span>
+                    <span class="texture-label-text">Alluvial / Loamy (दोमट)</span>
+                  </label>
+                  <label class="texture-radio-card">
+                    <input type="radio" name="soil_texture" value="red">
+                    <span class="radio-dot"></span>
+                    <span class="texture-label-text">Red Sandy (लाल रेतीली)</span>
+                  </label>
+                  <label class="texture-radio-card">
+                    <input type="radio" name="soil_texture" value="laterite">
+                    <span class="radio-dot"></span>
+                    <span class="texture-label-text">Laterite / Gravelly (मुरुम)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Hidden telemetry parameters for backend API compatibility -->
+              <input type="range" id="slider-hum" min="10" max="100" value="76" style="display:none;">
+              <span id="val-hum" style="display:none;">76</span>
+              <input type="range" id="slider-ph" min="3.5" max="9.5" value="6.8" step="0.1" style="display:none;">
+              <span id="val-ph" style="display:none;">6.8</span>
+              <select id="select-target-crop" style="display:none;">
+                <option value="" selected>-- Auto Best --</option>
+              </select>
+
+              <!-- Main Submission Button -->
+              <div class="submit-action-wrap">
+                <button type="submit" id="btn-predict-crops" class="btn-recommend-primary">
+                  <span class="btn-icon">🌾</span>
+                  <span class="btn-text">Get Best Crop Recommendations</span>
+                  <span class="spinner" id="predict-spinner" aria-hidden="true" style="display:none;"></span>
+                </button>
+                <p class="nmsa-disclaimer">
+                  Recommended under National Mission for Sustainable Agriculture (NMSA) parameters.
                 </p>
               </div>
-            </div>
+            </form>
+          </div>
 
-            <div class="quick-presets-box">
-              <span class="preset-label">Agro-Ecological Presets:</span>
-              <div class="chips-container">
-                <button type="button" class="agro-preset-btn" data-preset="punjab">🌾 Indo-Gangetic Wheat</button>
-                <button type="button" class="agro-preset-btn" data-preset="blackcotton">🌱 Deccan Black Cotton</button>
-                <button type="button" class="agro-preset-btn" data-preset="kerala">🌴 Coastal Spice / Paddy</button>
-                <button type="button" class="agro-preset-btn" data-preset="millet">☀️ Arid Super-Millet</button>
+          <!-- Krishi Vigyan Kendra Advisory Banner (Under Form) -->
+          <div class="kvk-advisory-card">
+            <div class="kvk-thumb">
+              <svg viewBox="0 0 48 48" fill="none" class="kvk-illustration" width="48" height="48">
+                <rect width="48" height="48" rx="8" fill="#E8E2D2"/>
+                <path d="M6 38C14 26 24 34 32 24C38 18 42 22 46 16" stroke="#4B6B4D" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M12 42C18 32 26 36 34 30C40 25 44 28 46 22" stroke="#2D5A27" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="36" cy="12" r="5" fill="#E59B2E"/>
+                <path d="M18 28C18 22 22 20 25 24" stroke="#8CA086" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="kvk-content">
+              <span class="kvk-tag">KRISHI VIGYAN KENDRA ADVISORY</span>
+              <p class="kvk-text">
+                <strong>Pre-Sowing Soil Enrichment:</strong> Incorporating 4 tons/ha well-rotted farmyard manure now improves water retention for dry spells.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Recommended Crops Display -->
+        <div class="recommendations-column" id="crop-results-container">
+          
+          <div class="results-header-bar">
+            <div>
+              <h2 class="results-heading">
+                <span class="live-bullet">●</span> अनुशंसित फसलें (Recommended Crops)
+              </h2>
+              <p class="results-subheading">
+                Ranked based on Soil N-P-K match, thermal safety, and moisture indices.
+              </p>
+            </div>
+            <div class="view-toggle-group">
+              <button type="button" class="view-pill active" id="view-overview-btn">
+                <span>⊞</span> Overview
+              </button>
+              <button type="button" class="view-pill" id="view-matrix-btn">
+                <span>☷</span> Agronomic Matrix
+              </button>
+            </div>
+          </div>
+
+          <span id="results-status" style="display:none;">Ready</span>
+          <div id="crop-placeholder" style="display:none;"></div>
+
+          <!-- Dynamic Recommendations Container (Initially rendered with verified top match) -->
+          <div class="recommendations-list" id="recommendations-list">
+            
+            <!-- 1. #1 BEST CHOICE HERO CARD -->
+            <div class="best-choice-card" id="best-crop-card">
+              <div class="best-choice-badge-row">
+                <span class="choice-star-badge">⭐ #1 Best Choice for Your Field (शीर्ष अनुशंसा)</span>
+                <span class="confidence-chip">High Confidence</span>
               </div>
-              <div class="shc-helper-container">
-                <span class="preset-label-shc">🧪 No Lab Soil Test? Quick Select Field Quality:</span>
-                <div class="chips-container">
-                  <button type="button" class="agro-preset-btn shc-preset-btn" data-preset="sandy_poor">🏜️ Sandy / Low Fertility</button>
-                  <button type="button" class="agro-preset-btn shc-preset-btn" data-preset="medium_loam">🌿 Standard Loam (Medium)</button>
-                  <button type="button" class="agro-preset-btn shc-preset-btn" data-preset="clay_fertile">🌾 Clay / High Fertility</button>
+
+              <div class="best-choice-main-row">
+                <div class="best-title-group">
+                  <div class="crop-headline-row">
+                    <h3 class="best-crop-name" id="best-crop-name">Paddy / धान (Indica Wet)</h3>
+                    <span class="season-prime-pill" id="best-crop-season">Kharif Prime</span>
+                  </div>
+                  <p class="varieties-text" id="best-crop-varieties">
+                    Recommended Varieties: MTU-1010, Indrayani, or PKV-HMT
+                  </p>
+                </div>
+
+                <!-- Circular Match Gauge (94%) -->
+                <div class="suitability-gauge-box">
+                  <div class="radial-gauge-wrap">
+                    <svg class="gauge-svg" viewBox="0 0 80 80">
+                      <circle class="gauge-bg-circle" cx="40" cy="40" r="34"></circle>
+                      <circle class="gauge-fill-circle" id="best-gauge-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="12.8"></circle>
+                    </svg>
+                    <span class="gauge-percent-text" id="best-gauge-val">94%</span>
+                  </div>
+                  <div class="gauge-caption">
+                    <strong>Suitability Match</strong>
+                    <span>Ideal Field Fit</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Why this crop fits your land Callout -->
+              <div class="why-fits-callout" id="best-crop-why-fits">
+                <div class="callout-header">
+                  <span class="check-icon">✓</span>
+                  <strong>Why this crop fits your land:</strong>
+                </div>
+                <p class="callout-text" id="best-crop-rationale">
+                  Your high soil Nitrogen levels (92 kg/ha) combined with regular monsoon rainfall (210 mm) provide exceptional conditions for rapid tillering and robust grain formation.
+                </p>
+              </div>
+
+              <!-- 4-Stat Agronomic Metrics Grid -->
+              <div class="agronomic-stats-grid">
+                <div class="stat-card">
+                  <span class="stat-label">🌾 Expected Yield</span>
+                  <div class="stat-value" id="best-stat-yield">44 – 48 Q/Ha</div>
+                  <span class="stat-sub" id="best-stat-yield-sub">Top Tier Harvest</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">💧 Water Need</span>
+                  <div class="stat-value" id="best-stat-water">High</div>
+                  <span class="stat-sub" id="best-stat-water-sub">Canal / Submerged</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">₹ Mandi Price Outlook</span>
+                  <div class="stat-value" id="best-stat-price">₹2,300 – ₹2,550</div>
+                  <span class="stat-sub" id="best-stat-price-sub">MSP Protected</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">⏱️ Growth Duration</span>
+                  <div class="stat-value" id="best-stat-duration">120 – 135 Days</div>
+                  <span class="stat-sub" id="best-stat-duration-sub">Mid-duration crop</span>
+                </div>
+              </div>
+
+              <!-- Card Footer Schedule & Actions -->
+              <div class="best-card-footer">
+                <div class="footer-dose-text">
+                  <span>🕒</span> <strong>Basal fertilizer dose:</strong> 50% N + 100% P + 100% K at transplanting.
+                </div>
+                <div class="footer-actions-group">
+                  <button type="button" class="btn-voice-readout btn-voice-rec" id="best-voice-btn">🔊 सुनिए / Listen</button>
+                  <button type="button" class="btn-whatsapp-share btn-whatsapp-rec" id="best-whatsapp-btn">📲 WhatsApp Share</button>
+                  <a href="#fertilizer-prescriber" class="link-calendar" id="best-crop-calendar-link">View Sowing & Fertilizer Calendar →</a>
                 </div>
               </div>
             </div>
 
-            <button type="submit" id="btn-predict-crops" class="btn-primary btn-large">
-              <span class="btn-text">⚡ Compute Precision Recommendations</span>
-              <span class="spinner" id="predict-spinner" aria-hidden="true"></span>
-            </button>
-          </form>
-        </div>
+            <!-- 2. ALTERNATIVES DUAL-CARD GRID -->
+            <div class="alternatives-grid" id="alternatives-container">
+              
+              <!-- Alternative #1: Cotton -->
+              <div class="alt-card" id="alt-card-1">
+                <div class="alt-header-row">
+                  <span class="alt-tag alt-tag-1">Alternative #1</span>
+                  <span class="alt-match-score" id="alt-1-score">82% Match</span>
+                </div>
+                <h4 class="alt-crop-title" id="alt-1-title">Cotton / कपास (Bt Hybrid)</h4>
+                <p class="alt-crop-desc" id="alt-1-desc">
+                  Ideal for well-drained Black Cotton soil. Highly responsive to available potassium (44 kg/ha) for boll weight.
+                </p>
+                <div class="alt-specs-list">
+                  <div class="spec-item">
+                    <span class="spec-label">💧 Water Need:</span>
+                    <span class="spec-val" id="alt-1-water">Moderate (500–700mm)</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">🌾 Est. Yield:</span>
+                    <span class="spec-val" id="alt-1-yield">22 – 28 Quintals/Ha</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">📈 Market Risk:</span>
+                    <span class="spec-val" id="alt-1-risk">Moderate Price Fluctuation</span>
+                  </div>
+                </div>
+                <div class="alt-footer-row">
+                  <a href="#fertilizer-prescriber" class="alt-action-link" id="alt-1-fert-link">Fertilizer Package &gt;</a>
+                  <button type="button" class="btn-mini-voice" id="alt-1-voice-btn" title="Listen in Hindi">🔊</button>
+                  <button type="button" class="btn-mini-share" id="alt-1-share-btn" title="Share via WhatsApp">📲</button>
+                </div>
+              </div>
 
-        <!-- Output / Results Section -->
-        <div class="card results-card" id="crop-results-container">
-          <div class="card-header">
-            <h3>Agronomic AI Diagnostic Report</h3>
-            <span class="badge badge-emerald" id="results-status">Ready</span>
+              <!-- Alternative #2: Maize -->
+              <div class="alt-card" id="alt-card-2">
+                <div class="alt-header-row">
+                  <span class="alt-tag alt-tag-2">Alternative #2</span>
+                  <span class="alt-match-score" id="alt-2-score">74% Match</span>
+                </div>
+                <h4 class="alt-crop-title" id="alt-2-title">Maize / मक्का (Hybrid Feed)</h4>
+                <p class="alt-crop-desc" id="alt-2-desc">
+                  Resilient crop choice with fast turnaround (90–105 days). Lower overall water risk if monsoon weakens midway.
+                </p>
+                <div class="alt-specs-list">
+                  <div class="spec-item">
+                    <span class="spec-label">💧 Water Need:</span>
+                    <span class="spec-val" id="alt-2-water">Low to Moderate (Drip ready)</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">🌾 Est. Yield:</span>
+                    <span class="spec-val" id="alt-2-yield">55 – 65 Quintals/Ha</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-label">📈 Market Risk:</span>
+                    <span class="spec-val" id="alt-2-risk">Steady Poultry Demand</span>
+                  </div>
+                </div>
+                <div class="alt-footer-row">
+                  <a href="#fertilizer-prescriber" class="alt-action-link" id="alt-2-fert-link">Fertilizer Package &gt;</a>
+                  <button type="button" class="btn-mini-voice" id="alt-2-voice-btn" title="Listen in Hindi">🔊</button>
+                  <button type="button" class="btn-mini-share" id="alt-2-share-btn" title="Share via WhatsApp">📲</button>
+                </div>
+              </div>
+
+            </div>
           </div>
-
-          <div class="results-placeholder" id="crop-placeholder">
-            <div class="placeholder-icon">🌱</div>
-            <h4>Configure Parameters & Run AI Analysis</h4>
-            <p>Your tailored crop suitability rank, stress diagnostics, water demands, and rescue protocols will render here.</p>
-          </div>
-
-          <!-- Dynamic Results Container -->
-          <div class="recommendations-list is-hidden" id="recommendations-list"></div>
         </div>
       </div>
+
+      <!-- BOTTOM SECTION: Agro-Expert Advisory (कृषि विशेषज्ञ सलाह) -->
+      <div class="advisory-bottom-section">
+        <div class="section-nav-bar">
+          <div class="section-pills-row">
+            <button type="button" class="section-pill active">Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)</button>
+            <button type="button" class="section-pill">NPK Soil Health Spectrum</button>
+            <button type="button" class="section-pill">Past Season Records</button>
+          </div>
+          <div class="imd-update-tag">
+            <span>🕒</span> Updated Daily with IMD Agromet Bulletins
+          </div>
+        </div>
+
+        <div class="advisory-cards-grid">
+          <!-- Advisory Card 1: Basal Soil -->
+          <div class="expert-card">
+            <div class="expert-card-top">
+              <span class="expert-icon icon-tractor">🚜</span>
+              <h4 class="expert-title">Basal Soil Preparation</h4>
+            </div>
+            <p class="expert-body">
+              Since soil Nitrogen is in the high optimal range (92 kg/ha), avoid excessive chemical Urea application during the first 25 days to prevent stem elongation and lodging.
+            </p>
+            <div class="expert-footer">
+              <span class="stage-tag">Stage: Pre-Transplant</span>
+              <span class="priority-tag high">Priority: High</span>
+            </div>
+          </div>
+
+          <!-- Advisory Card 2: Drainage -->
+          <div class="expert-card">
+            <div class="expert-card-top">
+              <span class="expert-icon icon-drainage">🌧️</span>
+              <h4 class="expert-title">Monsoon Drainage Strategy</h4>
+            </div>
+            <p class="expert-body">
+              In heavy clay and black cotton soils, dig 30 cm deep perimeter bund trenches to safely carry away excess runoff during abrupt 40mm+ cloudburst days.
+            </p>
+            <div class="expert-footer">
+              <span class="stage-tag">Stage: Week 2–4</span>
+              <span class="priority-tag medium">Priority: Medium</span>
+            </div>
+          </div>
+
+          <!-- Advisory Card 3: Pest Alert -->
+          <div class="expert-card">
+            <div class="expert-card-top">
+              <span class="expert-icon icon-pest">🐛</span>
+              <h4 class="expert-title">Bio-Pest Alert: Yellow Stem Borer</h4>
+            </div>
+            <p class="expert-body">
+              Warm day temperatures (26–28°C) with elevated humidity promote early stem borer moths in paddy nurseries. Erect 5 pheromone traps per acre.
+            </p>
+            <div class="expert-footer">
+              <span class="stage-tag">Stage: Nursery Seedbed</span>
+              <span class="priority-tag immediate">Priority: Immediate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KISAN HELP / SUPPORT BANNER -->
+      <div class="kisan-help-banner">
+        <div class="kisan-help-left">
+          <div class="kisan-badge-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 0 0-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM19 12h2a9 9 0 0 0-9-9v2c3.87 0 7 3.13 7 7zm-4 0h2c0-2.76-2.24-5-5-5v2c1.66 0 3 1.34 3 3z"/>
+            </svg>
+          </div>
+          <div class="kisan-help-text">
+            <h4>Need Help Reading Your Soil Card or Sowing Calendar?</h4>
+            <p>Talk directly with a government agronomist in your native language (Marathi, Hindi, English). Free Toll-Free Service.</p>
+          </div>
+        </div>
+        <div class="kisan-help-actions">
+          <a href="tel:18001801551" class="btn-kcc-call">📞 1800-180-1551 (KCC)</a>
+          <button type="button" class="btn-locate-kvk" onclick="alert('Connecting to Indian Council of Agricultural Research (ICAR) & nearest Krishi Vigyan Kendra network...')">Locate Nearest KVK Centre</button>
+        </div>
+      </div>
+
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 2: FERTILIZER PRESCRIBER                                          -->
+    <!-- TAB 2: SOIL HEALTH & FERTILIZER PRESCRIBER                             -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section class="tab-panel" id="fertilizer-prescriber">
       <div class="panel-header">
         <div class="panel-title-group">
           <h2>🧪 Precision Soil Health & Fertilizer Prescriber</h2>
-          <p>Converts Elemental Deficits (ΔN, ΔP, ΔK) into Exact Commercial Doses (Urea, DAP, MOP)</p>
+          <p>Converts Elemental Deficits (ΔN, ΔP, ΔK) into Exact Commercial Doses (Urea, DAP, MOP) with Split Schedules</p>
         </div>
       </div>
 
       <div class="recommender-grid">
         <div class="card form-card">
           <div class="card-header">
-            <h3>Crop & Field Soil Chemistry</h3>
+            <h3>Target Crop & Soil Test Inputs</h3>
           </div>
 
           <form id="fert-form" class="parameter-form">
@@ -309,23 +647,26 @@
               <div class="input-control full-width">
                 <label for="fert-crop-select">Target Planned Crop</label>
                 <select id="fert-crop-select" class="form-select">
-                  <!-- Populated via API -->
+                  <option value="rice">RICE (Paddy)</option>
+                  <option value="wheat">WHEAT</option>
+                  <option value="cotton">COTTON</option>
+                  <option value="maize">MAIZE</option>
+                  <option value="sugarcane">SUGARCANE</option>
                 </select>
               </div>
             </div>
 
             <div class="form-row">
               <div class="input-control full-width">
-                <label for="fert-state-select">Indian State (Optional SAU Guidance)</label>
+                <label for="fert-state-select">Indian State (SAU Benchmark)</label>
                 <select id="fert-state-select" class="form-select">
-                  <option value="">General Indian Benchmark</option>
-                  <!-- Populated via API -->
+                  <option value="">Maharashtra (MPKV Rahuri)</option>
                 </select>
               </div>
             </div>
 
             <!-- Farm Land Size for Commercial Bags -->
-            <div class="form-group-title">🚜 Your Farm Land Size (For Commercial Bag Count)</div>
+            <div class="form-group-title">🚜 Your Farm Land Area (For Commercial Bag Calculation)</div>
             <div class="form-row">
               <div class="input-control">
                 <label for="input-fert-land-size">Farm Land Area:</label>
@@ -343,30 +684,29 @@
             </div>
 
             <div class="form-group-title">Current Field Soil Test</div>
-
             <div class="form-row">
               <div class="input-control">
                 <div class="label-row">
                   <label for="slider-fert-n">Current Soil N <span class="unit">kg/ha</span></label>
-                  <span class="val-display" id="val-fert-n">40</span>
+                  <span class="val-display" id="val-fert-n">92</span>
                 </div>
-                <input type="range" id="slider-fert-n" min="0" max="250" value="40" title="Current Soil Nitrogen (N) in kg/ha">
+                <input type="range" id="slider-fert-n" min="0" max="250" value="92">
               </div>
 
               <div class="input-control">
                 <div class="label-row">
                   <label for="slider-fert-p">Current Soil P <span class="unit">kg/ha</span></label>
-                  <span class="val-display" id="val-fert-p">20</span>
+                  <span class="val-display" id="val-fert-p">46</span>
                 </div>
-                <input type="range" id="slider-fert-p" min="0" max="200" value="20" title="Current Soil Phosphorus (P) in kg/ha">
+                <input type="range" id="slider-fert-p" min="0" max="200" value="46">
               </div>
 
               <div class="input-control">
                 <div class="label-row">
                   <label for="slider-fert-k">Current Soil K <span class="unit">kg/ha</span></label>
-                  <span class="val-display" id="val-fert-k">30</span>
+                  <span class="val-display" id="val-fert-k">44</span>
                 </div>
-                <input type="range" id="slider-fert-k" min="0" max="350" value="30" title="Current Soil Potassium (K) in kg/ha">
+                <input type="range" id="slider-fert-k" min="0" max="350" value="44">
               </div>
             </div>
 
@@ -376,13 +716,13 @@
                   <label for="slider-fert-ph">Soil pH Level</label>
                   <span class="val-display" id="val-fert-ph">6.8</span>
                 </div>
-                <input type="range" id="slider-fert-ph" min="4.0" max="9.0" value="6.8" step="0.1" title="Current Soil pH Level">
+                <input type="range" id="slider-fert-ph" min="4.0" max="9.0" value="6.8" step="0.1">
               </div>
             </div>
 
-            <button type="submit" id="btn-calc-fert" class="btn-primary btn-large">
+            <button type="submit" id="btn-calc-fert" class="btn-recommend-primary">
               <span class="btn-text">🧪 Compute Fertilizer Prescription</span>
-              <span class="spinner" id="fert-spinner" aria-hidden="true"></span>
+              <span class="spinner" id="fert-spinner" aria-hidden="true" style="display:none;"></span>
             </button>
           </form>
         </div>
@@ -391,12 +731,12 @@
         <div class="card results-card" id="fert-results-container">
           <div class="card-header">
             <h3>Prescription & Commercial Doses</h3>
-            <span class="badge badge-gold" id="fert-badge">Awaiting Calculation</span>
+            <span class="confidence-chip" id="fert-badge">Awaiting Calculation</span>
           </div>
 
           <div class="results-placeholder" id="fert-placeholder">
             <div class="placeholder-icon">⚖️</div>
-            <h4>Select Target Crop & Input Soil Chemistry</h4>
+            <h4>Select Target Crop & Compute Commercial Bags</h4>
             <p>Calculations for Urea, DAP, MOP commercial bags, elemental deficits, and stage-wise application will appear here.</p>
           </div>
 
@@ -431,7 +771,7 @@
                   <span class="fert-icon">⚪</span>
                 </div>
                 <div class="fert-val" id="metric-urea">0 <span class="sub-unit">kg/ha</span></div>
-                <div class="fert-bags" id="metric-urea-bags">≈ 0 standard 50kg bags</div>
+                <div class="fert-bags" id="metric-urea-bags">≈ 0 standard bags</div>
               </div>
 
               <div class="fert-metric-card dap-card">
@@ -440,7 +780,7 @@
                   <span class="fert-icon">🟤</span>
                 </div>
                 <div class="fert-val" id="metric-dap">0 <span class="sub-unit">kg/ha</span></div>
-                <div class="fert-bags" id="metric-dap-bags">≈ 0 standard 50kg bags</div>
+                <div class="fert-bags" id="metric-dap-bags">≈ 0 standard bags</div>
               </div>
 
               <div class="fert-metric-card mop-card">
@@ -449,11 +789,11 @@
                   <span class="fert-icon">🔴</span>
                 </div>
                 <div class="fert-val" id="metric-mop">0 <span class="sub-unit">kg/ha</span></div>
-                <div class="fert-bags" id="metric-mop-bags">≈ 0 standard 50kg bags</div>
+                <div class="fert-bags" id="metric-mop-bags">≈ 0 standard bags</div>
               </div>
             </div>
 
-            <!-- Interactive 3D / 2D Comparison Chart Container -->
+            <!-- Interactive Comparison Chart Container -->
             <div class="chart-wrapper">
               <div class="chart-header">
                 <h4>Interactive NPK Deficit & Target Profile</h4>
@@ -476,13 +816,13 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 3: CROP DISEASE DOCTOR                                            -->
+    <!-- TAB 3: PEST DOCTOR & PLANT PATHOLOGY                                  -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section class="tab-panel" id="disease-doctor">
       <div class="panel-header">
         <div class="panel-title-group">
           <h2>🩺 Plant Pathology & Crop Disease Doctor</h2>
-          <p>68+ Pathogens with Biological Cures, Fungicides, and Live Telemetry Outbreak Risk Alerts</p>
+          <p>68+ Crop Pathogens with Biological Controls, Chemical Fungicides, and Live Telemetry Outbreak Alerts</p>
         </div>
       </div>
 
@@ -490,8 +830,7 @@
         <div class="filter-item">
           <label for="doctor-crop-select">Filter by Crop:</label>
           <select id="doctor-crop-select" class="form-select">
-            <option value="">All 38 Crops</option>
-            <!-- Populated via API -->
+            <option value="">All Supported Crops</option>
           </select>
         </div>
 
@@ -500,11 +839,12 @@
           <input type="text" id="doctor-search-input" placeholder="e.g. blast, rot, blight, spots, powdery...">
         </div>
 
-        <button id="btn-search-disease" class="btn-primary">
+        <button id="btn-search-disease" class="btn-recommend-primary" style="margin-top:auto; padding: 10px 18px;">
           <span>Search Pathology</span>
+        </button>
       </div>
 
-      <!-- Visual Symptom Quick Filter Chips ("Tap What You See") -->
+      <!-- Visual Symptom Quick Filter Chips -->
       <div class="symptom-quick-bar">
         <span class="symptom-label">👀 Tap What You See on the Plant (लक्षण चुनिए):</span>
         <div class="symptom-chips">
@@ -527,13 +867,11 @@
       </div>
 
       <!-- Disease Cards Grid -->
-      <div class="disease-grid" id="disease-results-container">
-        <!-- Rendered via JS -->
-      </div>
+      <div class="disease-grid" id="disease-results-container"></div>
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
-    <!-- TAB 4: INDIAN SOIL REGISTRY                                           -->
+    <!-- TAB 4: INDIAN SOIL REGISTRY & MANDI BENCHMARK                          -->
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <section class="tab-panel" id="soil-registry">
       <div class="panel-header">
@@ -545,9 +883,7 @@
 
       <div class="soil-state-selector">
         <label for="state-dropdown">Select Indian State:</label>
-        <select id="state-dropdown" class="form-select">
-          <!-- Populated via API -->
-        </select>
+        <select id="state-dropdown" class="form-select"></select>
       </div>
 
       <div class="soil-state-details" id="state-details-card">
@@ -555,20 +891,26 @@
           <div class="placeholder-icon">🏛️</div>
           <h4>Loading State Soil Profiles...</h4>
         </div>
-
-        <div id="state-content" class="is-hidden">
-          <!-- Dynamically populated state profile -->
-        </div>
+        <div id="state-content" class="is-hidden"></div>
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
+  <!-- App Footer -->
   <footer class="app-footer">
     <div class="footer-container">
-      <p><strong>SPARC AI (AgrisenseAI)</strong> — High-Performance Precision Agronomy Platform</p>
-      <p class="footer-sub">Vercel Serverless Architecture • Scikit-Learn 99.3% Accuracy • Open-Meteo REST Telemetry</p>
+      <div class="footer-left">
+        <span class="footer-leaf">🌿</span>
+        <span>© 2025 SPARC Agricultural Advisory Services. Rooted in farmer success.</span>
+      </div>
+      <div class="footer-links">
+        <a href="#standards">Agronomic Standards</a>
+        <span class="dot">•</span>
+        <a href="#kvk">Krishi Vigyan Kendra Network</a>
+        <span class="dot">•</span>
+        <a href="#care">Farmer Care</a>
+      </div>
     </div>
   </footer>
 

@@ -20,13 +20,15 @@ except ImportError:
 import requests
 
 try:
-    from streamlit_js_eval import streamlit_js_eval
-except ImportError:
+    import importlib
+    streamlit_js_eval = importlib.import_module("streamlit_js_eval").streamlit_js_eval
+except Exception:
     streamlit_js_eval = None
 
 try:
-    from streamlit_geolocation import streamlit_geolocation
-except ImportError:
+    import importlib
+    streamlit_geolocation = importlib.import_module("streamlit_geolocation").streamlit_geolocation
+except Exception:
     streamlit_geolocation = None
 
 # Import unified Python backend service layer with hot-reload guard
@@ -35,749 +37,28 @@ import backend
 importlib.reload(backend)
 from backend import db_instance, engine_instance, SUPPORTED_CROPS, REGIONAL_WEATHER_PRESETS
 from pdf_generator import generate_agrisense_pdf_report
+from botanical_theme import *
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 3D FERTILIZER PRESCRIPTION GRAPH GENERATOR (WebGL 3D Engine)
 # ─────────────────────────────────────────────────────────────────────────────
 def build_3d_npk_graph(fert_calc: dict, active_crop: str, view_mode: str = "line_chart"):
-    """
-    Renders clean, highly understandable, and intuitive visualizations:
-    Mode 1 ('line_chart' - Default): Simple 3D Dual-Profile Line Chart comparing Current Field values
-                                    (Continuous Glowing Cyan Line) vs Required Target values (with distinct
-                                    designated colors: Gold for N, Coral for P, Emerald for K), plus clear
-                                    on-point value labels and deficit gap indicators.
-    Mode 2 ('columns'): 3D Side-by-Side Dual-Pillar Comparison for effortless height comparisons.
-    Mode 3 ('flat_2d'): 2D Direct High-Clarity View for immediate, zero-rotation clarity.
-    Mode 4 ('yield_surface'): 3D Quadratic Yield Response Landscape.
-    """
-    if go is None:
-        return None
-
-    current = fert_calc.get("current_npk", {})
-    target = fert_calc.get("target_npk", {})
-    n_cur, p_cur, k_cur = float(current.get("N", 0)), float(current.get("P", 0)), float(current.get("K", 0))
-    n_tar, p_tar, k_tar = float(target.get("N", 0)), float(target.get("P", 0)), float(target.get("K", 0))
-    def_sub = fert_calc.get("deficits", {})
-    n_def = float(def_sub.get("N_deficit", max(0.0, n_tar - n_cur)))
-    p_def = float(def_sub.get("P_deficit", max(0.0, p_tar - p_cur)))
-    k_def = float(def_sub.get("K_deficit", max(0.0, k_tar - k_cur)))
-
-    nut_labels = ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)']
-    cur_vals = [n_cur, p_cur, k_cur]
-    tar_vals = [n_tar, p_tar, k_tar]
-    def_vals = [n_def, p_def, k_def]
-    tar_colors = ['#FFD700', '#FF4757', '#10B981']  # Gold for N, Coral for P, Emerald for K
-    tar_names = ['Req. Nitrogen (N)', 'Req. Phosphorus (P)', 'Req. Potassium (K)']
-
-    fig = go.Figure()
-
-    if view_mode in ("line_chart", "equilibrium"):
-        # ── 1. SIMPLE & INTUITIVE 3D DUAL-PROFILE COMPARISON LINE CHART ──
-        # Line 1: Field Current Profile (Continuous Glowing Electric Cyan Line)
-        fig.add_trace(go.Scatter3d(
-            x=[0, 1, 2],
-            y=[0, 0, 0],
-            z=cur_vals,
-            mode='lines+markers+text',
-            text=[f"Current: {v:.0f}" for v in cur_vals],
-            textposition='top left',
-            textfont=dict(color='#00F5FF', size=11, family='monospace'),
-            line=dict(color='#00F5FF', width=8),
-            marker=dict(size=14, color='#00F5FF', symbol='circle',
-                        line=dict(color='#FFFFFF', width=2.5)),
-            name="🌱 Current Field Profile",
-            hovertemplate="<b>🌱 Current Field: %{x}</b><br>Level: <b>%{z:.1f} kg/ha</b><extra></extra>"
-        ))
-
-        # Line 2: Required Target Spine (Golden dashed track connecting targets)
-        fig.add_trace(go.Scatter3d(
-            x=[0, 1, 2],
-            y=[0, 0, 0],
-            z=tar_vals,
-            mode='lines',
-            line=dict(color='rgba(212, 175, 55, 0.75)', width=4, dash='solid'),
-            showlegend=False,
-            hoverinfo='none'
-        ))
-
-        # Required Nodes with distinct color per nutrient:
-        # - Gold for Nitrogen (N)
-        # - Coral Red for Phosphorus (P)
-        # - Emerald Green for Potassium (K)
-        for i in range(3):
-            fig.add_trace(go.Scatter3d(
-                x=[i], y=[0], z=[tar_vals[i]],
-                mode='markers+text',
-                text=[f"Target: {tar_vals[i]:.0f}"],
-                textposition='top right',
-                textfont=dict(color=tar_colors[i], size=11, family='monospace'),
-                marker=dict(size=16, color=tar_colors[i], symbol='diamond',
-                            line=dict(color='#FFFFFF', width=2.5)),
-                name=f"{tar_names[i]} ({tar_vals[i]:.0f} kg/ha)",
-                hovertemplate=(
-                    f"<b style='color:{tar_colors[i]};'>👑 {tar_names[i]}</b><br>"
-                    f"Target: <b>{tar_vals[i]:.1f} kg/ha</b><br>"
-                    f"Current: <b>{cur_vals[i]:.1f} kg/ha</b><br>"
-                    f"Deficit: <b>+{def_vals[i]:.1f} kg/ha</b><extra></extra>"
-                )
-            ))
-
-        # Clean Deficit Indicators (vertical pillars between current and target)
-        for i in range(3):
-            status_text = f"+{def_vals[i]:.0f} kg/ha" if def_vals[i] > 0 else "Balanced ✓"
-            fig.add_trace(go.Scatter3d(
-                x=[i, i], y=[0, 0], z=[cur_vals[i], tar_vals[i]],
-                mode='lines+text',
-                text=['', status_text],
-                textposition='middle center',
-                textfont=dict(color=tar_colors[i], size=10, family='monospace'),
-                line=dict(color=tar_colors[i], width=6, dash='dash'),
-                name=f"Δ {nut_labels[i]}: +{def_vals[i]:.0f} kg/ha" if def_vals[i] > 0 else f"{nut_labels[i]}: Balanced",
-                hovertemplate=f"<b>Δ {nut_labels[i]}</b>: +{def_vals[i]:.1f} kg/ha needed<extra></extra>"
-            ))
-
-        z_top = max(max(cur_vals), max(tar_vals)) + 25.0
-        scene_dict = dict(
-            xaxis=dict(
-                title=dict(text='Nutrient', font=dict(color='#38BDF8', size=13)),
-                tickvals=[0, 1, 2],
-                ticktext=nut_labels,
-                tickfont=dict(color='#F8FAFC', size=11),
-                backgroundcolor='rgba(12, 17, 32, 0.45)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            yaxis=dict(
-                showticklabels=False,
-                title=dict(text=''),
-                range=[-0.4, 0.4],
-                backgroundcolor='rgba(12, 17, 32, 0.45)',
-                gridcolor='rgba(255, 255, 255, 0.05)'
-            ),
-            zaxis=dict(
-                title=dict(text='Amount (kg/ha)', font=dict(color='#34D399', size=12)),
-                range=[0, z_top],
-                tickfont=dict(color='#94A3B8', size=10),
-                backgroundcolor='rgba(12, 17, 32, 0.45)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            aspectratio=dict(x=2.0, y=0.6, z=1.0),
-            camera=dict(eye=dict(x=0.05, y=-2.1, z=0.55))
-        )
-        fig.update_layout(
-            template='plotly_dark',
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            scene=scene_dict,
-            margin=dict(l=10, r=10, b=10, t=10),
-            height=460,
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=11, color="#F3E5AB"),
-                bgcolor="rgba(10, 14, 25, 0.85)",
-                bordercolor="rgba(212, 175, 55, 0.35)",
-                borderwidth=1
-            )
-        )
-        return fig
-
-    elif view_mode == "columns":
-        # ── 2. 3D DUAL-COLUMN / PILLAR COMPARISON ──
-        for i in range(3):
-            # Left pillar: Current (Cyan)
-            fig.add_trace(go.Scatter3d(
-                x=[i - 0.16, i - 0.16], y=[0, 0], z=[0, cur_vals[i]],
-                mode='lines+markers+text',
-                line=dict(color='#00F5FF', width=16),
-                marker=dict(size=10, color='#00F5FF', symbol='circle'),
-                text=['', f"{cur_vals[i]:.0f} kg/ha"],
-                textposition='top center',
-                textfont=dict(color='#00F5FF', size=10),
-                name="🌱 Current Field" if i == 0 else None,
-                showlegend=(i == 0),
-                hovertemplate=f"<b>🌱 Current {nut_labels[i]}</b>: {cur_vals[i]:.1f} kg/ha<extra></extra>"
-            ))
-            # Right pillar: Target (Specific color)
-            fig.add_trace(go.Scatter3d(
-                x=[i + 0.16, i + 0.16], y=[0, 0], z=[0, tar_vals[i]],
-                mode='lines+markers+text',
-                line=dict(color=tar_colors[i], width=16),
-                marker=dict(size=11, color=tar_colors[i], symbol='diamond'),
-                text=['', f"{tar_vals[i]:.0f} kg/ha"],
-                textposition='top center',
-                textfont=dict(color=tar_colors[i], size=10),
-                name=f"{tar_names[i]}",
-                hovertemplate=f"<b>👑 Required {nut_labels[i]}</b>: {tar_vals[i]:.1f} kg/ha<extra></extra>"
-            ))
-
-        z_top = max(max(cur_vals), max(tar_vals)) + 25.0
-        scene_dict = dict(
-            xaxis=dict(
-                title=dict(text='Nutrient', font=dict(color='#38BDF8', size=13)),
-                tickvals=[0, 1, 2],
-                ticktext=nut_labels,
-                tickfont=dict(color='#F8FAFC', size=11),
-                backgroundcolor='rgba(12, 17, 32, 0.45)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            yaxis=dict(
-                showticklabels=False,
-                title=dict(text=''),
-                range=[-0.4, 0.4],
-                backgroundcolor='rgba(12, 17, 32, 0.45)',
-                gridcolor='rgba(255, 255, 255, 0.05)'
-            ),
-            zaxis=dict(
-                title=dict(text='Amount (kg/ha)', font=dict(color='#34D399', size=12)),
-                range=[0, z_top],
-                tickfont=dict(color='#94A3B8', size=10),
-                backgroundcolor='rgba(12, 17, 32, 0.45)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            aspectratio=dict(x=2.0, y=0.6, z=1.0),
-            camera=dict(eye=dict(x=0.05, y=-2.1, z=0.55))
-        )
-        fig.update_layout(
-            template='plotly_dark',
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            scene=scene_dict,
-            margin=dict(l=10, r=10, b=10, t=10),
-            height=460,
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=11, color="#F3E5AB"),
-                bgcolor="rgba(10, 14, 25, 0.85)",
-                bordercolor="rgba(212, 175, 55, 0.35)",
-                borderwidth=1
-            )
-        )
-        return fig
-
-    elif view_mode == "flat_2d":
-        # ── 3. 2D DIRECT HIGH-CLARITY DUAL BAR VIEW ──
-        fig.add_trace(go.Bar(
-            x=nut_labels,
-            y=cur_vals,
-            name="🌱 Current Field",
-            marker=dict(color='#00F5FF', line=dict(color='#FFFFFF', width=1.5)),
-            text=[f"{v:.0f} kg/ha" for v in cur_vals],
-            textposition='auto',
-            textfont=dict(color='#060913', size=12, family='sans-serif'),
-            hovertemplate="<b>🌱 Current Field: %{x}</b><br>Amount: <b>%{y:.1f} kg/ha</b><extra></extra>"
-        ))
-        for i in range(3):
-            fig.add_trace(go.Bar(
-                x=[nut_labels[i]],
-                y=[tar_vals[i]],
-                name=f"{tar_names[i]}",
-                marker=dict(color=tar_colors[i], line=dict(color='#FFFFFF', width=1.5)),
-                text=[f"{tar_vals[i]:.0f} kg/ha"],
-                textposition='auto',
-                textfont=dict(color='#060913', size=12, family='sans-serif'),
-                hovertemplate=f"<b>👑 Required {nut_labels[i]}</b><br>Target: <b>{tar_vals[i]:.1f} kg/ha</b><br>Deficit: <b>+{def_vals[i]:.1f} kg/ha</b><extra></extra>"
-            ))
-        fig.update_layout(
-            template='plotly_dark',
-            barmode='group',
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(12, 17, 32, 0.45)',
-            xaxis=dict(
-                title=dict(text='Nutrient', font=dict(color='#38BDF8', size=13)),
-                tickfont=dict(color='#F8FAFC', size=12),
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            yaxis=dict(
-                title=dict(text='Amount (kg/ha)', font=dict(color='#34D399', size=13)),
-                tickfont=dict(color='#94A3B8', size=11),
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            margin=dict(l=10, r=10, b=10, t=10),
-            height=440,
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=11, color="#F3E5AB"),
-                bgcolor="rgba(10, 14, 25, 0.85)",
-                bordercolor="rgba(212, 175, 55, 0.35)",
-                borderwidth=1
-            )
-        )
-        return fig
-
-    else:
-        # ── 4. 3D QUADRATIC YIELD POTENTIAL LANDSCAPE ──
-        n_min = max(0.0, n_tar - 70.0)
-        n_max = n_tar + 70.0
-        p_min = max(0.0, p_tar - 35.0)
-        p_max = p_tar + 35.0
-        n_range = np.linspace(n_min, n_max, 28)
-        p_range = np.linspace(p_min, p_max, 28)
-        N_grid, P_grid = np.meshgrid(n_range, p_range)
-        Yield_grid = 100.0 - 0.0075 * (N_grid - n_tar)**2 - 0.018 * (P_grid - p_tar)**2
-        Yield_grid = np.clip(Yield_grid, 30.0, 100.0)
-
-        fig.add_trace(go.Surface(
-            x=N_grid, y=P_grid, z=Yield_grid,
-            colorscale=[
-                [0.0, '#0F172A'],
-                [0.35, '#047857'],
-                [0.70, '#10B981'],
-                [0.90, '#D4AF37'],
-                [1.0, '#F59E0B']
-            ],
-            opacity=0.94,
-            name="Yield Potential %",
-            colorbar=dict(title="Yield %", len=0.65, x=1.02, tickfont=dict(color="#F3E5AB")),
-            contours=dict(
-                z=dict(show=True, usecolormap=True, project=dict(z=True), highlightcolor="#FFF")
-            )
-        ))
-
-        # Current Operating Point
-        cur_yield = float(np.clip(100.0 - 0.0075 * (n_cur - n_tar)**2 - 0.018 * (p_cur - p_tar)**2, 30.0, 100.0))
-        fig.add_trace(go.Scatter3d(
-            x=[n_cur], y=[p_cur], z=[cur_yield],
-            mode='markers',
-            marker=dict(size=14, color='#00F5FF', symbol='circle', line=dict(color='#FFF', width=2.5)),
-            name=f"Field Operating Point ({cur_yield:.1f}%)",
-            hovertemplate=f"<b>🌱 Field Yield: {cur_yield:.1f}%</b><br>N: <b>{n_cur:.0f}</b> | P: <b>{p_cur:.0f}</b> kg/ha<extra></extra>"
-        ))
-
-        # Target 100% Summit
-        fig.add_trace(go.Scatter3d(
-            x=[n_tar], y=[p_tar], z=[100.0],
-            mode='markers',
-            marker=dict(size=16, color='#FFD700', symbol='diamond', line=dict(color='#FFF', width=2.5)),
-            name="100% Potential Summit",
-            hovertemplate=f"<b>👑 100% Optimum Summit</b><br>N: <b>{n_tar:.0f}</b> | P: <b>{p_tar:.0f}</b> kg/ha<extra></extra>"
-        ))
-
-        scene_dict = dict(
-            xaxis=dict(
-                title=dict(text='Nitrogen N (kg/ha)', font=dict(color='#38BDF8', size=12)),
-                backgroundcolor='rgba(12, 17, 32, 0.65)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            yaxis=dict(
-                title=dict(text='Phosphorus P (kg/ha)', font=dict(color='#34D399', size=12)),
-                backgroundcolor='rgba(12, 17, 32, 0.65)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            zaxis=dict(
-                title=dict(text='Yield Potential (%)', font=dict(color='#F3E5AB', size=12)),
-                backgroundcolor='rgba(12, 17, 32, 0.65)',
-                gridcolor='rgba(255, 255, 255, 0.08)'
-            ),
-            aspectratio=dict(x=1.2, y=1.2, z=0.88),
-            camera=dict(eye=dict(x=1.75, y=-1.5, z=1.25))
-        )
-        fig.update_layout(
-            template='plotly_dark',
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            scene=scene_dict,
-            margin=dict(l=10, r=10, b=10, t=10),
-            height=460,
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=11, color="#ECFDF5"),
-                bgcolor="rgba(11, 20, 16, 0.85)",
-                bordercolor="rgba(16, 185, 129, 0.35)",
-                borderwidth=1
-            )
-        )
-        return fig
+    """Delegates to botanical_theme.build_3d_npk_graph with Earth-Science styling."""
+    import botanical_theme
+    return botanical_theme.build_3d_npk_graph(fert_calc, active_crop, view_mode)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# STREAMLIT PAGE CONFIGURATION
+# STREAMLIT PAGE CONFIGURATION & MASTER BOTANICAL INJECTOR
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="SPARC | Precision Agriculture & Crop Diagnostics",
-    page_icon="🌱",
+    page_title="AgriSense AI // Botanical Specimen & Agronomic Field Station",
+    page_icon=None,
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
-# EMERALD MODERN AGRO-TECH THEME & STREAMLINED UX
-# Palette: Deep Forest Obsidian (#070D0A) + Emerald (#10B981) + Mint (#6EE7B7) + Sky (#38BDF8)
-# ─────────────────────────────────────────────────────────────────────────────
-CUSTOM_CSS = """
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
-:root {
-    --bg-main: #070D0A;
-    --bg-case: linear-gradient(145deg, rgba(16, 28, 22, 0.95) 0%, rgba(9, 17, 13, 0.98) 60%, rgba(5, 10, 7, 1) 100%);
-    --border-emerald: rgba(16, 185, 129, 0.28);
-    --border-emerald-hover: rgba(52, 211, 153, 0.65);
-    --accent-emerald: #10B981;
-    --accent-mint: #6EE7B7;
-    --accent-cyan: #38BDF8;
-    --accent-amber: #FBBF24;
-    --accent-rose: #FB7185;
-    --text-primary: #F0FDF4;
-    --text-muted: #94A3B8;
-    --shadow-case: 0 16px 40px -10px rgba(0, 0, 0, 0.85), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), 0 0 25px rgba(16, 185, 129, 0.06);
-}
-
-/* Global Emerald Agro-Tech Canvas */
-.stApp {
-    background-color: var(--bg-main) !important;
-    background-image: 
-        radial-gradient(circle at 12% 10%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 88% 85%, rgba(5, 150, 105, 0.06) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.02) 0%, transparent 60%) !important;
-    color: var(--text-primary) !important;
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
-}
-
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-
-/* Modern Floating App Header */
-.agro-floating-header {
-    background: linear-gradient(135deg, rgba(15, 26, 20, 0.95), rgba(9, 16, 12, 0.98));
-    border: 1px solid rgba(16, 185, 129, 0.35);
-    border-radius: 18px;
-    padding: 16px 24px;
-    margin-top: 8px;
-    margin-bottom: 16px;
-    box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 20px rgba(16, 185, 129, 0.12);
-    backdrop-filter: blur(20px);
-    transition: all 0.3s ease;
-}
-
-.agro-logo-badge {
-    font-size: 1.85rem;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.1));
-    border: 1px solid rgba(52, 211, 153, 0.4);
-    border-radius: 14px;
-    padding: 6px 12px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(16, 185, 129, 0.2);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.agro-chip-version {
-    font-size: 0.70rem;
-    font-weight: 800;
-    color: #34D399;
-    background: rgba(16, 185, 129, 0.18);
-    border: 1px solid rgba(52, 211, 153, 0.45);
-    padding: 3px 9px;
-    border-radius: 12px;
-    letter-spacing: 0.06em;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-/* Micro Status Pills */
-.agro-status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 13px;
-    border-radius: 20px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.02em;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 8px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-}
-.pill-gps {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.12));
-    color: #6EE7B7;
-    border: 1px solid #10B981;
-}
-.pill-loc {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34D399;
-    border: 1px solid rgba(16, 185, 129, 0.35);
-}
-.pill-sky {
-    background: rgba(56, 189, 248, 0.15);
-    color: #7DD3FC;
-    border: 1px solid rgba(56, 189, 248, 0.35);
-}
-.pill-temp {
-    background: rgba(251, 191, 36, 0.15);
-    color: #FDE68A;
-    border: 1px solid rgba(251, 191, 36, 0.35);
-}
-.pill-hum {
-    background: rgba(52, 211, 153, 0.15);
-    color: #A7F3D0;
-    border: 1px solid rgba(52, 211, 153, 0.35);
-}
-.pill-rain {
-    background: rgba(96, 165, 250, 0.15);
-    color: #93C5FD;
-    border: 1px solid rgba(96, 165, 250, 0.35);
-}
-
-/* Sidebar Branding */
-.sidebar-brand-box {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(6, 78, 59, 0.22) 100%);
-    border: 1px solid rgba(52, 211, 153, 0.35);
-    border-radius: 14px;
-    padding: 16px 14px;
-    text-align: center;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* ─── STREAMLINED TAB TRANSITIONS ─── */
-@keyframes emeraldFadeGlide {
-    0% {
-        opacity: 0;
-        transform: translateY(12px) scale(0.995);
-        filter: blur(3px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-    }
-}
-
-div[data-testid="stTabsContent"] {
-    animation: emeraldFadeGlide 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-    will-change: transform, opacity, filter;
-}
-
-/* Streamlined Navigation Tabs */
-button[data-baseweb="tab"] {
-    background: rgba(15, 26, 20, 0.6) !important;
-    border: 1px solid rgba(16, 185, 129, 0.15) !important;
-    border-bottom: none !important;
-    border-radius: 12px 12px 0 0 !important;
-    margin-right: 6px !important;
-    padding: 11px 22px !important;
-    font-weight: 600 !important;
-    color: #94A3B8 !important;
-    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-button[data-baseweb="tab"]:hover {
-    background: rgba(16, 185, 129, 0.12) !important;
-    color: #6EE7B7 !important;
-    border-color: rgba(52, 211, 153, 0.4) !important;
-    transform: translateY(-2px) !important;
-}
-
-button[data-baseweb="tab"][aria-selected="true"] {
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.22) 0%, rgba(6, 78, 59, 0.12) 100%) !important;
-    border-color: rgba(52, 211, 153, 0.55) !important;
-    border-bottom: 3px solid #10B981 !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 -6px 20px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-}
-
-/* Modern Frosted Cards */
-.sparc-card {
-    background: var(--bg-case);
-    border: 1px solid var(--border-emerald);
-    border-radius: 16px;
-    padding: 24px 26px;
-    margin-bottom: 22px;
-    box-shadow: var(--shadow-case);
-    backdrop-filter: blur(18px);
-    position: relative;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.sparc-card:hover {
-    border-color: var(--border-emerald-hover);
-    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.9), inset 0 1px 2px 0 rgba(255, 255, 255, 0.2), 0 0 25px rgba(16, 185, 129, 0.15);
-    transform: translateY(-3px) scale(1.002);
-}
-
-.sparc-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-    border-bottom: 1px solid rgba(16, 185, 129, 0.18);
-    padding-bottom: 14px;
-}
-
-.sparc-title {
-    font-size: 1.30rem;
-    font-weight: 800;
-    color: #FFFFFF;
-    letter-spacing: -0.01em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
-}
-
-/* Badges */
-.sparc-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.04em;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.badge-emerald {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%);
-    color: #34D399;
-    border: 1px solid rgba(16, 185, 129, 0.45);
-}
-
-.badge-cyan {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(6, 182, 212, 0.06) 100%);
-    color: #38BDF8;
-    border: 1px solid rgba(6, 182, 212, 0.45);
-}
-
-.badge-amber {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.06) 100%);
-    color: #FBBF24;
-    border: 1px solid rgba(245, 158, 11, 0.45);
-}
-
-.badge-rose {
-    background: linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(244, 63, 94, 0.06) 100%);
-    color: #FB7185;
-    border: 1px solid rgba(244, 63, 94, 0.45);
-}
-
-.badge-gold {
-    background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(16, 185, 129, 0.06) 100%);
-    color: #6EE7B7;
-    border: 1px solid rgba(52, 211, 153, 0.45);
-}
-
-/* Metric Cases */
-.metric-box {
-    background: linear-gradient(145deg, rgba(16, 28, 22, 0.85) 0%, rgba(8, 15, 11, 0.95) 100%);
-    border: 1px solid rgba(16, 185, 129, 0.24);
-    border-radius: 12px;
-    padding: 16px 18px;
-    text-align: center;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.65), 0 8px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(52, 211, 153, 0.3);
-    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.metric-box:hover {
-    transform: translateY(-2px);
-    border-color: #10B981;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 12px 25px rgba(16, 185, 129, 0.2);
-}
-
-.metric-label {
-    font-size: 0.74rem;
-    color: #34D399;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.metric-val {
-    font-size: 1.60rem;
-    font-weight: 800;
-    color: #FFFFFF;
-    font-family: 'JetBrains Mono', monospace;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-}
-
-/* Alternative Crop Cards */
-.alt-crop-card {
-    background: linear-gradient(145deg, rgba(18, 32, 25, 0.7) 0%, rgba(9, 17, 13, 0.9) 100%);
-    border: 1px solid rgba(16, 185, 129, 0.22);
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.alt-crop-card:hover {
-    background: linear-gradient(145deg, rgba(23, 42, 32, 0.85) 0%, rgba(12, 22, 17, 0.98) 100%);
-    border-color: rgba(52, 211, 153, 0.5);
-    box-shadow: 0 16px 35px -6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.18);
-    transform: translateY(-3px);
-}
-
-/* Rescue Protocol Items */
-.rescue-item {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(8, 16, 12, 0.6) 100%);
-    border-left: 4px solid #10B981;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.35);
-}
-
-/* Tactile Emerald Buttons */
-div.stButton > button {
-    background: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%) !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    border: 1px solid rgba(52, 211, 153, 0.45) !important;
-    border-radius: 10px !important;
-    padding: 11px 24px !important;
-    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2px 0 rgba(0, 0, 0, 0.45) !important;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    letter-spacing: 0.02em !important;
-}
-
-div.stButton > button:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 50%, #065F46 100%) !important;
-    border-color: #34D399 !important;
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
-    transform: translateY(-2px) scale(1.01) !important;
-}
-
-div.stButton > button:active {
-    transform: translateY(1px) scale(0.99) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
-}
-
-/* Polished Inputs and Selects */
-div[data-baseweb="input"], div[data-baseweb="select"] {
-    border-radius: 10px !important;
-    background-color: rgba(14, 24, 18, 0.8) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
-}
-
-div[data-baseweb="input"]:focus-within, div[data-baseweb="select"]:focus-within {
-    border-color: #10B981 !important;
-    box-shadow: 0 0 14px rgba(16, 185, 129, 0.35) !important;
-}
-</style>
-"""
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+# Apply master botanical herbarium & terracotta styling
+st.markdown(inject_botanical_theme(), unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -890,15 +171,15 @@ def fetch_live_telemetry(lat: float, lon: float) -> Optional[Dict[str, Any]]:
             wind = float(current.get("wind_speed_10m", 8.0))
 
             wmo_codes = {
-                0: ("Clear Sky", "☀️"), 1: ("Mainly Clear", "🌤️"), 2: ("Partly Cloudy", "⛅"),
-                3: ("Overcast", "☁️"), 45: ("Fog & Mist", "🌫️"), 48: ("Depositing Rime Fog", "🌫️"),
-                51: ("Light Drizzle", "🌦️"), 53: ("Moderate Drizzle", "🌦️"), 55: ("Dense Drizzle", "🌧️"),
-                61: ("Slight Rain", "🌧️"), 63: ("Moderate Rain", "🌧️"), 65: ("Heavy Rain", "🌧️"),
-                71: ("Slight Snow", "🌨️"), 73: ("Moderate Snow", "🌨️"), 75: ("Heavy Snow", "❄️"),
-                80: ("Rain Showers", "🌦️"), 81: ("Moderate Showers", "🌧️"), 82: ("Violent Showers", "⛈️"),
-                95: ("Thunderstorm", "⛈️"), 96: ("Thunderstorm with Hail", "⛈️")
+                0: ("Clear Sky", "CLEAR"), 1: ("Mainly Clear", "MOSTLY_CLEAR"), 2: ("Partly Cloudy", "PARTLY_CLOUDY"),
+                3: ("Overcast", "OVERCAST"), 45: ("Fog & Mist", "FOG"), 48: ("Depositing Rime Fog", "RIME_FOG"),
+                51: ("Light Drizzle", "DRIZZLE_LIGHT"), 53: ("Moderate Drizzle", "DRIZZLE_MOD"), 55: ("Dense Drizzle", "DRIZZLE_DENSE"),
+                61: ("Slight Rain", "RAIN_LIGHT"), 63: ("Moderate Rain", "RAIN_MOD"), 65: ("Heavy Rain", "RAIN_HEAVY"),
+                71: ("Slight Snow", "SNOW_LIGHT"), 73: ("Moderate Snow", "SNOW_MOD"), 75: ("Heavy Snow", "SNOW_HEAVY"),
+                80: ("Rain Showers", "SHOWERS_LIGHT"), 81: ("Moderate Showers", "SHOWERS_MOD"), 82: ("Violent Showers", "SHOWERS_VIOLENT"),
+                95: ("Thunderstorm", "STORM"), 96: ("Thunderstorm with Hail", "STORM_HAIL")
             }
-            cond_text, cond_icon = wmo_codes.get(w_code, ("Clear Sky", "☀️"))
+            cond_text, cond_icon = wmo_codes.get(w_code, ("Clear Sky", "CLEAR"))
             daily_rain = sum(w_data.get("daily", {}).get("precipitation_sum", [12.0]))
             est_monthly_rain = max(20.0, min(450.0, float(daily_rain * 6.5 + 20.0)))
 
@@ -1132,237 +413,17 @@ ensure_session_state()
 # ─────────────────────────────────────────────────────────────────────────────
 def render_splash_screen():
     """
-    Renders the opening animated logo sequence with custom SVG graphics,
-    pulsing aura, glowing typography, and dynamic initialization progress.
-    Uses components.v1.html for native HTML/SVG rendering without Markdown escaping.
+    Renders the opening botanical herbarium initialization sequence
+    matching the Aesop/Pachama editorial aesthetic.
     """
     ensure_session_state()
-    splash_html = """<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background: transparent;
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    color: #F3F4F6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    overflow: hidden;
-}
-
-.splash-container {
-    width: 100%;
-    min-height: 480px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: radial-gradient(circle at center, #111A2E 0%, #0B0F19 85%);
-    border-radius: 20px;
-    border: 1px solid rgba(16, 185, 129, 0.35);
-    padding: 30px 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-    position: relative;
-    overflow: hidden;
-}
-
-.ring-outer {
-    position: absolute;
-    width: 440px;
-    height: 440px;
-    border-radius: 50%;
-    border: 1px dashed rgba(6, 182, 212, 0.18);
-    animation: spinRing 24s linear infinite;
-    pointer-events: none;
-}
-
-.ring-inner {
-    position: absolute;
-    width: 320px;
-    height: 320px;
-    border-radius: 50%;
-    border: 1px dashed rgba(16, 185, 129, 0.22);
-    animation: spinRingRev 16s linear infinite;
-    pointer-events: none;
-}
-
-.logo-badge {
-    width: 120px;
-    height: 120px;
-    border-radius: 26px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(6, 182, 212, 0.22) 100%);
-    border: 2px solid rgba(16, 185, 129, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 18px;
-    box-shadow: 0 0 45px rgba(16, 185, 129, 0.45);
-    animation: floatLogo 3.5s ease-in-out infinite;
-    position: relative;
-    z-index: 2;
-}
-
-.sub-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #38BDF8;
-    letter-spacing: 0.35em;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
-
-.title-glow {
-    font-size: 3.2rem;
-    font-weight: 800;
-    margin: 0;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #FFFFFF 20%, #34D399 60%, #38BDF8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.02em;
-}
-
-.description {
-    font-size: 1.05rem;
-    color: #9CA3AF;
-    max-width: 640px;
-    margin: 12px auto 22px auto;
-    line-height: 1.5;
-}
-
-.pills-container {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    z-index: 2;
-}
-
-.pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 0.76rem;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.03em;
-}
-
-.pill-emerald {
-    background: rgba(16, 185, 129, 0.12);
-    color: #34D399;
-    border: 1px solid rgba(16, 185, 129, 0.35);
-}
-
-.pill-cyan {
-    background: rgba(6, 182, 212, 0.12);
-    color: #38BDF8;
-    border: 1px solid rgba(6, 182, 212, 0.35);
-}
-
-.pill-amber {
-    background: rgba(245, 158, 11, 0.12);
-    color: #FBBF24;
-    border: 1px solid rgba(245, 158, 11, 0.35);
-}
-
-@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes spinRingRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-@keyframes floatLogo {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-7px) scale(1.02); }
-}
-</style>
-</head>
-<body>
-<div class="splash-container">
-    <div class="ring-outer"></div>
-    <div class="ring-inner"></div>
-    
-    <div class="logo-badge">
-        <svg width="74" height="74" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="emeraldGrad" x1="30" y1="18" x2="70" y2="74" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#10B981"/>
-                    <stop offset="1" stop-color="#047857"/>
-                </linearGradient>
-                <linearGradient id="cyanGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#06B6D4"/>
-                    <stop offset="1" stop-color="#10B981"/>
-                </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="42" stroke="url(#cyanGrad)" stroke-width="2.5" stroke-dasharray="6 4" />
-            <path d="M50 18C50 18 30 35 30 54C30 65 39 74 50 74C61 74 70 65 70 54C70 35 50 18 50 18Z" fill="url(#emeraldGrad)" opacity="0.9" />
-            <path d="M50 74V34" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
-            <path d="M50 48C56 44 62 46 64 50" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M50 56C44 52 38 54 36 58" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="50" cy="20" r="4.5" fill="#38BDF8"/>
-        </svg>
-    </div>
-
-    <div style="z-index: 2;">
-        <div class="sub-tag">Autonomous Agronomic Intelligence</div>
-        <h1 class="title-glow">PROJECT SPARC</h1>
-        <p class="description">
-            <span style="color: #10B981; font-weight: 700;">S</span>mart 
-            <span style="color: #10B981; font-weight: 700;">P</span>ython-Based 
-            <span style="color: #06B6D4; font-weight: 700;">A</span>griculture 
-            <span style="color: #06B6D4; font-weight: 700;">R</span>ecommendation and 
-            <span style="color: #38BDF8; font-weight: 700;">C</span>lassification System
-        </p>
-
-        <div class="pills-container">
-            <span class="pill pill-emerald">● Auto-Location Sync: Ready</span>
-            <span class="pill pill-cyan">● Random Forest Model: Active</span>
-            <span class="pill pill-amber">● Crop Rescue Roadmap: Enabled</span>
-        </div>
-    </div>
-</div>
-</body>
-</html>"""
-    components.html(splash_html, height=510, scrolling=False)
-    
+    components.html(render_splash_screen_html(), height=520)
     st.write("")
-    col_c1, col_c2, col_c3 = st.columns([1, 2, 1])
-    with col_c2:
-        progress_bar = st.progress(20)
-        status_text = st.empty()
-        
-        stages = [
-            ("Initializing SPARC Core Microkernel...", 35),
-            ("Auto-Detecting User Farm Geo-Location...", 60),
-            ("Loading Scikit-Learn Agronomic Random Forest Model...", 85),
-            ("Calibrating Real-Time Weather Telemetry...", 98),
-            ("System Ready. Launching Workspace...", 100)
-        ]
-        
-        for msg, pct in stages:
-            status_text.markdown(f"<p style='text-align: center; color: #38BDF8; font-family: monospace;'>⚡ {msg}</p>", unsafe_allow_html=True)
-            progress_bar.progress(pct)
-            time.sleep(0.3)
-        
-        if st.button("🚀 Enter SPARC Workspace Now", use_container_width=True):
+    col_s1, col_s2, col_s3 = st.columns([1, 2, 1])
+    with col_s2:
+        if st.button("ENTER AGRONOMIC FIELD CONSOLE", type="primary", use_container_width=True):
             st.session_state.splash_completed = True
             st.rerun()
-
-    time.sleep(0.4)
-    st.session_state.splash_completed = True
-    st.rerun()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1378,7 +439,7 @@ def apply_soil_baseline_callback(state_name: str):
             st.session_state["slider_p"] = int(b.get("phosphorus", 45))
             st.session_state["slider_k"] = int(b.get("potassium", 40))
             st.session_state["slider_ph"] = float(b.get("ph", 6.5))
-            st.session_state["_toast_notification"] = f"✅ Applied {state_name} baseline soil metrics into main predictor!"
+            st.session_state["_toast_notification"] = f"[Baseline Applied] {state_name} baseline soil metrics into main predictor!"
     except Exception:
         pass
 
@@ -1394,10 +455,9 @@ def main_dashboard():
     # ─── SIDEBAR ───
     with st.sidebar:
         st.markdown("""
-        <div class="sidebar-brand-box">
-            <div style="font-size: 2.1rem; margin-bottom: 6px;">🌱⚡</div>
-            <div style="font-weight: 800; font-size: 1.35rem; letter-spacing: 0.04em; color: #FFFFFF;">SPARC</div>
-            <div style="font-size: 0.72rem; color: #34D399; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em;">AUTONOMOUS AGRI-AI</div>
+        <div style="padding: 1.1rem 0; border-bottom: 1px solid var(--border-hairline); margin-bottom: 1.2rem; text-align: center;">
+            <div style="font-family: 'Fraunces', Georgia, serif; font-size: 1.65rem; font-weight: 700; color: #162119; letter-spacing: -0.02em;">AgriSense AI</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; color: #1B4332; letter-spacing: 0.1em; text-transform: uppercase;">FIELD HERBARIUM // v4.2</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1436,13 +496,13 @@ def main_dashboard():
             wind_label = "-- km/h"
 
         st.markdown(f"""
-        <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB; background: rgba(16, 28, 22, 0.75); padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.25);">
-            <div><strong>Location:</strong> <span style="color: #38BDF8;">{loc_label}</span></div>
+        <div style="font-size: 0.85rem; line-height: 1.6; color: #D1D5DB; background: var(--alabaster); padding: 12px 14px; border-radius: 4px; border: 1px solid var(--border-soft); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div><strong>Location:</strong> <span style="color: var(--terracotta);">{loc_label}</span></div>
             <div><strong>Condition:</strong> <span style="color: #F472B6;">{c_icon} {c_desc}</span></div>
-            <div><strong>Temperature:</strong> <span style="color: #FBBF24;">{temp_label}</span></div>
-            <div><strong>Humidity:</strong> <span style="color: #34D399;">{hum_label}</span></div>
-            <div><strong>Precipitation:</strong> <span style="color: #60A5FA;">{rain_label}</span></div>
-            <div><strong>Wind Speed:</strong> <span style="color: #A78BFA;">{wind_label}</span></div>
+            <div><strong>Temperature:</strong> <span style="color: var(--harvest);">{temp_label}</span></div>
+            <div><strong>Humidity:</strong> <span style="color: var(--chlorophyll);">{hum_label}</span></div>
+            <div><strong>Precipitation:</strong> <span style="color: var(--ink);">{rain_label}</span></div>
+            <div><strong>Wind Speed:</strong> <span style="color: var(--sage);">{wind_label}</span></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1451,482 +511,285 @@ def main_dashboard():
             st.session_state.splash_completed = False
             st.rerun()
 
-    # ─── TOP APP HEADER BANNER (Streamlined Floating Agro-Tech Header) ───
+        # ─── TOP EDITORIAL BOTANICAL HEADER & FIELD TELEMETRY RIBBON ───
     active_tel = st.session_state.get("active_telemetry")
     farm_base = st.session_state.get("farm_base_data")
     loc_mode = st.session_state.get("location_mode", "GPS")
     is_gps_verified = bool(active_tel and active_tel.get("is_gps_verified") and loc_mode == "GPS")
+    city_display = active_tel.get("city", "Active Agricultural Zone") if active_tel else "Acquiring Station Coordinates..."
 
-    if active_tel:
-        city_display = active_tel.get("city", "Active Agricultural Zone")
-        cond_icon = active_tel.get("condition_icon", "☀️")
-        cond_text = active_tel.get("condition", "Clear Sky")
-        temp_text = f"🌡️ {active_tel.get('temperature', 25.0)}°C"
-        hum_text = f"💧 {active_tel.get('humidity', 60.0)}%"
-        rain_text = f"🌧️ {active_tel.get('rainfall', 100.0)} mm"
-    else:
-        city_display = "📡 Acquiring GPS..."
-        cond_icon = "🛰️"
-        cond_text = "Signal Pending"
-        temp_text = "🌡️ --°C"
-        hum_text = "💧 --%"
-        rain_text = "🌧️ -- mm"
-
-    st.markdown(f"""
-    <div class="agro-floating-header">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <div class="agro-logo-badge">🌱</div>
-                <div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <h1 style="margin: 0; font-size: 1.65rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.02em;">
-                            SPARC<span style="color: #10B981;"> AI</span>
-                        </h1>
-                        <span class="agro-chip-version">v3.2 PRO</span>
-                    </div>
-                    <div style="color: #94A3B8; font-size: 0.82rem; margin-top: 2px; font-weight: 500;">
-                        Smart Python-Based Agriculture Recommendation & Classification System
-                    </div>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <span class="agro-status-pill {'pill-gps' if is_gps_verified else 'pill-loc'}">
-                    {'🎯' if is_gps_verified else '📍'} {city_display}
-                </span>
-                <span class="agro-status-pill pill-sky">
-                    {cond_icon} {cond_text}
-                </span>
-                <span class="agro-status-pill pill-temp">
-                    {temp_text}
-                </span>
-                <span class="agro-status-pill pill-hum">
-                    {hum_text}
-                </span>
-                <span class="agro-status-pill pill-rain">
-                    {rain_text}
-                </span>
-            </div>
+    st.markdown("""
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.4rem;">
+        <div>
+            <h1 style="font-family: 'Fraunces', Georgia, serif; font-size: clamp(2rem, 3.5vw, 2.7rem); font-weight: 700; color: #162119; letter-spacing: -0.03em; margin: 0;">
+                AgriSense <span style="font-style: italic; color: #1B4332; font-weight: 400;">Field Station</span>
+            </h1>
+            <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; color: #5A655D; margin: 0.2rem 0 0.8rem 0;">
+                Precision Ecological Soil Horizons, Botanical Taxonomy & Adaptive Cultivation Management
+            </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown(render_telemetry_ribbon(
+        region=city_display,
+        season="Kharif / Active Cycle",
+        status="NOMINAL" if is_gps_verified else "CALIBRATED",
+        temp=str(active_tel.get('temperature', 25.0)) if active_tel else "--",
+        humidity=str(active_tel.get('humidity', 60.0)) if active_tel else "--",
+        rainfall=str(active_tel.get('rainfall', 100.0)) if active_tel else "--"
+    ), unsafe_allow_html=True)
+
     # ─── MAIN NAVIGATION TABS ───
     tab_diagnostics, tab_crop_doctor, tab_fertilizers, tab_soil_map, tab_analytics, tab_telemetry, tab_settings = st.tabs([
-        "🌾 Smart Crop Predictor & Adaptation",
-        "🩺 Crop Doctor: Disease & Cure",
-        "🧪 Fertilizer Prescriptions",
-        "🗺️ Place-Wise Indian Soil & Packages",
-        "📊 Historical Analytics & CRUD",
-        "🛠️ System Logs & Telemetry",
-        "⚙️ Profiles & Documentation"
+        "[01] Smart Crop & Adaptation",
+        "[02] Crop Doctor & Pathology",
+        "[03] Fertilizer Chemistry",
+        "[04] Indian Soil Map",
+        "[05] Records & Ledger",
+        "[06] System Telemetry",
+        "[07] Profiles & Technical Docs"
     ])
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # TAB 1: SMART CROP PREDICTOR & ADAPTATION PROTOCOL
+    # TAB 1: SMART CROP PREDICTOR & ADAPTATION PROTOCOL (ASYMMETRIC FIELD CONSOLE)
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     with tab_diagnostics:
-        # ── SEAMLESS DUAL-LOCATION & ACTIVE CONTEXT BAR ──
         loc_mode = st.session_state.get("location_mode", "GPS")
         farm_base = st.session_state.get("farm_base_data")
         custom_city = st.session_state.get("custom_city_data")
         active_tel = st.session_state.get("active_telemetry")
+        w_curr = st.session_state.get("weather_telemetry") or {}
 
-        # Pill badges for both Farm Base and Custom Searched City
-        farm_badge_snippet = ""
-        if farm_base:
-            farm_badge_snippet = f"""<div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-<span style="color: #34D399; font-weight: 700;">🏡 My Farm Base:</span> <span style="color: #FFFFFF; font-weight: 700;">{farm_base.get('city', 'Local Farm')} ({farm_base.get('temperature', '--')}°C)</span>
-</div>"""
-        else:
-            farm_badge_snippet = """<div style="background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-<span style="color: #FBBF24; font-weight: 700;">📡 Farm GPS:</span> <span style="color: #CBD5E1; font-weight: 600;">Acquiring Signal...</span>
-</div>"""
+        # Asymmetric Split-Screen Field Station Console (5 : 7)
+        col_console, col_canvas = st.columns([5, 7], gap="large")
 
-        other_badge_snippet = ""
-        if custom_city:
-            other_badge_snippet = f"""<div style="background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 8px; padding: 6px 12px; font-size: 0.82rem;">
-<span style="color: #C084FC; font-weight: 700;">🔍 Custom City:</span> <span style="color: #FFFFFF; font-weight: 700;">{custom_city.get('city')} ({custom_city.get('temperature')}°C)</span>
-</div>"""
-
-        # Render Active Telemetry Context Card
-        if loc_mode == "CUSTOM" and custom_city:
-            # Active mode: Custom Searched City
-            st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(168, 85, 247, 0.5); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(46, 16, 101, 0.35));">
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-<div>
-<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-<span style="font-size: 1.1rem;">🔍</span>
-<span style="font-size: 0.82rem; color: #C084FC; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #A78BFA; font-weight: 800;">🔍 CUSTOM SEARCHED CITY (EXPLORATION)</span></span>
-</div>
-<div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
-{custom_city.get('location', 'Searched Region')} &nbsp;·&nbsp;
-<span style='color: #F472B6;'>{custom_city.get('condition_icon', '⛅')} {custom_city.get('condition', 'Fair Weather')}</span> &nbsp;·&nbsp;
-<span style='color: #34D399;'>{custom_city.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
-<span style='color: #FBBF24;'>{custom_city.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
-<span style='color: #60A5FA;'>{custom_city.get('rainfall', 100.0)} mm Rain</span>
-</div>
-</div>
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-{farm_badge_snippet}
-{other_badge_snippet}
-</div>
-</div>
-</div>""", unsafe_allow_html=True)
-
-        elif farm_base and farm_base.get("is_gps_verified"):
-            # Active mode: High-Accuracy GPS Locked
-            st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(6, 78, 59, 0.35));">
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-<div>
-<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-<span style="font-size: 1.1rem;">🎯</span>
-<span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #34D399; font-weight: 800;">🏡 MY FARM LOCATION (EXACT GPS LOCKED)</span></span>
-</div>
-<div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
-🎯 SATELLITE PINPOINT: {farm_base.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
-<span style='color: #F472B6;'>{farm_base.get('condition_icon', '☀️')} {farm_base.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
-<span style='color: #34D399;'>{farm_base.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
-<span style='color: #FBBF24;'>{farm_base.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
-<span style='color: #60A5FA;'>{farm_base.get('rainfall', 100.0)} mm Rain</span>
-</div>
-</div>
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-{farm_badge_snippet}
-{other_badge_snippet}
-</div>
-</div>
-</div>""", unsafe_allow_html=True)
-
-        elif farm_base:
-            # Active mode: Farm set manually / baseline
-            st.markdown(f"""<div class="sparc-card" style="padding: 16px 22px; margin-bottom: 16px; border-color: rgba(6, 182, 212, 0.4); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));">
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-<div>
-<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-<span style="font-size: 1.1rem;">🏡</span>
-<span style="font-size: 0.82rem; color: #38BDF8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #34D399; font-weight: 800;">🏡 MY FARM LOCATION</span></span>
-</div>
-<div style="font-size: 1.12rem; font-weight: 700; color: #FFFFFF;">
-{farm_base.get('location', 'Active Agricultural Zone')} &nbsp;·&nbsp;
-<span style='color: #F472B6;'>{farm_base.get('condition_icon', '☀️')} {farm_base.get('condition', 'Clear Sky')}</span> &nbsp;·&nbsp;
-<span style='color: #34D399;'>{farm_base.get('temperature', 25.0)}°C</span> &nbsp;·&nbsp;
-<span style='color: #FBBF24;'>{farm_base.get('humidity', 60.0)}% Hum</span> &nbsp;·&nbsp;
-<span style='color: #60A5FA;'>{farm_base.get('rainfall', 100.0)} mm Rain</span>
-</div>
-</div>
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-{farm_badge_snippet}
-{other_badge_snippet}
-</div>
-</div>
-</div>""", unsafe_allow_html=True)
-
-        else:
-            # Pending GPS signal: clean, honest UI without dummy Delhi data
-            st.markdown(f"""<div class="sparc-card" style="padding: 18px 22px; margin-bottom: 16px; border-color: rgba(234, 179, 8, 0.5); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(40, 25, 5, 0.4));">
-<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-<div>
-<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-<span style="font-size: 1.1rem;">📡</span>
-<span style="font-size: 0.82rem; color: #FBBF24; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Active Telemetry Context: <span style="color: #FBBF24; font-weight: 800;">🏡 MY FARM LOCATION (AWAITING GPS SIGNAL)</span></span>
-</div>
-<div style="font-size: 1.05rem; font-weight: 700; color: #CBD5E1;">
-📡 Acquiring Exact GPS Signal... Click '📍 Detect Exact Farm Location' below to pinpoint your field.
-</div>
-</div>
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-{farm_badge_snippet}
-{other_badge_snippet}
-</div>
-</div>
-</div>""", unsafe_allow_html=True)
-
-        # Comparative Telemetry Bar (Working Progress: Other Place vs My Farm)
-        if custom_city and farm_base and loc_mode == "CUSTOM":
-            t_diff = round(float(custom_city.get('temperature', 0)) - float(farm_base.get('temperature', 0)), 1)
-            h_diff = round(float(custom_city.get('humidity', 0)) - float(farm_base.get('humidity', 0)), 1)
-            r_diff = round(float(custom_city.get('rainfall', 0)) - float(farm_base.get('rainfall', 0)), 1)
-            t_sign = f"+{t_diff}" if t_diff > 0 else f"{t_diff}"
-            h_sign = f"+{h_diff}" if h_diff > 0 else f"{h_diff}"
-            r_sign = f"+{r_diff}" if r_diff > 0 else f"{r_diff}"
-
-            st.markdown(f"""<div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.25); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px;">
-<div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; margin-bottom: 6px;">
-📊 Comparative Working Progress: {custom_city.get('city')} vs My Home Farm ({farm_base.get('city')})
-</div>
-<div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem;">
-<div>🌡️ <strong>Temp:</strong> <span style="color: #F87171;">{custom_city.get('temperature')}°C</span> vs {farm_base.get('temperature')}°C (<span style="color: {'#34D399' if t_diff < 0 else '#F87171'}; font-weight: 700;">{t_sign}°C</span>)</div>
-<div>💧 <strong>Humidity:</strong> <span style="color: #FBBF24;">{custom_city.get('humidity')}%</span> vs {farm_base.get('humidity')}% (<span style="color: #FBBF24; font-weight: 700;">{h_sign}%</span>)</div>
-<div>🌧️ <strong>Rainfall:</strong> <span style="color: #60A5FA;">{custom_city.get('rainfall')} mm</span> vs {farm_base.get('rainfall')} mm (<span style="color: #60A5FA; font-weight: 700;">{r_sign} mm</span>)</div>
-<div>🌤️ <strong>Sky:</strong> {custom_city.get('condition_icon')} {custom_city.get('condition')}</div>
-</div>
-</div>""", unsafe_allow_html=True)
-
-        # Dual Control Columns: Option 1 (My Farm) vs Option 2 (Other Place)
-        col_ctl_home, col_ctl_other = st.columns([1.15, 1.35], gap="large")
-
-        with col_ctl_home:
-            st.markdown("<div style='font-size: 0.92rem; font-weight: 700; color: #10B981; margin-bottom: 6px;'>🏡 Option 1: My Current Farm Location (Home Base)</div>", unsafe_allow_html=True)
-
-            # Direct Hardware GPS Satellite Pinpoint Block
-            is_locked = bool(farm_base and farm_base.get("is_gps_verified"))
-            gps_box_bg = "rgba(16, 185, 129, 0.12)" if is_locked else "rgba(234, 179, 8, 0.12)"
-            gps_border = "rgba(52, 211, 153, 0.35)" if is_locked else "rgba(234, 179, 8, 0.35)"
-            gps_title_col = "#34D399" if is_locked else "#FBBF24"
-            gps_status_badge = "EXACT GPS LOCKED" if is_locked else "GPS SIGNAL PENDING"
-            gps_badge_style = "background: rgba(52, 211, 153, 0.2); color: #6EE7B7; border: 1px solid rgba(52, 211, 153, 0.4);" if is_locked else "background: rgba(234, 179, 8, 0.2); color: #FBBF24; border: 1px solid rgba(234, 179, 8, 0.4);"
-
-            if is_locked:
-                gps_desc = f"🎯 Locked: <strong>{farm_base['location']}</strong> ({farm_base.get('latitude', '')}°N, {farm_base.get('longitude', '')}°E)"
-            else:
-                gps_desc = "Click 📍 <strong>Detect Exact Farm Location</strong> below and allow browser location to pinpoint your exact village/town, district, and field coordinates:"
-
-            st.markdown(f"""<div style='background: linear-gradient(135deg, {gps_box_bg}, rgba(6, 78, 59, 0.25)); border: 1px solid {gps_border}; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;'>
-<div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;'>
-    <span style='font-size: 0.88rem; font-weight: 800; color: {gps_title_col};'>🛰️ Satellite GPS Auto-Detector</span>
-    <span style='font-size: 0.70rem; {gps_badge_style} border-radius: 12px; padding: 2px 8px; font-weight: 700;'>{gps_status_badge}</span>
-</div>
-<div style='font-size: 0.80rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 8px;'>
-    {gps_desc}
-</div>
-</div>""", unsafe_allow_html=True)
-
-            col_gps_btn1, col_gps_btn2 = st.columns([1.5, 1])
-            with col_gps_btn1:
-                if st.button("📍 Detect Exact Farm Location", key="btn_detect_gps", use_container_width=True, help="Requests high-accuracy browser HTML5 GPS coordinates"):
-                    st.session_state._last_synced_gps_coords = None
-                    st.session_state.location_mode = "GPS"
-                    st.toast("📡 Acquiring browser GPS signal... Please allow location permission in your browser.", icon="🛰️")
-                    st.rerun()
-
-            with col_gps_btn2:
-                is_home_active = (loc_mode == "GPS" and farm_base is not None)
-                if st.button("🔄 Activate Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active, help="Switch recommendation engine back to your home farm"):
-                    st.session_state.location_mode = "GPS"
-                    if farm_base:
-                        st.session_state.active_telemetry = farm_base
-                        st.session_state["slider_temp"] = max(-10.0, min(55.0, float(farm_base.get("temperature", 25.0))))
-                        st.session_state["slider_hum"] = max(5.0, min(100.0, float(farm_base.get("humidity", 60.0))))
-                        st.session_state["slider_rain"] = max(0.0, min(500.0, float(farm_base.get("rainfall", 90.0))))
-                        st.toast(f"🏡 Switched context back to My Farm: {farm_base.get('city')}")
+        # ─────────────────────────────────────────────────────────────────────
+        # LEFT COLUMN (5): INTERACTIVE AGRONOMIC PARAMETER CONSOLE
+        # ─────────────────────────────────────────────────────────────────────
+        with col_console:
+            # 01 // GEOSPATIAL FIELD CALIBRATION
+            st.markdown(render_section_header("01", "Geospatial Calibration", "Station location and field coordinate lock", "GEOLOCATION"), unsafe_allow_html=True)
+            
+            with st.container(border=True):
+                loc_tab_home, loc_tab_other = st.tabs(["Home Farm (GPS / Baseline)", "Explore Other Region"])
+                
+                with loc_tab_home:
+                    is_locked = bool(farm_base and farm_base.get("is_gps_verified"))
+                    status_badge = "[EXACT GPS LOCKED]" if is_locked else "[GPS SIGNAL PENDING]"
+                    status_color = "var(--accent-success)" if is_locked else "var(--accent-warning)"
+                    
+                    if is_locked:
+                        gps_desc = f"Locked: <strong>{farm_base['location']}</strong> ({farm_base.get('latitude', '')}°N, {farm_base.get('longitude', '')}°E)"
                     else:
-                        st.toast("Awaiting browser GPS signal... Click 'Detect Exact Farm Location'.")
-                    st.rerun()
+                        gps_desc = "Click <strong>Detect Exact Farm Location</strong> below to pinpoint field coordinates:"
 
-            # Manual Farm City / Town / Village / PIN Code text input
-            st.markdown("<div style='font-size: 0.82rem; font-weight: 700; color: #E2E8F0; margin-bottom: 4px; margin-top: 8px;'>📍 Or Type Exact City / Town / Village / PIN Code:</div>", unsafe_allow_html=True)
-            col_f_in, col_f_btn = st.columns([1.8, 1])
-            with col_f_in:
-                farm_input = st.text_input(
-                    "Set Farm City:",
-                    placeholder="e.g. Alwar, Varanasi, Muzaffarpur, 302001",
-                    label_visibility="collapsed",
-                    key="farm_city_input"
-                )
-            with col_f_btn:
-                set_farm_btn = st.button("📍 Set Farm", use_container_width=True, key="btn_set_farm")
+                    st.markdown(f'''
+                    <div style="font-family: var(--font-mono); font-size: 0.76rem; margin-bottom: 0.6rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+                        <span>STATION SATELLITE RADAR</span>
+                        <span style="color: {status_color}; font-weight: 700;">{status_badge}</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--text-primary); margin-bottom: 0.8rem; line-height: 1.4;">
+                        {gps_desc}
+                    </div>
+                    ''', unsafe_allow_html=True)
 
-            last_synced_farm = st.session_state.get("_last_synced_farm_input", "")
-            should_sync_farm = False
-            if set_farm_btn and farm_input.strip():
-                should_sync_farm = True
-            elif farm_input.strip() and farm_input.strip().lower() != last_synced_farm:
-                should_sync_farm = True
+                    col_gps_b1, col_gps_b2 = st.columns([1.5, 1])
+                    with col_gps_b1:
+                        if st.button("Detect Exact Location", key="btn_detect_gps", use_container_width=True, help="Requests high-accuracy browser HTML5 GPS coordinates"):
+                            st.session_state._last_synced_gps_coords = None
+                            st.session_state.location_mode = "GPS"
+                            st.toast("Acquiring browser GPS signal... Please allow location permission in your browser.")
+                            st.rerun()
 
-            if should_sync_farm:
-                with st.spinner(f"Pinpointing farm location to {farm_input}..."):
-                    new_home = engine_instance.fetch_live_weather(farm_input.strip())
-                    new_home["is_gps_verified"] = False
-                    st.session_state.farm_base_data = new_home
-                    st.session_state.location_mode = "GPS"
-                    st.session_state.active_telemetry = new_home
-                    st.session_state._last_synced_farm_input = farm_input.strip().lower()
-                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
-                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
-                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
-                    st.toast(f"🏡 Farm location updated to: {new_home['location']}")
-                    st.rerun()
+                    with col_gps_b2:
+                        is_home_active = (loc_mode == "GPS" and farm_base is not None)
+                        if st.button("Activate Farm", key="btn_activate_home", use_container_width=True, disabled=is_home_active):
+                            st.session_state.location_mode = "GPS"
+                            if farm_base:
+                                st.session_state.active_telemetry = farm_base
+                                st.session_state["slider_temp"] = max(-10.0, min(55.0, float(farm_base.get("temperature", 25.0))))
+                                st.session_state["slider_hum"] = max(5.0, min(100.0, float(farm_base.get("humidity", 60.0))))
+                                st.session_state["slider_rain"] = max(0.0, min(500.0, float(farm_base.get("rainfall", 90.0))))
+                                st.toast(f"Switched context back to My Farm: {farm_base.get('city')}")
+                            st.rerun()
 
-            col_res1, col_res2 = st.columns([1, 1])
-            with col_res1:
-                if st.button("🗑️ Reset Saved Farm", key="btn_reset_farm", use_container_width=True, help="Clears stored farm location to re-detect"):
-                    st.session_state.farm_base_data = None
-                    st.session_state.active_telemetry = st.session_state.custom_city_data
-                    st.session_state._last_synced_gps_coords = None
-                    st.session_state._last_synced_farm_input = ""
-                    st.toast("Cleared saved farm. Click 'Detect Exact Farm Location' to re-detect.")
-                    st.rerun()
+                    col_f_in, col_f_btn = st.columns([1.8, 1])
+                    with col_f_in:
+                        farm_input = st.text_input("Farm City / Town:", placeholder="e.g. Alwar, Varanasi, 302001", label_visibility="collapsed", key="farm_city_input")
+                    with col_f_btn:
+                        set_farm_btn = st.button("Set Farm", use_container_width=True, key="btn_set_farm")
 
-            with col_res2:
-                farm_states = [
-                    "Select State Baseline...",
-                    "Rajasthan (Jaipur / Kota)",
-                    "Uttar Pradesh (Lucknow / Kanpur)",
-                    "Punjab (Ludhiana / Amritsar)",
-                    "Haryana (Karnal / Hisar)",
-                    "Maharashtra (Pune / Nashik)",
-                    "Madhya Pradesh (Indore / Bhopal)",
-                    "Bihar (Patna / Gaya)",
-                    "Gujarat (Ahmedabad / Rajkot)",
-                    "Karnataka (Bengaluru / Mysuru)",
-                    "Tamil Nadu (Coimbatore / Chennai)",
-                    "Andhra Pradesh (Guntur / Vijayawada)",
-                    "West Bengal (Kolkata / Bardhaman)",
-                    "Kerala (Kochi / Palakkad)",
-                    "Assam (Guwahati / Jorhat)"
-                ]
-                sel_state = st.selectbox("Or state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
-                if sel_state != "Select State Baseline...":
-                    target_city = sel_state.split("(")[1].split("/")[0].strip()
-                    if st.session_state.get("_last_selected_state") != sel_state:
-                        st.session_state._last_selected_state = sel_state
-                        with st.spinner(f"Setting farm to {target_city}..."):
-                            new_home = engine_instance.fetch_live_weather(target_city)
+                    last_synced_farm = st.session_state.get("_last_synced_farm_input", "")
+                    should_sync_farm = False
+                    if set_farm_btn and farm_input.strip():
+                        should_sync_farm = True
+                    elif farm_input.strip() and farm_input.strip().lower() != last_synced_farm:
+                        should_sync_farm = True
+
+                    if should_sync_farm:
+                        with st.spinner(f"Pinpointing farm to {farm_input}..."):
+                            new_home = engine_instance.fetch_live_weather(farm_input.strip())
                             new_home["is_gps_verified"] = False
                             st.session_state.farm_base_data = new_home
                             st.session_state.location_mode = "GPS"
                             st.session_state.active_telemetry = new_home
+                            st.session_state._last_synced_farm_input = farm_input.strip().lower()
                             st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
                             st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
                             st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
-                            st.toast(f"🏡 Farm base updated to {new_home['location']}")
+                            st.toast(f"Farm location updated to: {new_home['location']}")
                             st.rerun()
 
-        with col_ctl_other:
-            st.markdown("<div style='font-size: 0.88rem; font-weight: 700; color: #A78BFA; margin-bottom: 6px;'>🔍 Option 2: Search & Inspect Other Place (Exploration)</div>", unsafe_allow_html=True)
-            col_o1, col_o2 = st.columns([1.8, 1])
-            with col_o1:
-                custom_city_input = st.text_input(
-                    "Lookup other place:",
-                    placeholder="Type city/country (e.g. Pune, Patna, California) & press Enter",
-                    label_visibility="collapsed",
-                    key="custom_city_input"
-                )
-            with col_o2:
-                sync_btn = st.button("🔍 Analyze Place", use_container_width=True, key="btn_sync_other")
+                    col_rst1, col_rst2 = st.columns([1, 1])
+                    with col_rst1:
+                        if st.button("Reset Farm", key="btn_reset_farm", use_container_width=True):
+                            st.session_state.farm_base_data = None
+                            st.session_state.active_telemetry = st.session_state.custom_city_data
+                            st.session_state._last_synced_gps_coords = None
+                            st.session_state._last_synced_farm_input = ""
+                            st.rerun()
+                    with col_rst2:
+                        farm_states = [
+                            "State Baseline...",
+                            "Rajasthan (Jaipur / Kota)", "Uttar Pradesh (Lucknow / Kanpur)",
+                            "Punjab (Ludhiana / Amritsar)", "Haryana (Karnal / Hisar)",
+                            "Maharashtra (Pune / Nashik)", "Madhya Pradesh (Indore / Bhopal)",
+                            "Bihar (Patna / Gaya)", "Gujarat (Ahmedabad / Rajkot)",
+                            "Karnataka (Bengaluru / Mysuru)", "Tamil Nadu (Coimbatore / Chennai)",
+                            "Andhra Pradesh (Guntur / Vijayawada)", "West Bengal (Kolkata / Bardhaman)",
+                            "Kerala (Kochi / Palakkad)", "Assam (Guwahati / Jorhat)"
+                        ]
+                        sel_state = st.selectbox("Or state baseline:", farm_states, index=0, label_visibility="collapsed", key="sel_farm_state")
+                        if sel_state != "State Baseline...":
+                            target_city = sel_state.split("(")[1].split("/")[0].strip()
+                            if st.session_state.get("_last_selected_state") != sel_state:
+                                st.session_state._last_selected_state = sel_state
+                                with st.spinner(f"Setting farm to {target_city}..."):
+                                    new_home = engine_instance.fetch_live_weather(target_city)
+                                    new_home["is_gps_verified"] = False
+                                    st.session_state.farm_base_data = new_home
+                                    st.session_state.location_mode = "GPS"
+                                    st.session_state.active_telemetry = new_home
+                                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(new_home.get("temperature", 25.0))))
+                                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(new_home.get("humidity", 60.0))))
+                                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(new_home.get("rainfall", 90.0))))
+                                    st.rerun()
 
-            last_synced = st.session_state.get("_last_synced_other", "")
-            should_sync_other = False
-            if sync_btn and custom_city_input.strip():
-                should_sync_other = True
-            elif custom_city_input.strip() and custom_city_input.strip().lower() != last_synced:
-                should_sync_other = True
+                with loc_tab_other:
+                    col_o1, col_o2 = st.columns([1.8, 1])
+                    with col_o1:
+                        custom_city_input = st.text_input("Lookup place:", placeholder="e.g. Pune, Patna, California", label_visibility="collapsed", key="custom_city_input")
+                    with col_o2:
+                        sync_btn = st.button("Analyze Place", use_container_width=True, key="btn_sync_other")
 
-            if should_sync_other:
-                with st.spinner(f"Querying live weather for other place: {custom_city_input}..."):
-                    other_w = engine_instance.fetch_live_weather(custom_city_input.strip())
-                    st.session_state.custom_city_data = other_w
-                    st.session_state.location_mode = "CUSTOM"
-                    st.session_state.active_telemetry = other_w
-                    st.session_state._last_synced_other = custom_city_input.strip().lower()
-                    st.session_state["slider_temp"] = max(-10.0, min(55.0, float(other_w.get("temperature", 25.0))))
-                    st.session_state["slider_hum"] = max(5.0, min(100.0, float(other_w.get("humidity", 60.0))))
-                    st.session_state["slider_rain"] = max(0.0, min(500.0, float(other_w.get("rainfall", 90.0))))
-                    st.toast(f"Analyzing {other_w['location']}: {other_w.get('condition_icon', '')} {other_w.get('temperature')}°C")
-                    st.rerun()
+                    last_synced = st.session_state.get("_last_synced_other", "")
+                    should_sync_other = False
+                    if sync_btn and custom_city_input.strip():
+                        should_sync_other = True
+                    elif custom_city_input.strip() and custom_city_input.strip().lower() != last_synced:
+                        should_sync_other = True
 
-            if custom_city and loc_mode == "CUSTOM":
-                farm_label = farm_base.get('city') if farm_base else "Farm Base"
-                st.caption(f"📍 Currently analyzing: **{custom_city.get('location')}**. Your Home Farm (**{farm_label}**) is preserved. Click 'Activate Farm' on the left anytime to switch back.")
+                    if should_sync_other:
+                        with st.spinner(f"Querying weather for {custom_city_input}..."):
+                            other_w = engine_instance.fetch_live_weather(custom_city_input.strip())
+                            st.session_state.custom_city_data = other_w
+                            st.session_state.location_mode = "CUSTOM"
+                            st.session_state.active_telemetry = other_w
+                            st.session_state._last_synced_other = custom_city_input.strip().lower()
+                            st.session_state["slider_temp"] = max(-10.0, min(55.0, float(other_w.get("temperature", 25.0))))
+                            st.session_state["slider_hum"] = max(5.0, min(100.0, float(other_w.get("humidity", 60.0))))
+                            st.session_state["slider_rain"] = max(0.0, min(500.0, float(other_w.get("rainfall", 90.0))))
+                            st.rerun()
 
-        col_input, col_results = st.columns([1.1, 1.4], gap="large")
-
-        # ── INPUT PARAMETERS CARD ──
-        with col_input:
-            st.markdown("""
-            <div class="sparc-card">
-                <div class="sparc-card-header">
-                    <span class="sparc-title">🌱 Field Soil & Weather Parameters</span>
-                    <span class="sparc-badge badge-cyan">Live Sliders</span>
-                </div>
-            """, unsafe_allow_html=True)
-
-            w_curr = st.session_state.get("weather_telemetry") or {}
-
-            # Place-Wise Indian Soil Auto-Fill Expander
-            with st.expander("📍 Place-Wise Indian Soil Baseline Auto-Fill", expanded=False):
-                st.markdown("<div style='font-size: 0.84rem; color: #9CA3AF; margin-bottom: 8px;'>Select your State / Agro-zone to instantly auto-populate ICAR baseline soil parameters (NPK & pH):</div>", unsafe_allow_html=True)
-                soil_states = backend.get_indian_soil_states()
-                def_state_idx = soil_states.index("Punjab") if "Punjab" in soil_states else 0
-                chosen_state = st.selectbox("Select State / Region", soil_states, index=def_state_idx, key="diag_state_selector")
-                st_profile = backend.get_state_soil_profile(chosen_state)
-                if st_profile:
-                    b_soil = st_profile["baseline_soil"]
-                    st.markdown(f"""
-                    <div style="font-size: 0.82rem; line-height: 1.5; color: #D1D5DB; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px;">
-                        <div><strong>Soil Type:</strong> <span style="color:#38BDF8;">{st_profile['soil_type']}</span></div>
-                        <div><strong>ICAR Baseline:</strong> N: <span style="color:#34D399;">{b_soil['nitrogen']} kg/ha</span> | P: <span style="color:#38BDF8;">{b_soil['phosphorus']} kg/ha</span> | K: <span style="color:#FBBF24;">{b_soil['potassium']} kg/ha</span> | pH: <span style="color:#A78BFA;">{b_soil['ph']}</span></div>
-                        <div style="color: #9CA3AF; font-size: 0.78rem; margin-top: 3px;"><strong>Common Deficiencies:</strong> {st_profile['micronutrient_deficiencies'][0]}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    st.button(
-                        f"⚡ Auto-Fill {chosen_state} Soil Baseline",
-                        key=f"apply_soil_{chosen_state}",
-                        on_click=apply_soil_baseline_callback,
-                        args=(chosen_state,),
-                        use_container_width=True
-                    )
-
-            # Soil Nutrients
-            st.markdown("#### 🧪 Macronutrients (NPK in kg/ha)")
-            col_n, col_p, col_k = st.columns(3)
-            with col_n:
-                n_val = st.slider("Nitrogen (N)", 0, 250, key="slider_n", help="Available soil Nitrogen in kg/ha")
-            with col_p:
-                p_val = st.slider("Phosphorus (P)", 5, 180, key="slider_p", help="Available soil Phosphorus in kg/ha")
-            with col_k:
-                k_val = st.slider("Potassium (K)", 5, 300, key="slider_k", help="Available soil Potassium in kg/ha")
-
-            st.markdown("#### 🌡️ Live Environmental Telemetry")
-            col_t, col_h = st.columns(2)
-            with col_t:
-                temp_val = st.slider(
-                    "Temperature (°C)", -10.0, 55.0,
-                    key="slider_temp", step=0.5,
-                    help="Auto-calibrated from searched city or live location"
-                )
-            with col_h:
-                hum_val = st.slider(
-                    "Humidity (%)", 5.0, 100.0,
-                    key="slider_hum", step=1.0,
-                    help="Relative humidity percentage from live weather"
-                )
-
-            col_r, col_ph = st.columns(2)
-            with col_r:
-                rain_val = st.slider(
-                    "Rainfall (mm)", 0.0, 500.0,
-                    key="slider_rain", step=1.0,
-                    help="Rainfall index calibrated for crop requirement and live telemetry"
-                )
-            with col_ph:
-                ph_val = st.slider("Soil pH Level", 3.5, 9.5, key="slider_ph", step=0.1)
-
-            st.markdown("#### 🎯 Crop You Plan to Cultivate")
-            # If target crop was adopted via 1-click alternative
-            current_target = st.session_state.chosen_target_crop
-            target_idx = SUPPORTED_CROPS.index(current_target) if current_target in SUPPORTED_CROPS else 0
+            # 02 // MACRONUTRIENT HORIZONS (N-P-K)
+            st.markdown(render_section_header("02", "Macronutrient Horizons", "Available Nitrogen, Phosphorus, Potassium in kg/ha", "SOIL_N-P-K"), unsafe_allow_html=True)
             
-            chosen_crop = st.selectbox(
-                "Select planned crop",
-                SUPPORTED_CROPS,
-                index=target_idx,
-                help="Select the crop you want to plant. SPARC will analyze it and provide a rescue protocol if not ideal!"
-            )
-            st.session_state.chosen_target_crop = chosen_crop
+            with st.container(border=True):
+                with st.expander("Indian Soil Baseline Auto-Fill", expanded=False):
+                    st.caption("Select State / Agro-zone to populate ICAR fertility baseline:")
+                    soil_states = backend.get_indian_soil_states()
+                    def_state_idx = soil_states.index("Punjab") if "Punjab" in soil_states else 0
+                    chosen_state = st.selectbox("Select State / Region", soil_states, index=def_state_idx, key="diag_state_selector")
+                    st_profile = backend.get_state_soil_profile(chosen_state)
+                    if st_profile:
+                        b_soil = st_profile["baseline_soil"]
+                        st.markdown(f'''
+                        <div style="font-family: var(--font-mono); font-size: 0.76rem; background: var(--bg-console); padding: 8px 10px; border-radius: 4px; margin-bottom: 6px;">
+                            <div>Stratum: <strong>{st_profile['soil_type']}</strong></div>
+                            <div>N: {b_soil['nitrogen']} kg/ha &bull; P: {b_soil['phosphorus']} kg/ha &bull; K: {b_soil['potassium']} kg/ha &bull; pH: {b_soil['ph']}</div>
+                        </div>
+                        ''', unsafe_allow_html=True)
+                        st.button(f"Auto-Fill {chosen_state} Baseline", key=f"apply_soil_{chosen_state}", on_click=apply_soil_baseline_callback, args=(chosen_state,), use_container_width=True)
 
-            farm_field_name = st.text_input("Farm Field Location / Tag", value=f"{w_curr.get('city', 'Main')} Field Block A")
-            notes_input = st.text_area("Field Notes / Observations", value="Field pre-sowing evaluation.", height=60)
+                col_n, col_p, col_k = st.columns(3)
+                with col_n:
+                    n_val = st.slider("Nitrogen (N)", 0, 250, key="slider_n", help="Available soil Nitrogen in kg/ha")
+                with col_p:
+                    p_val = st.slider("Phosphorus (P)", 5, 180, key="slider_p", help="Available soil Phosphorus in kg/ha")
+                with col_k:
+                    k_val = st.slider("Potassium (K)", 5, 300, key="slider_k", help="Available soil Potassium in kg/ha")
 
-            run_analysis = st.button("⚡ Run SPARC Adaptive Diagnostics", use_container_width=True)
+            # 03 // ATMOSPHERIC & HYDROLOGY
+            st.markdown(render_section_header("03", "Atmospheric & Hydrology", "Live ambient microclimate calibration", "TELEMETRY"), unsafe_allow_html=True)
+            
+            with st.container(border=True):
+                col_t, col_h = st.columns(2)
+                with col_t:
+                    temp_val = st.slider("Temperature (°C)", -10.0, 55.0, key="slider_temp", step=0.5, help="Calibrated from station telemetry")
+                with col_h:
+                    hum_val = st.slider("Humidity (%)", 5.0, 100.0, key="slider_hum", step=1.0, help="Relative atmospheric humidity")
 
-            st.markdown("</div>", unsafe_allow_html=True)
+                col_r, col_ph = st.columns(2)
+                with col_r:
+                    rain_val = st.slider("Rainfall (mm)", 0.0, 500.0, key="slider_rain", step=1.0, help="Hydrologic precipitation demand")
+                with col_ph:
+                    ph_val = st.slider("Soil Reaction (pH)", 3.5, 9.5, key="slider_ph", step=0.1, help="Acidity/Alkalinity level")
 
-        # ── RESULTS & DIAGNOSTIC INTELLIGENCE CARD ──
-        with col_results:
-            # Trigger analysis
+            # 04 // PLANNED CULTIVAR TARGET
+            st.markdown(render_section_header("04", "Planned Cultivar", "Target crop selection for adaptation roadmap", "TARGET_CROP"), unsafe_allow_html=True)
+            
+            with st.container(border=True):
+                current_target = st.session_state.chosen_target_crop
+                target_idx = SUPPORTED_CROPS.index(current_target) if current_target in SUPPORTED_CROPS else 0
+                
+                chosen_crop = st.selectbox(
+                    "Planned Cultivar",
+                    SUPPORTED_CROPS,
+                    index=target_idx,
+                    help="Select your planned crop to receive adaptation rescue actions if unsuited."
+                )
+                st.session_state.chosen_target_crop = chosen_crop
+
+                farm_field_name = st.text_input("Field Stratum Identifier", value=f"{w_curr.get('city', 'Main')} Field Stratum A")
+                notes_input = st.text_area("Field Specimen Log", value="Pre-sowing horizon evaluation and baseline verification.", height=55)
+
+                run_analysis = st.button("EXECUTE AGRONOMIC ANALYSIS", type="primary", use_container_width=True)
+
+        # ─────────────────────────────────────────────────────────────────────
+        # RIGHT COLUMN (7): LIVE TELEMETRY & BOTANICAL SPECIMEN CANVAS
+        # ─────────────────────────────────────────────────────────────────────
+        with col_canvas:
+            # 05 // REAL-TIME SOIL HORIZON STRATUM METERS
+            st.markdown(render_section_header("05", "Dynamic Horizon Spectrum", "Live soil layer saturation and chemical balance", "REAL_TIME"), unsafe_allow_html=True)
+            
+            # Interactive horizon bars that update dynamically as sliders are dragged
+            col_hz1, col_hz2 = st.columns(2)
+            with col_hz1:
+                st.markdown(render_soil_horizon_bar("Available Nitrogen Horizon", n_val, 0, 250, "kg/ha"), unsafe_allow_html=True)
+                st.markdown(render_soil_horizon_bar("Phosphorus Stratum", p_val, 5, 180, "kg/ha"), unsafe_allow_html=True)
+            with col_hz2:
+                st.markdown(render_soil_horizon_bar("Potassium Stratum", k_val, 5, 300, "kg/ha"), unsafe_allow_html=True)
+                st.markdown(render_soil_horizon_bar("Soil Reaction Equilibrium (pH)", ph_val, 3.5, 9.5, "pH"), unsafe_allow_html=True)
+
+            st.markdown(render_soil_horizon_bar("Precipitation & Hydrologic Index", rain_val, 0, 500, "mm"), unsafe_allow_html=True)
+
+            # Stoichiometric Balance Card
+            st.markdown(render_nutrient_balance_card(n_val, p_val, k_val, ph_val), unsafe_allow_html=True)
+
+            # Trigger Analysis / Load Cache
             if run_analysis or st.session_state.last_prediction is None:
-                with st.spinner("Computing agronomic intelligence & rescue roadmap..."):
+                with st.spinner("Computing botanical intelligence & adaptation roadmap..."):
                     top_preds = engine_instance.predict_top_crops(n_val, p_val, k_val, rain_val, temp_val, top_k=3)
                     diagnostics = engine_instance.diagnose_target_crop(
                         chosen_crop, n_val, p_val, k_val, temp_val, rain_val, hum_val, ph_val
@@ -1943,120 +806,78 @@ def main_dashboard():
             diag = st.session_state.last_diagnostics
             inputs = st.session_state.get("last_inputs", {})
 
-            # Visual risk indicators
-            risk_lvl = diag["risk_level"]
-            risk_badge = "badge-emerald" if risk_lvl == "Low Risk" else ("badge-amber" if risk_lvl == "Moderate Risk" else "badge-rose")
-            border_col = "#10B981" if risk_lvl == "Low Risk" else ("#F59E0B" if risk_lvl == "Moderate Risk" else "#F43F5E")
+            # Render High-Contrast Botanical Specimen Card for the top recommendation
+            top_crop_name, top_conf = top_preds[0]
+            top_profile = backend.CROP_AGRONOMIC_PROFILES.get(top_crop_name.lower(), {})
+            st.markdown(render_specimen_card(
+                crop_name=top_crop_name,
+                confidence=top_conf,
+                metrics_dict=top_profile
+            ), unsafe_allow_html=True)
 
-            # ── TARGET CROP STATUS BANNER ──
-            st.markdown(f"""
-            <div class="sparc-card" style="border-top: 4px solid {border_col}; margin-bottom: 16px;">
-                <div class="sparc-card-header">
-                    <span class="sparc-title">🎯 Target Crop Analysis: {diag['target_crop']}</span>
-                    <span class="sparc-badge {risk_badge}">Status: {diag['risk_level']}</span>
-                </div>
-                <div style="font-size: 1.02rem; color: #E5E7EB; line-height: 1.5; margin-bottom: 14px;">
-                    {diag['summary']}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # ── DUAL TABBED INTERFACE FOR SEAMLESS USER EXPERIENCE ──
+            # Dual Tabs: Target Crop Adaptation Protocol vs Top 3 Botanical Alternatives
             tab_rescue, tab_alts = st.tabs([
-                f"🌱 How to Plant {diag['target_crop']} Anyway (Rescue Roadmap)",
-                "🌾 Top 3 AI Recommendations (Natural Best Fits)"
+                f"Adaptation Protocol: {diag['target_crop'].title()}",
+                "Top 3 Botanical Alternatives"
             ])
 
-            # ── TAB A: HOW TO PLANT TARGET CROP ANYWAY ──
             with tab_rescue:
-                st.markdown(f"""
-                <div style="margin-bottom: 14px; color: #9CA3AF; font-size: 0.9rem;">
-                    If you still want to cultivate <strong>{diag['target_crop']}</strong>, follow these 
-                    actionable agronomic amendments and microclimate strategies to mitigate environmental risks:
-                </div>
-                """, unsafe_allow_html=True)
+                # Render Architectural Adaptation Protocol Card
+                st.markdown(render_rescue_protocol_card(
+                    crop_name=diag['target_crop'],
+                    feasibility_score=0.88 if diag['risk_level'] == 'Low Risk' else (0.58 if diag['risk_level'] == 'Moderate Risk' else 0.32),
+                    required_actions=[f"{item['category']}: {item['action']} ({item['impact']})" for item in diag.get("rescue_roadmap", [])],
+                    fertilizer_changes={"urea_adj_kg_ha": 15.0, "dap_adj_kg_ha": 10.0, "mop_adj_kg_ha": 5.0}
+                ), unsafe_allow_html=True)
 
-                if diag["rescue_roadmap"]:
-                    for item in diag["rescue_roadmap"]:
-                        st.markdown(f"""
-                        <div class="rescue-item">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <span style="font-weight: 700; color: #34D399; font-size: 0.95rem;">
-                                    📌 {item['category']}
-                                </span>
-                            </div>
-                            <div style="color: #F3F4F6; font-size: 0.92rem; margin-bottom: 4px;">
-                                <strong>Action:</strong> {item['action']}
-                            </div>
-                            <div style="color: #9CA3AF; font-size: 0.82rem;">
-                                💡 <em>Agronomic Impact: {item['impact']}</em>
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
-                else:
-                    st.success(f"No emergency adjustments needed! Standard sowing and cultivation practices are sufficient for {diag['target_crop']}.")
+                st.markdown("##### Agronomic Field Execution Checklist:")
+                st.checkbox("Soil Amendment Applied (NPK balancing & Lime/Gypsum as required)", value=False)
+                st.checkbox(f"Irrigation / Drainage lines calibrated for {diag['target_crop'].title()}", value=False)
+                st.checkbox("Certified seed inoculation with biofertilizers (Trichoderma / Rhizobium)", value=False)
+                st.checkbox("Mulching or microclimate protection prepared against temperature extremes", value=False)
 
-                st.markdown("##### ✅ Farmer Execution Checklist:")
-                st.checkbox(f"Soil Amendment Applied (NPK balancing & Lime/Gypsum as required)", value=False)
-                st.checkbox(f"Irrigation / Drainage lines calibrated for {diag['target_crop']}", value=False)
-                st.checkbox(f"Certified seeds pre-treated with biofertilizers (Trichoderma / Rhizobium)", value=False)
-                st.checkbox(f"Mulching or microclimate protection prepared against temperature extremes", value=False)
-
-            # ── TAB B: TOP 3 RECOMMENDED ALTERNATIVES ──
             with tab_alts:
-                st.markdown("""
-                <div style="margin-bottom: 14px; color: #9CA3AF; font-size: 0.9rem;">
-                    If planting your target crop is too expensive or risky, here are the <strong>Top 3 crops</strong> 
-                    that naturally thrive in your current field soil and weather:
-                </div>
-                """, unsafe_allow_html=True)
-
                 for idx, alt in enumerate(diag["top_3_enriched"]):
-                    col_card, col_act = st.columns([3, 1.2])
+                    col_card, col_act = st.columns([3.2, 1.2])
                     with col_card:
-                        is_target = " (Your Planned Crop)" if alt["is_current_target"] else ""
-                        st.markdown(f"""
+                        is_target = " [Planned Crop]" if alt["is_current_target"] else ""
+                        st.markdown(f'''
                         <div class="alt-crop-card">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="font-size: 1.15rem; font-weight: 800; color: #FFFFFF;">
-                                    {alt['rank_title']}: <span style="color: #34D399;">{alt['crop_name']}</span>{is_target}
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">
+                                    {alt['rank_title']}: <span style="color: var(--accent-primary);">{alt['crop_name'].title()}</span>{is_target}
                                 </span>
-                                <span style="font-family: monospace; font-size: 1.1rem; font-weight: 800; color: #38BDF8;">
+                                <span style="font-family: var(--font-mono); font-size: 0.95rem; font-weight: 700; color: var(--accent-secondary);">
                                     {alt['confidence']:.1f}% Match
                                 </span>
                             </div>
-                            <div style="font-size: 0.85rem; color: #D1D5DB; margin-bottom: 6px;">
+                            <div style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 4px;">
                                 <strong>Why it fits:</strong> {alt['why_recommended']}
                             </div>
-                            <div style="font-size: 0.82rem; color: #9CA3AF; line-height: 1.4;">
-                                • <strong>Cycle:</strong> {alt['cycle_days']} &nbsp;|&nbsp; 
-                                • <strong>Water Need:</strong> {alt['water_demand']}
-                            </div>
-                            <div style="font-size: 0.80rem; color: #A7F3D0; margin-top: 4px;">
-                                📈 <strong>Market Outlook:</strong> {alt['economic_outlook']}
+                            <div style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-dim);">
+                                Cycle: {alt['cycle_days']} &bull; Water: {alt['water_demand']}
                             </div>
                         </div>
-                        """, unsafe_allow_html=True)
+                        ''', unsafe_allow_html=True)
 
                     with col_act:
                         st.write("")
-                        st.write("")
                         if not alt["is_current_target"]:
-                            if st.button(f"⚡ Adopt {alt['crop_name']}", key=f"adopt_btn_{idx}", use_container_width=True):
+                            if st.button(f"Adopt {alt['crop_name'].title()}", key=f"adopt_btn_{idx}", use_container_width=True):
                                 st.session_state.chosen_target_crop = alt["crop_name"].lower()
                                 st.toast(f"Switched target crop to {alt['crop_name']}!")
                                 st.rerun()
                         else:
-                            st.info("Currently Selected")
+                            st.caption("Active Cultivar")
 
-            # ── COMMIT RECORD TO DATABASE & DOWNLOAD EXECUTIVE PDF REPORT ──
+            # Commit to Database & Download Executive Botanical PDF Report
             st.markdown("---")
             col_save, col_pdf = st.columns([1.2, 1.3], gap="medium")
             with col_save:
-                if st.button("💾 Commit Record to Database", use_container_width=True):
+                if st.button("Commit to Botanical Ledger", use_container_width=True):
                     record_data = {
                         "username": st.session_state.current_user,
-                        "farm_location": inputs.get("farm", "Main Field"),
+                        "farm_location": inputs.get("farm", "Main Field Stratum"),
                         "nitrogen": inputs.get("n", 80),
                         "phosphorus": inputs.get("p", 45),
                         "potassium": inputs.get("k", 40),
@@ -2073,11 +894,10 @@ def main_dashboard():
                         "notes": inputs.get("notes", "")
                     }
                     new_id = db_instance.insert_record(record_data)
-                    st.success(f"Saved into SQLite database as Record #{new_id}!")
-                st.caption("Saved records are accessible and editable anytime under the Historical Analytics tab.")
+                    st.success(f"Archived into Botanical Ledger as Record #{new_id}")
+                st.caption("Saved records are accessible and editable anytime under the Records & Ledger tab.")
 
             with col_pdf:
-                # Compile comprehensive executive agronomy report
                 fert_calc = None
                 try:
                     fert_calc = engine_instance.calculate_fertilizers(
@@ -2099,9 +919,9 @@ def main_dashboard():
                         operator=st.session_state.get("current_user", "Lead Agronomist")
                     )
                     st.download_button(
-                        label="📄 Download Agronomic Report (PDF)",
+                        label="Download Agronomic Specimen Report (PDF)",
                         data=pdf_bytes,
-                        file_name=f"SPARC_Agronomy_Report_{diag['target_crop'].lower()}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+                        file_name=f"AgriSense_Botanical_Report_{diag['target_crop'].lower()}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
                         mime="application/pdf",
                         use_container_width=True,
                         help="Generate and download a comprehensive, print-ready PDF diagnosis and prescription report."
@@ -2109,7 +929,7 @@ def main_dashboard():
                     st.caption("Includes target crop viability, rescue roadmap, fertilizer bags/acre, and Crop Doctor pathology advice.")
                 except Exception as ex:
                     st.error(f"PDF compilation error: {ex}")
-
+    
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     # TAB 2: CROP DOCTOR - PLANT PATHOLOGY & CURE DIAGNOSTICS
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2117,7 +937,7 @@ def main_dashboard():
         st.markdown("""
         <div class="sparc-card">
             <div class="sparc-card-header">
-                <span class="sparc-title">🩺 SPARC Crop Doctor: Plant Pathology & Integrated Pest Management</span>
+                <span class="sparc-title">SPARC Crop Doctor: Plant Pathology & Integrated Pest Management</span>
                 <span class="sparc-badge badge-rose">ICAR & CIBRC Grounded</span>
             </div>
             <p style="color: #9CA3AF; margin-bottom: 0;">
@@ -2155,8 +975,8 @@ def main_dashboard():
                 """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
-            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; font-size: 0.88rem; color: #34D399;">
-                ✅ <strong>Low Incubation Risk:</strong> Current ambient weather ({cur_t}°C, {cur_h}% RH) does not indicate active epidemic pathogen incubation for {active_crop_doc.capitalize()}.
+            <div style="background: rgba(27, 67, 50, 0.06); border: 1px solid rgba(27, 67, 50, 0.22); border-radius: 4px; padding: 10px 16px; margin-bottom: 16px; font-size: 0.88rem; color: #1B4332; font-family: 'Plus Jakarta Sans', sans-serif;">
+                [PASS] <strong>Low Incubation Risk:</strong> Current ambient weather ({cur_t}°C, {cur_h}% RH) does not indicate active epidemic pathogen incubation for {active_crop_doc.capitalize()}.
             </div>
             """, unsafe_allow_html=True)
 
@@ -2169,7 +989,7 @@ def main_dashboard():
                 "Filter by Crop",
                 all_crops_available,
                 index=def_idx,
-                format_func=lambda x: "🌱 All Supported Crops" if x == "all" else f"🌾 {x.capitalize()}"
+                format_func=lambda x: "All Supported Species" if x == "all" else x.title()
             )
         with col_cd2:
             symptom_kw = st.text_input("🔍 Search by Symptom or Disease (e.g., yellow spots, powdery, wilt, rot, borer, curl)", placeholder="Enter symptom keyword...")
@@ -2185,7 +1005,7 @@ def main_dashboard():
             st.info("No diseases matched your search criteria. Try a broader keyword like 'blight', 'spot', or 'leaf'.")
         else:
             for d in selected_diseases:
-                with st.expander(f"🩺 {d['name']} — [{d['crop'].capitalize()} | {d['pathogen_type']}]", expanded=False):
+                with st.expander(f"[Pathology] {d['name']} — [{d['crop'].capitalize()} | {d['pathogen_type']}]", expanded=False):
                     st.markdown(f"""
                     <div style="margin-bottom: 12px;">
                         <span class="sparc-badge badge-cyan">{d['pathogen_type']} Pathogen</span>
@@ -2208,7 +1028,7 @@ def main_dashboard():
                     with col_bio:
                         st.markdown("""
                         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 14px;">
-                            <div style="color: #34D399; font-weight: 700; margin-bottom: 8px;">🌿 Biological & Organic Biocontrols:</div>
+                            <div style="color: #1B4332; font-weight: 700; margin-bottom: 8px;">[+] Biological & Organic Biocontrols:</div>
                         """, unsafe_allow_html=True)
                         for bio in d["biological_cures"]:
                             st.markdown(f"• <span style='font-size:0.86rem; color:#D1D5DB;'>{bio}</span>", unsafe_allow_html=True)
@@ -2217,7 +1037,7 @@ def main_dashboard():
                     with col_chem:
                         st.markdown("""
                         <div style="background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 10px; padding: 14px;">
-                            <div style="color: #38BDF8; font-weight: 700; margin-bottom: 8px;">🧪 Chemical Treatments (ICAR / CIBRC Prescriptions):</div>
+                            <div style="color: #C85A32; font-weight: 700; margin-bottom: 8px;">[+] Chemical Treatments (ICAR / CIBRC Prescriptions):</div>
                         """, unsafe_allow_html=True)
                         for chem in d["chemical_remedies"]:
                             st.markdown(f"""
@@ -2231,7 +1051,7 @@ def main_dashboard():
 
                     st.markdown("""
                     <div style="margin-top: 12px; font-size: 0.85rem; color: #9CA3AF;">
-                        <strong>🛡️ Agronomic Prevention & Cultural Practices:</strong>
+                        <strong>[+] Agronomic Prevention & Cultural Practices:</strong>
                     </div>
                     """, unsafe_allow_html=True)
                     for prev in d["preventative_measures"]:
@@ -2270,11 +1090,11 @@ def main_dashboard():
         st.markdown(f"""
         <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; padding: 14px 20px; margin-top: 10px;">
             <div style="font-size: 0.95rem; color: #FFFFFF;">
-                Total Chemical / Bio-Agent to measure: <span style="color: #38BDF8; font-weight: 800; font-size: 1.25rem;">{total_chem:.1f} grams or ml</span> 
-                for <span style="color: #34D399; font-weight: 700;">{tank_vol * num_tanks:.0f} Liters total water</span>.
+                Total Chemical / Bio-Agent to measure: <span style="color: var(--terracotta); font-weight: 800; font-size: 1.25rem;">{total_chem:.1f} grams or ml</span> 
+                for <span style="color: var(--chlorophyll); font-weight: 700;">{tank_vol * num_tanks:.0f} Liters total water</span>.
             </div>
             <div style="font-size: 0.80rem; color: #9CA3AF; margin-top: 4px;">
-                💡 Always make a slurry in a small bucket first before pouring into the main spray tank. Never spray against the wind direction.
+                [Standard Protocol] Always make a slurry in a small bucket first before pouring into the main spray tank. Never spray against the wind direction.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2289,7 +1109,7 @@ def main_dashboard():
         st.markdown(
             f'<div class="sparc-card">'
             f'<div class="sparc-card-header">'
-            f'<span class="sparc-title">🧪 Precision Fertilizer Prescriptions for: {active_crop.capitalize()}</span>'
+            f'<span class="sparc-title">Precision Fertilizer Prescriptions // {active_crop.capitalize()}</span>'
             f'<span class="sparc-badge badge-emerald">Agronomic Calibrator</span>'
             f'</div>'
             f'<p style="color: #9CA3AF; margin-bottom: 0;">'
@@ -2328,7 +1148,7 @@ def main_dashboard():
         with col_hdr_title:
             st.markdown(
                 '<div style="font-size: 1.05rem; font-weight: 700; color: #FFFFFF; display: flex; align-items: center; gap: 8px;">'
-                '<span>🌐 Interactive 3D Agronomic Spatial Intelligence</span>'
+                '<span>Spatial Nutrient Intelligence Engine</span>'
                 '<span class="sparc-badge badge-gold">WebGL 3D Engine</span>'
                 '</div>'
                 '<div style="font-size: 0.83rem; color: #94A3B8; margin-top: 2px;">'
@@ -2339,13 +1159,13 @@ def main_dashboard():
         with col_hdr_toggle:
             graph_mode_choice = st.radio(
                 "Chart Visualization Mode",
-                ["📈 3D Simple Line Comparison", "📊 3D Side-by-Side Columns", "🎯 2D High-Clarity View", "🏔️ 3D Yield Landscape"],
+                ["3D Coordinate Trajectory", "3D Dual Horizon", "2D High-Clarity Vector", "3D Yield Response Landscape"],
                 horizontal=True,
                 label_visibility="collapsed"
             )
-            if "Line Comparison" in graph_mode_choice:
+            if "Trajectory" in graph_mode_choice:
                 mode_key = "line_chart"
-            elif "Columns" in graph_mode_choice:
+            elif "Dual Horizon" in graph_mode_choice:
                 mode_key = "columns"
             elif "2D" in graph_mode_choice:
                 mode_key = "flat_2d"
@@ -2356,11 +1176,11 @@ def main_dashboard():
 
         with col_radar:
             title_text = {
-                "line_chart": "📈 3D Simple Current vs Required Line Comparison",
-                "columns": "📊 3D Side-by-Side Dual-Pillar Comparison",
-                "flat_2d": "🎯 2D Direct High-Clarity Comparison",
-                "yield_surface": "🏔️ 3D Quadratic Yield Response Landscape"
-            }.get(mode_key, "📈 3D Nutrient Comparison")
+                "line_chart": "3D Trajectory: Current Horizon vs Required Target",
+                "columns": "3D Dual-Pillar Horizon Comparison",
+                "flat_2d": "2D High-Clarity Vector Horizon Comparison",
+                "yield_surface": "3D Agronomic Yield Response Landscape"
+            }.get(mode_key, "Nutrient Spatial Comparison")
 
             chart_header_html = (
                 f'<div class="sparc-card" style="padding: 16px 20px 14px 20px; margin-bottom: 12px;">'
@@ -2370,7 +1190,7 @@ def main_dashboard():
                 f'</div>'
                 f'<div style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.80rem;">'
                 f'<span style="background: rgba(0,245,255,0.08); border: 1px solid rgba(0,245,255,0.3); border-radius: 6px; padding: 4px 9px; color: #00F5FF;">'
-                f'🌱 Current: <strong>N:{n_cur:.0f} P:{p_cur:.0f} K:{k_cur:.0f}</strong> kg/ha'
+                f'Current Horizon: <strong>N:{n_cur:.0f} P:{p_cur:.0f} K:{k_cur:.0f}</strong> kg/ha'
                 f'</span>'
                 f'<span style="background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3); border-radius: 6px; padding: 4px 9px; color: #FFD700;">'
                 f'🟡 Req. N: <strong>{n_tar:.0f}</strong> (Δ+{n_def:.0f})'
@@ -2396,10 +1216,10 @@ def main_dashboard():
                     "Field Level": [fert_calc["current_npk"]["N"], fert_calc["current_npk"]["P"], fert_calc["current_npk"]["K"]],
                     "Target Optimal": [fert_calc["target_npk"]["N"], fert_calc["target_npk"]["P"], fert_calc["target_npk"]["K"]],
                 })
-                st.bar_chart(npk_df.set_index("Nutrient"), color=["#06B6D4", "#10B981"])
+                st.bar_chart(npk_df.set_index("Nutrient"), color=["#C85A32", "#1B4332"])
 
             # 3D Inset Luxury Metric Cases
-            ph_status_color = '#34D399' if 6.0 <= inputs.get('ph', 6.5) <= 7.5 else '#FBBF24'
+            ph_status_color = '#1B4332' if 6.0 <= inputs.get('ph', 6.5) <= 7.5 else '#D97706'
             ph_status_text = 'Optimal Neutral' if 6.0 <= inputs.get('ph', 6.5) <= 7.5 else ('Acidic' if inputs.get('ph', 6.5) < 6.0 else 'Alkaline')
             cond_str = fert_calc.get('soil_conditioner', 'None').split()[0]
             cond_dose = fert_calc.get('conditioner_dose_kg_acre', 0.0)
@@ -2443,9 +1263,9 @@ def main_dashboard():
                     f'<div style="font-size: 0.84rem; color: #CBD5E1; margin-bottom: 6px; line-height: 1.4;">'
                     f'<strong style="color: #38BDF8;">Target Function:</strong> {p_role}'
                     f'</div>'
-                    f'<div style="font-size: 0.80rem; color: #34D399; font-weight: 600; display: flex; align-items: center; gap: 6px;">'
-                    f'<span>⏱️ Application Window:</span>'
-                    f'<span style="color: #F8FAFC; font-weight: 400;">{p_timing}</span>'
+                    f'<div style="font-size: 0.80rem; color: var(--terracotta); font-weight: 600; display: flex; align-items: center; gap: 6px;">'
+                    f'<span>Application Window:</span>'
+                    f'<span style="color: var(--ink); font-weight: 500;">{p_timing}</span>'
                     f'</div>'
                     f'</div>'
                 )
@@ -2464,7 +1284,7 @@ def main_dashboard():
                 f'</div>'
                 f'{presc_items_html}'
                 f'<div style="margin-top: 16px; padding: 12px 14px; background: rgba(212, 175, 55, 0.05); border: 1px dashed rgba(212, 175, 55, 0.3); border-radius: 10px; font-size: 0.82rem; color: #D1D5DB;">'
-                f'<strong style="color: #F3E5AB;">🛡️ Agronomic Calibration Rule:</strong> Split nitrogen application into basal (50%) and top-dressing at tillering/panicle initiation (25% + 25%) to minimize volatilization and leaching losses.'
+                f'<strong style="color: var(--harvest);">[Agronomic Calibration Protocol]</strong> Split nitrogen application into basal (50%) and top-dressing at tillering/panicle initiation (25% + 25%) to minimize volatilization and leaching losses.'
                 f'</div>'
                 f'</div>'
             )
@@ -2545,7 +1365,7 @@ def main_dashboard():
                 st.markdown(f"""
                 <div class="metric-box">
                     <div class="metric-label">Soil pH & Reaction</div>
-                    <div class="metric-val" style="color: {'#34D399' if 6.2 <= b['ph'] <= 7.8 else '#FBBF24'};">{b['ph']}</div>
+                    <div class="metric-val" style="color: {'var(--chlorophyll)' if 6.2 <= b['ph'] <= 7.8 else 'var(--harvest)'};">{b['ph']}</div>
                     <div style="font-size: 0.78rem; color: #9CA3AF; margin-top: 4px;">EC: {b['salinity_ec']} dS/m | OC: {b['organic_carbon_pct']}%</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -2592,7 +1412,7 @@ def main_dashboard():
                 st.markdown(f"""
                 <div class="sparc-card">
                     <div class="sparc-card-header">
-                        <span class="sparc-title">🌾 State Recommended Fertilizer Packages</span>
+                        <span class="sparc-title">State Recommended Fertilizer Packages</span>
                         <span class="sparc-badge badge-emerald">{st_choice} KVK</span>
                     </div>
                 """, unsafe_allow_html=True)
@@ -2603,7 +1423,7 @@ def main_dashboard():
                         st.markdown(f"""
                         <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <strong style="color: #38BDF8; font-size: 1.05rem;">🌾 {crop_k.capitalize()}</strong>
+                                <strong style="color: var(--terracotta); font-size: 1.05rem;">{crop_k.title()}</strong>
                                 <span class="sparc-badge badge-amber">{pkg.get('npk_ratio', 'ICAR Package')}</span>
                             </div>
                             <div style="font-size: 0.84rem; color: #D1D5DB; line-height: 1.5;">
@@ -2617,7 +1437,7 @@ def main_dashboard():
                 else:
                     st.info(f"General ICAR fertilizer schedule applies for crops in {st_choice}.")
 
-                st.markdown("<div style='color: #34D399; font-weight: 700; margin-top: 14px;'>🌱 Regional Soil Management & Reclamation Interventions:</div>", unsafe_allow_html=True)
+                st.markdown("<div style='color: #1B4332; font-weight: 700; margin-top: 14px;'>[+] Regional Soil Management & Reclamation Protocols:</div>", unsafe_allow_html=True)
                 for tip in profile_data["management_tips"]:
                     st.markdown(f"✔ <span style='font-size:0.84rem; color:#D1D5DB;'>{tip}</span>", unsafe_allow_html=True)
 
@@ -2665,7 +1485,7 @@ def main_dashboard():
                 st.markdown(f"""
                 <div class="metric-box">
                     <div class="metric-label">Low Risk Rate</div>
-                    <div class="metric-val" style="color: #34D399;">{pct:.1f}%</div>
+                    <div class="metric-val" style="color: var(--chlorophyll);">{pct:.1f}%</div>
                 </div>
                 """, unsafe_allow_html=True)
             with m_col3:

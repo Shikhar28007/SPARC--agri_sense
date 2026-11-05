@@ -16,3 +16,5 @@ ENV/
 
 # Scratch & temporary workspace files
 scratch/
+
+*_backup.py
