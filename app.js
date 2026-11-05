@@ -4074,10 +4074,20 @@ ${loc.symptoms.substring(0, 180)}...
 
   function getSearchHistory() {
     try {
+      // If user has explicitly cleared history or deleted records down to zero, respect it!
+      if (localStorage.getItem('sparc_history_cleared') === '1') {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        }
+        return [];
+      }
+
       const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
-      if (raw) {
+      if (raw !== null) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) return parsed;
       }
     } catch (e) {
       console.warn('Error reading search history:', e);
@@ -4133,6 +4143,7 @@ ${loc.symptoms.substring(0, 180)}...
 
   function saveSearchItem(item) {
     try {
+      localStorage.removeItem('sparc_history_cleared');
       let history = getSearchHistory().filter(h => !h.id.startsWith('hist_seed_'));
       item.id = 'hist_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
       item.timestamp = Date.now();
@@ -4151,8 +4162,19 @@ ${loc.symptoms.substring(0, 180)}...
     try {
       let history = getSearchHistory().filter(h => h.id !== id);
       localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
-      updateHistoryUI();
-      showToast('Deleted search record', '🗑️');
+      localStorage.setItem('sparc_history_cleared', '1');
+
+      // Animate card removal in DOM immediately
+      document.querySelectorAll(`[data-id="${id}"]`).forEach(card => {
+        card.style.transition = 'all 0.25s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(25px)';
+      });
+
+      setTimeout(() => {
+        updateHistoryUI();
+        showToast('Record deleted', '🗑️');
+      }, 250);
     } catch (e) {
       console.warn('Error deleting history item:', e);
     }
@@ -4160,9 +4182,10 @@ ${loc.symptoms.substring(0, 180)}...
 
   function clearAllSearchHistory() {
     try {
-      localStorage.removeItem(HISTORY_STORAGE_KEY);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify([]));
+      localStorage.setItem('sparc_history_cleared', '1');
       updateHistoryUI();
-      showToast('Search history cleared', '🗑️');
+      showToast('All search history cleared', '🗑️');
     } catch (e) {
       console.warn('Error clearing history:', e);
     }
@@ -4273,8 +4296,8 @@ ${loc.symptoms.substring(0, 180)}...
             <button type="button" class="btn-restore-history" data-action="restore" data-id="${item.id}">
               🔄 Restore & View Results
             </button>
-            <button type="button" class="btn-delete-history-item" data-action="delete" data-id="${item.id}" title="Delete record">
-              🗑️
+            <button type="button" class="btn-delete-history-item" data-action="delete" data-id="${item.id}" title="Delete record (हटाएं)">
+              <span>🗑️</span> <span>Delete</span>
             </button>
           </div>
         </div>

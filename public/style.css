@@ -3360,19 +3360,26 @@ button {
 }
 
 .btn-delete-history-item {
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  font-size: 14px;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: color 0.15s ease;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
 }
 
 .btn-delete-history-item:hover {
-  color: #DC2626;
-  background: #FEE2E2;
+  background: #DC2626;
+  color: #FFFFFF;
+  border-color: #DC2626;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
 }
 
 .history-empty-state {
