@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 5. MULTI-LANGUAGE TRANSLATIONS & CROPS METADATA ENGINE
+      // 5. MULTI-LANGUAGE TRANSLATIONS & CROPS METADATA ENGINE
   // ─────────────────────────────────────────────────────────────────────────
   const TRANSLATIONS = {
     en: {
@@ -493,7 +493,38 @@ document.addEventListener('DOMContentLoaded', () => {
       diseaseFilterCrop: 'Filter by Crop:',
       subtabAdvisory: 'Agro-Expert Advisory',
       subtabSpectrum: 'NPK Soil Health Spectrum',
-      subtabRecords: 'Past Season Records'
+      subtabRecords: 'Past Season Records',
+      // Recommended Card Elements
+      heroChoiceBadge: '⭐ #1 Best Choice for Your Field',
+      heroConfidenceChip: 'High Confidence',
+      recVarietiesPrefix: 'Recommended Varieties: ',
+      gaugeMatch: 'Suitability Match',
+      gaugeFit: 'Ideal Field Fit',
+      whyFitsTitle: 'Why this crop fits your land:',
+      lblYield: '🌾 Expected Yield',
+      lblWater: '💧 Water Need',
+      lblPrice: '₹ Mandi Price Outlook',
+      lblDuration: '⏱️ Growth Duration',
+      lblBasalDose: 'Basal fertilizer dose:',
+      calendarLink: 'View Sowing & Fertilizer Calendar →',
+      altTag1: 'Alternative #1',
+      altTag2: 'Alternative #2',
+      altMatchText: 'Match',
+      altLblWater: '💧 Water Need:',
+      altLblYield: '🌾 Est. Yield:',
+      altLblRisk: '📈 Market Risk:',
+      altFertLink: 'Fertilizer Package >',
+      // Disease Doctor Elements
+      pestDoctorTitle: '🩺 Plant Pathology & Crop Disease Doctor',
+      pestDoctorSub: '68+ Crop Pathogens with Biological Controls, Chemical Fungicides, and Live Telemetry Outbreak Alerts',
+      symptomTapLabel: '👀 Tap What You See on the Plant (लक्षण चुनिए):',
+      diagSymptoms: 'Diagnostic Symptoms',
+      bioControl: 'Biological & Organic Control',
+      chemControl: 'Chemical Fungicide / Treatment',
+      noPathogensTitle: 'No Pathogens Found',
+      noPathogensDesc: 'No diseases matched your search criteria. Try a different crop or broader symptom keyword.',
+      listenBtnText: '🔊 Listen',
+      shareBtnText: '📲 WhatsApp Share'
     },
     hi: {
       navAdvisory: 'फसल सलाह (Advisory)',
@@ -516,12 +547,43 @@ document.addEventListener('DOMContentLoaded', () => {
       helplineBannerTitle: 'क्या आपको मृदा स्वास्थ्य कार्ड या बुवाई कैलेंडर समझने में मदद चाहिए?',
       helplineBannerDesc: 'अपनी मातृभाषा (हिंदी, मराठी, अंग्रेजी) में सीधे सरकारी कृषि विशेषज्ञ से बात करें। निःशुल्क सेवा।',
       locateKvkBtn: 'निकटतम KVK केंद्र खोजें',
-      btnFertCalc: '🧪 Compute Fertilizer Prescription',
-      searchPathologyBtn: 'Search Pathology',
+      btnFertCalc: '🧪 उर्वरक गणना करें',
+      searchPathologyBtn: 'रोग का निदान खोजें',
       diseaseFilterCrop: 'फसल अनुसार चुनें:',
       subtabAdvisory: 'Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)',
       subtabSpectrum: 'NPK मृदा स्वास्थ्य स्पेक्ट्रम',
-      subtabRecords: 'पिछले मौसम के रिकॉर्ड'
+      subtabRecords: 'पिछले मौसम के रिकॉर्ड',
+      // Recommended Card Elements
+      heroChoiceBadge: '⭐ #1 आपके खेत के लिए सर्वश्रेष्ठ पसंद (Best Choice)',
+      heroConfidenceChip: 'उच्च सटीकता (High Confidence)',
+      recVarietiesPrefix: 'अनुशंसित उन्नत किस्में: ',
+      gaugeMatch: 'अनुकूलता मिलान',
+      gaugeFit: 'खेत के सर्वथा अनुकूल',
+      whyFitsTitle: 'यह फसल आपकी भूमि के अनुकूल क्यों है:',
+      lblYield: '🌾 अपेक्षित उपज',
+      lblWater: '💧 पानी की आवश्यकता',
+      lblPrice: '₹ मंडी भाव दृष्टिकोण',
+      lblDuration: '⏱️ फसल अवधि',
+      lblBasalDose: 'बुवाई के समय मूल खाद:',
+      calendarLink: 'बुवाई व उर्वरक कैलेंडर देखें →',
+      altTag1: 'वैकल्पिक फसल #1',
+      altTag2: 'वैकल्पिक फसल #2',
+      altMatchText: 'मैच',
+      altLblWater: '💧 पानी की जरूरत:',
+      altLblYield: '🌾 अनुमानित उपज:',
+      altLblRisk: '📈 बाजार दृष्टिकोण:',
+      altFertLink: 'उर्वरक पैकेज >',
+      // Disease Doctor Elements
+      pestDoctorTitle: '🩺 पादप रोग विज्ञान एवं फसल डॉक्टर (Pest Doctor)',
+      pestDoctorSub: 'जैविक नियंत्रण, रासायनिक फफूंदनाशक और लाइव मौसम अलर्ट सहित 68+ फसल रोग',
+      symptomTapLabel: '👀 पौधे पर क्या लक्षण दिखाई दे रहे हैं? (लक्षण चुनें):',
+      diagSymptoms: 'रोग के लक्षण (Diagnostic Symptoms)',
+      bioControl: 'जैविक व प्राकृतिक नियंत्रण (Biological Control)',
+      chemControl: 'रासायनिक फफूंदनाशक व उपचार (Chemical Treatment)',
+      noPathogensTitle: 'कोई रोग या कीट नहीं मिला',
+      noPathogensDesc: 'आपके खोज मानदंडों से कोई बीमारी मेल नहीं खाती। कृपया अन्य फसल या सामान्य लक्षण खोजें।',
+      listenBtnText: '🔊 सुनिए / Listen',
+      shareBtnText: '📲 WhatsApp शेयर'
     },
     mr: {
       navAdvisory: 'पीक सल्ला (Advisory)',
@@ -549,144 +611,782 @@ document.addEventListener('DOMContentLoaded', () => {
       diseaseFilterCrop: 'पिकानुसार फिल्टर करा:',
       subtabAdvisory: 'कृषी तज्ज्ञ सल्ला (Agro Advisory)',
       subtabSpectrum: 'NPK माती आरोग्य स्पेक्ट्रम',
-      subtabRecords: 'मागील हंगामातील नोंदी'
-    }
-  };
-
-  const CROP_TRANSLATIONS = {
-    rice: {
-      en: { name: 'Paddy (Indica Wet)', rationale: (n, rain) => `Your soil Nitrogen levels (${n} kg/ha) with regular monsoon rainfall (${rain} mm) provide exceptional conditions for rapid tillering and robust grain formation.` },
-      hi: { name: 'धान / Paddy (Indica Wet)', rationale: (n, rain) => `आपका उच्च मिट्टी नाइट्रोजन स्तर (${n} kg/ha) और नियमित मानसूनी वर्षा (${rain} mm) धान के कल्ले फूटने और दाना भराव के लिए सर्वोत्तम परिस्थितियाँ प्रदान करते हैं।` },
-      mr: { name: 'भात / धान (Indica Wet)', rationale: (n, rain) => `आपल्या शेतातील नत्राचे प्रमाण (${n} kg/ha) आणि मान्सून पाऊस (${rain} mm) भाताच्या फुटवे वाढीसाठी आणि दाणे भरण्यासाठी अत्यंत अनुकूल आहे.` }
-    },
-    cotton: {
-      en: { name: 'Cotton (Bt Hybrid)', rationale: (n, rain) => `Ideal for well-drained Black Cotton soil. Highly responsive to available potassium for fiber strength and superior boll weight.` },
-      hi: { name: 'कपास / Cotton (Bt Hybrid)', rationale: (n, rain) => `अच्छी जल निकासी वाली काली कपास मिट्टी के लिए आदर्श। रेशे की मजबूती और गूलर के वजन के लिए पोटाश के प्रति अत्यधिक उत्तरदायी।` },
-      mr: { name: 'कापूस / Cotton (Bt Hybrid)', rationale: (n, rain) => `चांगला निचरा होणाऱ्या काळ्या कसदार मातीसाठी आदर्श. धाग्याची मजबुती आणि बोंडाचे वजन वाढवण्यासाठी पोटॅशियम अत्यंत फायदेशीर ठरते.` }
-    },
-    maize: {
-      en: { name: 'Maize (Hybrid Feed)', rationale: (n, rain) => `Resilient crop choice with fast turnaround (90–105 days). Lower overall water risk if monsoon weakens midway.` },
-      hi: { name: 'मक्का / Maize (Hybrid Feed)', rationale: (n, rain) => `कम अवधि (90-105 दिन) वाली लचीली फसल। यदि मानसून बीच में कमजोर भी पड़ता है, तो भी फसल सुरक्षित रहती है।` },
-      mr: { name: 'मका / Maize (Hybrid Feed)', rationale: (n, rain) => `कमी कालावधीत (९०-१०५ दिवस) येणारे लवचिक पीक. मान्सूनमध्ये खंड पडला तरी पाण्याचा ताण सहज सहन करू शकते.` }
-    },
-    wheat: {
-      en: { name: 'Wheat (HD-2967)', rationale: (n, rain) => `Thrives in balanced loam soils with moderate soil fertility and structured irrigation schedules.` },
-      hi: { name: 'गेहूं / Wheat (HD-2967)', rationale: (n, rain) => `मध्यम उर्वरता और संरचित सिंचाई कार्यक्रम के साथ संतुलित दोमट मिट्टी में उत्कृष्ट पैदावार देता है।` },
-      mr: { name: 'गहू / Wheat (HD-2967)', rationale: (n, rain) => `मध्यम सुपीकता आणि वेळेवर पाणी व्यवस्थापनासह चांगल्या निचऱ्याच्या पोयटा जमिनीत उत्कृष्ट उत्पादन देते.` }
-    },
-    sugarcane: {
-      en: { name: 'Sugarcane (Co-86032)', rationale: (n, rain) => `Exceptional biomass potential under heavy clay soils with assured drainage and balanced NPK nourishment.` },
-      hi: { name: 'गन्ना / Sugarcane (Co-86032)', rationale: (n, rain) => `सुनिश्चित जल निकासी और संतुलित NPK पोषण के साथ भारी मिट्टी में असाधारण बायोमास और उच्च मिठास क्षमता।` },
-      mr: { name: 'ऊस / Sugarcane (Co-86032)', rationale: (n, rain) => `योग्य निचरा आणि संतुलित खत व्यवस्थापनासह भारी काळ्या जमिनीत भरघोस उत्पादन व उच्च साखर उतारा देणारे पीक.` }
+      subtabRecords: 'मागील हंगामातील नोंदी',
+      // Recommended Card Elements
+      heroChoiceBadge: '⭐ #1 आपल्या शेतासाठी सर्वोत्तम निवड (Best Choice)',
+      heroConfidenceChip: 'उच्च अचूकता (High Confidence)',
+      recVarietiesPrefix: 'शिफारस केलेले सुधारित वाण: ',
+      gaugeMatch: 'योग्यतेचे प्रमाण',
+      gaugeFit: 'शेतीसाठी सर्वोत्तम अनुकूल',
+      whyFitsTitle: 'हे पीक आपल्या शेतीसाठी का योग्य आहे:',
+      lblYield: '🌾 अपेक्षित उत्पादन',
+      lblWater: '💧 पाण्याची गरज',
+      lblPrice: '₹ बाजार भाव अंदाज',
+      lblDuration: '⏱️ पिकाचा कालावधी',
+      lblBasalDose: 'पेरणीच्या वेळचा खताचा डोस:',
+      calendarLink: 'पेरणी व खत दिनदर्शिका पहा →',
+      altTag1: 'पर्यायी पीक #1',
+      altTag2: 'पर्यायी पीक #2',
+      altMatchText: 'जुळणी',
+      altLblWater: '💧 पाण्याची गरज:',
+      altLblYield: '🌾 अंदाजित उत्पादन:',
+      altLblRisk: '📈 बाजार जोखीम अंदाज:',
+      altFertLink: 'खत नियोजन >',
+      // Disease Doctor Elements
+      pestDoctorTitle: '🩺 वनस्पती रोग निदान आणि पीक डॉक्टर (Pest Doctor)',
+      pestDoctorSub: 'जैविक नियंत्रण, रासायनिक बुरशीनाशक आणि थेट हवामान अलर्टसह ६८+ पीक रोग',
+      symptomTapLabel: '👀 पिकावर कोणती लक्षणे दिसत आहेत? (लक्षण निवडा):',
+      diagSymptoms: 'रोगाची लक्षणे (Diagnostic Symptoms)',
+      bioControl: 'जैविक व सेंद्रिय नियंत्रण (Biological Control)',
+      chemControl: 'रासायनिक बुरशीनाशक व उपचार (Chemical Treatment)',
+      noPathogensTitle: 'कोणताही रोग आढळला नाही',
+      noPathogensDesc: 'आपल्या शोधाशी जुळणारा कोणताही रोग आढळला नाही. कृपया इतर पीक निवडा किंवा वेगळे लक्षण शोधा.',
+      listenBtnText: '🔊 ऐका / Listen',
+      shareBtnText: '📲 WhatsApp शेअर'
     }
   };
 
   const AGRONOMIC_METADATA = {
     rice: {
-      fullName: 'Paddy / धान (Indica Wet)',
-      seasonBadge: 'Kharif Prime',
-      varieties: 'MTU-1010, Indrayani, or PKV-HMT',
-      yield: '44 – 48 Q/Ha',
-      yieldSub: 'Top Tier Harvest',
-      water: 'High',
-      waterSub: 'Canal / Submerged',
-      price: '₹2,300 – ₹2,550',
-      priceSub: 'MSP Protected',
-      duration: '120 – 135 Days',
-      durationSub: 'Mid-duration crop',
-      basalDose: '50% N + 100% P + 100% K at transplanting.',
-      rationale: (n, rain) => `Your high soil Nitrogen levels (${n} kg/ha) combined with regular monsoon rainfall (${rain} mm) provide exceptional conditions for rapid tillering and robust grain formation.`
+      fullName: {
+        en: 'Paddy / Rice (Indica Wet)',
+        hi: 'धान / Paddy (Indica Wet)',
+        mr: 'भात / धान (Indica Wet)'
+      },
+      seasonBadge: {
+        en: 'Kharif Prime',
+        hi: 'प्रमुख खरीफ फसल',
+        mr: 'प्रमुख खरीप पीक'
+      },
+      varieties: {
+        en: 'MTU-1010, Indrayani, or PKV-HMT',
+        hi: 'MTU-1010, इंद्रायणी, या PKV-HMT',
+        mr: 'MTU-1010, इंद्रायणी, किंवा PKV-HMT'
+      },
+      yield: {
+        en: '44 – 48 Q/Ha',
+        hi: '44 – 48 क्विंटल/हेक्टेयर',
+        mr: '४४ – ४८ क्विंटल/हे.'
+      },
+      yieldSub: {
+        en: 'Top Tier Harvest',
+        hi: 'उच्च श्रेणी उत्पादन',
+        mr: 'भरघोस पीक उत्पादन'
+      },
+      water: {
+        en: 'High',
+        hi: 'अधिक (High)',
+        mr: 'जास्त (High)'
+      },
+      waterSub: {
+        en: 'Canal / Submerged',
+        hi: 'नहर / जलमग्न सिंचाई',
+        mr: 'कालवा / पाणी साचलेली शेती'
+      },
+      price: {
+        en: '₹2,300 – ₹2,550',
+        hi: '₹2,300 – ₹2,550',
+        mr: '₹२,३०० – ₹२,५५०'
+      },
+      priceSub: {
+        en: 'MSP Protected',
+        hi: 'न्यूनतम समर्थन मूल्य (MSP)',
+        mr: 'हमीभाव (MSP) सुरक्षित'
+      },
+      duration: {
+        en: '120 – 135 Days',
+        hi: '120 – 135 दिन',
+        mr: '१२० – १३५ दिवस'
+      },
+      durationSub: {
+        en: 'Mid-duration crop',
+        hi: 'मध्यम अवधि की फसल',
+        mr: 'मध्यम कालावधीचे पीक'
+      },
+      basalDose: {
+        en: '50% N + 100% P + 100% K at transplanting.',
+        hi: 'रोपाई के समय 50% N + 100% P + 100% K बेसल खुराक दें।',
+        mr: 'लावणीच्या वेळी ५०% नत्र + १००% स्फुरद + १००% पालाश बेसल डोस द्या.'
+      },
+      rationale: {
+        en: (n, rain) => `Your high soil Nitrogen levels (${n} kg/ha) combined with regular monsoon rainfall (${rain} mm) provide exceptional conditions for rapid tillering and robust grain formation.`,
+        hi: (n, rain) => `आपका उच्च मिट्टी नाइट्रोजन स्तर (${n} kg/ha) और नियमित मानसूनी वर्षा (${rain} mm) धान के कल्ले फूटने और दाना भराव के लिए सर्वोत्तम परिस्थितियाँ प्रदान करते हैं।`,
+        mr: (n, rain) => `आपल्या शेतातील नत्राचे प्रमाण (${n} kg/ha) आणि मान्सून पाऊस (${rain} mm) भाताच्या फुटवे वाढीसाठी आणि दाणे भरण्यासाठी अत्यंत अनुकूल आहे.`
+      }
     },
     cotton: {
-      fullName: 'Cotton / कपास (Bt Hybrid)',
-      seasonBadge: 'Kharif Cash',
-      varieties: 'RCH-659, Ankur-3028, or Ajit-155',
-      yield: '22 – 28 Quintals/Ha',
-      yieldSub: 'High Boll Load',
-      water: 'Moderate (500–700mm)',
-      waterSub: 'Deep Root Tap',
-      price: '₹7,120 – ₹7,520',
-      priceSub: 'MSP Grade-A',
-      duration: '150 – 165 Days',
-      durationSub: 'Extended Picking',
-      basalDose: '20% N + 100% P + 100% K at planting, split N at 30 & 60 DAS.',
-      rationale: (n, rain) => `Ideal for well-drained Black Cotton soil. Highly responsive to available potassium for fiber strength and superior boll weight.`
+      fullName: {
+        en: 'Cotton (Bt Hybrid)',
+        hi: 'कपास / Cotton (Bt Hybrid)',
+        mr: 'कापूस / Cotton (Bt Hybrid)'
+      },
+      seasonBadge: {
+        en: 'Kharif Cash',
+        hi: 'नकदी खरीफ फसल',
+        mr: 'महत्त्वाचे खरीप नगदी पीक'
+      },
+      varieties: {
+        en: 'RCH-659, Ankur-3028, or Ajit-155',
+        hi: 'RCH-659, अंकुर-3028, या अजीत-155',
+        mr: 'RCH-659, अंकुर-3028, किंवा अजित-155'
+      },
+      yield: {
+        en: '22 – 28 Quintals/Ha',
+        hi: '22 – 28 क्विंटल/हेक्टेयर',
+        mr: '२२ – २८ क्विंटल/हे.'
+      },
+      yieldSub: {
+        en: 'High Boll Load',
+        hi: 'अधिक गूलर भार व वजन',
+        mr: 'भरघोस बोंडांचे प्रमाण'
+      },
+      water: {
+        en: 'Moderate (500–700mm)',
+        hi: 'मध्यम (500–700mm)',
+        mr: 'मध्यम (५००–७०० मिमी)'
+      },
+      waterSub: {
+        en: 'Deep Root Tap',
+        hi: 'गहरी जड़ों से जल अवशोषण',
+        mr: 'खोल मुळांद्वारे पाणी शोषण'
+      },
+      price: {
+        en: '₹7,120 – ₹7,520',
+        hi: '₹7,120 – ₹7,520',
+        mr: '₹७,१२० – ₹७,५२०'
+      },
+      priceSub: {
+        en: 'MSP Grade-A',
+        hi: 'ग्रेड-ए समर्थन मूल्य',
+        mr: 'ग्रेड-ए हमीभाव'
+      },
+      duration: {
+        en: '150 – 165 Days',
+        hi: '150 – 165 दिन',
+        mr: '१५० – १६५ दिवस'
+      },
+      durationSub: {
+        en: 'Extended Picking',
+        hi: 'दीर्घ तुड़ाई अवधि',
+        mr: 'दीर्घ तोडणी कालावधी'
+      },
+      basalDose: {
+        en: '20% N + 100% P + 100% K at planting, split N at 30 & 60 DAS.',
+        hi: 'बुवाई पर 20% N + 100% P + 100% K दें, शेष N को 30 व 60 दिन पर दें।',
+        mr: 'लागवडीच्या वेळी २०% नत्र + १००% स्फुरद + १००% पालाश, उरलेले नत्र ३० व ६० दिवसांनी द्या.'
+      },
+      rationale: {
+        en: (n, rain) => `Ideal for well-drained Black Cotton soil. Highly responsive to available potassium for fiber strength and superior boll weight.`,
+        hi: (n, rain) => `अच्छी जल निकासी वाली काली कपास मिट्टी के लिए आदर्श। रेशे की मजबूती और गूलर के वजन के लिए पोटाश के प्रति अत्यधिक उत्तरदायी।`,
+        mr: (n, rain) => `चांगला निचरा होणाऱ्या काळ्या कसदार मातीसाठी आदर्श. धाग्याची मजबुती आणि बोंडाचे वजन वाढवण्यासाठी पोटॅशियम अत्यंत फायदेशीर ठरते.`
+      }
     },
     maize: {
-      fullName: 'Maize / मक्का (Hybrid Feed)',
-      seasonBadge: 'Kharif Fast',
-      varieties: 'DKC-9108, Pioneer-P3501, or Bio-9681',
-      yield: '55 – 65 Quintals/Ha',
-      yieldSub: 'Heavy Cob Biomass',
-      water: 'Low to Moderate (Drip ready)',
-      waterSub: 'Tolerant to breaks',
-      price: '₹2,090 – ₹2,225',
-      priceSub: 'Steady Poultry Demand',
-      duration: '90 – 105 Days',
-      durationSub: 'Fast Turnaround',
-      basalDose: '25% N + 100% P + 100% K basal, remainder N at knee-high and tasseling.',
-      rationale: (n, rain) => `Resilient crop choice with fast turnaround (90–105 days). Lower overall water risk if monsoon weakens midway.`
+      fullName: {
+        en: 'Maize (Hybrid Feed)',
+        hi: 'मक्का / Maize (Hybrid Feed)',
+        mr: 'मका / Maize (Hybrid Feed)'
+      },
+      seasonBadge: {
+        en: 'Kharif Fast',
+        hi: 'शीघ्र खरीफ फसल',
+        mr: 'कमी कालावधीचे खरीप पीक'
+      },
+      varieties: {
+        en: 'DKC-9108, Pioneer-P3501, or Bio-9681',
+        hi: 'DKC-9108, पायनियर-P3501, या बायो-9681',
+        mr: 'DKC-9108, पायोनियर-P3501, किंवा बायो-9681'
+      },
+      yield: {
+        en: '55 – 65 Quintals/Ha',
+        hi: '55 – 65 क्विंटल/हेक्टेयर',
+        mr: '५५ – ६५ क्विंटल/हे.'
+      },
+      yieldSub: {
+        en: 'Heavy Cob Biomass',
+        hi: 'भारी भुट्टा व दाना वजन',
+        mr: 'भरघोस कणसे व दाणे'
+      },
+      water: {
+        en: 'Low to Moderate',
+        hi: 'कम से मध्यम',
+        mr: 'कमी ते मध्यम'
+      },
+      waterSub: {
+        en: 'Tolerant to breaks',
+        hi: 'मानसून अंतराल सहनशील',
+        mr: 'पावसातील खंड सहन करणारे'
+      },
+      price: {
+        en: '₹2,090 – ₹2,225',
+        hi: '₹2,090 – ₹2,225',
+        mr: '₹२,०९० – ₹२,२२५'
+      },
+      priceSub: {
+        en: 'Steady Poultry Demand',
+        hi: 'मुर्गी दाना व मंडी में भारी मांग',
+        mr: 'बाजार व कुक्कुटपालनात सतत मागणी'
+      },
+      duration: {
+        en: '90 – 105 Days',
+        hi: '90 – 105 दिन',
+        mr: '९० – १०५ दिवस'
+      },
+      durationSub: {
+        en: 'Fast Turnaround',
+        hi: 'शीघ्र पकने वाली फसल',
+        mr: 'लवकर निघणारे पीक'
+      },
+      basalDose: {
+        en: '25% N + 100% P + 100% K basal, remainder N at knee-high and tasseling.',
+        hi: '25% N + 100% P + 100% K बुवाई पर, शेष N घुटने की ऊंचाई और नर मंजरी पर दें।',
+        mr: 'पेरणीच्या वेळी २५% नत्र + १००% स्फुरद + १००% पालाश, उर्वरित नत्र नंतर दोन हप्त्यांत द्या.'
+      },
+      rationale: {
+        en: (n, rain) => `Resilient crop choice with fast turnaround (90–105 days). Lower overall water risk if monsoon weakens midway.`,
+        hi: (n, rain) => `कम अवधि (90-105 दिन) वाली लचीली फसल। यदि मानसून बीच में कमजोर भी पड़ता है, तो भी फसल सुरक्षित रहती है।`,
+        mr: (n, rain) => `कमी कालावधीत (९०-१०५ दिवस) येणारे लवचिक पीक. मान्सूनमध्ये खंड पडला तरी पाण्याचा ताण सहज सहन करू शकते.`
+      }
     },
     wheat: {
-      fullName: 'Wheat / गेहूं (HD-2967)',
-      seasonBadge: 'Rabi Sovereign',
-      varieties: 'HD-2967, PBW-343, or GW-322',
-      yield: '48 – 54 Q/Ha',
-      yieldSub: 'Prime Milling Grade',
-      water: 'Moderate',
-      waterSub: '4–5 Critical Irrigations',
-      price: '₹2,275 – ₹2,450',
-      priceSub: 'MSP Guaranteed',
-      duration: '115 – 125 Days',
-      durationSub: 'Timely Sown',
-      basalDose: '50% N + 100% P + 100% K at crown root initiation.',
-      rationale: (n, rain) => `Thrives in balanced loam soils with moderate soil fertility and structured irrigation schedules.`
+      fullName: {
+        en: 'Wheat (HD-2967)',
+        hi: 'गेहूं / Wheat (HD-2967)',
+        mr: 'गहू / Wheat (HD-2967)'
+      },
+      seasonBadge: {
+        en: 'Rabi Sovereign',
+        hi: 'प्रमुख रबी फसल',
+        mr: 'प्रमुख रब्बी पीक'
+      },
+      varieties: {
+        en: 'HD-2967, PBW-343, or GW-322',
+        hi: 'HD-2967, PBW-343, या GW-322',
+        mr: 'HD-2967, PBW-343, किंवा GW-322'
+      },
+      yield: {
+        en: '48 – 54 Q/Ha',
+        hi: '48 – 54 क्विंटल/हेक्टेयर',
+        mr: '४८ – ५४ क्विंटल/हे.'
+      },
+      yieldSub: {
+        en: 'Prime Milling Grade',
+        hi: 'उत्कृष्ट आटा व दाना गुणवत्ता',
+        mr: 'उत्कृष्ट दाण्याची प्रत'
+      },
+      water: {
+        en: 'Moderate',
+        hi: 'मध्यम (Moderate)',
+        mr: 'मध्यम (Moderate)'
+      },
+      waterSub: {
+        en: '4–5 Critical Irrigations',
+        hi: '4-5 आवश्यक क्रांतिकालीन सिंचाई',
+        mr: '४-५ आवश्यक पाणी पाळ्या'
+      },
+      price: {
+        en: '₹2,275 – ₹2,450',
+        hi: '₹2,275 – ₹2,450',
+        mr: '₹२,२७५ – ₹२,४५०'
+      },
+      priceSub: {
+        en: 'MSP Guaranteed',
+        hi: 'सरकारी खरीद व MSP सुरक्षित',
+        mr: 'हमीभाव (MSP) हमी'
+      },
+      duration: {
+        en: '115 – 125 Days',
+        hi: '115 – 125 दिन',
+        mr: '११५ – १२५ दिवस'
+      },
+      durationSub: {
+        en: 'Timely Sown',
+        hi: 'समय पर बुवाई योग्य',
+        mr: 'वेळेवर पेरणीयोग्य'
+      },
+      basalDose: {
+        en: '50% N + 100% P + 100% K at crown root initiation.',
+        hi: 'बुवाई के समय 50% N + 100% P + 100% K बेसल उर्वरक डालें।',
+        mr: 'पेरणीच्या वेळी ५०% नत्र + १००% स्फुरद + १००% पालाश खत द्या.'
+      },
+      rationale: {
+        en: (n, rain) => `Thrives in balanced loam soils with moderate soil fertility and structured irrigation schedules.`,
+        hi: (n, rain) => `मध्यम उर्वरता और व्यवस्थित सिंचाई व्यवस्था वाली दोमट मिट्टी में उत्कृष्ट पैदावार देने वाली फसल।`,
+        mr: (n, rain) => `चांगल्या निचऱ्याच्या पोयटा जमिनीत आणि वेळेवर पाणी व्यवस्थापनासह भरघोस उत्पन्न देणारे मुख्य रब्बी पीक.`
+      }
     },
     sugarcane: {
-      fullName: 'Sugarcane / गन्ना (Co-86032)',
-      seasonBadge: 'Perennial Cash',
-      varieties: 'Co-86032 (Nira), Co-0265 (Phule 265)',
-      yield: '110 – 130 Tons/Ha',
-      yieldSub: 'High Cane Recovery',
-      water: 'High (1500–2500mm)',
-      waterSub: 'Assured Furrow/Drip',
-      price: '₹3,150 / Ton',
-      priceSub: 'FRP Mandated',
-      duration: '12 – 14 Months',
-      durationSub: 'Full Agronomic Cycle',
-      basalDose: '10% N + 100% P + 50% K at furrow planting.',
-      rationale: (n, rain) => `Exceptional biomass potential under heavy clay soils with assured drainage and balanced NPK nourishment.`
+      fullName: {
+        en: 'Sugarcane (Co-86032)',
+        hi: 'गन्ना / Sugarcane (Co-86032)',
+        mr: 'ऊस / Sugarcane (Co-86032)'
+      },
+      seasonBadge: {
+        en: 'Perennial Cash',
+        hi: 'वार्षिक नकदी फसल',
+        mr: 'वार्षिक महत्त्वाचे नगदी पीक'
+      },
+      varieties: {
+        en: 'Co-86032 (Nira), Co-0265 (Phule 265)',
+        hi: 'Co-86032 (नीरा), Co-0265 (फुले 265)',
+        mr: 'Co-86032 (निरा), Co-0265 (फुले २६५)'
+      },
+      yield: {
+        en: '110 – 130 Tons/Ha',
+        hi: '110 – 130 टन/हेक्टेयर',
+        mr: '११० – १३० टन/हे.'
+      },
+      yieldSub: {
+        en: 'High Cane Recovery',
+        hi: 'उच्च चीनी व रस रिकवरी',
+        mr: 'उच्च साखर उतारा व वजन'
+      },
+      water: {
+        en: 'High (1500–2500mm)',
+        hi: 'अधिक (1500–2500mm)',
+        mr: 'भरपूर (१५००–२५०० मिमी)'
+      },
+      waterSub: {
+        en: 'Assured Furrow/Drip',
+        hi: 'सुनिश्चित नाली या ड्रिप सिंचाई',
+        mr: 'ठिबक किंवा पाटपाणी सिंचन'
+      },
+      price: {
+        en: '₹3,150 / Ton',
+        hi: '₹3,150 / टन',
+        mr: '₹३,१५० / टन'
+      },
+      priceSub: {
+        en: 'FRP Mandated',
+        hi: 'FRP वैधानिक मूल्य सुरक्षित',
+        mr: 'एफआरपी (FRP) दर सुरक्षित'
+      },
+      duration: {
+        en: '12 – 14 Months',
+        hi: '12 – 14 माह',
+        mr: '१२ – १४ महिने'
+      },
+      durationSub: {
+        en: 'Full Agronomic Cycle',
+        hi: 'पूर्ण फसल चक्र',
+        mr: 'संपूर्ण पीक चक्र'
+      },
+      basalDose: {
+        en: '10% N + 100% P + 50% K at furrow planting.',
+        hi: 'नाली में बुवाई के समय 10% N + 100% P + 50% K दें।',
+        mr: 'सरीमध्ये लागवडीच्या वेळी १०% नत्र + १००% स्फुरद + ५०% पालाश द्या.'
+      },
+      rationale: {
+        en: (n, rain) => `Exceptional biomass potential under heavy clay soils with assured drainage and balanced NPK nourishment.`,
+        hi: (n, rain) => `उचित जल निकासी और संतुलित NPK पोषण के साथ भारी मिट्टी में असाधारण बायोमास और उच्च मिठास क्षमता।`,
+        mr: (n, rain) => `योग्य निचरा आणि संतुलित खत व्यवस्थापनासह भारी काळ्या जमिनीत भरघोस उत्पादन व उच्च साखर उतारा देणारे पीक.`
+      }
     }
   };
+
+  // ── DISEASE PATHOLOGY LOCALIZATION ENGINE ──
+  const CROP_NAME_I18N = {
+    rice: { en: 'RICE', hi: 'धान (Paddy)', mr: 'भात / धान' },
+    wheat: { en: 'WHEAT', hi: 'गेहूं (Wheat)', mr: 'गहू (Wheat)' },
+    cotton: { en: 'COTTON', hi: 'कपास (Cotton)', mr: 'कापूस (Cotton)' },
+    maize: { en: 'MAIZE', hi: 'मक्का (Maize)', mr: 'मका (Maize)' },
+    sugarcane: { en: 'SUGARCANE', hi: 'गन्ना (Sugarcane)', mr: 'ऊस (Sugarcane)' },
+    potato: { en: 'POTATO', hi: 'आलू (Potato)', mr: 'बटाटा (Potato)' },
+    tomato: { en: 'TOMATO', hi: 'टमाटर (Tomato)', mr: 'टोमॅटो (Tomato)' },
+    mustard: { en: 'MUSTARD', hi: 'सरसों (Mustard)', mr: 'मोहरी (Mustard)' },
+    soybean: { en: 'SOYBEAN', hi: 'सोयाबीन (Soybean)', mr: 'सोयाबीन (Soybean)' },
+    groundnut: { en: 'GROUNDNUT', hi: 'मूंगफली (Groundnut)', mr: 'भुईमूग (Groundnut)' },
+    onion: { en: 'ONION', hi: 'प्याज (Onion)', mr: 'कांदा (Onion)' },
+    chilli: { en: 'CHILLI', hi: 'मिर्च (Chilli)', mr: 'मिरची (Chilli)' },
+    banana: { en: 'BANANA', hi: 'केला (Banana)', mr: 'केळी (Banana)' },
+    apple: { en: 'APPLE', hi: 'सेब (Apple)', mr: 'सफरचंद (Apple)' },
+    grapes: { en: 'GRAPES', hi: 'अंगूर (Grapes)', mr: 'द्राक्षे (Grapes)' },
+    ginger: { en: 'GINGER', hi: 'अदरक (Ginger)', mr: 'आले (Ginger)' },
+    turmeric: { en: 'TURMERIC', hi: 'हल्दी (Turmeric)', mr: 'हळद (Turmeric)' },
+    pomegranate: { en: 'POMEGRANATE', hi: 'अनार (Pomegranate)', mr: 'डाळिंब (Pomegranate)' },
+    watermelon: { en: 'WATERMELON', hi: 'तरबूज (Watermelon)', mr: 'कलिंगड (Watermelon)' },
+    chickpea: { en: 'CHICKPEA', hi: 'चना (Gram)', mr: 'हरभरा (Gram)' }
+  };
+
+  const PATHOGEN_TYPE_I18N = {
+    'fungal': { en: 'Fungal', hi: 'फफूंद जनित (Fungal)', mr: 'बुरशीजन्य (Fungal)' },
+    'bacterial': { en: 'Bacterial', hi: 'जीवाणु जनित (Bacterial)', mr: 'जिवाणूजन्य (Bacterial)' },
+    'viral': { en: 'Viral', hi: 'विषाणु जनित (Viral)', mr: 'विषाणूजन्य (Viral)' },
+    'insect pest': { en: 'Insect Pest', hi: 'कीट प्रकोप (Insect Pest)', mr: 'कीटक प्रादुर्भाव (Insect Pest)' }
+  };
+
+  const DISEASE_I18N_DB = {
+    rice_blast: {
+      hi: {
+        name: 'धान का झोंका रोग (Rice Blast / Jhonka Rog)',
+        symptoms: 'पत्तियों पर आँख या नाव के आकार के धब्बे जिनके बीच का भाग राख/सफेद और किनारे गहरे कत्थई होते हैं। गंभीर प्रकोप में "गर्दन तोड़" (Neck Blast) रोग होता है जिससे बाली की जड़ काली होकर टूट जाती है और दाने पूरी तरह थोथे (खाली) रह जाते हैं।',
+        bio: [
+          'ट्राइकोडर्मा विरिडी या स्यूडोमोनास फ्लोरेसेंस 10 ग्राम प्रति किलो बीज की दर से बीज उपचार करें।',
+          'नर्सरी और कल्ले फूटने की अवस्था में स्यूडोमोनास फ्लोरेसेंस (2 ग्राम/लीटर) का पर्णीय छिड़काव करें।',
+          'रोग के शुरुआती लक्षण दिखते ही 5% नीम बीज अर्क (NSKE) या नीम का तेल (3 मिली/लीटर) छिड़कें।'
+        ],
+        chem: [
+          'ट्राइसाइक्लाजोल 75% WP (बाण / बीम) @ 0.6 ग्राम/लीटर पानी: पत्ती पर लक्षण दिखते ही या 5% बाली निकलते समय तुरंत छिड़कें।',
+          'आइसोप्रोपिलियोलेन 40% EC (फूजी-वन) @ 1.5 मिली/लीटर पानी: प्रभावी उपचारात्मक और निवारक प्रणालीगत फफूंदनाशक।',
+          'एज़ोक्सीस्ट्रोबिन 18.2% + डिफेनोकोनाज़ोल 11.4% SC (एमिस्टार टॉप) @ 1.0 मिली/लीटर पानी: ब्लास्ट और शीथ ब्लाइट दोनों के लिए व्यापक सुरक्षा।'
+        ]
+      },
+      mr: {
+        name: 'भातावरील करपा व मानमोड रोग (Rice Blast)',
+        symptoms: 'पानांवर डोळ्यासारखे किंवा बोट-आकाराचे ठिपके ज्यांचे केंद्र करडे/पांढरट आणि कडा गडद तपकिरी असतात. तीव्र प्रादुर्भावात "मानमोड" (Neck Blast) रोग होतो, ज्यामुळे ओंबीचा तळ काळा पडून तुटतो आणि दाणे पूर्णपणे पोचट राहतात.',
+        bio: [
+          'ट्रायकोडर्मा व्हिरिडी किंवा स्यूडोमोनस फ्लोरेसेन्स १० ग्रॅम प्रति किलो बियाण्यावर बीजप्रक्रिया करा.',
+          'रोपवाटिका आणि फुटवे फुटण्याच्या अवस्थेत स्यूडोमोनस फ्लोरेसेन्स (२ ग्रॅम/लिटर) फवारा.',
+          'लक्षणे दिसताच ५% निंबोळी अर्क (NSKE) किंवा कडुलिंब तेल (३ मिली/लिटर) फवारा.'
+        ],
+        chem: [
+          'ट्रायसायक्लॅझोल ७५% WP (बाण / बीम) @ ०.६ ग्रॅम/लिटर पाणी: पानांवर लक्षणे दिसताच किंवा ५% ओंब्या बाहेर पडताना फवारा.',
+          'आयसोप्रोथिओलेन ४०% EC (फुजी-वन) @ १.५ मिली/लिटर पाणी: अत्यंत प्रभावी आंतरप्रवाही बुरशीनाशक.',
+          'अझॉक्सीस्ट्रॉबिन १८.२% + डायफेनोकोनॅझोल ११.४% SC (अमिस्टार टॉप) @ १.० मिली/लिटर पाणी: करपा व पर्णकोष करपा या दोन्हीवर उत्कृष्ट नियंत्रण.'
+        ]
+      }
+    },
+    rice_sheath_blight: {
+      hi: {
+        name: 'धान का शीथ ब्लाइट / खोल गलन (Sheath Blight of Rice)',
+        symptoms: 'पानी की सतह के पास पत्ती के आवरण (खोल) पर अंडाकार या अनियमित हरे-भूरे धब्बे। धब्बे आपस में मिलकर साँप की केंचुली जैसे पैटर्न बनाते हैं और पौधे खेतों में टुकड़ों में गिर जाते हैं।',
+        bio: [
+          'गोबर की खाद में संवर्धित ट्राइकोडर्मा हरजिएनम (50 किग्रा खाद + 2 किग्रा ट्राइकोडर्मा प्रति एकड़) मिट्टी में डालें।',
+          'बैसिलस सबटिलिस या स्यूडोमोनास फ्लोरेसेंस 2.5 ग्राम/लीटर का पर्णीय छिड़काव करें।'
+        ],
+        chem: [
+          'वैलिडामाइसिन 3% L @ 2.0 मिली/लीटर पानी का छिड़काव करें।',
+          'हेक्साकोनाजोल 5% SC (कॉन्टाफ) @ 2.0 मिली/लीटर पानी का छिड़काव करें।'
+        ]
+      },
+      mr: {
+        name: 'भाताचा पर्णकोष करपा (Sheath Blight of Rice)',
+        symptoms: 'पाण्याच्या पातळीजवळ पानांच्या आच्छादनावर लंबगोलाकार हिरवट-करडे ठिपके पडतात. हे ठिपके एकमेकांत मिसळून सापाच्या कातडीसारखे नक्षीदार दिसतात व रोपे शेतात लोळतात.',
+        bio: [
+          'शेणखतात मिसळलेले ट्रायकोडर्मा (५० किलो शेणखत + २ किलो ट्रायकोडर्मा प्रति एकर) जमिनीत टाका.',
+          'बॅसिलस सबटिलिस किंवा स्यूडोमोनस फ्लोरेसेन्स २.५ ग्रॅम/लिटर फवारा.'
+        ],
+        chem: [
+          'व्हॅलिडामायसिन ३% L @ २.० मिली/लिटर पाण्यात मिसळून फवारा.',
+          'हेक्झाकोनॅझोल ५% SC (कॉन्टाफ) @ २.० मिली/लिटर पाण्यात मिसळून फवारा.'
+        ]
+      }
+    },
+    rice_bacterial_leaf_blight: {
+      hi: {
+        name: 'जीवाणु पत्ती झुलसा / BLB (Bacterial Leaf Blight)',
+        symptoms: 'पत्तियों के किनारों से शुरू होकर अंदर की ओर बढ़ती हुई पीली से सफेद लहरदार धारियां। पत्तियों पर सुबह के समय बैक्टीरिया के चिपचिपे पीले बूंद दिखाई देते हैं।',
+        bio: ['नीम का तेल (3000 ppm) @ 3 मिली/लीटर और स्यूडोमोनास फ्लोरेसेंस @ 5 ग्राम/लीटर का छिड़काव करें।'],
+        chem: ['कॉपर ऑक्सीक्लोराइड 50% WP @ 2.5 ग्राम + स्ट्रेप्टोसाइक्लिन @ 0.1 ग्राम प्रति लीटर पानी का छिड़काव करें।']
+      },
+      mr: {
+        name: 'भातावरील जिवाणूजन्य करपा / BLB',
+        symptoms: 'पानांच्या कडांपासून आत पसरत जाणाऱ्या पिवळसर ते पांढऱ्या लाटांसारख्या पट्ट्या. पानांवर सकाळी चिकट जिवाणूचे पिवळे थेंब आढळतात.',
+        bio: ['कडुलिंब अर्क (३००० ppm) @ ३ मिली/लिटर आणि स्यूडोमोनस @ ५ ग्रॅम/लिटर फवारा.'],
+        chem: ['कॉपर ऑक्सिक्लोराईड ५०% WP @ २.५ ग्रॅम + स्ट्रेप्टोसायक्लीन @ ०.१ ग्रॅम प्रति लिटर पाण्यात मिसळून फवारा.']
+      }
+    },
+    wheat_yellow_rust: {
+      hi: {
+        name: 'गेहूं का पीला रतुआ (Yellow Rust / Stripe Rust)',
+        symptoms: 'पत्तियों पर समानांतर कतारों में चमकीले पीले रंग के पाउडर वाले फफोले बनते हैं। छूने पर अंगुलियों पर हल्दी जैसा पीला पाउडर लग जाता है।',
+        bio: ['प्रतिरोधी किस्मों (जैसे HD-2967, PBW-550) की बुवाई करें और संतुलित उर्वरक प्रयोग करें।'],
+        chem: ['प्रोपिकोनाजोल 25% EC (टिल्ट) @ 1 मिली/लीटर पानी का छिड़काव लक्षण दिखते ही करें।']
+      },
+      mr: {
+        name: 'गव्हाचा पिवळा तांबेरा (Yellow Rust)',
+        symptoms: 'पानांवर समांतर ओळींमध्ये चमकदार पिवळ्या पावडरसारखे फोड येतात. बोटाने स्पर्श केल्यास हळदीसारखा पिवळा रंग हाताला लागतो.',
+        bio: ['तांबेरा प्रतिकारक वाण पेरा आणि नत्राचा अतिवापर टाळा.'],
+        chem: ['प्रोपिकोनेझोल २५% EC (टिल्ट) @ १ मिली/लिटर पाण्यात मिसळून तातडीने फवारा.']
+      }
+    },
+    cotton_pink_bollworm: {
+      hi: {
+        name: 'कपास की गुलाबी सूंडी (Pink Bollworm of Cotton)',
+        symptoms: 'फूल "गुलाब" के रूप में बंद रहते हैं (रोसेटेड फूल)। गूलर/बोंड के अंदर गुलाबी सूंडी बीज और रेशे को खा जाती है, जिससे कपास की गुणवत्ता और उत्पादन घट जाता है।',
+        bio: ['फेरोमोन ट्रैप (8 ट्रैप प्रति एकड़) लगाएं और ट्राइकोग्रामा परजीवी ततैया 1.5 लाख प्रति हेक्टेयर छोड़ें।'],
+        chem: ['इमामेक्टिन बेंजोएट 5% SG @ 0.4 ग्राम/लीटर या स्पाइनोटेोरम 11.7% SC @ 0.8 मिली/लीटर का छिड़काव करें।']
+      },
+      mr: {
+        name: 'कापसावरील गुलाबी बोंडअळी (Pink Bollworm)',
+        symptoms: 'फुले गुलाबासारखी बंद राहतात (रोझेट फुले). बोंडाच्या आत गुलाबी अळी सरकी आणि कापूस कुरतडून खाते, त्यामुळे बोंडे सडतात व प्रत खराब होते.',
+        bio: ['कामगंध सापळे (८ सापळे प्रति एकर) लावा आणि ट्रायकोकार्ड्स चा वापर करा.'],
+        chem: ['इमामेक्टिन बेन्झोएट ५% SG @ ०.४ ग्रॅम/लिटर किंवा स्पिनोटोरम ११.७% SC @ ०.८ मिली/लिटर फवारा.']
+      }
+    },
+    potato_late_blight: {
+      hi: {
+        name: 'आलू का पछेता झुलसा (Late Blight of Potato)',
+        symptoms: 'पत्तियों की नोकों और किनारों पर पानी से भीगे हुए काले-भूरे धब्बे। नम मौसम में पत्तियों की निचली सतह पर सफेद रुई जैसी फफूंद दिखती है।',
+        bio: ['ट्राइकोडर्मा विरिडी से कंद उपचार करें और फसल चक्र अपनाएं।'],
+        chem: ['मैनकोजेब 75% WP @ 2.5 ग्राम/लीटर या सिमोक्सानिल + मैनकोजेब @ 2.0 ग्राम/लीटर का छिड़काव करें।']
+      },
+      mr: {
+        name: 'बटाट्यावरील उशिरा येणारा करपा (Late Blight)',
+        symptoms: 'पानांच्या टोकांवर आणि कडांवर काळे-तपकिरी जळाल्यासारखे ठिपके. ढगाळ व दमट हवामानात पानांच्या खालच्या बाजूला पांढरी बुरशी दिसते.',
+        bio: ['ट्रायकोडर्मा व्हिरिडीने बेणेप्रक्रिया करा आणि पिकांची फेरपालट करा.'],
+        chem: ['मॅनकोझेब ७५% WP @ २.५ ग्रॅम/लिटर किंवा सायमोक्सॅनिल + मॅनकोझेब @ २.० ग्रॅम/लिटर फवारा.']
+      }
+    },
+    tomato_leaf_curl: {
+      hi: {
+        name: 'टमाटर का पर्ण कुंचन रोग (Tomato Leaf Curl Virus / ToLCV)',
+        symptoms: 'पत्तियां ऊपर और अंदर की ओर मुड़कर छोटी, मोटी व विकृत हो जाती हैं। पौधे बौने रह जाते हैं और फल नहीं लगते। यह सफेद मक्खी द्वारा फैलता है।',
+        bio: ['पीले चिपचिपे कार्ड (15-20 प्रति एकड़) लगाएं और नीम का तेल 3 मिली/लीटर छिड़कें।'],
+        chem: ['सफेद मक्खी नियंत्रण के लिए डाइफेन्थियूरॉन 50% WP @ 1.2 ग्राम/लीटर या एसिटामिप्रिड 20% SP @ 0.3 ग्राम/लीटर का छिड़काव करें।']
+      },
+      mr: {
+        name: 'टोमॅटोचा पर्णगुच्छ रोग (Tomato Leaf Curl Virus)',
+        symptoms: 'पाने वरच्या बाजूला वळतात, आकसतात आणि जाड होतात. झाडाची वाढ खुंटते व फळधारणा थांबते. हा विषाणू पांढऱ्या माशीमार्फत पसरतो.',
+        bio: ['पिवळे चिकट सापळे (१५-२० प्रति एकर) लावा आणि कडुलिंब तेल ३ मिली/लिटर फवारा.'],
+        chem: ['पांढऱ्या माशीच्या नियंत्रणासाठी डायफेन्थिउरॉन ५०% WP @ १.२ ग्रॅम/लिटर किंवा अ‍ॅसिटामिप्रीड २०% SP @ ०.३ ग्रॅम/लिटर फवारा.']
+      }
+    },
+    sugarcane_red_rot: {
+      hi: {
+        name: 'गन्ने का लाल सड़न रोग (Red Rot of Sugarcane)',
+        symptoms: 'गन्ने की तीसरी व चौथी पत्ती पीली पड़कर सूखने लगती है। गन्ने को बीच से चीरने पर अंदर का गूदा लाल दिखाई देता है जिसमें सफेद आड़ी धारियां और सिरके जैसी गंध आती है।',
+        bio: ['स्वस्थ और प्रमाणित बीज सेट का ही उपयोग करें। ट्राइकोडर्मा हरजिएनम से सेट उपचार करें।'],
+        chem: ['कार्बेन्डाजिम 50% WP (1 ग्राम/लीटर) के घोल में बीज सेट्स को 15 मिनट डुबोकर बोएं।']
+      },
+      mr: {
+        name: 'उसाचा तांबेरा / लाल कुजव्या रोग (Red Rot of Sugarcane)',
+        symptoms: 'उसाची मधली पाने सुकू लागतात. ऊस उभा चिरल्यास आतील गर लाल दिसतो, त्यावर पांढरे पट्टे दिसतात आणि उसातून आंबूस वास येतो.',
+        bio: ['निरोगी बेणे निवडा आणि ट्रायकोडर्माने बेणे प्रक्रिया करा.'],
+        chem: ['कार्बेन्डाझिम ५०% WP (१ ग्रॅम/लिटर) च्या द्रावणात बेणे १५ मिनिटे बुडवून नंतर लागवड करा.']
+      }
+    },
+    soybean_yellow_mosaic: {
+      hi: {
+        name: 'सोयाबीन का पीला मोजेक रोग (Yellow Mosaic Virus of Soybean)',
+        symptoms: 'पत्तियों पर पीले और हरे रंग के चितकबरे धब्बे बन जाते हैं। धीरे-धीरे पूरी पत्ती पीली हो जाती है और फलियों में दाने नहीं बनते या छोटे रह जाते हैं।',
+        bio: ['पीले चिपचिपे कार्ड लगाएं और रोगग्रस्त पौधों को शुरुआत में ही उखाड़कर नष्ट कर दें।'],
+        chem: ['थियामेथोक्सम 25% WG @ 0.3 ग्राम/लीटर पानी का छिड़काव करें।']
+      },
+      mr: {
+        name: 'सोयाबीनचा पिवळा मोझॅक रोग (Yellow Mosaic Virus)',
+        symptoms: 'पानांवर पिवळे व हिरवे चट्टे तयार होतात. नंतर संपूर्ण पाने पिवळी पडतात आणि शेंगांमध्ये दाणे भरत नाहीत. हा रोग पांढऱ्या माशीमुळे पसरतो.',
+        bio: ['पिवळे चिकट सापळे लावा आणि रोगट झाडे सुरुवातीलाच उपटून नष्ट करा.'],
+        chem: ['थायमेथॉक्सम २५% WG @ ०.३ ग्रॅम/लिटर पाण्यात मिसळून फवारा.']
+      }
+    },
+    groundnut_tikka: {
+      hi: {
+        name: 'मूंगफली का टिक्का रोग / पत्ती धब्बा (Tikka Disease of Groundnut)',
+        symptoms: 'पत्तियों पर गोल गहरे भूरे से काले धब्बे बनते हैं जिनके चारों ओर पीला छल्ला होता है। गंभीर संक्रमण में पत्तियां जल्दी गिर जाती हैं।',
+        bio: ['स्यूडोमोनास फ्लोरेसेंस 10 ग्राम/किग्रा बीज से उपचार करें और नीम तेल (2%) का छिड़काव करें।'],
+        chem: ['कार्बेन्डाजिम 12% + मैनकोजेब 63% WP (साफ / Saaf) @ 2 ग्राम/लीटर पानी का छिड़काव करें।']
+      },
+      mr: {
+        name: 'भुईमुगावरील टिक्का रोग (Tikka Disease)',
+        symptoms: 'पानांवर गोल गडद तपकिरी ते काळे ठिपके पडतात आणि त्यांच्या भोवती पिवळे कडे असते. तीव्र संसर्गात पाने गळून पडतात.',
+        bio: ['स्यूडोमोनस फ्लोरेसेन्सने बीजप्रक्रिया करा आणि २% निंबोळी अर्क फवारा.'],
+        chem: ['कार्बेन्डाझिम १२% + मॅनकोझेब ६३% WP (साफ / Saaf) @ २ ग्रॅम/लिटर पाण्यात मिसळून फवारा.']
+      }
+    },
+    mustard_white_rust: {
+      hi: {
+        name: 'सरसों का सफेद रतुआ (White Rust of Mustard)',
+        symptoms: 'पत्तियों की निचली सतह पर सफेद या हल्के पीले उभरे हुए छाले बनते हैं। फूल विकृत होकर फूल जाते हैं।',
+        bio: ['प्रमाणित बीजों का प्रयोग करें और समय पर बुवाई करें।'],
+        chem: ['रिडोमिल एमजेड (मेटालेक्सिल 8% + मैनकोजेब 64%) @ 2 ग्राम/लीटर पानी का छिड़काव करें।']
+      },
+      mr: {
+        name: 'मोहरीवरील पांढरा तांबेरा (White Rust)',
+        symptoms: 'पानांच्या खालच्या पृष्ठभागावर पांढरे किंवा फिकट पिवळे फोड येतात. फुलोरा विकृत होतो.',
+        bio: ['प्रमाणित बियाणे वापरा आणि वेळेवर पेरणी करा.'],
+        chem: ['रिडोमिल एमझेड (मेटॅलॅक्सिल ८% + मॅनकोझेब ६४%) @ २ ग्रॅम/लिटर फवारा.']
+      }
+    },
+    onion_purple_blotch: {
+      hi: {
+        name: 'प्याज का बैंगनी धब्बा रोग (Purple Blotch of Onion)',
+        symptoms: 'पत्तियों पर छोटे, पानी से भीगे धब्बे जो बाद में केंद्र में बैंगनी और किनारों पर भूरे हो जाते हैं। पत्तियां बीच से टूट जाती हैं।',
+        bio: ['ट्राइकोडर्मा से कंद उपचार करें और अतिरिक्त नाइट्रोजन का प्रयोग न करें।'],
+        chem: ['डाइफेनोकोनाजोल 25% EC (स्कोर) @ 1 मिली/लीटर या मैनकोजेब @ 2.5 ग्राम/लीटर का छिड़काव करें।']
+      },
+      mr: {
+        name: 'कांद्यावरील जांभळा करपा (Purple Blotch)',
+        symptoms: 'पानांवर सुरुवातीला लहान पांढुरके ठिपके येतात जे नंतर मध्यभागी जांभळे व कडेला तपकिरी होतात. पाने मधेच वाकून मोडतात.',
+        bio: ['ट्रायकोडर्माने पुनर्लागवड प्रक्रिया करा आणि नत्राचा अतिरेक टाळा.'],
+        chem: ['डायफेनोकोनॅझोल २५% EC (स्कोर) @ १ मिली/लिटर किंवा मॅनकोझेब @ २.५ ग्रॅम/लिटर फवारा.']
+      }
+    },
+    chilli_anthracnose: {
+      hi: {
+        name: 'मिर्च का फल सड़न / एन्थ्रेक्नोज (Chilli Anthracnose / Dieback)',
+        symptoms: 'पके फलों पर धंसे हुए गोल या लम्बे काले धब्बे जिन पर काले छल्ले बनते हैं। शाखाएं ऊपर से नीचे की ओर सूखती हैं (डाइबैक)।',
+        bio: ['ट्राइकोडर्मा विरिडी से बीज उपचार करें और नीम तेल (3000 ppm) का छिड़काव करें।'],
+        chem: ['एज़ोक्सीस्ट्रोबिन 23% SC @ 1 मिली/लीटर या कॉपर ऑक्सीक्लोराइड @ 2.5 ग्राम/लीटर का छिड़काव करें।']
+      },
+      mr: {
+        name: 'मिरचीवरील फळकुज व डायबॅक (Chilli Anthracnose)',
+        symptoms: 'पक्व फळांवर खोलगट काळे गोलाकार डाग पडतात. शेंड्याकडून फांद्या खाली सुकत जातात (डायबॅक).',
+        bio: ['ट्रायकोडर्माने बीजप्रक्रिया करा आणि कडुलिंब अर्क फवारा.'],
+        chem: ['अझॉक्सीस्ट्रॉबिन २३% SC @ १ मिली/लिटर किंवा कॉपर ऑक्सिक्लोराईड @ २.५ ग्रॅम/लिटर फवारा.']
+      }
+    },
+    maize_fall_armyworm: {
+      hi: {
+        name: 'मक्के का फॉल आर्मीवर्म (Fall Armyworm of Maize)',
+        symptoms: 'मक्के के पोंगे (भोंपू) में पत्तियों को खुरचकर बड़े-बड़े छेद कर देती है और पोंगा चूरेदार विष्ठा (sawdust frass) से भर जाता है।',
+        bio: ['रेत/राख और चूना (9:1) पोंगे में डालें या नोमुरिया रिलेई कवक @ 3 ग्राम/लीटर का छिड़काव करें।'],
+        chem: ['क्लोरांट्रानिलिप्रोल 18.5% SC (कोराजन) @ 0.4 मिली/लीटर या स्पाइनोटेोरम 11.7% SC @ 0.5 मिली/लीटर का छिड़काव पोंगे में करें।']
+      },
+      mr: {
+        name: 'मक्यावरील लष्करी अळी (Fall Armyworm)',
+        symptoms: 'मक्याच्या पोंग्यातील पाने कुरतडून मोठी छिद्रे पाडते आणि पोंग्यात लाकडाच्या भुशासारखी घाण साठलेली दिसते.',
+        bio: ['पोंग्यामध्ये वाळू व चुन्याचे मिश्रण टाका किंवा नोमुरिया रिलेई बुरशी ३ ग्रॅम/लिटर फवारा.'],
+        chem: ['क्लोरांट्रानिलीप्रोल १८.५% SC (कोराजन) @ ०.४ मिली/लिटर किंवा स्पिनोटोरम @ ०.५ मिली/लिटर पोंग्यात पडेल असे फवारा.']
+      }
+    }
+  };
+
+  function getLocalizedDisease(d, lang) {
+    if (!lang) lang = state.language || 'hi';
+    const rawCrop = (d.crop || '').toLowerCase();
+    const rawPath = (d.pathogen_type || '').toLowerCase();
+
+    const cropObj = CROP_NAME_I18N[rawCrop];
+    const cropTag = cropObj ? (cropObj[lang] || cropObj['en']) : (d.crop ? d.crop.toUpperCase() : 'ALL CROPS');
+
+    const pathObj = PATHOGEN_TYPE_I18N[rawPath];
+    const pathTag = pathObj ? (pathObj[lang] || pathObj['en']) : (d.pathogen_type || 'Pathogen');
+
+    if (lang === 'en') {
+      let bioText = 'Bio-fungicide protocol';
+      if (Array.isArray(d.biological_cures) && d.biological_cures.length > 0) {
+        bioText = d.biological_cures.map(c => `• ${c}`).join('<br>');
+      } else if (d.organic_control || d.biological_cure) {
+        bioText = d.organic_control || d.biological_cure;
+      }
+
+      let chemText = 'Targeted chemical spray';
+      let speechChem = 'Apply recommended fungicide';
+      if (Array.isArray(d.chemical_remedies) && d.chemical_remedies.length > 0) {
+        chemText = d.chemical_remedies.map(r => {
+          if (typeof r === 'object' && r !== null) {
+            const ing = r.active_ingredient || '';
+            const dose = r.dosage ? ` (${r.dosage})` : '';
+            const app = r.application ? `: ${r.application}` : '';
+            return `• <strong>${ing}</strong>${dose}${app}`;
+          }
+          return `• ${r}`;
+        }).join('<br>');
+        speechChem = typeof d.chemical_remedies[0] === 'object' ? d.chemical_remedies[0].active_ingredient : d.chemical_remedies[0];
+      }
+
+      return {
+        name: d.name || d.disease_name || d.disease || 'Plant Disease',
+        cropTag,
+        pathTag,
+        symptoms: d.symptoms || 'Visual lesion details',
+        bioText,
+        chemText,
+        speechChem
+      };
+    }
+
+    const dId = d.id || '';
+    const localizedEntry = (DISEASE_I18N_DB[dId] && DISEASE_I18N_DB[dId][lang]) ? DISEASE_I18N_DB[dId][lang] : null;
+
+    if (localizedEntry) {
+      return {
+        name: localizedEntry.name,
+        cropTag,
+        pathTag,
+        symptoms: localizedEntry.symptoms,
+        bioText: localizedEntry.bio.map(c => `• ${c}`).join('<br>'),
+        chemText: localizedEntry.chem.map(c => `• ${c}`).join('<br>'),
+        speechChem: localizedEntry.chem[0]
+      };
+    }
+
+    // Smart fallback translation for diseases not yet explicitly listed
+    let dName = d.name || d.disease_name || d.disease || 'Plant Disease';
+    let symptoms = d.symptoms || 'Visual lesion details';
+    let bioText = 'जैविक नियंत्रण उपचार';
+    let chemText = 'उचित रासायनिक फफूंदनाशक का छिड़काव करें';
+    let speechChem = chemText;
+
+    if (Array.isArray(d.biological_cures) && d.biological_cures.length > 0) {
+      bioText = d.biological_cures.map(c => `• ${c}`).join('<br>');
+    }
+    if (Array.isArray(d.chemical_remedies) && d.chemical_remedies.length > 0) {
+      chemText = d.chemical_remedies.map(r => {
+        if (typeof r === 'object' && r !== null) {
+          const ing = r.active_ingredient || '';
+          const dose = r.dosage ? ` (${r.dosage})` : '';
+          const app = r.application ? `: ${r.application}` : '';
+          return `• <strong>${ing}</strong>${dose}${app}`;
+        }
+        return `• ${r}`;
+      }).join('<br>');
+    }
+
+    return {
+      name: dName,
+      cropTag,
+      pathTag,
+      symptoms,
+      bioText,
+      chemText,
+      speechChem
+    };
+  }
 
   function getCropMeta(cropKey, fallbackProfile = {}) {
     const key = (cropKey || '').toLowerCase();
     const lang = state.language || 'hi';
-    const ct = CROP_TRANSLATIONS[key] ? (CROP_TRANSLATIONS[key][lang] || CROP_TRANSLATIONS[key]['hi']) : null;
-    const base = AGRONOMIC_METADATA[key] || {};
+    const base = AGRONOMIC_METADATA[key];
 
-    if (AGRONOMIC_METADATA[key]) {
+    if (base) {
+      const getL = (field, fallback = '') => {
+        if (!field) return fallback;
+        if (typeof field === 'string') return field;
+        return field[lang] || field['hi'] || field['en'] || fallback;
+      };
+
+      const ratFn = base.rationale ? (base.rationale[lang] || base.rationale['hi'] || base.rationale['en']) : null;
+
       return {
-        ...base,
-        fullName: ct ? ct.name : base.fullName,
-        rationale: ct ? ct.rationale : base.rationale
+        fullName: getL(base.fullName, cropKey),
+        seasonBadge: getL(base.seasonBadge, 'Kharif Prime'),
+        varieties: getL(base.varieties, 'Certified Regional Varieties'),
+        yield: getL(base.yield, '40 – 48 Q/Ha'),
+        yieldSub: getL(base.yieldSub, 'Optimal Management'),
+        water: getL(base.water, 'Moderate'),
+        waterSub: getL(base.waterSub, 'Well-drained Soil'),
+        price: getL(base.price, 'MSP Protected'),
+        priceSub: getL(base.priceSub, 'High Liquidity'),
+        duration: getL(base.duration, '120 Days'),
+        durationSub: getL(base.durationSub, 'Full Cycle'),
+        basalDose: getL(base.basalDose, 'Apply balanced NPK as per SAU guidelines.'),
+        rationale: ratFn || ((n, rain) => `Strong agronomic fit for current field conditions.`)
       };
     }
+
     const cleanName = cropKey.charAt(0).toUpperCase() + cropKey.slice(1);
+    const cropLocal = CROP_NAME_I18N[key] ? (CROP_NAME_I18N[key][lang] || cleanName) : cleanName;
+
     return {
-      fullName: ct ? ct.name : `${cleanName} / फसल (${fallbackProfile.cycle_days || 'Standard'})`,
-      seasonBadge: 'Agro Recommended',
-      varieties: `Certified Regional Varieties (${cleanName})`,
+      fullName: `${cropLocal} (${fallbackProfile.cycle_days || 'Standard'})`,
+      seasonBadge: lang === 'en' ? 'Agro Recommended' : (lang === 'mr' ? 'शिफारस केलेले पीक' : 'अनुशंसित फसल'),
+      varieties: lang === 'en' ? `Certified Regional Varieties (${cleanName})` : (lang === 'mr' ? `प्रमाणित विभागीय वाण (${cropLocal})` : `प्रमाणित क्षेत्रीय किस्में (${cropLocal})`),
       yield: '30 – 40 Q/Ha',
-      yieldSub: 'Optimal Management',
+      yieldSub: lang === 'en' ? 'Optimal Management' : (lang === 'mr' ? 'उत्तम व्यवस्थापन' : 'इष्टतम प्रबंधन'),
       water: fallbackProfile.water_demand || 'Moderate',
       waterSub: fallbackProfile.soil_type || 'Loamy Soils',
       price: fallbackProfile.economic_outlook ? fallbackProfile.economic_outlook.split(' ')[0] : 'High Liquidity',
-      priceSub: 'Active Mandi Trade',
+      priceSub: lang === 'en' ? 'Active Mandi Trade' : (lang === 'mr' ? 'बाजारपेठेत चांगली मागणी' : 'सक्रिय मंडी मांग'),
       duration: fallbackProfile.cycle_days || '90 – 120 Days',
-      durationSub: 'Season Duration',
-      basalDose: 'Apply balanced NPK dose as per University guidelines.',
-      rationale: ct ? ct.rationale : ((n, rain) => `Strong agronomic fit for current field conditions with balanced soil test indices.`)
+      durationSub: lang === 'en' ? 'Season Duration' : (lang === 'mr' ? 'हंगाम कालावधी' : 'मौसम अवधि'),
+      basalDose: lang === 'en' ? 'Apply balanced NPK dose as per University guidelines.' : (lang === 'mr' ? 'विद्यापीठाच्या शिफारशीनुसार संतुलित खतांचा डोस द्या.' : 'विश्वविद्यालय दिशानिर्देशों के अनुसार संतुलित NPK खुराक दें।'),
+      rationale: (n, rain) => lang === 'en'
+        ? `Strong agronomic fit for current field conditions with balanced soil test indices.`
+        : (lang === 'mr'
+          ? `सध्याच्या माती चाचणीनुसार व हवामानानुसार हे पीक आपल्या शेतासाठी अत्यंत अनुकूल आहे.`
+          : `वर्तमान मिट्टी परीक्षण और जलवायु के अनुसार यह फसल आपके खेत के लिए बहुत अनुकूल है।`)
     };
   }
 
@@ -851,7 +1551,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Language Switcher Controller ──
   const langSelect = document.getElementById('lang-select');
 
-  function applyLanguage(lang) {
+      function applyLanguage(lang) {
     if (!TRANSLATIONS[lang]) lang = 'hi';
     state.language = lang;
     localStorage.setItem('agrisense_lang', lang);
@@ -927,11 +1627,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (bText) bText.textContent = t.btnFertCalc;
     }
 
-    // Disease Doctor Button
+    // Disease Doctor Header & Filter
+    const pestDocHeaderH2 = document.querySelector('#crop-doctor .panel-title-group h2');
+    const pestDocHeaderP = document.querySelector('#crop-doctor .panel-title-group p');
+    if (pestDocHeaderH2) pestDocHeaderH2.textContent = t.pestDoctorTitle;
+    if (pestDocHeaderP) pestDocHeaderP.textContent = t.pestDoctorSub;
+
     const btnSearchDis = document.getElementById('btn-search-disease');
-    if (btnSearchDis) btnSearchDis.textContent = t.searchPathologyBtn;
+    if (btnSearchDis) {
+      const sp = btnSearchDis.querySelector('span');
+      if (sp) sp.textContent = t.searchPathologyBtn;
+      else btnSearchDis.textContent = t.searchPathologyBtn;
+    }
     const docCropLbl = document.querySelector('label[for="doctor-crop-select"]');
     if (docCropLbl) docCropLbl.textContent = t.diseaseFilterCrop;
+
+    const lblSymptomTap = document.getElementById('lbl-symptom-tap');
+    if (lblSymptomTap) lblSymptomTap.textContent = t.symptomTapLabel;
 
     // Bottom Section Subtabs
     const subAdvisory = document.getElementById('btn-subtab-advisory');
@@ -944,13 +1656,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Voice button labels
     document.querySelectorAll('.btn-voice-readout').forEach(btn => {
       if (!btn.classList.contains('is-speaking')) {
-        btn.innerHTML = lang === 'en' ? '🔊 Listen' : (lang === 'mr' ? '🔊 ऐका / Listen' : '🔊 सुनिए / Listen');
+        btn.innerHTML = t.listenBtnText;
       }
     });
 
-    // Re-render recommendations if loaded
-    if (state.lastRecommendationsData) {
-      renderRecommendations(state.lastRecommendationsData);
+    // Share button labels
+    document.querySelectorAll('.btn-whatsapp-share').forEach(btn => {
+      btn.innerHTML = t.shareBtnText;
+    });
+
+    // Re-render recommendations (initialize defaults if empty so initial page is localized)
+    if (!state.lastRecommendationsData) {
+      state.lastRecommendationsData = {
+        crop: 'rice',
+        confidence: 94,
+        recommendations: [
+          { crop: 'rice', confidence: 94 },
+          { crop: 'cotton', confidence: 82 },
+          { crop: 'maize', confidence: 74 }
+        ]
+      };
+    }
+    renderRecommendations(state.lastRecommendationsData);
+
+    // Re-render disease doctor cards if active or loaded
+    if (state.lastDiseaseData) {
+      renderDiseases(state.lastDiseaseData);
     }
   }
 
@@ -1010,62 +1741,107 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function renderRecommendations(data, currentN = 92, currentRain = 210) {
+      function renderRecommendations(data, currentN = 92, currentRain = 210) {
     state.lastRecommendationsData = data;
     const recs = data.recommendations || [];
     if (recs.length === 0) return;
+
+    const lang = state.language || 'hi';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
 
     // #1 Best Choice Crop
     const best = recs[0];
     const bestMeta = getCropMeta(best.crop, best.profile);
 
-    const bestCard = document.getElementById('best-crop-card');
+    const bestChoiceBadge = document.getElementById('hero-choice-badge');
+    const bestConfChip = document.getElementById('hero-confidence-chip');
     const bestCropName = document.getElementById('best-crop-name');
     const bestSeason = document.getElementById('best-crop-season');
     const bestVarieties = document.getElementById('best-crop-varieties');
     const bestGaugeVal = document.getElementById('best-gauge-val');
     const bestGaugeFill = document.getElementById('best-gauge-fill');
+    const gaugeTitle = document.getElementById('gauge-caption-title');
+    const gaugeSub = document.getElementById('gauge-caption-sub');
+    const whyFitsTitle = document.getElementById('why-fits-title');
     const bestRationale = document.getElementById('best-crop-rationale');
+
+    const lblStatYield = document.getElementById('lbl-stat-yield');
     const bestStatYield = document.getElementById('best-stat-yield');
     const bestStatYieldSub = document.getElementById('best-stat-yield-sub');
+
+    const lblStatWater = document.getElementById('lbl-stat-water');
     const bestStatWater = document.getElementById('best-stat-water');
     const bestStatWaterSub = document.getElementById('best-stat-water-sub');
+
+    const lblStatPrice = document.getElementById('lbl-stat-price');
     const bestStatPrice = document.getElementById('best-stat-price');
     const bestStatPriceSub = document.getElementById('best-stat-price-sub');
+
+    const lblStatDuration = document.getElementById('lbl-stat-duration');
     const bestStatDuration = document.getElementById('best-stat-duration');
     const bestStatDurationSub = document.getElementById('best-stat-duration-sub');
 
+    const lblBasalDose = document.getElementById('lbl-basal-dose');
+    const valBasalDose = document.getElementById('val-basal-dose');
+    const bestCalLink = document.getElementById('best-crop-calendar-link');
+
+    if (bestChoiceBadge) bestChoiceBadge.textContent = t.heroChoiceBadge;
+    if (bestConfChip) bestConfChip.textContent = t.heroConfidenceChip;
     if (bestCropName) bestCropName.textContent = bestMeta.fullName;
     if (bestSeason) bestSeason.textContent = bestMeta.seasonBadge;
-    if (bestVarieties) bestVarieties.textContent = `Recommended Varieties: ${bestMeta.varieties}`;
+    if (bestVarieties) bestVarieties.textContent = `${t.recVarietiesPrefix}${bestMeta.varieties}`;
     if (bestGaugeVal) bestGaugeVal.textContent = `${best.confidence}%`;
     if (bestGaugeFill) {
-      // 2 * PI * 34 = 213.6
       const offset = 213.6 - (213.6 * best.confidence / 100);
       bestGaugeFill.setAttribute('stroke-dashoffset', offset.toFixed(1));
     }
+    if (gaugeTitle) gaugeTitle.textContent = t.gaugeMatch;
+    if (gaugeSub) gaugeSub.textContent = t.gaugeFit;
+    if (whyFitsTitle) whyFitsTitle.textContent = t.whyFitsTitle;
     if (bestRationale) {
-      bestRationale.textContent = bestMeta.rationale(currentN, currentRain);
+      bestRationale.textContent = bestMeta.rationale(currentN, currentRain, lang);
     }
+
+    if (lblStatYield) lblStatYield.textContent = t.lblYield;
     if (bestStatYield) bestStatYield.textContent = bestMeta.yield;
     if (bestStatYieldSub) bestStatYieldSub.textContent = bestMeta.yieldSub;
+
+    if (lblStatWater) lblStatWater.textContent = t.lblWater;
     if (bestStatWater) bestStatWater.textContent = bestMeta.water;
     if (bestStatWaterSub) bestStatWaterSub.textContent = bestMeta.waterSub;
+
+    if (lblStatPrice) lblStatPrice.textContent = t.lblPrice;
     if (bestStatPrice) bestStatPrice.textContent = bestMeta.price;
     if (bestStatPriceSub) bestStatPriceSub.textContent = bestMeta.priceSub;
+
+    if (lblStatDuration) lblStatDuration.textContent = t.lblDuration;
     if (bestStatDuration) bestStatDuration.textContent = bestMeta.duration;
     if (bestStatDurationSub) bestStatDurationSub.textContent = bestMeta.durationSub;
+
+    if (lblBasalDose) lblBasalDose.textContent = t.lblBasalDose;
+    if (valBasalDose) valBasalDose.textContent = bestMeta.basalDose;
+    if (bestCalLink) bestCalLink.textContent = t.calendarLink;
 
     // Attach Voice & WhatsApp to new Best Choice
     const dynamicBestVoice = document.getElementById('best-voice-btn');
     if (dynamicBestVoice) {
-      const spText = `शीर्ष अनुशंसित फसल: ${bestMeta.fullName}. मैच आत्मविश्वास ${best.confidence} प्रतिशत. अपेक्षित उपज: ${bestMeta.yield}. जल आवश्यकता: ${bestMeta.water}. फसल अवधि: ${bestMeta.duration}.`;
+      dynamicBestVoice.innerHTML = t.listenBtnText;
+      const spText = lang === 'en'
+        ? `Top recommended crop: ${bestMeta.fullName}. Match confidence ${best.confidence} percent. Expected yield: ${bestMeta.yield}. Water need: ${bestMeta.water}. Duration: ${bestMeta.duration}.`
+        : (lang === 'mr'
+          ? `प्रथम शिफारस केलेले पीक: ${bestMeta.fullName}. योग्यतेचे प्रमाण ${best.confidence} टक्के. अपेक्षित उत्पादन: ${bestMeta.yield}. पाण्याची गरज: ${bestMeta.water}. कालावधी: ${bestMeta.duration}.`
+          : `शीर्ष अनुशंसित फसल: ${bestMeta.fullName}. मैच आत्मविश्वास ${best.confidence} प्रतिशत. अपेक्षित उपज: ${bestMeta.yield}. जल आवश्यकता: ${bestMeta.water}. फसल अवधि: ${bestMeta.duration}.`);
       dynamicBestVoice.onclick = () => toggleSpeech(spText, dynamicBestVoice);
     }
 
     const dynamicBestWa = document.getElementById('best-whatsapp-btn');
     if (dynamicBestWa) {
-      const waDet = `📊 *Match:* ${best.confidence}%\n🌾 *Yield:* ${bestMeta.yield}\n💧 *Water:* ${bestMeta.water}\n⏱️ *Duration:* ${bestMeta.duration}\n💰 *Mandi:* ${bestMeta.price}`;
+      dynamicBestWa.innerHTML = t.shareBtnText;
+      const waDet = `📊 *Match:* ${best.confidence}%
+🌾 *Yield:* ${bestMeta.yield}
+💧 *Water:* ${bestMeta.water}
+⏱️ *Duration:* ${bestMeta.duration}
+💰 *Mandi:* ${bestMeta.price}`;
       dynamicBestWa.onclick = () => shareOnWhatsApp(bestMeta.fullName, waDet);
     }
 
@@ -1073,23 +1849,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recs.length > 1) {
       const alt1 = recs[1];
       const alt1Meta = getCropMeta(alt1.crop, alt1.profile);
+      const alt1Tag = document.getElementById('alt-1-tag');
       const alt1Score = document.getElementById('alt-1-score');
       const alt1Title = document.getElementById('alt-1-title');
       const alt1Desc = document.getElementById('alt-1-desc');
+      const alt1LblWater = document.getElementById('alt-1-lbl-water');
       const alt1Water = document.getElementById('alt-1-water');
+      const alt1LblYield = document.getElementById('alt-1-lbl-yield');
       const alt1Yield = document.getElementById('alt-1-yield');
+      const alt1LblRisk = document.getElementById('alt-1-lbl-risk');
       const alt1Risk = document.getElementById('alt-1-risk');
+      const alt1FertLink = document.getElementById('alt-1-fert-link');
 
-      if (alt1Score) alt1Score.textContent = `${alt1.confidence}% Match`;
+      if (alt1Tag) alt1Tag.textContent = t.altTag1;
+      if (alt1Score) alt1Score.textContent = `${alt1.confidence}% ${t.altMatchText}`;
       if (alt1Title) alt1Title.textContent = alt1Meta.fullName;
-      if (alt1Desc) alt1Desc.textContent = alt1Meta.rationale(currentN, currentRain);
+      if (alt1Desc) alt1Desc.textContent = alt1Meta.rationale(currentN, currentRain, lang);
+      if (alt1LblWater) alt1LblWater.textContent = t.altLblWater;
       if (alt1Water) alt1Water.textContent = alt1Meta.water;
+      if (alt1LblYield) alt1LblYield.textContent = t.altLblYield;
       if (alt1Yield) alt1Yield.textContent = alt1Meta.yield;
+      if (alt1LblRisk) alt1LblRisk.textContent = t.altLblRisk;
       if (alt1Risk) alt1Risk.textContent = alt1Meta.priceSub;
+      if (alt1FertLink) alt1FertLink.textContent = t.altFertLink;
 
       const alt1V = document.getElementById('alt-1-voice-btn');
       if (alt1V) {
-        alt1V.onclick = () => toggleSpeech(`वैकल्पिक फसल 1: ${alt1Meta.fullName}. मैच ${alt1.confidence} प्रतिशत.`, alt1V);
+        alt1V.onclick = () => toggleSpeech(`${t.altTag1}: ${alt1Meta.fullName}. ${t.altMatchText} ${alt1.confidence}%.`, alt1V);
       }
     }
 
@@ -1097,23 +1883,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (recs.length > 2) {
       const alt2 = recs[2];
       const alt2Meta = getCropMeta(alt2.crop, alt2.profile);
+      const alt2Tag = document.getElementById('alt-2-tag');
       const alt2Score = document.getElementById('alt-2-score');
       const alt2Title = document.getElementById('alt-2-title');
       const alt2Desc = document.getElementById('alt-2-desc');
+      const alt2LblWater = document.getElementById('alt-2-lbl-water');
       const alt2Water = document.getElementById('alt-2-water');
+      const alt2LblYield = document.getElementById('alt-2-lbl-yield');
       const alt2Yield = document.getElementById('alt-2-yield');
+      const alt2LblRisk = document.getElementById('alt-2-lbl-risk');
       const alt2Risk = document.getElementById('alt-2-risk');
+      const alt2FertLink = document.getElementById('alt-2-fert-link');
 
-      if (alt2Score) alt2Score.textContent = `${alt2.confidence}% Match`;
+      if (alt2Tag) alt2Tag.textContent = t.altTag2;
+      if (alt2Score) alt2Score.textContent = `${alt2.confidence}% ${t.altMatchText}`;
       if (alt2Title) alt2Title.textContent = alt2Meta.fullName;
-      if (alt2Desc) alt2Desc.textContent = alt2Meta.rationale(currentN, currentRain);
+      if (alt2Desc) alt2Desc.textContent = alt2Meta.rationale(currentN, currentRain, lang);
+      if (alt2LblWater) alt2LblWater.textContent = t.altLblWater;
       if (alt2Water) alt2Water.textContent = alt2Meta.water;
+      if (alt2LblYield) alt2LblYield.textContent = t.altLblYield;
       if (alt2Yield) alt2Yield.textContent = alt2Meta.yield;
+      if (alt2LblRisk) alt2LblRisk.textContent = t.altLblRisk;
       if (alt2Risk) alt2Risk.textContent = alt2Meta.priceSub;
+      if (alt2FertLink) alt2FertLink.textContent = t.altFertLink;
 
       const alt2V = document.getElementById('alt-2-voice-btn');
       if (alt2V) {
-        alt2V.onclick = () => toggleSpeech(`वैकल्पिक फसल 2: ${alt2Meta.fullName}. मैच ${alt2.confidence} प्रतिशत.`, alt2V);
+        alt2V.onclick = () => toggleSpeech(`${t.altTag2}: ${alt2Meta.fullName}. ${t.altMatchText} ${alt2.confidence}%.`, alt2V);
       }
     }
   }
@@ -1472,13 +2268,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  function renderDiseases(data) {
+    function renderDiseases(data) {
     if (!diseaseResultsContainer) return;
+    state.lastDiseaseData = data;
     diseaseResultsContainer.innerHTML = '';
+
+    const lang = state.language || 'hi';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
 
     if (data.outbreak_risk && data.outbreak_risk.length > 0 && doctorRiskBanner) {
       doctorRiskBanner.classList.remove('is-hidden');
-      if (riskCropName) riskCropName.textContent = data.crop || 'Monitored Crop';
+      if (riskCropName) {
+        const cObj = CROP_NAME_I18N[(data.crop || '').toLowerCase()];
+        riskCropName.textContent = cObj ? (cObj[lang] || cObj['en']) : (data.crop || 'Monitored Crop');
+      }
       if (riskItemsList) {
         riskItemsList.innerHTML = data.outbreak_risk.map(r => `
           <div class="risk-warning-item">
@@ -1494,8 +2297,8 @@ document.addEventListener('DOMContentLoaded', () => {
       diseaseResultsContainer.innerHTML = `
         <div class="no-pathogens-box">
           <div class="no-pathogens-icon">🩺</div>
-          <h4 class="no-pathogens-title">No Pathogens Found</h4>
-          <p>No diseases matched your search criteria. Try a different crop or broader symptom keyword.</p>
+          <h4 class="no-pathogens-title">${t.noPathogensTitle}</h4>
+          <p>${t.noPathogensDesc}</p>
         </div>
       `;
       return;
@@ -1504,74 +2307,57 @@ document.addEventListener('DOMContentLoaded', () => {
     data.diseases.forEach(d => {
       const card = document.createElement('div');
       card.className = 'disease-card';
-      const dName = d.name || d.disease_name || d.disease || 'Plant Disease';
-
-      // Biological control text
-      let bioText = 'Bio-fungicide protocol';
-      if (Array.isArray(d.biological_cures) && d.biological_cures.length > 0) {
-        bioText = d.biological_cures.map(c => `• ${c}`).join('<br>');
-      } else if (d.organic_control || d.biological_cure) {
-        bioText = d.organic_control || d.biological_cure;
-      }
-
-      // Chemical remedies text
-      let chemText = 'Targeted chemical spray';
-      let speechChem = 'उचित दवा का छिड़काव करें';
-      if (Array.isArray(d.chemical_remedies) && d.chemical_remedies.length > 0) {
-        chemText = d.chemical_remedies.map(r => {
-          if (typeof r === 'object' && r !== null) {
-            const ing = r.active_ingredient || '';
-            const dose = r.dosage ? ` (${r.dosage})` : '';
-            const app = r.application ? `: ${r.application}` : '';
-            return `• <strong>${ing}</strong>${dose}${app}`;
-          }
-          return `• ${r}`;
-        }).join('<br>');
-        speechChem = typeof d.chemical_remedies[0] === 'object' ? d.chemical_remedies[0].active_ingredient : d.chemical_remedies[0];
-      } else if (d.chemical_cure || d.fungicide) {
-        chemText = d.chemical_cure || d.fungicide;
-        speechChem = chemText;
-      }
+      const loc = getLocalizedDisease(d, lang);
 
       card.innerHTML = `
         <div class="disease-header">
           <div>
-            <div class="disease-name">${dName}</div>
-            <span class="disease-crop-tag">🌱 ${d.crop ? d.crop.toUpperCase() : 'ALL CROPS'}</span>
+            <div class="disease-name">${loc.name}</div>
+            <span class="disease-crop-tag">🌱 ${loc.cropTag}</span>
           </div>
-          <span class="badge-coral">${d.pathogen_type || 'Pathogen'}</span>
+          <span class="badge-coral">${loc.pathTag}</span>
         </div>
         <div class="disease-section">
-          <h5>Diagnostic Symptoms</h5>
-          <p>${d.symptoms || 'Visual lesion details'}</p>
+          <h5>${t.diagSymptoms}</h5>
+          <p>${loc.symptoms}</p>
         </div>
         <div class="disease-section">
-          <h5>Biological & Organic Control</h5>
-          <p>${bioText}</p>
+          <h5>${t.bioControl}</h5>
+          <p>${loc.bioText}</p>
         </div>
         <div class="disease-section">
-          <h5>Chemical Fungicide / Treatment</h5>
-          <p>${chemText}</p>
+          <h5>${t.chemControl}</h5>
+          <p>${loc.chemText}</p>
         </div>
         <div class="card-action-bar">
-          <button type="button" class="btn-voice-readout btn-voice-disease">🔊 सुनिए / Listen</button>
-          <button type="button" class="btn-whatsapp-share btn-whatsapp-disease">📲 WhatsApp Share</button>
+          <button type="button" class="btn-voice-readout btn-voice-disease">${t.listenBtnText}</button>
+          <button type="button" class="btn-whatsapp-share btn-whatsapp-disease">${t.shareBtnText}</button>
         </div>
       `;
 
+      // Voice readout for disease
       const vBtn = card.querySelector('.btn-voice-disease');
       if (vBtn) {
-        const speechText = `रोग का नाम: ${dName}. फसल: ${d.crop || ''}. प्रमुख लक्षण: ${d.symptoms || ''}. अनुशंसित दवा: ${speechChem}`;
-        vBtn.addEventListener('click', () => toggleSpeech(speechText, vBtn));
+        const readout = lang === 'en'
+          ? `Disease: ${loc.name}. Symptoms: ${loc.symptoms}. Treatment: ${loc.speechChem}.`
+          : (lang === 'mr'
+            ? `रोग: ${loc.name}. लक्षणे: ${loc.symptoms}. उपचार: ${loc.speechChem}.`
+            : `रोग: ${loc.name}. लक्षण: ${loc.symptoms}. उपचार: ${loc.speechChem}.`);
+        vBtn.addEventListener('click', () => toggleSpeech(readout, vBtn));
       }
 
+      // WhatsApp share
       const waBtn = card.querySelector('.btn-whatsapp-disease');
       if (waBtn) {
-        const waDetails = `🩺 *Pathogen:* ${dName} (${d.pathogen_type || 'Disease'})
-🌱 *Crop:* ${d.crop ? d.crop.toUpperCase() : 'General'}
-🔍 *Symptoms:* ${d.symptoms || 'Visual lesions'}
-🧪 *Chemical Remedy:* ${speechChem}`;
-        waBtn.addEventListener('click', () => shareOnWhatsApp(`${dName} (${d.crop || ''})`, waDetails));
+        const waText = `🩺 *${loc.name}*
+🌱 Crop: ${loc.cropTag}
+🔬 Type: ${loc.pathTag}
+
+*Symptoms:*
+${loc.symptoms.substring(0, 180)}...
+
+*Control:* ${loc.speechChem}`;
+        waBtn.addEventListener('click', () => shareOnWhatsApp(loc.name, waText));
       }
 
       diseaseResultsContainer.appendChild(card);
