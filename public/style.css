@@ -234,8 +234,13 @@ button {
   font-weight: 700;
   color: var(--pine-primary);
   font-size: 13px;
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
+  pointer-events: none;
 }
 
 .lang-dropdown {
@@ -2404,9 +2409,30 @@ button {
 
 .state-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 1.2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.state-metrics-grid .stat-card {
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 12px 14px;
+}
+
+@media (max-width: 768px) {
+  .state-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .state-metrics-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .state-stat-value {
