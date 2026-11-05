@@ -206,6 +206,7 @@ def predict_crop(req: CropPredictionRequest):
         raise HTTPException(status_code=500, detail=f"Inference error: {str(e)}")
 
 @router.post("/fertilizer")
+@router.post("/fertilizer-calc")
 def get_fertilizer_prescription(req: FertilizerRequest):
     try:
         crop_clean = req.target_crop.lower().strip()
@@ -252,6 +253,25 @@ def get_fertilizer_prescription(req: FertilizerRequest):
         calc["commercial_doses"] = commercial_doses
         calc["application_schedule"] = app_schedule
 
+        target_npk = calc.get("target_npk", {})
+        deficits = {
+            "target_n": round(float(target_npk.get("N", 120.0)), 1),
+            "target_p": round(float(target_npk.get("P", 60.0)), 1),
+            "target_k": round(float(target_npk.get("K", 40.0)), 1),
+            "current_n": req.nitrogen,
+            "current_p": req.phosphorus,
+            "current_k": req.potassium,
+            "n_deficit": float(calc.get("deficits", {}).get("N_deficit", 0.0)),
+            "p_deficit": float(calc.get("deficits", {}).get("P_deficit", 0.0)),
+            "k_deficit": float(calc.get("deficits", {}).get("K_deficit", 0.0))
+        }
+
+        fertilizers_summary = {
+            "urea_kg_ha": round(urea_kg, 1),
+            "dap_kg_ha": round(dap_kg, 1),
+            "mop_kg_ha": round(mop_kg, 1)
+        }
+
         state_package = None
         if req.state:
             state_package = get_state_crop_fertilizer_package(req.state, crop_clean)
@@ -260,6 +280,8 @@ def get_fertilizer_prescription(req: FertilizerRequest):
             "success": True,
             "target_crop": req.target_crop,
             "inputs": req.dict(),
+            "fertilizers": fertilizers_summary,
+            "deficits": deficits,
             "prescription": calc,
             "state_package": state_package
         }

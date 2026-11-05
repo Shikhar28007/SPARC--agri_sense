@@ -823,14 +823,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-      const res = await apiFetch('/fertilizer-calc', {
+      let res = await apiFetch('/fertilizer-calc', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
+      if (res.status === 404) {
+        res = await apiFetch('/fertilizer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
       const data = await res.json();
-      if (data.success && data.fertilizers) {
+      if (data.success && (data.fertilizers || data.prescription)) {
         renderFertilizers(data);
       } else {
         alert(data.detail || 'Fertilizer calculation failed.');
@@ -847,8 +855,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fertPlaceholder) fertPlaceholder.classList.add('is-hidden');
     if (fertContent) fertContent.classList.remove('is-hidden');
 
+    let f = data.fertilizers;
+    if (!f && data.prescription) {
+      const cd = data.prescription.commercial_doses || {};
+      f = {
+        urea_kg_ha: cd.urea_kg ?? cd.urea_kg_ha ?? 0,
+        dap_kg_ha: cd.dap_kg ?? cd.dap_kg_ha ?? 0,
+        mop_kg_ha: cd.mop_kg ?? cd.mop_kg_ha ?? 0
+      };
+    }
+    if (!f) {
+      f = { urea_kg_ha: 0, dap_kg_ha: 0, mop_kg_ha: 0 };
+    }
+    data.fertilizers = f;
     state.lastFertData = data;
-    const f = data.fertilizers;
 
     const metricUrea = document.getElementById('metric-urea');
     const metricDap = document.getElementById('metric-dap');
@@ -927,7 +947,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const chartDiv = document.getElementById('fert-plotly-chart');
     if (!chartDiv) return;
 
-    const d = data.deficits || {};
+    let d = data.deficits;
+    if (!d && data.prescription) {
+      const p = data.prescription;
+      const tnpk = p.target_npk || {};
+      d = {
+        target_n: tnpk.N || 120,
+        target_p: tnpk.P || 60,
+        target_k: tnpk.K || 40,
+        current_n: data.inputs?.nitrogen || 92,
+        current_p: data.inputs?.phosphorus || 46,
+        current_k: data.inputs?.potassium || 44
+      };
+    }
+    d = d || {};
     const trace1 = {
       x: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)'],
       y: [d.target_n || 120, d.target_p || 60, d.target_k || 40],
