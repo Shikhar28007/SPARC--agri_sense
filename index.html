@@ -46,6 +46,14 @@
 
       <!-- Right Utility Controls -->
       <div class="header-actions">
+        <button type="button" class="btn-welcome-toggle" id="btn-welcome-toggle" title="Welcome Guide / मंच परिचय">
+          <span class="icon">ℹ️</span> <span class="label">Guide</span>
+        </button>
+        <button type="button" class="btn-history-header" id="btn-history-toggle" title="Search History / पिछला खोज इतिहास">
+          <span class="btn-history-icon">📜</span>
+          <span class="btn-history-text">History</span>
+          <span class="history-badge" id="history-badge-count">0</span>
+        </button>
         <div class="lang-selector" title="Select Language / भाषा चुनें / भाषा निवडा">
           <span class="lang-icon" aria-hidden="true">文A</span>
           <select id="lang-select" class="lang-dropdown" aria-label="Select Language" title="Select Language">
@@ -104,6 +112,77 @@
 
   <!-- Main App Canvas -->
   <main class="main-container">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- OPENING PAGE / WELCOME LANDING GATEWAY                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="welcome-gateway-card" id="welcome-gateway-card">
+      <div class="welcome-gateway-banner">
+        <div class="welcome-header-content">
+          <div class="welcome-top-tag">
+            <span class="welcome-pulse-dot"></span>
+            <span>National Mission for Sustainable Agriculture (NMSA) • ICAR Powered</span>
+          </div>
+          <h1 class="welcome-main-title">
+            SPARC AgriSense AI
+            <span class="welcome-sub-title">Precision Agricultural Decision Engine • भारतीय किसान समृद्धि मंच</span>
+          </h1>
+          <p class="welcome-desc">
+            Transform soil test reports, live district weather telemetry, and ICAR agricultural university research into customized, profitable farming decisions.
+          </p>
+          <div class="welcome-cta-row">
+            <button type="button" class="btn-welcome-primary" id="btn-welcome-start">
+              <span>🚀 Launch Crop Advisory (शुरू करें)</span>
+            </button>
+            <button type="button" class="btn-welcome-secondary" id="btn-welcome-history">
+              <span>📜 View Past Searches (इतिहास)</span>
+            </button>
+            <button type="button" class="btn-welcome-dismiss" id="btn-welcome-minimize" title="Minimize welcome overview">
+              <span>✕ Hide</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Pillars Grid -->
+      <div class="welcome-pillars-grid">
+        <div class="welcome-pillar-item" data-jump-tab="crop-recommender">
+          <div class="pillar-icon-box">🌾</div>
+          <div class="pillar-info">
+            <h4>Smart Crop Recommender</h4>
+            <p>Predict highest-yielding crops tailored to soil N-P-K, pH, temperature, and monsoon rainfall.</p>
+            <span class="pillar-link">Open Advisor →</span>
+          </div>
+        </div>
+
+        <div class="welcome-pillar-item" data-jump-tab="fertilizer-prescriber">
+          <div class="pillar-icon-box">🧪</div>
+          <div class="pillar-info">
+            <h4>Precision Fertilizer Prescriber</h4>
+            <p>Convert soil deficits into exact 45kg Urea, 50kg DAP, and MOP bags with stage-wise split schedules.</p>
+            <span class="pillar-link">Prescribe Doses →</span>
+          </div>
+        </div>
+
+        <div class="welcome-pillar-item" data-jump-tab="disease-doctor">
+          <div class="pillar-icon-box">🩺</div>
+          <div class="pillar-info">
+            <h4>Crop Disease Doctor</h4>
+            <p>Diagnose 68+ pathogens with one-tap symptom matcher, bio-controls, and chemical remedies.</p>
+            <span class="pillar-link">Diagnose Plants →</span>
+          </div>
+        </div>
+
+        <div class="welcome-pillar-item" data-jump-tab="soil-registry">
+          <div class="pillar-icon-box">🗺️</div>
+          <div class="pillar-info">
+            <h4>State Soil Health Registry</h4>
+            <p>Explore ICAR-IISS soil benchmarks and state agricultural university fertilizer schedules across India.</p>
+            <span class="pillar-link">Explore Registry →</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <!-- TAB 1: CROP ADVISORY (Core Screen Matching Target Design)              -->
@@ -714,9 +793,16 @@
           </div>
         </div>
 
-        <!-- SUBTAB 3: Past Season Records -->
+        <!-- SUBTAB 3: Past Searches & Records -->
         <div class="subtab-panel is-hidden" id="subtab-panel-records">
-          <div class="records-cards-grid">
+          <div class="subtab-history-header">
+            <div>
+              <h4>📜 Past Searches & Soil Health History</h4>
+              <p>Click any previous search to instantly restore inputs and view recommendations.</p>
+            </div>
+            <button type="button" class="btn-clear-history-inline" id="btn-clear-history-inline">🗑️ Clear History</button>
+          </div>
+          <div class="records-cards-grid" id="inline-history-container">
             <div class="record-card">
               <div class="record-top">
                 <span class="record-season">Kharif 2024</span>
@@ -1107,6 +1193,41 @@
       </div>
     </div>
   </footer>
+
+    <!-- Search & Calculation History Modal Drawer -->
+  <div class="modal-overlay" id="history-modal" aria-hidden="true">
+    <div class="modal-card history-modal-card">
+      <div class="modal-header">
+        <div class="history-modal-title-group">
+          <h3>📜 Search & Calculation History</h3>
+          <span class="history-modal-sub">Access and restore your previous soil tests, recommendations, and fertilizer doses</span>
+        </div>
+        <button type="button" class="modal-close" id="history-modal-close-btn" aria-label="Close history">&times;</button>
+      </div>
+
+      <div class="history-controls-bar">
+        <div class="history-filter-chips">
+          <button type="button" class="history-filter-chip active" data-filter="all">All</button>
+          <button type="button" class="history-filter-chip" data-filter="crop">🌾 Crop Advisory</button>
+          <button type="button" class="history-filter-chip" data-filter="fert">🧪 Fertilizer</button>
+          <button type="button" class="history-filter-chip" data-filter="doctor">🩺 Pest Doctor</button>
+        </div>
+        <button type="button" class="btn-clear-history" id="btn-clear-history" title="Clear all history">
+          🗑️ Clear All
+        </button>
+      </div>
+
+      <div class="history-items-container" id="history-items-container">
+        <!-- Dynamically rendered by updateHistoryUI -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" id="toast-notification" aria-hidden="true">
+    <span class="toast-icon">✅</span>
+    <span class="toast-message" id="toast-message">Restored previous search successfully!</span>
+  </div>
 
   <script src="app.js"></script>
 </body>

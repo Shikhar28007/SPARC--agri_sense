@@ -2931,6 +2931,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function renderRecommendations(data, currentN = 92, currentRain = 210) {
     state.lastRecommendationsData = data;
+    // Auto-save search to History
+    try {
+      const topRec = recs[0];
+      const topMeta = topRec ? getCropMeta(topRec.crop, topRec.profile) : null;
+      saveSearchItem({
+        type: 'crop',
+        typeName: 'Crop Advisory',
+        icon: '🌾',
+        title: topMeta ? `${topMeta.fullName} • ${topRec.confidence}% Match` : 'Crop Recommendation',
+        inputs: {
+          nitrogen: currentN,
+          phosphorus: parseFloat(inputs.p?.value || 45),
+          potassium: parseFloat(inputs.k?.value || 45),
+          ph: parseFloat(inputs.ph?.value || 6.5),
+          temperature: parseFloat(sliders.temp?.value || 25),
+          humidity: parseFloat(sliders.hum?.value || 70),
+          rainfall: currentRain,
+          target_crop: document.getElementById('select-target-crop')?.value || '',
+          state: state.currentCity || ''
+        },
+        summary: `Soil N=${currentN}, P=${inputs.p?.value || 45}, K=${inputs.k?.value || 45}, pH=${inputs.ph?.value || 6.5} • Weather: ${sliders.temp?.value || 25}°C, ${currentRain}mm`,
+        details: `Top: ${topMeta?.fullName || 'Crop'} (${topRec?.confidence || 90}%)`
+      });
+    } catch (histErr) {
+      console.warn('History save error:', histErr);
+    }
+
     const recs = data.recommendations || [];
     if (recs.length === 0) return;
 
@@ -3394,6 +3421,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     data.fertilizers = f;
     state.lastFertData = data;
+    // Auto-save fertilizer calculation to History
+    try {
+      const landSize = document.getElementById('input-fert-land-size')?.value || 1.0;
+      const landUnit = document.getElementById('select-fert-land-unit')?.value || 'acre';
+      saveSearchItem({
+        type: 'fert',
+        typeName: 'Fertilizer Prescription',
+        icon: '🧪',
+        title: `${data.target_crop || 'CROP'} • Urea: ${f.urea_kg_ha.toFixed(1)} kg, DAP: ${f.dap_kg_ha.toFixed(1)} kg, MOP: ${f.mop_kg_ha.toFixed(1)} kg/ha`,
+        inputs: {
+          nitrogen: data.inputs?.nitrogen || 90,
+          phosphorus: data.inputs?.phosphorus || 45,
+          potassium: data.inputs?.potassium || 45,
+          ph: data.inputs?.ph || 6.8,
+          target_crop: data.target_crop || '',
+          state: fertStateSelect?.value || '',
+          land_size: landSize,
+          land_unit: landUnit
+        },
+        summary: `Target: ${data.target_crop || 'Crop'} • Land: ${landSize} ${landUnit.toUpperCase()} • NPK: ${data.inputs?.nitrogen || 90}-${data.inputs?.phosphorus || 45}-${data.inputs?.potassium || 45}`,
+        details: `Prescription: ${f.urea_kg_ha.toFixed(0)} kg Urea, ${f.dap_kg_ha.toFixed(0)} kg DAP, ${f.mop_kg_ha.toFixed(0)} kg MOP/ha`
+      });
+    } catch (fertHistErr) {
+      console.warn('Fert history save error:', fertHistErr);
+    }
+
 
     const metricUrea = document.getElementById('metric-urea');
     const metricDap = document.getElementById('metric-dap');
@@ -3899,6 +3952,378 @@ ${loc.symptoms.substring(0, 180)}...
   // ─────────────────────────────────────────────────────────────────────────
   // 10. BOOTSTRAP INITIALIZATION
   // ─────────────────────────────────────────────────────────────────────────
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 10. SEARCH HISTORY & WELCOME OPENING GATEWAY ENGINE
+  // ─────────────────────────────────────────────────────────────────────────
+  const HISTORY_STORAGE_KEY = 'sparc_search_history';
+  const WELCOME_DISMISSED_KEY = 'sparc_welcome_dismissed';
+
+  function showToast(message, icon = '✅') {
+    const toast = document.getElementById('toast-notification');
+    const msgEl = document.getElementById('toast-message');
+    if (!toast || !msgEl) return;
+    msgEl.textContent = message;
+    const iconEl = toast.querySelector('.toast-icon');
+    if (iconEl) iconEl.textContent = icon;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
+  }
+
+  function getSearchHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Error reading search history:', e);
+    }
+
+    // Default pre-seeded demo records for first-time visitors
+    return [
+      {
+        id: 'hist_seed_1',
+        type: 'crop',
+        typeName: 'Crop Advisory',
+        icon: '🌾',
+        title: 'Paddy / Rice (Indica Wet) • 94% Match',
+        timestamp: Date.now() - 3600000,
+        formattedTime: 'Today',
+        inputs: {
+          nitrogen: 92,
+          phosphorus: 46,
+          potassium: 44,
+          ph: 6.8,
+          temperature: 22.2,
+          humidity: 75,
+          rainfall: 210,
+          target_crop: 'rice',
+          state: 'Uttar Pradesh'
+        },
+        summary: 'Soil: N=92, P=46, K=44, pH=6.8 • Weather: 22.2°C, 210mm • Uttar Pradesh',
+        details: 'Top Recommended: Paddy (94%), Jute (88%), Papaya (81%)'
+      },
+      {
+        id: 'hist_seed_2',
+        type: 'fert',
+        typeName: 'Fertilizer Prescription',
+        icon: '🧪',
+        title: 'Urea: 49 kg/ha, DAP: 30 kg/ha, MOP: 27 kg/ha',
+        timestamp: Date.now() - 7200000,
+        formattedTime: 'Earlier Today',
+        inputs: {
+          nitrogen: 92,
+          phosphorus: 46,
+          potassium: 44,
+          ph: 6.8,
+          target_crop: 'RICE',
+          state: 'Uttar Pradesh',
+          land_size: 1.0,
+          land_unit: 'acre'
+        },
+        summary: 'Target: Rice • 1.0 Acre • UP Baseline • NPK: 92-46-44',
+        details: 'Prescription: 49 kg Urea, 30 kg DAP, 27 kg MOP with 3-stage split application'
+      }
+    ];
+  }
+
+  function saveSearchItem(item) {
+    try {
+      let history = getSearchHistory().filter(h => !h.id.startsWith('hist_seed_'));
+      item.id = 'hist_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+      item.timestamp = Date.now();
+      const d = new Date(item.timestamp);
+      item.formattedTime = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ', ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      history.unshift(item);
+      if (history.length > 30) history.pop();
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      updateHistoryUI();
+    } catch (e) {
+      console.warn('Error saving search history:', e);
+    }
+  }
+
+  function deleteSearchItem(id) {
+    try {
+      let history = getSearchHistory().filter(h => h.id !== id);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      updateHistoryUI();
+      showToast('Deleted search record', '🗑️');
+    } catch (e) {
+      console.warn('Error deleting history item:', e);
+    }
+  }
+
+  function clearAllSearchHistory() {
+    try {
+      localStorage.removeItem(HISTORY_STORAGE_KEY);
+      updateHistoryUI();
+      showToast('Search history cleared', '🗑️');
+    } catch (e) {
+      console.warn('Error clearing history:', e);
+    }
+  }
+
+  function restoreSearchItem(id) {
+    const item = getSearchHistory().find(h => h.id === id);
+    if (!item) return;
+
+    if (item.type === 'crop') {
+      const tabCrop = document.getElementById('tab-btn-crop');
+      if (tabCrop) tabCrop.click();
+
+      if (sliders.n && item.inputs.nitrogen !== undefined) {
+        sliders.n.value = item.inputs.nitrogen;
+        inputs.n.value = item.inputs.nitrogen;
+      }
+      if (sliders.p && item.inputs.phosphorus !== undefined) {
+        sliders.p.value = item.inputs.phosphorus;
+        inputs.p.value = item.inputs.phosphorus;
+      }
+      if (sliders.k && item.inputs.potassium !== undefined) {
+        sliders.k.value = item.inputs.potassium;
+        inputs.k.value = item.inputs.potassium;
+      }
+      if (sliders.ph && item.inputs.ph !== undefined) {
+        sliders.ph.value = item.inputs.ph;
+        inputs.ph.value = item.inputs.ph;
+      }
+      if (sliders.temp && item.inputs.temperature !== undefined) {
+        sliders.temp.value = item.inputs.temperature;
+        inputs.temp.value = item.inputs.temperature;
+        if (displays.temp) displays.temp.textContent = Number(item.inputs.temperature).toFixed(1);
+      }
+      if (sliders.rain && item.inputs.rainfall !== undefined) {
+        sliders.rain.value = item.inputs.rainfall;
+        inputs.rain.value = item.inputs.rainfall;
+        if (displays.rain) displays.rain.textContent = Math.round(item.inputs.rainfall);
+      }
+      const selectTargetCrop = document.getElementById('select-target-crop');
+      if (selectTargetCrop && item.inputs.target_crop !== undefined) {
+        selectTargetCrop.value = item.inputs.target_crop;
+      }
+      updateSoilSpectrum(Number(inputs.n.value), Number(inputs.p.value), Number(inputs.k.value), Number(inputs.ph.value));
+
+      // Trigger predict
+      const btnPredict = document.getElementById('btn-predict-crops');
+      if (btnPredict) btnPredict.click();
+
+      showToast(`🌾 Restored Crop Advisory inputs (${item.formattedTime})`);
+    } else if (item.type === 'fert') {
+      const tabFert = document.getElementById('tab-btn-fert');
+      if (tabFert) tabFert.click();
+
+      if (fertSliders.n && item.inputs.nitrogen !== undefined) fertSliders.n.value = item.inputs.nitrogen;
+      if (fertSliders.p && item.inputs.phosphorus !== undefined) fertSliders.p.value = item.inputs.phosphorus;
+      if (fertSliders.k && item.inputs.potassium !== undefined) fertSliders.k.value = item.inputs.potassium;
+      if (fertSliders.ph && item.inputs.ph !== undefined) fertSliders.ph.value = item.inputs.ph;
+      if (fertCropSelect && item.inputs.target_crop) fertCropSelect.value = item.inputs.target_crop.toLowerCase();
+      if (fertStateSelect && item.inputs.state) fertStateSelect.value = item.inputs.state;
+
+      const landSizeInput = document.getElementById('input-fert-land-size');
+      const landUnitSelect = document.getElementById('select-fert-land-unit');
+      if (landSizeInput && item.inputs.land_size) landSizeInput.value = item.inputs.land_size;
+      if (landUnitSelect && item.inputs.land_unit) landUnitSelect.value = item.inputs.land_unit;
+
+      const fertForm = document.getElementById('fert-form');
+      if (fertForm) {
+        fertForm.dispatchEvent(new Event('submit'));
+      }
+      showToast(`🧪 Restored Fertilizer Prescription (${item.formattedTime})`);
+    } else if (item.type === 'doctor') {
+      const tabDoctor = document.getElementById('tab-btn-doctor');
+      if (tabDoctor) tabDoctor.click();
+
+      if (doctorCropSelect && item.inputs.crop !== undefined) doctorCropSelect.value = item.inputs.crop;
+      if (doctorSearchInput && item.inputs.q !== undefined) doctorSearchInput.value = item.inputs.q;
+
+      searchDiseases();
+      showToast(`🩺 Restored Disease Doctor search (${item.formattedTime})`);
+    }
+
+    const histModal = document.getElementById('history-modal');
+    if (histModal) histModal.classList.remove('open');
+  }
+
+  let activeHistoryFilter = 'all';
+
+  function updateHistoryUI(filter = activeHistoryFilter) {
+    activeHistoryFilter = filter;
+    const history = getSearchHistory();
+    const badgeEl = document.getElementById('history-badge-count');
+    if (badgeEl) badgeEl.textContent = history.length;
+
+    const filtered = filter === 'all' ? history : history.filter(h => h.type === filter);
+
+    const renderCardHtml = (item) => {
+      const badgeClass = item.type === 'crop' ? 'badge-crop' : (item.type === 'fert' ? 'badge-fert' : 'badge-doctor');
+      return `
+        <div class="history-item-card" data-id="${item.id}">
+          <div class="history-item-header">
+            <span class="history-item-badge ${badgeClass}">${item.icon} ${item.typeName}</span>
+            <span class="history-item-time">${item.formattedTime}</span>
+          </div>
+          <div class="history-item-title">${item.title}</div>
+          <div class="history-item-summary">${item.summary}</div>
+          <div class="history-item-actions">
+            <button type="button" class="btn-restore-history" data-action="restore" data-id="${item.id}">
+              🔄 Restore & View Results
+            </button>
+            <button type="button" class="btn-delete-history-item" data-action="delete" data-id="${item.id}" title="Delete record">
+              🗑️
+            </button>
+          </div>
+        </div>
+      `;
+    };
+
+    // 1. Render in modal container
+    const container = document.getElementById('history-items-container');
+    if (container) {
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="history-empty-state">
+            <div class="history-empty-icon">📜</div>
+            <h4>No Search Records Found</h4>
+            <p>Run a crop recommendation, calculate fertilizer doses, or search plant pathology to build your farm history.</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = filtered.map(renderCardHtml).join('');
+      }
+    }
+
+    // 2. Render in Subtab 3 inline container
+    const inlineContainer = document.getElementById('inline-history-container');
+    if (inlineContainer) {
+      if (filtered.length === 0) {
+        inlineContainer.innerHTML = `
+          <div class="history-empty-state" style="grid-column: 1/-1;">
+            <div class="history-empty-icon">📜</div>
+            <h4>No Search Records Yet</h4>
+            <p>Your recent field tests and advisory calculations will appear here automatically.</p>
+          </div>
+        `;
+      } else {
+        inlineContainer.innerHTML = filtered.map(renderCardHtml).join('');
+      }
+    }
+
+    // Attach event listeners to all restore and delete buttons
+    document.querySelectorAll('.btn-restore-history').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        restoreSearchItem(btn.dataset.id);
+      };
+    });
+
+    document.querySelectorAll('.btn-delete-history-item').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        deleteSearchItem(btn.dataset.id);
+      };
+    });
+  }
+
+  // Hook history UI controls
+  const btnHistoryToggle = document.getElementById('btn-history-toggle');
+  const btnWelcomeHistory = document.getElementById('btn-welcome-history');
+  const historyModal = document.getElementById('history-modal');
+  const historyModalClose = document.getElementById('history-modal-close-btn');
+  const btnClearHistory = document.getElementById('btn-clear-history');
+  const btnClearHistoryInline = document.getElementById('btn-clear-history-inline');
+
+  if (btnHistoryToggle && historyModal) {
+    btnHistoryToggle.addEventListener('click', () => {
+      updateHistoryUI();
+      historyModal.classList.add('open');
+    });
+  }
+
+  if (btnWelcomeHistory && historyModal) {
+    btnWelcomeHistory.addEventListener('click', () => {
+      updateHistoryUI();
+      historyModal.classList.add('open');
+    });
+  }
+
+  if (historyModalClose && historyModal) {
+    historyModalClose.addEventListener('click', () => {
+      historyModal.classList.remove('open');
+    });
+  }
+
+  if (historyModal) {
+    historyModal.addEventListener('click', (e) => {
+      if (e.target === historyModal) historyModal.classList.remove('open');
+    });
+  }
+
+  if (btnClearHistory) {
+    btnClearHistory.addEventListener('click', clearAllSearchHistory);
+  }
+  if (btnClearHistoryInline) {
+    btnClearHistoryInline.addEventListener('click', clearAllSearchHistory);
+  }
+
+  // Filter chips in history modal
+  document.querySelectorAll('.history-filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.history-filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      updateHistoryUI(chip.dataset.filter);
+    });
+  });
+
+  // Welcome Gateway interactions
+  const welcomeCard = document.getElementById('welcome-gateway-card');
+  const btnWelcomeStart = document.getElementById('btn-welcome-start');
+  const btnWelcomeMinimize = document.getElementById('btn-welcome-minimize');
+  const btnWelcomeToggle = document.getElementById('btn-welcome-toggle');
+
+  if (btnWelcomeStart) {
+    btnWelcomeStart.addEventListener('click', () => {
+      const tabCrop = document.getElementById('tab-btn-crop');
+      if (tabCrop) tabCrop.click();
+      const fieldCard = document.querySelector('.field-diagnostics-card');
+      if (fieldCard) fieldCard.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  if (btnWelcomeMinimize && welcomeCard) {
+    btnWelcomeMinimize.addEventListener('click', () => {
+      welcomeCard.classList.add('is-minimized');
+      localStorage.setItem(WELCOME_DISMISSED_KEY, '1');
+      showToast('Welcome guide hidden. Click "Guide" in the top bar to reopen.', 'ℹ️');
+    });
+  }
+
+  if (btnWelcomeToggle && welcomeCard) {
+    btnWelcomeToggle.addEventListener('click', () => {
+      welcomeCard.classList.toggle('is-minimized');
+      if (!welcomeCard.classList.contains('is-minimized')) {
+        welcomeCard.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  // Welcome Pillar cards click to jump
+  document.querySelectorAll('.welcome-pillar-item').forEach(pillar => {
+    pillar.addEventListener('click', () => {
+      const targetTab = pillar.dataset.jumpTab;
+      const navBtn = document.querySelector(`.nav-tab[data-tab="${targetTab}"]`);
+      if (navBtn) navBtn.click();
+      const targetSection = document.getElementById(targetTab);
+      if (targetSection) targetSection.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+
   async function initApp() {
     applyLanguage(state.language);
     updateSoilSpectrum(92, 46, 44, 6.8);
@@ -3993,6 +4418,15 @@ ${loc.symptoms.substring(0, 180)}...
 
     // 5. Auto-Detect Weather & Field Location (GPS / IP Telemetry)
     autoDetectWeather(false);
+    // 6. Initialize Search History UI & Seed Data
+    updateHistoryUI();
+
+    // Check if user previously dismissed welcome card
+    if (localStorage.getItem(WELCOME_DISMISSED_KEY) === '1') {
+      const wc = document.getElementById('welcome-gateway-card');
+      if (wc) wc.classList.add('is-minimized');
+    }
+
   }
 
   initApp();
