@@ -569,58 +569,201 @@
       <div class="advisory-bottom-section">
         <div class="section-nav-bar">
           <div class="section-pills-row">
-            <button type="button" class="section-pill active">Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)</button>
-            <button type="button" class="section-pill">NPK Soil Health Spectrum</button>
-            <button type="button" class="section-pill">Past Season Records</button>
+            <button type="button" class="section-pill active" id="btn-subtab-advisory" data-subtab="advisory">Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)</button>
+            <button type="button" class="section-pill" id="btn-subtab-spectrum" data-subtab="spectrum">NPK Soil Health Spectrum</button>
+            <button type="button" class="section-pill" id="btn-subtab-records" data-subtab="records">Past Season Records</button>
           </div>
           <div class="imd-update-tag">
             <span>🕒</span> Updated Daily with IMD Agromet Bulletins
           </div>
         </div>
 
-        <div class="advisory-cards-grid">
-          <!-- Advisory Card 1: Basal Soil -->
-          <div class="expert-card">
-            <div class="expert-card-top">
-              <span class="expert-icon icon-tractor">🚜</span>
-              <h4 class="expert-title">Basal Soil Preparation</h4>
+        <!-- SUBTAB 1: Agro-Expert Advisory -->
+        <div class="subtab-panel" id="subtab-panel-advisory">
+          <div class="advisory-cards-grid">
+            <!-- Advisory Card 1: Basal Soil -->
+            <div class="expert-card">
+              <div class="expert-card-top">
+                <span class="expert-icon icon-tractor">🚜</span>
+                <h4 class="expert-title">Basal Soil Preparation</h4>
+              </div>
+              <p class="expert-body">
+                Since soil Nitrogen is in the high optimal range (92 kg/ha), avoid excessive chemical Urea application during the first 25 days to prevent stem elongation and lodging.
+              </p>
+              <div class="expert-footer">
+                <span class="stage-tag">Stage: Pre-Transplant</span>
+                <span class="priority-tag high">Priority: High</span>
+              </div>
             </div>
-            <p class="expert-body">
-              Since soil Nitrogen is in the high optimal range (92 kg/ha), avoid excessive chemical Urea application during the first 25 days to prevent stem elongation and lodging.
-            </p>
-            <div class="expert-footer">
-              <span class="stage-tag">Stage: Pre-Transplant</span>
-              <span class="priority-tag high">Priority: High</span>
+
+            <!-- Advisory Card 2: Drainage -->
+            <div class="expert-card">
+              <div class="expert-card-top">
+                <span class="expert-icon icon-drainage">🌧️</span>
+                <h4 class="expert-title">Monsoon Drainage Strategy</h4>
+              </div>
+              <p class="expert-body">
+                In heavy clay and black cotton soils, dig 30 cm deep perimeter bund trenches to safely carry away excess runoff during abrupt 40mm+ cloudburst days.
+              </p>
+              <div class="expert-footer">
+                <span class="stage-tag">Stage: Week 2–4</span>
+                <span class="priority-tag medium">Priority: Medium</span>
+              </div>
+            </div>
+
+            <!-- Advisory Card 3: Pest Alert -->
+            <div class="expert-card">
+              <div class="expert-card-top">
+                <span class="expert-icon icon-pest">🐛</span>
+                <h4 class="expert-title">Bio-Pest Alert: Yellow Stem Borer</h4>
+              </div>
+              <p class="expert-body">
+                Warm day temperatures (26–28°C) with elevated humidity promote early stem borer moths in paddy nurseries. Erect 5 pheromone traps per acre.
+              </p>
+              <div class="expert-footer">
+                <span class="stage-tag">Stage: Nursery Seedbed</span>
+                <span class="priority-tag immediate">Priority: Immediate</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          <!-- Advisory Card 2: Drainage -->
-          <div class="expert-card">
-            <div class="expert-card-top">
-              <span class="expert-icon icon-drainage">🌧️</span>
-              <h4 class="expert-title">Monsoon Drainage Strategy</h4>
+        <!-- SUBTAB 2: NPK Soil Health Spectrum -->
+        <div class="subtab-panel is-hidden" id="subtab-panel-spectrum">
+          <div class="spectrum-cards-grid">
+            <div class="spectrum-card">
+              <div class="spectrum-top">
+                <span class="spectrum-nut-name">Available Nitrogen (N)</span>
+                <span>🌱</span>
+              </div>
+              <div class="spectrum-val"><span id="spec-n-val">92</span> <span class="sub-unit">kg/ha</span></div>
+              <span class="spectrum-pill optimal" id="spec-n-badge">Optimal (60–120 kg/ha)</span>
+              <div class="spectrum-bar-track">
+                <div class="spectrum-bar-fill" id="spec-n-fill"></div>
+              </div>
+              <p class="spectrum-note">Promotes healthy vegetative growth and rapid tillering without fertilizer toxicity.</p>
             </div>
-            <p class="expert-body">
-              In heavy clay and black cotton soils, dig 30 cm deep perimeter bund trenches to safely carry away excess runoff during abrupt 40mm+ cloudburst days.
-            </p>
-            <div class="expert-footer">
-              <span class="stage-tag">Stage: Week 2–4</span>
-              <span class="priority-tag medium">Priority: Medium</span>
+
+            <div class="spectrum-card">
+              <div class="spectrum-top">
+                <span class="spectrum-nut-name">Available Phosphorus (P)</span>
+                <span>🌾</span>
+              </div>
+              <div class="spectrum-val"><span id="spec-p-val">46</span> <span class="sub-unit">kg/ha</span></div>
+              <span class="spectrum-pill adequate" id="spec-p-badge">Adequate (30–60 kg/ha)</span>
+              <div class="spectrum-bar-track">
+                <div class="spectrum-bar-fill" id="spec-p-fill"></div>
+              </div>
+              <p class="spectrum-note">Sufficient available P to anchor strong root establishment and early seedling vigor.</p>
+            </div>
+
+            <div class="spectrum-card">
+              <div class="spectrum-top">
+                <span class="spectrum-nut-name">Exchangeable Potassium (K)</span>
+                <span>🛡️</span>
+              </div>
+              <div class="spectrum-val"><span id="spec-k-val">44</span> <span class="sub-unit">kg/ha</span></div>
+              <span class="spectrum-pill adequate" id="spec-k-badge">Adequate (35–70 kg/ha)</span>
+              <div class="spectrum-bar-track">
+                <div class="spectrum-bar-fill" id="spec-k-fill"></div>
+              </div>
+              <p class="spectrum-note">Provides balanced cellular turgor, drought coping mechanism, and disease resistance.</p>
+            </div>
+
+            <div class="spectrum-card">
+              <div class="spectrum-top">
+                <span class="spectrum-nut-name">Soil Reaction (pH Level)</span>
+                <span>⚗️</span>
+              </div>
+              <div class="spectrum-val"><span id="spec-ph-val">6.8</span> <span class="sub-unit">pH</span></div>
+              <span class="spectrum-pill balanced" id="spec-ph-badge">Neutral / Ideal (6.5–7.5)</span>
+              <div class="spectrum-bar-track">
+                <div class="spectrum-bar-fill" id="spec-ph-fill"></div>
+              </div>
+              <p class="spectrum-note">Optimal range for microbiological activity and maximum micronutrient availability.</p>
             </div>
           </div>
+        </div>
 
-          <!-- Advisory Card 3: Pest Alert -->
-          <div class="expert-card">
-            <div class="expert-card-top">
-              <span class="expert-icon icon-pest">🐛</span>
-              <h4 class="expert-title">Bio-Pest Alert: Yellow Stem Borer</h4>
+        <!-- SUBTAB 3: Past Season Records -->
+        <div class="subtab-panel is-hidden" id="subtab-panel-records">
+          <div class="records-cards-grid">
+            <div class="record-card">
+              <div class="record-top">
+                <span class="record-season">Kharif 2024</span>
+                <span class="record-crop-badge">Paddy (Indica)</span>
+              </div>
+              <div class="record-metrics-row">
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Yield Achieved</span>
+                  <span class="record-metric-val">46.5 Q/Ha</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Rainfall</span>
+                  <span class="record-metric-val">218 mm</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Mandi Rate</span>
+                  <span class="record-metric-val">₹2,320 / Q</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Realization</span>
+                  <span class="record-metric-val">97% Target</span>
+                </div>
+              </div>
+              <p class="record-insight">Timely monsoon onset facilitated uniform tillering; near zero incidence of stem borer.</p>
             </div>
-            <p class="expert-body">
-              Warm day temperatures (26–28°C) with elevated humidity promote early stem borer moths in paddy nurseries. Erect 5 pheromone traps per acre.
-            </p>
-            <div class="expert-footer">
-              <span class="stage-tag">Stage: Nursery Seedbed</span>
-              <span class="priority-tag immediate">Priority: Immediate</span>
+
+            <div class="record-card">
+              <div class="record-top">
+                <span class="record-season">Rabi 2024–25</span>
+                <span class="record-crop-badge">Wheat (HD-2967)</span>
+              </div>
+              <div class="record-metrics-row">
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Yield Achieved</span>
+                  <span class="record-metric-val">52.0 Q/Ha</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Irrigations</span>
+                  <span class="record-metric-val">4 Cycles</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Mandi Rate</span>
+                  <span class="record-metric-val">₹2,425 / Q</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Realization</span>
+                  <span class="record-metric-val">98% Target</span>
+                </div>
+              </div>
+              <p class="record-insight">Favorable prolonged winter temperatures enhanced grain filling with high test weight.</p>
+            </div>
+
+            <div class="record-card">
+              <div class="record-top">
+                <span class="record-season">Kharif 2023</span>
+                <span class="record-crop-badge">Cotton (Bt Hybrid)</span>
+              </div>
+              <div class="record-metrics-row">
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Yield Achieved</span>
+                  <span class="record-metric-val">24.8 Q/Ha</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Rainfall</span>
+                  <span class="record-metric-val">185 mm</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Mandi Rate</span>
+                  <span class="record-metric-val">₹7,350 / Q</span>
+                </div>
+                <div class="record-metric-item">
+                  <span class="record-metric-label">Realization</span>
+                  <span class="record-metric-val">92% Target</span>
+                </div>
+              </div>
+              <p class="record-insight">Mid-season dry spell mitigated with supplemental drip irrigation; clean boll retention.</p>
             </div>
           </div>
         </div>

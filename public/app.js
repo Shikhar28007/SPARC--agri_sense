@@ -247,6 +247,12 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (val <= 90) markers[1].classList.add('active-pill');
       else markers[2].classList.add('active-pill');
     }
+    updateSoilSpectrum(
+      parseInt(inputs.n?.value || 92, 10),
+      parseInt(inputs.p?.value || 46, 10),
+      parseInt(inputs.k?.value || 44, 10),
+      parseFloat(sliders.ph?.value || 6.8)
+    );
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -484,7 +490,10 @@ document.addEventListener('DOMContentLoaded', () => {
       locateKvkBtn: 'Locate Nearest KVK Centre',
       btnFertCalc: '🧪 Compute Fertilizer Prescription',
       searchPathologyBtn: 'Search Pathology',
-      diseaseFilterCrop: 'Filter by Crop:'
+      diseaseFilterCrop: 'Filter by Crop:',
+      subtabAdvisory: 'Agro-Expert Advisory',
+      subtabSpectrum: 'NPK Soil Health Spectrum',
+      subtabRecords: 'Past Season Records'
     },
     hi: {
       navAdvisory: 'Advisory',
@@ -509,7 +518,10 @@ document.addEventListener('DOMContentLoaded', () => {
       locateKvkBtn: 'निकटतम KVK केंद्र खोजें',
       btnFertCalc: '🧪 Compute Fertilizer Prescription',
       searchPathologyBtn: 'Search Pathology',
-      diseaseFilterCrop: 'फसल अनुसार चुनें:'
+      diseaseFilterCrop: 'फसल अनुसार चुनें:',
+      subtabAdvisory: 'Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)',
+      subtabSpectrum: 'NPK मृदा स्वास्थ्य स्पेक्ट्रम',
+      subtabRecords: 'पिछले मौसम के रिकॉर्ड'
     },
     mr: {
       navAdvisory: 'पीक सल्ला',
@@ -534,7 +546,10 @@ document.addEventListener('DOMContentLoaded', () => {
       locateKvkBtn: 'जवळचे KVK केंद्र शोधा',
       btnFertCalc: '🧪 अचूक खत मात्रा तपासा',
       searchPathologyBtn: 'रोगाचे निदान शोधा',
-      diseaseFilterCrop: 'पिकानुसार फिल्टर करा:'
+      diseaseFilterCrop: 'पिकानुसार फिल्टर करा:',
+      subtabAdvisory: 'कृषी तज्ज्ञ सल्ला (Agro Advisory)',
+      subtabSpectrum: 'NPK माती आरोग्य स्पेक्ट्रम',
+      subtabRecords: 'मागील हंगामातील नोंदी'
     }
   };
 
@@ -673,6 +688,47 @@ document.addEventListener('DOMContentLoaded', () => {
       basalDose: 'Apply balanced NPK dose as per University guidelines.',
       rationale: ct ? ct.rationale : ((n, rain) => `Strong agronomic fit for current field conditions with balanced soil test indices.`)
     };
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // BOTTOM SECTION SUB-TABS (Advisory / Spectrum / Records)
+  // ─────────────────────────────────────────────────────────────────────────
+  const subtabPills = document.querySelectorAll('.section-pill');
+  subtabPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const targetSubtab = pill.dataset.subtab;
+      subtabPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+
+      document.querySelectorAll('.subtab-panel').forEach(panel => {
+        panel.classList.add('is-hidden');
+      });
+      const activePanel = document.getElementById(`subtab-panel-${targetSubtab}`);
+      if (activePanel) {
+        activePanel.classList.remove('is-hidden');
+      }
+    });
+  });
+
+  function updateSoilSpectrum(n, p, k, ph = 6.8) {
+    const specNVal = document.getElementById('spec-n-val');
+    const specPVal = document.getElementById('spec-p-val');
+    const specKVal = document.getElementById('spec-k-val');
+    const specPhVal = document.getElementById('spec-ph-val');
+    const specNFill = document.getElementById('spec-n-fill');
+    const specPFill = document.getElementById('spec-p-fill');
+    const specKFill = document.getElementById('spec-k-fill');
+    const specPhFill = document.getElementById('spec-ph-fill');
+
+    if (specNVal) specNVal.textContent = n;
+    if (specPVal) specPVal.textContent = p;
+    if (specKVal) specKVal.textContent = k;
+    if (specPhVal) specPhVal.textContent = ph;
+
+    if (specNFill) specNFill.style.width = `${Math.min(100, Math.round((n / 140) * 100))}%`;
+    if (specPFill) specPFill.style.width = `${Math.min(100, Math.round((p / 80) * 100))}%`;
+    if (specKFill) specKFill.style.width = `${Math.min(100, Math.round((k / 100) * 100))}%`;
+    if (specPhFill) specPhFill.style.width = `${Math.min(100, Math.round((ph / 9) * 100))}%`;
   }
 
   // ── Speech Synthesis & WhatsApp Kisan Helpers ──
@@ -876,6 +932,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnSearchDis) btnSearchDis.textContent = t.searchPathologyBtn;
     const docCropLbl = document.querySelector('label[for="doctor-crop-select"]');
     if (docCropLbl) docCropLbl.textContent = t.diseaseFilterCrop;
+
+    // Bottom Section Subtabs
+    const subAdvisory = document.getElementById('btn-subtab-advisory');
+    const subSpectrum = document.getElementById('btn-subtab-spectrum');
+    const subRecords = document.getElementById('btn-subtab-records');
+    if (subAdvisory) subAdvisory.textContent = t.subtabAdvisory;
+    if (subSpectrum) subSpectrum.textContent = t.subtabSpectrum;
+    if (subRecords) subRecords.textContent = t.subtabRecords;
 
     // Voice button labels
     document.querySelectorAll('.btn-voice-readout').forEach(btn => {
@@ -1593,6 +1657,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   async function initApp() {
     applyLanguage(state.language);
+    updateSoilSpectrum(92, 46, 44, 6.8);
     // 1. Fetch crops list
     try {
       const res = await apiFetch('/crops');

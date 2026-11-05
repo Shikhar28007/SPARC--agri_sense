@@ -1533,6 +1533,194 @@ button {
   color: #C81E1E;
 }
 
+/* Sub-tab Panels for Advisory Bottom Section */
+.subtab-panel.is-hidden {
+  display: none !important;
+}
+
+/* NPK Soil Health Spectrum Grid */
+.spectrum-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.spectrum-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-subtle);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.spectrum-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.spectrum-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.spectrum-nut-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.spectrum-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--pine-primary);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.spectrum-val .sub-unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.spectrum-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  margin-bottom: 10px;
+}
+
+.spectrum-pill.optimal {
+  background: #E8F5E9;
+  color: #1C4A32;
+}
+
+.spectrum-pill.adequate {
+  background: #FEF9EE;
+  color: #8C6219;
+}
+
+.spectrum-pill.balanced {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+.spectrum-pill.low {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.spectrum-bar-track {
+  width: 100%;
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.spectrum-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--pine-primary);
+  transition: width 0.3s ease;
+}
+
+.spectrum-note {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.45;
+}
+
+/* Past Season Records Grid */
+.records-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.record-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.record-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.record-season {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.record-crop-badge {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-subtle);
+  color: var(--pine-primary);
+}
+
+.record-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: var(--bg-canvas);
+  border-radius: var(--radius-sm);
+}
+
+.record-metric-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.record-metric-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.record-metric-val {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.record-insight {
+  font-size: 12px;
+  color: var(--text-body);
+  line-height: 1.4;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+}
+
+@media (max-width: 900px) {
+  .spectrum-cards-grid,
+  .records-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    6. KISAN HELP / SUPPORT BANNER
    ═══════════════════════════════════════════════════════════════════════════ */
