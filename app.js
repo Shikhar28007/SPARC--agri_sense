@@ -468,11 +468,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   const TRANSLATIONS = {
     en: {
-      navAdvisory: 'Advisory',
+      navAdvisory: 'Crop Advisory',
       navWeather: 'Weather Alerts',
-      navSoil: 'Soil Health',
+      navSoil: 'Fertilizer Prescriber',
       navDoctor: 'Pest Doctor',
-      navMandi: 'Mandi Rates',
+      navMandi: 'Soil Health Registry',
       advisorBadge: 'Kharif 2025 Advisory Cycle • ICAR-KVK Validated Algorithm',
       advisorTitle: 'Farmer’s Crop Advisor <span class="hindi-sub">| Precision Soil Intelligence</span>',
       advisorSubtitle: 'Tailored agronomic guidance rooted in real-time district weather baselines, rainfall patterns, and lab-tested N-P-K soil health indicators.',
@@ -496,11 +496,11 @@ document.addEventListener('DOMContentLoaded', () => {
       subtabRecords: 'Past Season Records'
     },
     hi: {
-      navAdvisory: 'Advisory',
+      navAdvisory: 'फसल सलाह (Advisory)',
       navWeather: 'मौसम अलर्ट',
-      navSoil: 'मिट्टी स्वास्थ्य',
-      navDoctor: 'कीट डॉक्टर',
-      navMandi: 'मंडी भाव',
+      navSoil: 'उर्वरक पर्चा (Fertilizer)',
+      navDoctor: 'कीट डॉक्टर (Pest Doctor)',
+      navMandi: 'मृदा स्वास्थ्य रजिस्ट्री (Soil Health)',
       advisorBadge: 'खरीफ 2025 कृषि सलाह चक्र • ICAR-KVK मान्य एल्गोरिथम',
       advisorTitle: 'Farmer’s Crop Advisor <span class="hindi-sub">| फसल और मिट्टी सलाहकार</span>',
       advisorSubtitle: 'वास्तविक समय जिला मौसम, वर्षा पैटर्न और प्रयोगशाला-परीक्षणित N-P-K मिट्टी संकेतकों पर आधारित सटीक मार्गदर्शन।',
@@ -524,11 +524,11 @@ document.addEventListener('DOMContentLoaded', () => {
       subtabRecords: 'पिछले मौसम के रिकॉर्ड'
     },
     mr: {
-      navAdvisory: 'पीक सल्ला',
+      navAdvisory: 'पीक सल्ला (Advisory)',
       navWeather: 'हवामान अंदाज',
-      navSoil: 'मृदा आरोग्य',
+      navSoil: 'खत व्यवस्थापन (Fertilizer)',
       navDoctor: 'कीड व रोग डॉक्टर',
-      navMandi: 'बाजार भाव',
+      navMandi: 'मृदा आरोग्य नोंदवही (Soil Health)',
       advisorBadge: 'खरीप २०२५ कृषी सल्ला चक्र • ICAR-KVK प्रमाणित प्रणाली',
       advisorTitle: 'शेतकरी पीक सल्लागार <span class="hindi-sub">| माती व हवामान आधारित मार्गदर्शन</span>',
       advisorSubtitle: 'रिअल-टाइम जिल्हा हवामान, पावसाचे प्रमाण आणि लॅब-चाचणी N-P-K माती घटकांवर आधारित परिपूर्ण कृषी सल्ला.',
