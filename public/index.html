@@ -20,7 +20,7 @@
       <!-- Left Branding -->
       <div class="brand-group">
         <div class="brand-logo">
-          <svg class="leaf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="leaf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
             <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
           </svg>
@@ -37,11 +37,11 @@
 
       <!-- Center Navigation Tabs -->
       <nav class="nav-tabs" aria-label="Main Navigation">
-        <button class="nav-tab active" id="tab-btn-crop" data-tab="crop-recommender">Advisory</button>
-        <button class="nav-tab" id="tab-btn-weather" data-tab="weather-alerts">Weather Alerts</button>
-        <button class="nav-tab" id="tab-btn-fert" data-tab="fertilizer-prescriber">Soil Health</button>
-        <button class="nav-tab" id="tab-btn-doctor" data-tab="disease-doctor">Pest Doctor</button>
-        <button class="nav-tab" id="tab-btn-soil" data-tab="soil-registry">Mandi Rates</button>
+        <button type="button" class="nav-tab active" id="tab-btn-crop" data-tab="crop-recommender">Advisory</button>
+        <button type="button" class="nav-tab" id="tab-btn-weather" data-tab="weather-alerts">Weather Alerts</button>
+        <button type="button" class="nav-tab" id="tab-btn-fert" data-tab="fertilizer-prescriber">Soil Health</button>
+        <button type="button" class="nav-tab" id="tab-btn-doctor" data-tab="disease-doctor">Pest Doctor</button>
+        <button type="button" class="nav-tab" id="tab-btn-soil" data-tab="soil-registry">Mandi Rates</button>
       </nav>
 
       <!-- Right Utility Controls -->
@@ -55,7 +55,7 @@
             <a href="tel:18001801551" class="helpline-number">📞 1800-180-1551</a>
           </div>
           <div class="helpline-avatar" title="Farmer Support">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
           </div>
@@ -69,22 +69,23 @@
     <div class="modal-card">
       <div class="modal-header">
         <h3>Agro-Climatic District & Telemetry</h3>
-        <button class="modal-close" id="modal-close-btn">&times;</button>
+        <button type="button" class="modal-close" id="modal-close-btn" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="search-box">
-          <input type="text" id="city-search-input" placeholder="Type district or city (e.g. Pune, Nashik, Nagpur)...">
-          <button id="city-search-btn" class="btn-primary">Search</button>
+          <label for="city-search-input" class="visually-hidden">Search District or City</label>
+          <input type="text" id="city-search-input" title="Search District or City" aria-label="Search District or City" placeholder="Type district or city (e.g. Pune, Nashik, Nagpur)...">
+          <button type="button" id="city-search-btn" class="btn-primary">Search</button>
         </div>
         <div class="city-presets">
           <span class="preset-label">Quick Select District:</span>
-          <button class="preset-chip" data-city="Pune">Pune (Maharashtra)</button>
-          <button class="preset-chip" data-city="Nashik">Nashik (Maharashtra)</button>
-          <button class="preset-chip" data-city="Nagpur">Nagpur (Vidarbha)</button>
-          <button class="preset-chip" data-city="Indore">Indore (Madhya Pradesh)</button>
-          <button class="preset-chip" data-city="Kolhapur">Kolhapur (Maharashtra)</button>
-          <button class="preset-chip" data-city="Ludhiana">Ludhiana (Punjab)</button>
-          <button class="preset-chip" data-city="Varanasi">Varanasi (UP)</button>
+          <button type="button" class="preset-chip" data-city="Pune">Pune (Maharashtra)</button>
+          <button type="button" class="preset-chip" data-city="Nashik">Nashik (Maharashtra)</button>
+          <button type="button" class="preset-chip" data-city="Nagpur">Nagpur (Vidarbha)</button>
+          <button type="button" class="preset-chip" data-city="Indore">Indore (Madhya Pradesh)</button>
+          <button type="button" class="preset-chip" data-city="Kolhapur">Kolhapur (Maharashtra)</button>
+          <button type="button" class="preset-chip" data-city="Ludhiana">Ludhiana (Punjab)</button>
+          <button type="button" class="preset-chip" data-city="Varanasi">Varanasi (UP)</button>
         </div>
       </div>
     </div>
@@ -116,16 +117,16 @@
           <div class="zone-metrics-row">
             <span class="zone-weather-icon">☀️</span>
             <span class="zone-temp-val" id="telemetry-temp">27.4°C</span>
-            <span class="zone-status-pill" id="zone-condition-pill">Humid</span>
+            <span class="zone-status-pill zone-pill-humid" id="zone-condition-pill">Humid</span>
           </div>
           <div class="zone-sub-info">
             Expected Monsoon: <strong id="zone-monsoon-text">215 mm</strong>
-            <span class="zone-gps-trigger" id="btn-change-city" title="Change district">⚙️ Change</span>
+            <button type="button" class="zone-gps-trigger" id="btn-change-city" title="Change district">⚙️ Change</button>
           </div>
           <!-- Hidden telemetry items for legacy JS compatibility -->
-          <span id="telemetry-city" style="display:none;">Pune</span>
-          <span id="telemetry-humidity" style="display:none;">76%</span>
-          <span id="telemetry-rain" style="display:none;">215 mm</span>
+          <span id="telemetry-city" class="is-hidden">Pune</span>
+          <span id="telemetry-humidity" class="is-hidden">76%</span>
+          <span id="telemetry-rain" class="is-hidden">215 mm</span>
         </div>
       </div>
 
@@ -139,7 +140,7 @@
             <div class="card-top-bar">
               <div class="card-title-group">
                 <div class="title-icon-box">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <line x1="4" y1="21" x2="4" y2="14"></line>
                     <line x1="4" y1="10" x2="4" y2="3"></line>
                     <line x1="12" y1="21" x2="12" y2="12"></line>
@@ -166,7 +167,7 @@
               <!-- District Selector -->
               <div class="form-section">
                 <div class="section-label-row">
-                  <label class="section-label">Select District / जिला</label>
+                  <span class="section-label">Select District / जिला</span>
                   <button type="button" class="btn-auto-gps" id="btn-detect-gps">
                     <span class="gps-dot"></span> 📡 Auto GPS
                   </button>
@@ -189,7 +190,7 @@
                   <span class="slider-live-badge"><span id="val-temp">26.5</span>°C</span>
                 </div>
                 <div class="range-wrap">
-                  <input type="range" id="slider-temp" min="10" max="45" value="26.5" step="0.5" class="custom-range">
+                  <input type="range" id="slider-temp" min="10" max="45" value="26.5" step="0.5" class="custom-range" title="Average Temperature in Celsius" aria-label="Average Temperature in Celsius">
                 </div>
                 <div class="slider-markers-row">
                   <span class="marker-item">Cool (15°C)</span>
@@ -207,7 +208,7 @@
                   <span class="slider-live-badge"><span id="val-rain">210</span> mm</span>
                 </div>
                 <div class="range-wrap">
-                  <input type="range" id="slider-rain" min="20" max="500" value="210" step="5" class="custom-range">
+                  <input type="range" id="slider-rain" min="20" max="500" value="210" step="5" class="custom-range" title="Seasonal Rainfall in millimeters" aria-label="Seasonal Rainfall in millimeters">
                 </div>
                 <div class="slider-markers-row">
                   <span class="marker-item">&lt;100mm Low</span>
@@ -220,25 +221,26 @@
               <div class="nutrients-section">
                 <div class="section-label-row">
                   <span class="section-label">🔬 Soil Nutrients / मिट्टी के पोषक तत्व</span>
-                  <span class="shc-sublink" id="btn-sync-weather" title="Preset from official Soil Health Card benchmark">From Soil Health Card</span>
+                  <button type="button" class="shc-sublink" id="btn-sync-weather" title="Preset from official Soil Health Card benchmark">From Soil Health Card</button>
                 </div>
 
                 <!-- Nitrogen Row -->
                 <div class="nutrient-row-item">
                   <div class="nutrient-control-bar">
-                    <div class="nutrient-name-tag">
+                    <label for="input-n" class="nutrient-name-tag">
                       <span class="nutrient-symbol-badge badge-n">N</span>
                       <span class="nutrient-full-name">Nitrogen (नाइट्रोजन)</span>
-                    </div>
+                    </label>
                     <div class="stepper-box">
-                      <button type="button" class="stepper-btn btn-dec" data-target="n">−</button>
-                      <input type="number" id="input-n" value="92" min="0" max="300" class="stepper-val-input">
-                      <button type="button" class="stepper-btn btn-inc" data-target="n">+</button>
+                      <button type="button" class="stepper-btn btn-dec" data-target="n" aria-label="Decrease Nitrogen">−</button>
+                      <input type="number" id="input-n" value="92" min="0" max="300" class="stepper-val-input" title="Soil Nitrogen in kg per hectare" aria-label="Soil Nitrogen in kg per hectare" placeholder="92">
+                      <button type="button" class="stepper-btn btn-inc" data-target="n" aria-label="Increase Nitrogen">+</button>
                       <span class="stepper-unit">kg/ha</span>
                     </div>
                   </div>
-                  <input type="range" id="slider-n" min="0" max="250" value="92" class="hidden-sync-slider" tabindex="-1">
-                  <span id="val-n" style="display:none;">92</span>
+                  <label for="slider-n" class="visually-hidden">Nitrogen Range Slider</label>
+                  <input type="range" id="slider-n" min="0" max="250" value="92" class="hidden-sync-slider" tabindex="-1" title="Nitrogen Range Slider" aria-label="Nitrogen Range Slider">
+                  <span id="val-n" class="is-hidden">92</span>
                   <div class="nutrient-markers-row">
                     <span class="nut-marker">Deficient (&lt;50)</span>
                     <span class="nut-marker active-pill">Optimal for Grain Production</span>
@@ -249,19 +251,20 @@
                 <!-- Phosphorus Row -->
                 <div class="nutrient-row-item">
                   <div class="nutrient-control-bar">
-                    <div class="nutrient-name-tag">
+                    <label for="input-p" class="nutrient-name-tag">
                       <span class="nutrient-symbol-badge badge-p">P</span>
                       <span class="nutrient-full-name">Phosphorus (फास्फोरस)</span>
-                    </div>
+                    </label>
                     <div class="stepper-box">
-                      <button type="button" class="stepper-btn btn-dec" data-target="p">−</button>
-                      <input type="number" id="input-p" value="46" min="0" max="250" class="stepper-val-input">
-                      <button type="button" class="stepper-btn btn-inc" data-target="p">+</button>
+                      <button type="button" class="stepper-btn btn-dec" data-target="p" aria-label="Decrease Phosphorus">−</button>
+                      <input type="number" id="input-p" value="46" min="0" max="250" class="stepper-val-input" title="Soil Phosphorus in kg per hectare" aria-label="Soil Phosphorus in kg per hectare" placeholder="46">
+                      <button type="button" class="stepper-btn btn-inc" data-target="p" aria-label="Increase Phosphorus">+</button>
                       <span class="stepper-unit">kg/ha</span>
                     </div>
                   </div>
-                  <input type="range" id="slider-p" min="0" max="200" value="46" class="hidden-sync-slider" tabindex="-1">
-                  <span id="val-p" style="display:none;">46</span>
+                  <label for="slider-p" class="visually-hidden">Phosphorus Range Slider</label>
+                  <input type="range" id="slider-p" min="0" max="200" value="46" class="hidden-sync-slider" tabindex="-1" title="Phosphorus Range Slider" aria-label="Phosphorus Range Slider">
+                  <span id="val-p" class="is-hidden">46</span>
                   <div class="nutrient-markers-row">
                     <span class="nut-marker">Low (&lt;20)</span>
                     <span class="nut-marker active-pill">Adequate for Root Sturdiness</span>
@@ -272,19 +275,20 @@
                 <!-- Potassium Row -->
                 <div class="nutrient-row-item">
                   <div class="nutrient-control-bar">
-                    <div class="nutrient-name-tag">
+                    <label for="input-k" class="nutrient-name-tag">
                       <span class="nutrient-symbol-badge badge-k">K</span>
                       <span class="nutrient-full-name">Potassium (पोटाश)</span>
-                    </div>
+                    </label>
                     <div class="stepper-box">
-                      <button type="button" class="stepper-btn btn-dec" data-target="k">−</button>
-                      <input type="number" id="input-k" value="44" min="0" max="400" class="stepper-val-input">
-                      <button type="button" class="stepper-btn btn-inc" data-target="k">+</button>
+                      <button type="button" class="stepper-btn btn-dec" data-target="k" aria-label="Decrease Potassium">−</button>
+                      <input type="number" id="input-k" value="44" min="0" max="400" class="stepper-val-input" title="Soil Potassium in kg per hectare" aria-label="Soil Potassium in kg per hectare" placeholder="44">
+                      <button type="button" class="stepper-btn btn-inc" data-target="k" aria-label="Increase Potassium">+</button>
                       <span class="stepper-unit">kg/ha</span>
                     </div>
                   </div>
-                  <input type="range" id="slider-k" min="0" max="350" value="44" class="hidden-sync-slider" tabindex="-1">
-                  <span id="val-k" style="display:none;">44</span>
+                  <label for="slider-k" class="visually-hidden">Potassium Range Slider</label>
+                  <input type="range" id="slider-k" min="0" max="350" value="44" class="hidden-sync-slider" tabindex="-1" title="Potassium Range Slider" aria-label="Potassium Range Slider">
+                  <span id="val-k" class="is-hidden">44</span>
                   <div class="nutrient-markers-row">
                     <span class="nut-marker">Low (&lt;25)</span>
                     <span class="nut-marker active-pill">Balanced Disease Immunity</span>
@@ -295,37 +299,50 @@
 
               <!-- Dominant Soil Texture (Radio Matrix) -->
               <div class="form-section soil-texture-section">
-                <label class="section-label">🧱 Dominant Soil Texture (मिट्टी का प्रकार)</label>
+                <span class="section-label">🧱 Dominant Soil Texture (मिट्टी का प्रकार)</span>
                 <div class="texture-radio-grid">
-                  <label class="texture-radio-card active">
-                    <input type="radio" name="soil_texture" value="black" checked>
-                    <span class="radio-dot"></span>
-                    <span class="texture-label-text">Black Cotton Soil (काली)</span>
-                  </label>
-                  <label class="texture-radio-card">
-                    <input type="radio" name="soil_texture" value="alluvial">
-                    <span class="radio-dot"></span>
-                    <span class="texture-label-text">Alluvial / Loamy (दोमट)</span>
-                  </label>
-                  <label class="texture-radio-card">
-                    <input type="radio" name="soil_texture" value="red">
-                    <span class="radio-dot"></span>
-                    <span class="texture-label-text">Red Sandy (लाल रेतीली)</span>
-                  </label>
-                  <label class="texture-radio-card">
-                    <input type="radio" name="soil_texture" value="laterite">
-                    <span class="radio-dot"></span>
-                    <span class="texture-label-text">Laterite / Gravelly (मुरुम)</span>
-                  </label>
+                  <div class="texture-radio-card active">
+                    <input type="radio" id="st-black" name="soil_texture" value="black" checked title="Black Cotton Soil" aria-label="Black Cotton Soil">
+                    <label for="st-black" class="texture-label-wrap">
+                      <span class="radio-dot"></span>
+                      <span class="texture-label-text">Black Cotton Soil (काली)</span>
+                    </label>
+                  </div>
+                  <div class="texture-radio-card">
+                    <input type="radio" id="st-loamy" name="soil_texture" value="alluvial" title="Alluvial and Loamy Soil" aria-label="Alluvial and Loamy Soil">
+                    <label for="st-loamy" class="texture-label-wrap">
+                      <span class="radio-dot"></span>
+                      <span class="texture-label-text">Alluvial / Loamy (दोमट)</span>
+                    </label>
+                  </div>
+                  <div class="texture-radio-card">
+                    <input type="radio" id="st-red" name="soil_texture" value="red" title="Red Sandy Soil" aria-label="Red Sandy Soil">
+                    <label for="st-red" class="texture-label-wrap">
+                      <span class="radio-dot"></span>
+                      <span class="texture-label-text">Red Sandy (लाल रेतीली)</span>
+                    </label>
+                  </div>
+                  <div class="texture-radio-card">
+                    <input type="radio" id="st-laterite" name="soil_texture" value="laterite" title="Laterite or Gravelly Soil" aria-label="Laterite or Gravelly Soil">
+                    <label for="st-laterite" class="texture-label-wrap">
+                      <span class="radio-dot"></span>
+                      <span class="texture-label-text">Laterite / Gravelly (मुरुम)</span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
               <!-- Hidden telemetry parameters for backend API compatibility -->
-              <input type="range" id="slider-hum" min="10" max="100" value="76" style="display:none;">
-              <span id="val-hum" style="display:none;">76</span>
-              <input type="range" id="slider-ph" min="3.5" max="9.5" value="6.8" step="0.1" style="display:none;">
-              <span id="val-ph" style="display:none;">6.8</span>
-              <select id="select-target-crop" style="display:none;">
+              <label for="slider-hum" class="visually-hidden">Relative Humidity</label>
+              <input type="range" id="slider-hum" min="10" max="100" value="76" class="is-hidden" title="Relative Humidity Percentage" aria-label="Relative Humidity Percentage">
+              <span id="val-hum" class="is-hidden">76</span>
+
+              <label for="slider-ph" class="visually-hidden">Soil pH Level</label>
+              <input type="range" id="slider-ph" min="3.5" max="9.5" value="6.8" step="0.1" class="is-hidden" title="Soil pH Level" aria-label="Soil pH Level">
+              <span id="val-ph" class="is-hidden">6.8</span>
+
+              <label for="select-target-crop" class="visually-hidden">Target Planned Crop</label>
+              <select id="select-target-crop" class="is-hidden" title="Target Planned Crop" aria-label="Target Planned Crop">
                 <option value="" selected>-- Auto Best --</option>
               </select>
 
@@ -334,7 +351,7 @@
                 <button type="submit" id="btn-predict-crops" class="btn-recommend-primary">
                   <span class="btn-icon">🌾</span>
                   <span class="btn-text">Get Best Crop Recommendations</span>
-                  <span class="spinner" id="predict-spinner" aria-hidden="true" style="display:none;"></span>
+                  <span class="spinner is-hidden" id="predict-spinner" aria-hidden="true"></span>
                 </button>
                 <p class="nmsa-disclaimer">
                   Recommended under National Mission for Sustainable Agriculture (NMSA) parameters.
@@ -343,10 +360,10 @@
             </form>
           </div>
 
-          <!-- Krishi Vigyan Kendra Advisory Banner (Under Form) -->
+          <!-- Krishi Vigyan Kendra Advisory Card (Below Form) -->
           <div class="kvk-advisory-card">
             <div class="kvk-thumb">
-              <svg viewBox="0 0 48 48" fill="none" class="kvk-illustration" width="48" height="48">
+              <svg viewBox="0 0 48 48" fill="none" class="kvk-illustration" width="48" height="48" aria-hidden="true">
                 <rect width="48" height="48" rx="8" fill="#E8E2D2"/>
                 <path d="M6 38C14 26 24 34 32 24C38 18 42 22 46 16" stroke="#4B6B4D" stroke-width="2.5" stroke-linecap="round"/>
                 <path d="M12 42C18 32 26 36 34 30C40 25 44 28 46 22" stroke="#2D5A27" stroke-width="3" stroke-linecap="round"/>
@@ -385,8 +402,8 @@
             </div>
           </div>
 
-          <span id="results-status" style="display:none;">Ready</span>
-          <div id="crop-placeholder" style="display:none;"></div>
+          <span id="results-status" class="is-hidden">Ready</span>
+          <div id="crop-placeholder" class="is-hidden"></div>
 
           <!-- Dynamic Recommendations Container (Initially rendered with verified top match) -->
           <div class="recommendations-list" id="recommendations-list">
@@ -412,7 +429,7 @@
                 <!-- Circular Match Gauge (94%) -->
                 <div class="suitability-gauge-box">
                   <div class="radial-gauge-wrap">
-                    <svg class="gauge-svg" viewBox="0 0 80 80">
+                    <svg class="gauge-svg" viewBox="0 0 80 80" aria-hidden="true">
                       <circle class="gauge-bg-circle" cx="40" cy="40" r="34"></circle>
                       <circle class="gauge-fill-circle" id="best-gauge-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="12.8"></circle>
                     </svg>
@@ -502,8 +519,8 @@
                 </div>
                 <div class="alt-footer-row">
                   <a href="#fertilizer-prescriber" class="alt-action-link" id="alt-1-fert-link">Fertilizer Package &gt;</a>
-                  <button type="button" class="btn-mini-voice" id="alt-1-voice-btn" title="Listen in Hindi">🔊</button>
-                  <button type="button" class="btn-mini-share" id="alt-1-share-btn" title="Share via WhatsApp">📲</button>
+                  <button type="button" class="btn-mini-voice" id="alt-1-voice-btn" title="Listen in Hindi" aria-label="Listen in Hindi">🔊</button>
+                  <button type="button" class="btn-mini-share" id="alt-1-share-btn" title="Share via WhatsApp" aria-label="Share via WhatsApp">📲</button>
                 </div>
               </div>
 
@@ -533,8 +550,8 @@
                 </div>
                 <div class="alt-footer-row">
                   <a href="#fertilizer-prescriber" class="alt-action-link" id="alt-2-fert-link">Fertilizer Package &gt;</a>
-                  <button type="button" class="btn-mini-voice" id="alt-2-voice-btn" title="Listen in Hindi">🔊</button>
-                  <button type="button" class="btn-mini-share" id="alt-2-share-btn" title="Share via WhatsApp">📲</button>
+                  <button type="button" class="btn-mini-voice" id="alt-2-voice-btn" title="Listen in Hindi" aria-label="Listen in Hindi">🔊</button>
+                  <button type="button" class="btn-mini-share" id="alt-2-share-btn" title="Share via WhatsApp" aria-label="Share via WhatsApp">📲</button>
                 </div>
               </div>
 
@@ -608,7 +625,7 @@
       <div class="kisan-help-banner">
         <div class="kisan-help-left">
           <div class="kisan-badge-icon">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
               <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 0 0-1.02.24l-2.2 2.2a15.045 15.045 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1zM19 12h2a9 9 0 0 0-9-9v2c3.87 0 7 3.13 7 7zm-4 0h2c0-2.76-2.24-5-5-5v2c1.66 0 3 1.34 3 3z"/>
             </svg>
           </div>
@@ -646,7 +663,7 @@
             <div class="form-row">
               <div class="input-control full-width">
                 <label for="fert-crop-select">Target Planned Crop</label>
-                <select id="fert-crop-select" class="form-select">
+                <select id="fert-crop-select" class="form-select" title="Target Planned Crop" aria-label="Target Planned Crop">
                   <option value="rice">RICE (Paddy)</option>
                   <option value="wheat">WHEAT</option>
                   <option value="cotton">COTTON</option>
@@ -659,7 +676,7 @@
             <div class="form-row">
               <div class="input-control full-width">
                 <label for="fert-state-select">Indian State (SAU Benchmark)</label>
-                <select id="fert-state-select" class="form-select">
+                <select id="fert-state-select" class="form-select" title="Indian State Benchmark" aria-label="Indian State Benchmark">
                   <option value="">Maharashtra (MPKV Rahuri)</option>
                 </select>
               </div>
@@ -670,11 +687,11 @@
             <div class="form-row">
               <div class="input-control">
                 <label for="input-fert-land-size">Farm Land Area:</label>
-                <input type="number" id="input-fert-land-size" min="0.25" max="500" step="0.25" value="1.0" class="form-input">
+                <input type="number" id="input-fert-land-size" min="0.25" max="500" step="0.25" value="1.0" class="form-input" title="Farm Land Area" aria-label="Farm Land Area" placeholder="1.0">
               </div>
               <div class="input-control">
                 <label for="select-fert-land-unit">Area Unit:</label>
-                <select id="select-fert-land-unit" class="form-select">
+                <select id="select-fert-land-unit" class="form-select" title="Area Unit" aria-label="Area Unit">
                   <option value="acre" selected>Acre (एकड़)</option>
                   <option value="bigha">Bigha (बीघा - 0.62 Acre)</option>
                   <option value="hectare">Hectare (हेक्टेयर - 2.47 Acre)</option>
@@ -690,7 +707,7 @@
                   <label for="slider-fert-n">Current Soil N <span class="unit">kg/ha</span></label>
                   <span class="val-display" id="val-fert-n">92</span>
                 </div>
-                <input type="range" id="slider-fert-n" min="0" max="250" value="92">
+                <input type="range" id="slider-fert-n" min="0" max="250" value="92" title="Current Soil Nitrogen in kg/ha" aria-label="Current Soil Nitrogen in kg/ha">
               </div>
 
               <div class="input-control">
@@ -698,7 +715,7 @@
                   <label for="slider-fert-p">Current Soil P <span class="unit">kg/ha</span></label>
                   <span class="val-display" id="val-fert-p">46</span>
                 </div>
-                <input type="range" id="slider-fert-p" min="0" max="200" value="46">
+                <input type="range" id="slider-fert-p" min="0" max="200" value="46" title="Current Soil Phosphorus in kg/ha" aria-label="Current Soil Phosphorus in kg/ha">
               </div>
 
               <div class="input-control">
@@ -706,7 +723,7 @@
                   <label for="slider-fert-k">Current Soil K <span class="unit">kg/ha</span></label>
                   <span class="val-display" id="val-fert-k">44</span>
                 </div>
-                <input type="range" id="slider-fert-k" min="0" max="350" value="44">
+                <input type="range" id="slider-fert-k" min="0" max="350" value="44" title="Current Soil Potassium in kg/ha" aria-label="Current Soil Potassium in kg/ha">
               </div>
             </div>
 
@@ -716,13 +733,13 @@
                   <label for="slider-fert-ph">Soil pH Level</label>
                   <span class="val-display" id="val-fert-ph">6.8</span>
                 </div>
-                <input type="range" id="slider-fert-ph" min="4.0" max="9.0" value="6.8" step="0.1">
+                <input type="range" id="slider-fert-ph" min="4.0" max="9.0" value="6.8" step="0.1" title="Current Soil pH Level" aria-label="Current Soil pH Level">
               </div>
             </div>
 
             <button type="submit" id="btn-calc-fert" class="btn-recommend-primary">
               <span class="btn-text">🧪 Compute Fertilizer Prescription</span>
-              <span class="spinner" id="fert-spinner" aria-hidden="true" style="display:none;"></span>
+              <span class="spinner is-hidden" id="fert-spinner" aria-hidden="true"></span>
             </button>
           </form>
         </div>
@@ -829,17 +846,17 @@
       <div class="doctor-filter-bar">
         <div class="filter-item">
           <label for="doctor-crop-select">Filter by Crop:</label>
-          <select id="doctor-crop-select" class="form-select">
+          <select id="doctor-crop-select" class="form-select" title="Filter by Crop" aria-label="Filter by Crop">
             <option value="">All Supported Crops</option>
           </select>
         </div>
 
         <div class="filter-item grow">
           <label for="doctor-search-input">Search Symptoms or Disease Name:</label>
-          <input type="text" id="doctor-search-input" placeholder="e.g. blast, rot, blight, spots, powdery...">
+          <input type="text" id="doctor-search-input" placeholder="e.g. blast, rot, blight, spots, powdery..." title="Search Symptoms or Disease Name" aria-label="Search Symptoms or Disease Name">
         </div>
 
-        <button id="btn-search-disease" class="btn-recommend-primary" style="margin-top:auto; padding: 10px 18px;">
+        <button type="button" id="btn-search-disease" class="btn-recommend-primary btn-search-disease-action">
           <span>Search Pathology</span>
         </button>
       </div>
@@ -883,7 +900,7 @@
 
       <div class="soil-state-selector">
         <label for="state-dropdown">Select Indian State:</label>
-        <select id="state-dropdown" class="form-select"></select>
+        <select id="state-dropdown" class="form-select" title="Select Indian State" aria-label="Select Indian State"></select>
       </div>
 
       <div class="soil-state-details" id="state-details-card">

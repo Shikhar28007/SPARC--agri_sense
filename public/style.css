@@ -794,7 +794,19 @@ button {
 }
 
 .texture-radio-card input[type="radio"] {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.texture-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  cursor: pointer;
 }
 
 .radio-dot {
@@ -805,12 +817,24 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .texture-radio-card.active .radio-dot {
   border-color: var(--pine-primary);
   background: var(--pine-primary);
   box-shadow: inset 0 0 0 3px #FFFFFF;
+}
+
+.texture-label-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-body);
+}
+
+.texture-radio-card.active .texture-label-text {
+  color: var(--pine-primary);
+  font-weight: 600;
 }
 
 /* Primary CTA Button */
@@ -2005,9 +2029,140 @@ button {
   color: var(--border-input);
 }
 
-/* Utilities */
+/* Utilities & Accessibility */
 .is-hidden {
   display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Zone Condition Pills */
+.zone-pill-humid {
+  background: var(--sage-light);
+  color: var(--sage-text);
+}
+
+.zone-pill-warm {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.zone-pill-cool {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+/* Search Disease Action Button */
+.btn-search-disease-action {
+  margin-top: auto;
+  padding: 10px 18px;
+}
+
+/* Dynamic Schedule & Timeline */
+.timeline-schedule-box {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+.timeline-step-item {
+  margin-bottom: 6px;
+}
+
+/* Outbreak Risk Warning */
+.risk-warning-item {
+  font-size: 0.85rem;
+  color: #1A2C22;
+  margin-top: 0.25rem;
+}
+
+/* No Pathogens Empty State */
+.no-pathogens-box {
+  grid-column: 1 / -1;
+  padding: 30px;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.no-pathogens-icon {
+  font-size: 2rem;
+}
+
+.no-pathogens-title {
+  margin: 8px 0;
+  color: var(--text-main);
+}
+
+/* State Profile Components */
+.state-profile-card {
+  margin-top: 1.5rem;
+}
+
+.state-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.state-profile-title {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: var(--text-main);
+}
+
+.state-dominant-soil {
+  color: var(--leaf-green);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.state-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.state-stat-value {
+  font-size: 1rem;
+}
+
+.state-callout-crops {
+  margin-bottom: 1rem;
+}
+
+.state-crops-title {
+  color: var(--pine-primary);
+}
+
+.state-crops-body {
+  color: var(--text-body);
+  margin-top: 0.25rem;
+}
+
+.state-callout-sau {
+  border-left-color: #E59B2E;
+  background: #FEF9EE;
+}
+
+.state-sau-title {
+  color: #8C6219;
+}
+
+.state-sau-body {
+  color: #4A3E2C;
+  margin-top: 0.25rem;
 }
 
 .spinner {

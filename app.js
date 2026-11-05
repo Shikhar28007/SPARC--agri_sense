@@ -212,18 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateConditionPill(temp) {
     if (!zoneConditionPill) return;
     const t = parseFloat(temp);
+    zoneConditionPill.classList.remove('zone-pill-humid', 'zone-pill-warm', 'zone-pill-cool');
     if (t > 32) {
       zoneConditionPill.textContent = 'Hot / Semi-Arid';
-      zoneConditionPill.style.background = '#FEF3C7';
-      zoneConditionPill.style.color = '#92400E';
+      zoneConditionPill.classList.add('zone-pill-warm');
     } else if (t < 20) {
       zoneConditionPill.textContent = 'Cool / Temperate';
-      zoneConditionPill.style.background = '#E0F2FE';
-      zoneConditionPill.style.color = '#0369A1';
+      zoneConditionPill.classList.add('zone-pill-cool');
     } else {
       zoneConditionPill.textContent = 'Humid';
-      zoneConditionPill.style.background = '#E8F6ED';
-      zoneConditionPill.style.color = '#1D643B';
+      zoneConditionPill.classList.add('zone-pill-humid');
     }
   }
 
@@ -656,7 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   cropForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (predictSpinner) predictSpinner.style.display = 'inline-block';
+    if (predictSpinner) predictSpinner.classList.remove('is-hidden');
     if (resultsStatus) resultsStatus.textContent = 'Analyzing...';
 
     const nVal = inputs.n ? parseFloat(inputs.n.value) : parseFloat(sliders.n.value);
@@ -697,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(err);
       alert('Network error connecting to Agronomic Intelligence API.');
     } finally {
-      if (predictSpinner) predictSpinner.style.display = 'none';
+      if (predictSpinner) predictSpinner.classList.add('is-hidden');
     }
   });
 
@@ -813,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   fertForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (fertSpinner) fertSpinner.style.display = 'inline-block';
+    if (fertSpinner) fertSpinner.classList.remove('is-hidden');
 
     const payload = {
       nitrogen: parseFloat(fertSliders.n.value),
@@ -841,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error(err);
       alert('Error connecting to fertilizer calculation endpoint.');
     } finally {
-      if (fertSpinner) fertSpinner.style.display = 'none';
+      if (fertSpinner) fertSpinner.classList.add('is-hidden');
     }
   });
 
@@ -880,9 +878,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const timelineEl = document.getElementById('fert-timeline');
     if (timelineEl) {
       timelineEl.innerHTML = `
-        <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-body);">
-          <div style="margin-bottom: 6px;">🌱 <strong>Basal Application (बुवाई/रोपाई के समय):</strong> 100% DAP (${f.dap_kg_ha.toFixed(0)} kg/ha), 100% MOP (${f.mop_kg_ha.toFixed(0)} kg/ha), and 33% Urea.</div>
-          <div style="margin-bottom: 6px;">🌿 <strong>First Top Dressing (25–30 दिन बाद):</strong> 33% Urea during active tillering/vegetative phase.</div>
+        <div class="timeline-schedule-box">
+          <div class="timeline-step-item">🌱 <strong>Basal Application (बुवाई/रोपाई के समय):</strong> 100% DAP (${f.dap_kg_ha.toFixed(0)} kg/ha), 100% MOP (${f.mop_kg_ha.toFixed(0)} kg/ha), and 33% Urea.</div>
+          <div class="timeline-step-item">🌿 <strong>First Top Dressing (25–30 दिन बाद):</strong> 33% Urea during active tillering/vegetative phase.</div>
           <div>🌾 <strong>Second Top Dressing (50–55 दिन बाद):</strong> Remaining 34% Urea before panicle initiation/flowering.</div>
         </div>
       `;
@@ -1010,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (riskCropName) riskCropName.textContent = data.crop || 'Monitored Crop';
       if (riskItemsList) {
         riskItemsList.innerHTML = data.outbreak_risk.map(r => `
-          <div style="font-size: 0.85rem; color: #1A2C22; margin-top: 0.25rem;">
+          <div class="risk-warning-item">
             • <strong>${r.disease}:</strong> ${r.risk_reason} (${r.risk_level} Risk)
           </div>
         `).join('');
@@ -1021,9 +1019,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!data.diseases || data.diseases.length === 0) {
       diseaseResultsContainer.innerHTML = `
-        <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-dim);">
-          <div style="font-size: 2rem;">🩺</div>
-          <h4 style="margin: 8px 0; color: var(--text-main);">No Pathogens Found</h4>
+        <div class="no-pathogens-box">
+          <div class="no-pathogens-icon">🩺</div>
+          <h4 class="no-pathogens-title">No Pathogens Found</h4>
           <p>No diseases matched your search criteria. Try a different crop or broader symptom keyword.</p>
         </div>
       `;
@@ -1102,42 +1100,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const npk = p.baseline_soil_test || {};
     stateContent.innerHTML = `
-      <div class="card" style="margin-top: 1.5rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+      <div class="card state-profile-card">
+        <div class="state-profile-header">
           <div>
-            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--text-main);">${name}</h3>
-            <span style="color: var(--leaf-green); font-size: 0.85rem; font-weight: 600;">Dominant Soil: ${p.dominant_soil_types || 'Alluvial & Loamy'}</span>
+            <h3 class="state-profile-title">${name}</h3>
+            <span class="state-dominant-soil">Dominant Soil: ${p.dominant_soil_types || 'Alluvial & Loamy'}</span>
           </div>
           <span class="choice-star-badge">ICAR-IISS Benchmark</span>
         </div>
 
-        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1rem;">
+        <div class="state-metrics-grid">
           <div class="stat-card">
             <span class="stat-label">Nitrogen Status</span>
-            <div class="stat-value" style="font-size: 1rem;">${npk.nitrogen_status || 'Medium'}</div>
+            <div class="stat-value state-stat-value">${npk.nitrogen_status || 'Medium'}</div>
           </div>
           <div class="stat-card">
             <span class="stat-label">Phosphorus Status</span>
-            <div class="stat-value" style="font-size: 1rem;">${npk.phosphorus_status || 'Low to Medium'}</div>
+            <div class="stat-value state-stat-value">${npk.phosphorus_status || 'Low to Medium'}</div>
           </div>
           <div class="stat-card">
             <span class="stat-label">Potassium Status</span>
-            <div class="stat-value" style="font-size: 1rem;">${npk.potassium_status || 'High'}</div>
+            <div class="stat-value state-stat-value">${npk.potassium_status || 'High'}</div>
           </div>
           <div class="stat-card">
             <span class="stat-label">Organic Carbon</span>
-            <div class="stat-value" style="font-size: 1rem;">${npk.organic_carbon || '0.45 - 0.75%'}</div>
+            <div class="stat-value state-stat-value">${npk.organic_carbon || '0.45 - 0.75%'}</div>
           </div>
         </div>
 
-        <div class="why-fits-callout" style="margin-bottom: 1rem;">
-          <strong style="color: var(--pine-primary);">🌾 Recommended Staple & Commercial Crops:</strong>
-          <p style="color: var(--text-body); margin-top: 0.25rem;">${p.staple_crops || 'Paddy, Wheat, Sugarcane, Pulses'}</p>
+        <div class="why-fits-callout state-callout-crops">
+          <strong class="state-crops-title">🌾 Recommended Staple & Commercial Crops:</strong>
+          <p class="state-crops-body">${p.staple_crops || 'Paddy, Wheat, Sugarcane, Pulses'}</p>
         </div>
 
-        <div class="why-fits-callout" style="border-left-color: #E59B2E; background: #FEF9EE;">
-          <strong style="color: #8C6219;">🏛️ State Agricultural University (SAU) Fertilizer Advisory:</strong>
-          <p style="color: #4A3E2C; margin-top: 0.25rem;">${p.sau_advisory || 'Balanced application with FYM and Micronutrient zinc enhancement.'}</p>
+        <div class="why-fits-callout state-callout-sau">
+          <strong class="state-sau-title">🏛️ State Agricultural University (SAU) Fertilizer Advisory:</strong>
+          <p class="state-sau-body">${p.sau_advisory || 'Balanced application with FYM and Micronutrient zinc enhancement.'}</p>
         </div>
       </div>
     `;
