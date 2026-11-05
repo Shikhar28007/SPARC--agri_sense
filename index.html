@@ -14,6 +14,80 @@
 </head>
 <body>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- OPENING SEQUENCE LOADING SPLASH SCREEN (5-SECOND CALIBRATION INTRO)   -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="opening-splash-screen" id="opening-splash-screen" aria-label="Loading SPARC AgriSense AI">
+    <div class="splash-backdrop-glow"></div>
+    <div class="splash-particles">
+      <span class="particle p1">🌱</span>
+      <span class="particle p2">🌾</span>
+      <span class="particle p3">☀️</span>
+      <span class="particle p4">💧</span>
+    </div>
+
+    <div class="splash-content-box">
+      <!-- Pulsing Brand Emblem -->
+      <div class="splash-emblem-wrap">
+        <div class="splash-ripple r1"></div>
+        <div class="splash-ripple r2"></div>
+        <div class="splash-logo-circle">
+          <svg class="splash-leaf-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Brand Titles -->
+      <div class="splash-titles">
+        <div class="splash-gov-tag">
+          <span class="splash-live-dot"></span>
+          ICAR-IISS Benchmark • National Sustainable Agriculture Mission
+        </div>
+        <h1 class="splash-brand-heading">
+          SPARC <span class="splash-gradient-text">AgriSense AI</span>
+        </h1>
+        <p class="splash-sub-heading">Smart Crop Recommendation, Soil Telemetry & Precision Agriculture Engine</p>
+      </div>
+
+      <!-- 5-Second Loading Progress Bar & Telemetry Diagnostics -->
+      <div class="splash-loading-card">
+        <div class="splash-progress-track">
+          <div class="splash-progress-fill" id="splash-progress-fill"></div>
+        </div>
+        
+        <div class="splash-status-row">
+          <span class="splash-status-text" id="splash-status-text">🛰️ Connecting to ISRO Bhuvan & IMD Agromet Satellites...</span>
+          <span class="splash-pct-text" id="splash-pct-text">0%</span>
+        </div>
+
+        <div class="splash-calibration-grid">
+          <div class="splash-calib-pill active" id="calib-step-1">
+            <span class="calib-dot"></span> IMD Weather Telemetry
+          </div>
+          <div class="splash-calib-pill" id="calib-step-2">
+            <span class="calib-dot"></span> ICAR Soil Health Benchmarks
+          </div>
+          <div class="splash-calib-pill" id="calib-step-3">
+            <span class="calib-dot"></span> 68+ Disease Diagnostics
+          </div>
+          <div class="splash-calib-pill" id="calib-step-4">
+            <span class="calib-dot"></span> SAU Fertilizer Packages
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer with Countdown & Skip Button -->
+      <div class="splash-footer-actions">
+        <span class="splash-countdown-label" id="splash-countdown-label">Launching main workspace in <strong id="splash-seconds-countdown">5</strong>s</span>
+        <button type="button" class="btn-splash-skip" id="btn-splash-skip">
+          Skip to App <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Top App Navigation Bar -->
   <header class="app-header">
     <div class="header-container">

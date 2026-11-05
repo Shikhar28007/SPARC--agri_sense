@@ -4526,6 +4526,95 @@ ${loc.symptoms.substring(0, 180)}...
       if (wc) wc.classList.add('is-minimized');
     }
 
+    // 7. Initialize Opening Sequence Loading Splash Screen (5-second calibration)
+    initOpeningSequence();
+
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // OPENING SEQUENCE LOADING SPLASH SCREEN (5-SECOND INTRO CALIBRATION)
+  // ─────────────────────────────────────────────────────────────────────────
+  const splashScreen = document.getElementById('opening-splash-screen');
+  const splashProgressFill = document.getElementById('splash-progress-fill');
+  const splashStatusText = document.getElementById('splash-status-text');
+  const splashPctText = document.getElementById('splash-pct-text');
+  const splashCountdown = document.getElementById('splash-seconds-countdown');
+  const btnSplashSkip = document.getElementById('btn-splash-skip');
+
+  const calibSteps = [
+    document.getElementById('calib-step-1'),
+    document.getElementById('calib-step-2'),
+    document.getElementById('calib-step-3'),
+    document.getElementById('calib-step-4')
+  ];
+
+  const splashMessages = [
+    { atPct: 0, text: '🛰️ Connecting to ISRO Bhuvan & IMD Meteorological Satellites...', step: 0 },
+    { atPct: 22, text: '🌱 Calibrating ICAR-IISS Soil Health & Regional NPK Matrices...', step: 1 },
+    { atPct: 52, text: '🔬 Loading 68+ Crop Pathology Diagnostic Doctor Models...', step: 2 },
+    { atPct: 78, text: '🌾 Synchronizing State Agricultural University Fertilizer Packages...', step: 3 },
+    { atPct: 96, text: '✅ Calibration Complete: Launching SPARC AgriSense Workspace...', step: 3 }
+  ];
+
+  let splashStartTime = null;
+  const SPLASH_DURATION = 5000; // Exact 5-second delay rate
+  let splashAnimId = null;
+
+  function dismissSplashScreen() {
+    if (!splashScreen || splashScreen.classList.contains('is-dismissed')) return;
+    if (splashAnimId) cancelAnimationFrame(splashAnimId);
+    splashScreen.classList.add('is-dismissed');
+    setTimeout(() => {
+      splashScreen.style.display = 'none';
+    }, 650);
+  }
+
+  function initOpeningSequence() {
+    if (!splashScreen) return;
+    if (btnSplashSkip) {
+      btnSplashSkip.addEventListener('click', dismissSplashScreen);
+    }
+
+    function updateSplashProgress(timestamp) {
+      if (!splashStartTime) splashStartTime = timestamp;
+      const elapsed = timestamp - splashStartTime;
+      const progress = Math.min(1, elapsed / SPLASH_DURATION);
+      const pct = Math.round(progress * 100);
+
+      if (splashProgressFill) {
+        splashProgressFill.style.width = `${pct}%`;
+      }
+      if (splashPctText) {
+        splashPctText.textContent = `${pct}%`;
+      }
+
+      const remainingSecs = Math.max(1, Math.ceil((SPLASH_DURATION - elapsed) / 1000));
+      if (splashCountdown) {
+        splashCountdown.textContent = remainingSecs;
+      }
+
+      for (let i = splashMessages.length - 1; i >= 0; i--) {
+        if (pct >= splashMessages[i].atPct) {
+          if (splashStatusText) splashStatusText.textContent = splashMessages[i].text;
+          const activeIdx = splashMessages[i].step;
+          calibSteps.forEach((st, sIdx) => {
+            if (st) {
+              if (sIdx <= activeIdx) st.classList.add('active');
+              else st.classList.remove('active');
+            }
+          });
+          break;
+        }
+      }
+
+      if (progress < 1) {
+        splashAnimId = requestAnimationFrame(updateSplashProgress);
+      } else {
+        setTimeout(dismissSplashScreen, 300);
+      }
+    }
+
+    splashAnimId = requestAnimationFrame(updateSplashProgress);
   }
 
   initApp();
