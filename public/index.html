@@ -346,10 +346,21 @@
               <input type="range" id="slider-ph" min="3.5" max="9.5" value="6.8" step="0.1" class="is-hidden" title="Soil pH Level" aria-label="Soil pH Level">
               <span id="val-ph" class="is-hidden">6.8</span>
 
-              <label for="select-target-crop" class="visually-hidden">Target Planned Crop</label>
-              <select id="select-target-crop" class="is-hidden" title="Target Planned Crop" aria-label="Target Planned Crop">
-                <option value="" selected>-- Auto Best --</option>
-              </select>
+              <!-- Planned Target Crop Selector (User's Intended Crop) -->
+              <div class="form-section target-crop-section">
+                <div class="target-crop-header-row">
+                  <label for="select-target-crop" class="section-label" id="lbl-target-crop">🎯 Planned Crop to Cultivate (इच्छित फसल)</label>
+                  <span class="optional-badge" id="badge-target-crop-opt">Optional / AI Check</span>
+                </div>
+                <div class="target-crop-input-wrap">
+                  <select id="select-target-crop" class="form-select target-crop-dropdown" title="Select Crop You Want to Cultivate" aria-label="Select Crop You Want to Cultivate">
+                    <option value="" selected>✨ AI Auto-Recommend (सर्वोत्तम AI अनुशंसा)</option>
+                  </select>
+                </div>
+                <p class="target-crop-hint" id="hint-target-crop">
+                  Have a specific crop in mind? Select it above. SPARC AI will verify if your land can cultivate it or suggest the preferred high-yield alternative.
+                </p>
+              </div>
 
               <!-- Main Submission Button -->
               <div class="submit-action-wrap">
@@ -413,6 +424,9 @@
           <!-- Dynamic Recommendations Container (Initially rendered with verified top match) -->
           <div class="recommendations-list" id="recommendations-list">
             
+            <!-- Target Crop Feasibility & Preferred Alternative Advisory Banner -->
+            <div id="target-crop-advisory-banner" class="target-crop-advisory-banner is-hidden"></div>
+
             <!-- 1. #1 BEST CHOICE HERO CARD -->
             <div class="best-choice-card" id="best-crop-card">
               <div class="best-choice-badge-row">

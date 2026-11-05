@@ -494,6 +494,15 @@ document.addEventListener('DOMContentLoaded', () => {
       subtabAdvisory: 'Agro-Expert Advisory',
       subtabSpectrum: 'NPK Soil Health Spectrum',
       subtabRecords: 'Past Season Records',
+      lblTargetCrop: '🎯 Planned Crop to Cultivate (Optional)',
+      badgeTargetCropOpt: 'Optional / AI Check',
+      hintTargetCrop: 'Have a specific crop in mind? Select it above. SPARC AI will verify if your land can cultivate it or suggest the preferred high-yield alternative.',
+      optAutoRecommend: '✨ AI Auto-Recommend (Best Crop for Field)',
+      targetViableTitle: '✅ Feasibility Verified: Your field naturally supports cultivating {crop}!',
+      targetRiskyTitle: '⚠️ Cultivation Alert: {crop} has High Agronomic Risk on this land',
+      preferredHeader: '🌟 Recommended Preferred Crop for Your Land:',
+      preferredWhyLabel: '💡 Why this preferred crop is better:',
+      rescueToggleLabel: '🛠️ If you still want to cultivate {crop}: View Rescue Roadmap ▼',
       // Recommended Card Elements
       heroChoiceBadge: '⭐ #1 Best Choice for Your Field',
       heroConfidenceChip: 'High Confidence',
@@ -553,6 +562,15 @@ document.addEventListener('DOMContentLoaded', () => {
       subtabAdvisory: 'Agro-Expert Advisory (कृषि विशेषज्ञ सलाह)',
       subtabSpectrum: 'NPK मृदा स्वास्थ्य स्पेक्ट्रम',
       subtabRecords: 'पिछले मौसम के रिकॉर्ड',
+      lblTargetCrop: '🎯 आप कौन सी फसल उगाना चाहते हैं? (इच्छित फसल)',
+      badgeTargetCropOpt: 'वैकल्पिक / AI सत्यापन',
+      hintTargetCrop: 'यदि आपके मन में कोई विशिष्ट फसल है तो उसे चुनें। SPARC AI जांचेगा कि आपकी भूमि इसके अनुकूल है या नहीं, और आवश्यक होने पर बेहतर फसल सुझाएगा।',
+      optAutoRecommend: '✨ सर्वोत्तम AI अनुशंसा (खेत के लिए सबसे उपयुक्त)',
+      targetViableTitle: '✅ खेती के अनुकूल: आपकी भूमि और मौसम {crop} की खेती के सर्वथा उपयुक्त है!',
+      targetRiskyTitle: '⚠️ फसल जोखिम चेतावनी: इस खेत में {crop} की खेती में विफलता का उच्च जोखिम है',
+      preferredHeader: '🌟 सुझाई गई पसंदीदा बेहतर फसल (Recommended Preferred Crop):',
+      preferredWhyLabel: '💡 यह फसल क्यों बेहतर विकल्प है:',
+      rescueToggleLabel: '🛠️ यदि आप फिर भी {crop} उगाना चाहते हैं: आवश्यक मिट्टी सुधार व बचाव उपाय देखें ▼',
       // Recommended Card Elements
       heroChoiceBadge: '⭐ #1 आपके खेत के लिए सर्वश्रेष्ठ पसंद (Best Choice)',
       heroConfidenceChip: 'उच्च सटीकता (High Confidence)',
@@ -612,6 +630,15 @@ document.addEventListener('DOMContentLoaded', () => {
       subtabAdvisory: 'कृषी तज्ज्ञ सल्ला (Agro Advisory)',
       subtabSpectrum: 'NPK माती आरोग्य स्पेक्ट्रम',
       subtabRecords: 'मागील हंगामातील नोंदी',
+      lblTargetCrop: '🎯 आपण कोणते पीक घेऊ इच्छिता? (इच्छित पीक)',
+      badgeTargetCropOpt: 'पर्यायी / AI पडताळणी',
+      hintTargetCrop: 'आपल्या मनात विशिष्ट पीक असल्यास ते निवडा. SPARC AI आपली जमीन त्यासाठी योग्य आहे का ते तपासेल किंवा जास्त फायदेशीर पर्यायी पीक सुचवेल.',
+      optAutoRecommend: '✨ सर्वोत्तम AI शिफारस (शेतीसाठी सर्वात योग्य)',
+      targetViableTitle: '✅ लागवडीसाठी योग्य: आपली जमीन आणि हवामान {crop} च्या लागवडीसाठी अत्यंत अनुकूल आहे!',
+      targetRiskyTitle: '⚠️ पीक जोखीम इशारा: या शेतात {crop} लागवडीमध्ये अपयशाची मोठी जोखीम आहे',
+      preferredHeader: '🌟 सुचवलेले पर्यायी उत्तम पीक (Recommended Preferred Crop):',
+      preferredWhyLabel: '💡 हे पर्यायी पीक का जास्त फायदेशीर आहे:',
+      rescueToggleLabel: '🛠️ तरीही {crop} घ्यायचे असल्यास: आवश्यक जमीन सुधारणा व बचाव नियोजन पहा ▼',
       // Recommended Card Elements
       heroChoiceBadge: '⭐ #1 आपल्या शेतासाठी सर्वोत्तम निवड (Best Choice)',
       heroConfidenceChip: 'उच्च अचूकता (High Confidence)',
@@ -1335,6 +1362,43 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  const TARGET_CROP_OPTIONS = [
+    { value: '', label: { en: '✨ AI Auto-Recommend (Best Match for Soil)', hi: '✨ सर्वोत्तम AI अनुशंसा (खेत के लिए सबसे उपयुक्त)', mr: '✨ सर्वोत्तम AI शिफारस (शेतीसाठी सर्वात योग्य)' } },
+    { value: 'rice', label: { en: 'Paddy / Rice (धान / भात)', hi: 'धान / Paddy (Rice)', mr: 'भात / धान (Paddy)' } },
+    { value: 'wheat', label: { en: 'Wheat (गेहूं / गहू)', hi: 'गेहूं (Wheat)', mr: 'गहू (Wheat)' } },
+    { value: 'cotton', label: { en: 'Cotton (कपास / कापूस)', hi: 'कपास (Cotton)', mr: 'कापूस (Cotton)' } },
+    { value: 'maize', label: { en: 'Maize (मक्का / मका)', hi: 'मक्का (Maize)', mr: 'मका (Maize)' } },
+    { value: 'sugarcane', label: { en: 'Sugarcane (गन्ना / ऊस)', hi: 'गन्ना (Sugarcane)', mr: 'ऊस (Sugarcane)' } },
+    { value: 'soybean', label: { en: 'Soybean (सोयाबीन)', hi: 'सोयाबीन (Soybean)', mr: 'सोयाबीन (Soybean)' } },
+    { value: 'groundnut', label: { en: 'Groundnut (मूंगफली / भुईमूग)', hi: 'मूंगफली (Groundnut)', mr: 'भुईमूग (Groundnut)' } },
+    { value: 'mustard', label: { en: 'Mustard (सरसों / मोहरी)', hi: 'सरसों (Mustard)', mr: 'मोहरी (Mustard)' } },
+    { value: 'chickpea', label: { en: 'Chickpea / Gram (चना / हरभरा)', hi: 'चना (Gram / Chickpea)', mr: 'हरभरा / चना (Gram)' } },
+    { value: 'onion', label: { en: 'Onion (प्याज / कांदा)', hi: 'प्याज (Onion)', mr: 'कांदा (Onion)' } },
+    { value: 'potato', label: { en: 'Potato (आलू / बटाटा)', hi: 'आलू (Potato)', mr: 'बटाटा (Potato)' } },
+    { value: 'tomato', label: { en: 'Tomato (टमाटर / टोमॅटो)', hi: 'टमाटर (Tomato)', mr: 'टोमॅटो (Tomato)' } },
+    { value: 'chilli', label: { en: 'Chilli (मिर्च / मिरची)', hi: 'मिर्च (Chilli)', mr: 'मिरची (Chilli)' } },
+    { value: 'banana', label: { en: 'Banana (केला / केळी)', hi: 'केला (Banana)', mr: 'केळी (Banana)' } },
+    { value: 'apple', label: { en: 'Apple (सेब / सफरचंद)', hi: 'सेब (Apple)', mr: 'सफरचंद (Apple)' } },
+    { value: 'grapes', label: { en: 'Grapes (अंगूर / द्राक्षे)', hi: 'अंगूर (Grapes)', mr: 'द्राक्षे (Grapes)' } },
+    { value: 'papaya', label: { en: 'Papaya (पपीता / पपई)', hi: 'पपीता (Papaya)', mr: 'पपई (Papaya)' } },
+    { value: 'watermelon', label: { en: 'Watermelon (तरबूज / कलिंगड)', hi: 'तरबूज (Watermelon)', mr: 'कलिंगड (Watermelon)' } },
+    { value: 'jute', label: { en: 'Jute (पटसन / ताग)', hi: 'पटसन / जूट (Jute)', mr: 'ताग / ज्यूट (Jute)' } },
+    { value: 'pigeonpeas', label: { en: 'Pigeonpeas / Arhar (अरहर / तूर)', hi: 'अरहर / तुअर (Arhar)', mr: 'तूर (Arhar / Tur)' } },
+    { value: 'blackgram', label: { en: 'Blackgram / Urad (उड़द / उडीद)', hi: 'उड़द (Urad / Blackgram)', mr: 'उडीद (Urad)' } },
+    { value: 'mungbean', label: { en: 'Mungbean (मूंग / मूग)', hi: 'मूंग (Moong / Mungbean)', mr: 'मूग (Moong)' } },
+    { value: 'lentil', label: { en: 'Lentil / Masoor (मसूर)', hi: 'मसूर (Lentil)', mr: 'मसूर (Lentil)' } }
+  ];
+
+  function populateTargetCrops(lang) {
+    if (!selectTargetCrop) return;
+    const curVal = selectTargetCrop.value;
+    selectTargetCrop.innerHTML = TARGET_CROP_OPTIONS.map(opt => {
+      const lbl = (opt.label && (opt.label[lang] || opt.label['hi'] || opt.label['en'])) || opt.value;
+      const sel = (opt.value === curVal) ? 'selected' : '';
+      return `<option value="${opt.value}" ${sel}>${lbl}</option>`;
+    }).join('');
+  }
+
   function getCropMeta(cropKey, fallbackProfile = {}) {
     const key = (cropKey || '').toLowerCase();
     const lang = state.language || 'hi';
@@ -1393,7 +1457,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   // BOTTOM SECTION SUB-TABS (Advisory / Spectrum / Records)
   // ─────────────────────────────────────────────────────────────────────────
-  const subtabPills = document.querySelectorAll('.section-pill');
+  if (selectTargetCrop) {
+    selectTargetCrop.addEventListener('change', () => {
+      // If user changes planned crop, automatically run prediction with current parameters
+      if (state.lastRecommendationsData) {
+        predictCrops();
+      }
+    });
+  }
+
+    const subtabPills = document.querySelectorAll('.section-pill');
   subtabPills.forEach(pill => {
     pill.addEventListener('click', () => {
       const targetSubtab = pill.dataset.subtab;
@@ -1591,6 +1664,15 @@ document.addEventListener('DOMContentLoaded', () => {
       btnReset.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg> ${t.btnDefaults}`;
     }
 
+    // Target Crop Selector Labels
+    const lblTargetCrop = document.getElementById('lbl-target-crop');
+    const badgeTargetCropOpt = document.getElementById('badge-target-crop-opt');
+    const hintTargetCrop = document.getElementById('hint-target-crop');
+    if (lblTargetCrop) lblTargetCrop.textContent = t.lblTargetCrop;
+    if (badgeTargetCropOpt) badgeTargetCropOpt.textContent = t.badgeTargetCropOpt;
+    if (hintTargetCrop) hintTargetCrop.textContent = t.hintTargetCrop;
+    populateTargetCrops(lang);
+
     // Recommend Button
     const btnPredict = document.getElementById('btn-predict-crops');
     if (btnPredict) {
@@ -1749,7 +1831,105 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = state.language || 'hi';
     const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
 
-    // #1 Best Choice Crop
+    // Target Crop Feasibility & Preferred Alternative Advisory
+    const targetBanner = document.getElementById('target-crop-advisory-banner');
+    if (targetBanner) {
+      if (data.target_diagnosis && data.target_diagnosis.crop) {
+        const diag = data.target_diagnosis;
+        const targetCropKey = diag.crop.toLowerCase();
+        const targetMeta = getCropMeta(targetCropKey, diag.profile);
+        const topRec = recs[0];
+        const topMeta = getCropMeta(topRec.crop, topRec.profile);
+        const isViable = diag.risk_level === 'Low Risk' || (diag.compatibility_score >= 80);
+
+        targetBanner.classList.remove('is-hidden');
+        targetBanner.className = `target-crop-advisory-banner ${isViable ? 'is-viable' : 'is-risky'}`;
+
+        if (isViable) {
+          const vTitle = (t.targetViableTitle || '✅ Feasibility Verified: Your field naturally supports cultivating {crop}!').replace('{crop}', targetMeta.fullName);
+          targetBanner.innerHTML = `
+            <div class="advisory-header-row">
+              <div class="advisory-title-group">
+                <span class="advisory-status-icon">✅</span>
+                <div>
+                  <h4 class="advisory-title">${vTitle}</h4>
+                  <p class="advisory-summary-text">${diag.summary || (lang === 'en' ? 'Your field soil and current rainfall naturally support cultivating this crop.' : (lang === 'mr' ? 'आपली जमीन आणि स्थानिक हवामान या पिकासाठी अत्यंत अनुकूल आहे.' : 'आपकी मिट्टी और जलवायु इस फसल के लिए पूरी तरह अनुकूल है।'))}</p>
+                </div>
+              </div>
+              <span class="advisory-score-pill badge-success">${diag.compatibility_score}% Feasibility (${diag.risk_level})</span>
+            </div>
+          `;
+        } else {
+          // Chosen crop CANNOT happen or has high risk! Suggest preferred crop!
+          const rTitle = (t.targetRiskyTitle || '⚠️ Cultivation Alert: {crop} has High Agronomic Risk on this land').replace('{crop}', targetMeta.fullName);
+          
+          const issuesHtml = (diag.issues && diag.issues.length > 0)
+            ? `<div class="advisory-issues-list">
+                 <div class="advisory-issues-title">${lang === 'en' ? '⚠️ Key Limiting Factors for' : (lang === 'mr' ? '⚠️ अपयशाची मुख्य कारणे:' : '⚠️ विफलता के मुख्य कारण:')} ${targetMeta.fullName}:</div>
+                 ${diag.issues.map(iss => `<div class="advisory-issue-item">❌ <strong>${iss.param} (${iss.status}):</strong> ${iss.detail}</div>`).join('')}
+               </div>`
+            : '';
+
+          const rescueTitle = (t.rescueToggleLabel || '🛠️ If you still want to cultivate {crop}: View Rescue Roadmap ▼').replace('{crop}', targetMeta.fullName);
+
+          const rescueHtml = (diag.rescue_roadmap && diag.rescue_roadmap.length > 0)
+            ? `<button type="button" class="rescue-accordion-btn" id="btn-toggle-rescue">${rescueTitle}</button>
+               <div class="rescue-roadmap-panel is-hidden" id="rescue-panel">
+                 <div class="rescue-roadmap-title">${lang === 'en' ? 'Intensive Rescue & Soil Amendment Protocol:' : (lang === 'mr' ? 'विशेष जमीन सुधारणा व तांत्रिक उपाय:' : 'विशेष मिट्टी सुधार व तकनीकी बचाव उपाय:')}</div>
+                 ${diag.rescue_roadmap.map(step => `<div class="rescue-item"><strong>${step.category}:</strong> ${step.action}<span class="impact">💡 ${step.impact}</span></div>`).join('')}
+               </div>`
+            : '';
+
+          targetBanner.innerHTML = `
+            <div class="advisory-header-row">
+              <div class="advisory-title-group">
+                <span class="advisory-status-icon">⚠️</span>
+                <div>
+                  <h4 class="advisory-title">${rTitle}</h4>
+                  <p class="advisory-summary-text">${diag.summary}</p>
+                </div>
+              </div>
+              <span class="advisory-score-pill badge-warning">${diag.compatibility_score}% Feasibility (${diag.risk_level})</span>
+            </div>
+            ${issuesHtml}
+            
+            <!-- AI PREFERRED CROP SUGGESTION -->
+            <div class="preferred-suggestion-box">
+              <div class="preferred-header">
+                <div class="preferred-header-left">
+                  <span>🌟</span>
+                  <span>${t.preferredHeader || 'AI Recommended Preferred Crop for Your Land:'}</span>
+                </div>
+                <span class="preferred-match-tag">${topRec.confidence}% ${t.altMatchText || 'Match'}</span>
+              </div>
+              <div class="preferred-crop-highlight">${topMeta.fullName}</div>
+              <p class="preferred-desc">
+                ${lang === 'en' 
+                  ? `💡 <strong>Why switch to ${topMeta.fullName}:</strong> Rather than risking losses with ${targetMeta.fullName}, ${topMeta.fullName} naturally matches your available soil nutrients (${currentN} kg/ha N) and rainfall (${currentRain} mm), delivering a protected harvest of ${topMeta.yield} with ${topMeta.priceSub}.`
+                  : (lang === 'mr'
+                    ? `💡 <strong>${topMeta.fullName} का निवडावे:</strong> ${targetMeta.fullName} मधील नुकसान टाळून, ${topMeta.fullName} आपल्या जमिनीतील घटक (${currentN} नत्र) आणि मान्सून पावसाचा (${currentRain} मिमी) परिपूर्ण वापर करते, आणि ${topMeta.yield} हमखास उत्पन्न देते.`
+                    : `💡 <strong>${topMeta.fullName} क्यों चुनें:</strong> ${targetMeta.fullName} में फसल विफलता का जोखिम लेने के बजाय, ${topMeta.fullName} आपकी मिट्टी (${currentN} N) और वर्षा (${currentRain} mm) के पूर्णतः अनुकूल है, जिससे ${topMeta.yield} की सुरक्षित पैदावार मिलती है।`)}
+              </p>
+            </div>
+            ${rescueHtml}
+          `;
+
+          // Hook rescue accordion toggle
+          const toggleRescueBtn = document.getElementById('btn-toggle-rescue');
+          const rescuePanel = document.getElementById('rescue-panel');
+          if (toggleRescueBtn && rescuePanel) {
+            toggleRescueBtn.addEventListener('click', () => {
+              rescuePanel.classList.toggle('is-hidden');
+            });
+          }
+        }
+      } else {
+        targetBanner.classList.add('is-hidden');
+        targetBanner.innerHTML = '';
+      }
+    }
+
+        // #1 Best Choice Crop
     const best = recs[0];
     const bestMeta = getCropMeta(best.crop, best.profile);
 
@@ -2450,10 +2630,7 @@ ${loc.symptoms.substring(0, 180)}...
       const data = await res.json();
       if (data.crops) {
         state.crops = data.crops;
-        if (selectTargetCrop) {
-          selectTargetCrop.innerHTML = '<option value="">-- Auto Best --</option>' +
-            data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-        }
+        populateTargetCrops(state.language);
         if (fertCropSelect) {
           fertCropSelect.innerHTML = data.crops.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
           fertCropSelect.value = 'rice';
