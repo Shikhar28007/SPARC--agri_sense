@@ -1084,7 +1084,7 @@
         <!-- Fertilizer Output Results -->
         <div class="card results-card" id="fert-results-container">
           <div class="card-header">
-            <h3>Prescription & Commercial Doses</h3>
+            <h3 id="fert-results-title">Prescription & Commercial Doses</h3>
             <span class="confidence-chip" id="fert-badge">Awaiting Calculation</span>
           </div>
 
@@ -1098,21 +1098,21 @@
             <!-- Commercial Bags Summary for Farmer Land Size -->
             <div class="kisan-bag-summary" id="kisan-bag-summary">
               <div class="kisan-bag-header">
-                <span class="kisan-bag-title">🎒 Total Commercial Bags to Buy From Mandi / Shop</span>
+                <span class="kisan-bag-title" id="kisan-bag-title">🎒 Total Commercial Bags to Buy From Mandi / Shop</span>
                 <span class="badge badge-gold" id="kisan-land-badge">For 1.0 Acre Land</span>
               </div>
               <div class="kisan-bag-items">
                 <div class="kisan-bag-box urea-box">
                   <div class="kisan-bag-count" id="kisan-urea-bags">0</div>
-                  <div class="kisan-bag-label">Bags Urea (45 kg)</div>
+                  <div class="kisan-bag-label" id="label-bag-urea">Bags Urea (45 kg)</div>
                 </div>
                 <div class="kisan-bag-box dap-box">
                   <div class="kisan-bag-count" id="kisan-dap-bags">0</div>
-                  <div class="kisan-bag-label">Bags DAP (50 kg)</div>
+                  <div class="kisan-bag-label" id="label-bag-dap">Bags DAP (50 kg)</div>
                 </div>
                 <div class="kisan-bag-box mop-box">
                   <div class="kisan-bag-count" id="kisan-mop-bags">0</div>
-                  <div class="kisan-bag-label">Bags MOP (50 kg)</div>
+                  <div class="kisan-bag-label" id="label-bag-mop">Bags MOP (50 kg)</div>
                 </div>
               </div>
             </div>
@@ -1292,21 +1292,21 @@
     <div class="modal-card history-modal-card">
       <div class="modal-header">
         <div class="history-modal-title-group">
-          <h3>📜 Search & Calculation History</h3>
-          <span class="history-modal-sub">Access and restore your previous soil tests, recommendations, and fertilizer doses</span>
+          <h3 id="history-modal-title">📜 Search & Calculation History</h3>
+          <span class="history-modal-sub" id="history-modal-sub">Access and restore your previous soil tests, recommendations, and fertilizer doses</span>
         </div>
         <button type="button" class="modal-close" id="history-modal-close-btn" aria-label="Close history">&times;</button>
       </div>
 
       <div class="history-controls-bar">
         <div class="history-filter-chips">
-          <button type="button" class="history-filter-chip active" data-filter="all">All</button>
-          <button type="button" class="history-filter-chip" data-filter="crop">🌾 Crop Advisory</button>
-          <button type="button" class="history-filter-chip" data-filter="fert">🧪 Fertilizer</button>
-          <button type="button" class="history-filter-chip" data-filter="doctor">🩺 Pest Doctor</button>
+          <button type="button" class="history-filter-chip active" id="chip-hist-all" data-filter="all">All</button>
+          <button type="button" class="history-filter-chip" id="chip-hist-crop" data-filter="crop">🌾 Crop Advisory</button>
+          <button type="button" class="history-filter-chip" id="chip-hist-fert" data-filter="fert">🧪 Fertilizer</button>
+          <button type="button" class="history-filter-chip" id="chip-hist-doctor" data-filter="doctor">🩺 Pest Doctor</button>
         </div>
         <button type="button" class="btn-clear-history" id="btn-clear-history" title="Clear all history">
-          🗑️ Clear All
+          <span id="btn-clear-history-text">🗑️ Clear All</span>
         </button>
       </div>
 
