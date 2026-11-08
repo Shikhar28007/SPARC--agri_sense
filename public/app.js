@@ -4357,8 +4357,510 @@ document.addEventListener('DOMContentLoaded', () => {
     if (specPhFill) specPhFill.style.width = `${Math.min(100, Math.round((ph / 9) * 100))}%`;
   }
 
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SOWING & FERTILIZER MANAGEMENT CALENDAR DATABASE & CONTROLLER
+  // ─────────────────────────────────────────────────────────────────────────
+  const CROP_CALENDAR_I18N = {
+    title: {
+      en: '🗓️ Sowing & Fertilizer Management Calendar',
+      hi: '🗓️ बुवाई एवं उर्वरक प्रबंधन कैलेंडर',
+      mr: '🗓️ पेरणी आणि खत व्यवस्थापन दिनदर्शिका',
+      pa: '🗓️ ਬਿਜਾਈ ਅਤੇ ਖਾਦ ਪ੍ਰਬੰਧਨ ਕੈਲੰਡਰ',
+      gu: '🗓️ વાવણી અને ખાતર વ્યવસ્થાપન કેલેન્ડર',
+      te: '🗓️ విత్తన & ఎరువుల నిర్వహణ క్యాలెండర్',
+      ta: '🗓️ விதைப்பு மற்றும் உர மேலாண்மை காலண்டர்',
+      bn: '🗓️ বপন ও সার ব্যবস্থাপনা ক্যালেন্ডার',
+      kn: '🗓️ ಬಿತ್ತನೆ ಮತ್ತು ರಸಗೊಬ್ಬರ ನಿರ್ವಹಣಾ ಕ್ಯಾಲೆಂಡರ್'
+    },
+    sub: {
+      en: 'Scientific stage-by-stage crop timeline, optimal sowing window, and fertilizer schedule',
+      hi: 'वैज्ञानिक चरणबद्ध फसल समयरेखा, सर्वोत्तम बुवाई अवधि एवं उर्वरक खुराक अनुसूची',
+      mr: 'वैज्ञानिक टप्प्यानुसार पीक वेळापत्रक, पेरणीची योग्य वेळ आणि खत डोस वेळापत्रक',
+      pa: 'ਵਿਗਿਆਨਕ ਪੜਾਅਵਾਰ ਫ਼ਸਲ ਸਮਾਂ-ਸਾਰਣੀ, ਬਿਜਾਈ ਦਾ ਢੁਕਵਾਂ ਸਮਾਂ ਅਤੇ ਖਾਦ ਸ਼ਡਿਊਲ',
+      gu: 'વૈજ્ઞાનિક તબક્કાવાર પાક સમયરેખા, વાવણીનો શ્રેષ્ઠ સમય અને ખાતર શેડ્યૂલ',
+      te: 'శాస్త్రీయ దశల వారీ పంట కాలపట్టిక, సరైన విత్తన సమయం మరియు ఎరువుల షెడ్యూల్',
+      ta: 'அறிவியல் பூர்வமான பயிர் கால அட்டவணை, விதைப்பு பருவம் மற்றும் உர கால அட்டவணை',
+      bn: 'বৈজ্ঞানিক পর্যায়ক্রমিক ফসল সময়সূচী, সর্বোত্তম বপন সময় এবং সার প্রয়োগ সময়সূচী',
+      kn: 'ವೈಜ್ಞಾನಿಕ ಹಂತವಾರು ಬೆಳೆ ವೇಳಾಪಟ್ಟಿ, ಸೂಕ್ತ ಬಿತ್ತನೆ ಸಮಯ ಮತ್ತು ರಸಗೊಬ್ಬರ ವೇಳಾಪಟ್ಟಿ'
+    },
+    lblSeason: { en: 'Season Window', hi: 'मौसम व बुवाई अवधि', mr: 'हंगाम व पेरणी कालावधी', pa: 'ਸੀਜ਼ਨ ਅਤੇ ਬਿਜਾਈ', gu: 'ઋતુ અને વાવણી ગાળો', te: 'సీజన్ విండో', ta: 'பருவக்காலம்', bn: 'মৌসুম ও বপনকাল', kn: 'ಋತು & ಬಿತ್ತನೆ ಅವಧಿ' },
+    lblDuration: { en: 'Duration', hi: 'फसल अवधि', mr: 'कालावधी', pa: 'ਸਮਾਂ', gu: 'સમયગાળો', te: 'కాలపరిమితి', ta: 'பயிர் காலம்', bn: 'সময়কাল', kn: 'ಬೆಳೆ ಅವಧಿ' },
+    lblWater: { en: 'Water Need', hi: 'जल आवश्यकता', mr: 'पाण्याची गरज', pa: 'ਪਾਣੀ ਦੀ ਲੋੜ', gu: 'પાણી જરૂરિયાત', te: 'నీటి అవసరం', ta: 'நீர் தேவை', bn: 'জলের প্রয়োজন', kn: 'ನೀರಿನ ಅಗತ್ಯ' },
+    lblYield: { en: 'Target Yield', hi: 'अपेक्षित उपज', mr: 'अपेक्षित उत्पादन', pa: 'ਸੰਭਾਵਿਤ ਝਾੜ', gu: 'અપેક્ષિત ઉત્પાદન', te: 'లక్ష్య దిగుబడి', ta: 'இலக்கு மகசூல்', bn: 'লক্ষ্য ফলন', kn: 'ಗುರಿ ಇಳುವರಿ' },
+    btnJumpFert: {
+      en: '🧪 Calculate Commercial Bags for this Crop →',
+      hi: '🧪 इस फसल के लिए खाद की थैलियों की गणना करें →',
+      mr: '🧪 या पिकासाठी खतांच्या गोण्यांची गणना करा →',
+      pa: '🧪 ਇਸ ਫ਼ਸਲ ਲਈ ਖਾਦ ਦੇ ਥੈਲਿਆਂ ਦੀ ਗਣਨਾ ਕਰੋ →',
+      gu: '🧪 આ પાક માટે ખાતરની થેલીઓની ગણતરી કરો →',
+      te: '🧪 ఈ పంటకు కావలసిన ఎరువుల బస్తాల లెక్కింపు →',
+      ta: '🧪 இந்த பயிருக்கான உர மூட்டைகளை கணக்கிடுங்கள் →',
+      bn: '🧪 এই ফসলের বাণিজ্যিক সারের বস্তা গণনা করুন →',
+      kn: '🧪 ಈ ಬೆಳೆಗೆ ವಾಣಿಜ್ಯ ರಸಗೊಬ್ಬರ ಚೀಲಗಳನ್ನು ಲೆಕ್ಕಹಾಕಿ →'
+    },
+    btnPrint: {
+      en: '🖨️ Print Calendar',
+      hi: '🖨️ कैलेंडर प्रिंट करें',
+      mr: '🖨️ दिनदर्शिका प्रिंट करा',
+      pa: '🖨️ ਕੈਲੰਡਰ ਪ੍ਰਿੰਟ ਕਰੋ',
+      gu: '🖨️ કેલેન્ડર પ્રિન્ટ કરો',
+      te: '🖨️ క్యాలెಂಡర్ ప్రింట్ చేయండి',
+      ta: '🖨️ அச்சிடுங்கள்',
+      bn: '🖨️ ক্যালেন্ডার প্রিন্ট করুন',
+      kn: '🖨️ ಕ್ಯಾಲೆಂಡರ್ ಮುದ್ರಿಸಿ'
+    }
+  };
+
+  const CROP_CALENDARS = {
+    rice: {
+      season: 'Kharif Season (खरीफ मौसम)',
+      sowing_window: 'June 15 – July 25 (Transplanting / DSR)',
+      harvest_window: 'October 20 – November 25',
+      duration: '120 – 135 Days',
+      water_need: '1,150 – 1,350 mm',
+      target_yield: '44 – 50 Quintals/Ha',
+      stages: [
+        {
+          name: 'Stage 0: Pre-Sowing Land Preparation & Bio-Seed Treatment',
+          day: 'Day -15 to Day 0',
+          dose: '<strong>Organic Base:</strong> Incorporate 4–5 tonnes/acre well-rotted FYM. <strong>Seed Treatment:</strong> Soak seeds in <em>Trichoderma viride</em> (4g/kg seed) + PSB biofertilizer.',
+          notes: 'Laser level the field and puddle to form an impermeable plough-pan for standing water conservation.'
+        },
+        {
+          name: 'Stage 1: Basal Fertilizer Application at Transplanting',
+          day: 'Day 0 (Transplanting)',
+          dose: '<strong>Basal Dose:</strong> 100% Phosphorus (DAP ~ 30 kg/acre) + 100% Potash (MOP ~ 25 kg/acre) + 33% Nitrogen (Neem-coated Urea ~ 25 kg/acre) + Zinc Sulphate 10 kg/acre.',
+          notes: 'Mix into the top 5 cm puddle mud just before seedling planting; avoids nitrogen volatilization.'
+        },
+        {
+          name: 'Stage 2: Active Tillering First Nitrogen Top-Dressing',
+          day: 'Day 21 – 25 DAT',
+          dose: '<strong>First Top-Dressing:</strong> 33% Neem-coated Urea (~ 25 kg/acre).',
+          notes: 'Maintain 2–3 cm shallow standing water during application. Weed the field 2 days prior to ensure zero nutrient competition.'
+        },
+        {
+          name: 'Stage 3: Panicle Initiation Second Top-Dressing',
+          day: 'Day 42 – 48 DAT',
+          dose: '<strong>Second Top-Dressing:</strong> Remaining 33% Urea (~ 25 kg/acre) + 0.5% Potash (MOP) foliar spray.',
+          notes: 'Critical stage for spikelet fertility. Promotes heavier, bolder grain panicles.'
+        },
+        {
+          name: 'Stage 4: Flowering to Milk Stage Moisture Care',
+          day: 'Day 65 – 85 DAT',
+          dose: '<strong>Nutrient Check:</strong> Stop all chemical nitrogen. Spray 1% 13:0:45 (Potassium Nitrate) if flag leaves appear pale.',
+          notes: 'Never let soil crack during flowering. Monitor for sheath blight and brown plant hoppers.'
+        },
+        {
+          name: 'Stage 5: Physiological Ripening & Harvesting',
+          day: 'Day 110 – 135 DAT',
+          dose: '<strong>Drainage & Ripening:</strong> Completely drain standing water 10–12 days prior to harvest.',
+          notes: 'Harvest when 85% of the panicles turn golden brown and grain moisture drops to 18–20%.'
+        }
+      ]
+    },
+    wheat: {
+      season: 'Rabi Season (रबी मौसम)',
+      sowing_window: 'November 01 – November 25 (Optimal Temperature 20–22°C)',
+      harvest_window: 'March 25 – April 20',
+      duration: '125 – 135 Days',
+      water_need: '400 – 500 mm (5–6 Irrigations)',
+      target_yield: '48 – 55 Quintals/Ha',
+      stages: [
+        {
+          name: 'Stage 0: Pre-Sowing Irrigation (Rauni) & Seed Priming',
+          day: 'Day -10 to Day 0',
+          dose: '<strong>Seed Inoculation:</strong> Treat certified seed with Carboxin + Thiram (2g/kg) and <em>Azotobacter</em> culture.',
+          notes: 'Pre-sowing irrigation (*Rauni*) is vital for uniform seed germination and deep root anchorage.'
+        },
+        {
+          name: 'Stage 1: Basal Fertilizer Application at Sowing',
+          day: 'Day 0 (Sowing)',
+          dose: '<strong>Basal Dose:</strong> 100% Phosphorus (DAP ~ 55 kg/acre) + 100% Potash (MOP ~ 20 kg/acre) + 50% Nitrogen (Urea ~ 30 kg/acre).',
+          notes: 'Drill fertilizer 5 cm below seed line using seed-cum-fertilizer drill.'
+        },
+        {
+          name: 'Stage 2: Crown Root Initiation (CRI) First Top-Dressing',
+          day: 'Day 21 – 25 DAS',
+          dose: '<strong>First Top-Dressing:</strong> 25% Urea (~ 25 kg/acre) applied immediately after 1st irrigation.',
+          notes: 'CRI is the single most critical moisture stage in wheat; delay causes permanent yield depression.'
+        },
+        {
+          name: 'Stage 3: Late Tillering / Jointing Stage Second Top-Dressing',
+          day: 'Day 45 – 50 DAS',
+          dose: '<strong>Second Top-Dressing:</strong> Remaining 25% Urea (~ 25 kg/acre).',
+          notes: 'Broadcast under moist soil; monitor lower canopy for yellow/brown rust pustules.'
+        },
+        {
+          name: 'Stage 4: Booting & Flowering Stage Heat Defense',
+          day: 'Day 70 – 85 DAS',
+          dose: '<strong>Foliar Heat Defense:</strong> Spray Potassium Nitrate (13:0:45 @ 10g/L) to prevent terminal heat stress.',
+          notes: 'Give light irrigation on calm (windless) days to prevent crop lodging.'
+        },
+        {
+          name: 'Stage 5: Hard Dough to Harvest',
+          day: 'Day 115 – 135 DAS',
+          dose: '<strong>Harvesting:</strong> Stop all irrigation when grains cannot be dented with fingernail.',
+          notes: 'Harvest with combine when grain moisture reaches 11–12% for safe silo storage.'
+        }
+      ]
+    },
+    cotton: {
+      season: 'Kharif Season (खरीफ मौसम)',
+      sowing_window: 'May 01 – June 15 (Early Summer / Pre-Monsoon)',
+      harvest_window: 'October 15 – December 30 (Multiple Pickings)',
+      duration: '150 – 180 Days',
+      water_need: '650 – 850 mm',
+      target_yield: '24 – 30 Quintals/Ha',
+      stages: [
+        {
+          name: 'Stage 0: Ridge & Furrow Prep & Deep Plowing',
+          day: 'Day -15 to Day 0',
+          dose: '<strong>Basal Manure:</strong> 5 tonnes/acre FYM. Deep summer plowing to expose pink bollworm pupae to sun.',
+          notes: 'Create ridges at 90–120 cm spacing for root aeration and furrow irrigation.'
+        },
+        {
+          name: 'Stage 1: Basal Fertilizer Application at Dibbling',
+          day: 'Day 0 (Dibbling)',
+          dose: '<strong>Basal Dose:</strong> 100% Phosphorus (DAP ~ 35 kg/acre) + 33% Potash (MOP ~ 15 kg/acre) + 25% Nitrogen (Urea ~ 15 kg/acre) + 10 kg/acre Magnesium Sulphate.',
+          notes: 'Spot-apply fertilizer in dibbled holes 5cm away from the seed.'
+        },
+        {
+          name: 'Stage 2: Square Formation First Top-Dressing',
+          day: 'Day 35 – 45 DAS',
+          dose: '<strong>First Top-Dressing:</strong> 35% Urea (~ 25 kg/acre) followed by earthing-up.',
+          notes: 'Install pheromone traps (5 traps/acre) to monitor pink bollworm moth flights.'
+        },
+        {
+          name: 'Stage 3: Peak Flowering & Early Boll Second Top-Dressing',
+          day: 'Day 65 – 75 DAS',
+          dose: '<strong>Second Top-Dressing:</strong> 40% Urea (~ 25 kg/acre) + 33% Potash (MOP ~ 15 kg/acre) + 1% Boron foliar spray.',
+          notes: 'Spray Planofix (NAA 4.5 SL @ 0.25 ml/L) to prevent flower bud and boll shedding.'
+        },
+        {
+          name: 'Stage 4: Boll Development & Maturation Foliar Feed',
+          day: 'Day 90 – 120 DAS',
+          dose: '<strong>Foliar Spray:</strong> Spray 00:00:50 (Potassium Sulphate @ 10g/L) for fiber strength and boll weight.',
+          notes: 'Maintain steady soil moisture; avoid waterlogging during boll development.'
+        },
+        {
+          name: 'Stage 5: Boll Burst & Clean Picking',
+          day: 'Day 130 – 180 DAS',
+          dose: '<strong>Picking Cycle:</strong> Pick bolls during sunny afternoon hours once morning dew is dry.',
+          notes: 'Store clean seed cotton in dry, well-ventilated sheds away from damp soil.'
+        }
+      ]
+    },
+    maize: {
+      season: 'Kharif / Rabi Season (खरीफ व रबी)',
+      sowing_window: 'June 20 – July 15 (Kharif) or Oct 15 – Nov 15 (Rabi)',
+      harvest_window: 'October (Kharif) / March (Rabi)',
+      duration: '95 – 115 Days',
+      water_need: '500 – 650 mm',
+      target_yield: '55 – 68 Quintals/Ha',
+      stages: [
+        {
+          name: 'Stage 0: Seedbed Preparation & Fly Deterrent Coating',
+          day: 'Day -10 to Day 0',
+          dose: '<strong>Seed Treatment:</strong> Treat hybrid seeds with Imidacloprid (4ml/kg) to deter shoot fly.',
+          notes: 'Maintain 60cm row spacing and 20cm plant spacing for optimum solar radiation intercept.'
+        },
+        {
+          name: 'Stage 1: Basal Fertilizer Application at Sowing',
+          day: 'Day 0 (Sowing)',
+          dose: '<strong>Basal Dose:</strong> 100% Phosphorus (DAP ~ 40 kg/acre) + 100% Potash (MOP ~ 20 kg/acre) + 25% Nitrogen (Urea ~ 20 kg/acre) + 10 kg Zinc Sulphate.',
+          notes: 'Band place fertilizer 5 cm below and 5 cm to the side of the seed line.'
+        },
+        {
+          name: 'Stage 2: Knee-High Stage (V6–V8) First Top-Dressing',
+          day: 'Day 25 – 30 DAS',
+          dose: '<strong>First Top-Dressing:</strong> 40% Urea (~ 35 kg/acre) followed by earthing up.',
+          notes: 'Inspect whorls for Fall Armyworm (FAW) pinholes; apply Neem formulation or biocontrol.'
+        },
+        {
+          name: 'Stage 3: Tasseling & Silking Stage Second Top-Dressing',
+          day: 'Day 50 – 60 DAS',
+          dose: '<strong>Second Top-Dressing:</strong> Remaining 35% Urea (~ 30 kg/acre).',
+          notes: 'Most moisture-critical phase; ensure soil is well-watered during pollination and silk emergence.'
+        },
+        {
+          name: 'Stage 4: Grain Filling & Dough Stage',
+          day: 'Day 70 – 85 DAS',
+          dose: '<strong>Foliar Finish:</strong> Optional 0.5% Potash spray to boost kernel density and test weight.',
+          notes: 'Maintain moisture until black layer forms at the base of the grain kernels.'
+        },
+        {
+          name: 'Stage 5: Physiological Maturity & Shelling',
+          day: 'Day 95 – 115 DAS',
+          dose: '<strong>Harvesting:</strong> Harvest when outer cob husks turn papery white and dry.',
+          notes: 'Sun-dry cobs to 14% moisture before mechanical shelling.'
+        }
+      ]
+    },
+    sugarcane: {
+      season: 'Spring / Autumn Planting (वसंत / शरदकालीन)',
+      sowing_window: 'February 15 – March 31 or October 01 – October 31',
+      harvest_window: 'December – April (10–12 Months)',
+      duration: '300 – 360 Days',
+      water_need: '1,500 – 2,200 mm',
+      target_yield: '850 – 1,100 Quintals/Ha',
+      stages: [
+        {
+          name: 'Stage 0: Sett Treatment & Deep Trench Preparation',
+          day: 'Day -7 to Day 0',
+          dose: '<strong>Sett Treatment:</strong> Dip 2-bud or 3-bud setts in Carbendazim (1g/L) for 15 mins. Apply 10 t/acre compost.',
+          notes: 'Dig furrows at 90–120 cm trench depth to prevent later cane lodging.'
+        },
+        {
+          name: 'Stage 1: Basal Application in Furrow',
+          day: 'Day 0 (Planting)',
+          dose: '<strong>Basal Dose:</strong> 100% Phosphorus (SSP ~ 150 kg/acre) + 33% Potash (MOP ~ 30 kg/acre) + 20% Nitrogen (Urea ~ 25 kg/acre).',
+          notes: 'Cover setts with 5–7 cm soil and apply immediate light irrigation.'
+        },
+        {
+          name: 'Stage 2: Formative / Tillering Stage Top-Dressing',
+          day: 'Day 45 – 60 DAP',
+          dose: '<strong>First Top-Dressing:</strong> 30% Urea (~ 35 kg/acre) + partial earthing-up.',
+          notes: 'Monitor for early shoot borer (dead hearts); install pheromone traps or apply bio-agent.'
+        },
+        {
+          name: 'Stage 3: Grand Growth Stage Nutrition & Deep Earthing',
+          day: 'Day 90 – 120 DAP',
+          dose: '<strong>Second Top-Dressing:</strong> 30% Urea (~ 35 kg/acre) + 33% Potash (MOP ~ 25 kg/acre).',
+          notes: 'Perform deep earthing-up and tie canes (trash wrapping) to withstand monsoon storms.'
+        },
+        {
+          name: 'Stage 4: Late Grand Growth Elongation',
+          day: 'Day 150 – 180 DAP',
+          dose: '<strong>Final Top-Dressing:</strong> Remaining 20% Urea (~ 25 kg/acre) + 34% Potash (MOP ~ 25 kg/acre).',
+          notes: 'Withhold nitrogen after month 6 to avoid water-shoots and ensure high juice sucrose recovery.'
+        },
+        {
+          name: 'Stage 5: Ripening & Ground-Level Harvest',
+          day: 'Day 300 – 360 DAP',
+          dose: '<strong>Harvest:</strong> Withhold irrigation 15–20 days prior to harvest for peak Brix sucrose.',
+          notes: 'Cut canes at ground level (highest sugar concentration is in the bottom internodes).'
+        }
+      ]
+    }
+  };
+
+  function getGenericCropCalendar(cropName, lang) {
+    const meta = getCropMeta(cropName);
+    const duration = meta.duration || '100 – 120 Days';
+    const water = meta.water || 'Moderate (500 – 700 mm)';
+    const yieldEst = meta.yield || '30 – 40 Q/Ha';
+    const season = meta.seasonBadge || 'Agro-Climatic Window';
+
+    return {
+      season: season,
+      sowing_window: 'Season specific optimal window (soil temp 22–28°C)',
+      harvest_window: 'Maturity cycle completion',
+      duration: duration,
+      water_need: water,
+      target_yield: yieldEst,
+      stages: [
+        {
+          name: 'Stage 0: Pre-Sowing Seedbed Preparation & Organic Enrichment',
+          day: 'Day -10 to Day 0',
+          dose: '<strong>Soil Base:</strong> Apply 3–4 tonnes/acre well-rotted FYM. <strong>Seed Treatment:</strong> Bio-inoculation with Trichoderma viride (4g/kg seed).',
+          notes: 'Ensure fine tilth, optimum weed eradication, and proper field drainage.'
+        },
+        {
+          name: 'Stage 1: Basal Fertilizer Application at Sowing',
+          day: 'Day 0 (Sowing)',
+          dose: '<strong>Basal Dose:</strong> 100% Phosphorus (DAP) + 100% Potash (MOP) + 33%–50% Nitrogen (Urea) placed 5cm below seed.',
+          notes: 'Band placement near root-zone ensures immediate seedling vigor and root establishment.'
+        },
+        {
+          name: 'Stage 2: Active Vegetative Growth Top-Dressing',
+          day: 'Day 21 – 30 DAS',
+          dose: '<strong>First Top-Dressing:</strong> 25%–33% Neem-coated Urea broadcast under moist soil conditions.',
+          notes: 'Critical weed management window. Irrigate immediately after nitrogen application.'
+        },
+        {
+          name: 'Stage 3: Flowering / Reproductive Top-Dressing',
+          day: 'Day 45 – 60 DAS',
+          dose: '<strong>Second Top-Dressing:</strong> Remaining Nitrogen + 0.5% Potash foliar spray.',
+          notes: 'Ensure steady soil moisture; moisture stress during flowering causes massive flower/pod drop.'
+        },
+        {
+          name: 'Stage 4: Grain / Fruit Development & Ripening',
+          day: 'Day 75 – 95 DAS',
+          dose: '<strong>Foliar Micronutrients:</strong> Optional 1% 13:0:45 foliar spray if foliage pales.',
+          notes: 'Monitor for pest infestations. Maintain optimal moisture until seed/fruit hardening.'
+        },
+        {
+          name: 'Stage 5: Physiological Maturity & Harvesting',
+          day: 'Day 100 – 130 DAS',
+          dose: '<strong>Pre-Harvest:</strong> Stop irrigation 8–10 days before harvest for uniform drying.',
+          notes: 'Harvest at recommended grain moisture percentage to maximize Mandi market price.'
+        }
+      ]
+    };
+  }
+
+  function openCropCalendarModal(cropId) {
+    const modal = document.getElementById('calendar-modal');
+    const body = document.getElementById('calendar-modal-body');
+    if (!modal || !body) return;
+
+    const cId = (cropId || 'rice').toLowerCase();
+    const cal = CROP_CALENDARS[cId] || getGenericCropCalendar(cId, state.language);
+    const meta = getCropMeta(cId);
+    const lang = state.language || 'hi';
+    const t = CROP_CALENDAR_I18N;
+
+    const modalTitle = document.getElementById('calendar-modal-title');
+    const modalSub = document.getElementById('calendar-modal-sub');
+    if (modalTitle) modalTitle.textContent = t.title[lang] || t.title['en'];
+    if (modalSub) modalSub.textContent = t.sub[lang] || t.sub['en'];
+
+    const btnJumpLabel = t.btnJumpFert[lang] || t.btnJumpFert['en'];
+    const btnPrintLabel = t.btnPrint[lang] || t.btnPrint['en'];
+
+    const stagesHtml = cal.stages.map((st, idx) => `
+      <div class="calendar-stage-card">
+        <div class="calendar-stage-top">
+          <span class="calendar-stage-name">📍 ${st.name}</span>
+          <span class="calendar-stage-day">🗓️ ${st.day}</span>
+        </div>
+        <div class="calendar-stage-dose">
+          ${st.dose}
+        </div>
+        <div class="calendar-stage-notes">
+          💡 <em>${st.notes}</em>
+        </div>
+      </div>
+    `).join('');
+
+    body.innerHTML = `
+      <div class="calendar-crop-header-banner">
+        <div>
+          <h4 class="calendar-crop-name">🌱 ${meta.fullName || cropId.toUpperCase()}</h4>
+          <p class="calendar-crop-season">🗓️ ${cal.season} • <strong>Sowing Window:</strong> ${cal.sowing_window}</p>
+        </div>
+        <div class="calendar-pills-row">
+          <span class="calendar-pill">⏱️ ${cal.duration}</span>
+          <span class="calendar-pill">💧 ${cal.water_need}</span>
+          <span class="calendar-pill">🌾 ${cal.target_yield}</span>
+        </div>
+      </div>
+
+      <div class="calendar-timeline">
+        ${stagesHtml}
+      </div>
+
+      <div class="calendar-modal-actions">
+        <button type="button" class="btn-calendar-print" id="btn-calendar-print-action">${btnPrintLabel}</button>
+        <button type="button" class="btn-calendar-jump-fert" id="btn-calendar-jump-fert-action">${btnJumpLabel}</button>
+      </div>
+    `;
+
+    // Wire action buttons
+    document.getElementById('btn-calendar-print-action')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    document.getElementById('btn-calendar-jump-fert-action')?.addEventListener('click', () => {
+      closeCropCalendarModal();
+      navigateToFertilizerPackage(cId);
+    });
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeCropCalendarModal() {
+    const modal = document.getElementById('calendar-modal');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // FERTILIZER PACKAGE NAVIGATION & ONE-CLICK CALCULATION
+  // ─────────────────────────────────────────────────────────────────────────
+  function navigateToFertilizerPackage(cropName) {
+    if (!cropName) cropName = 'rice';
+    const targetCrop = cropName.toLowerCase();
+
+    // 1. Switch to Fertilizer Prescriber tab
+    const fertNavBtn = document.querySelector('.nav-tab[data-tab="fertilizer-prescriber"]');
+    if (fertNavBtn) fertNavBtn.click();
+
+    // 2. Select this crop in dropdown
+    const fertCropSelect = document.getElementById('fert-crop-select');
+    if (fertCropSelect) {
+      let optionExists = false;
+      for (let i = 0; i < fertCropSelect.options.length; i++) {
+        if (fertCropSelect.options[i].value.toLowerCase() === targetCrop) {
+          fertCropSelect.selectedIndex = i;
+          optionExists = true;
+          break;
+        }
+      }
+      if (!optionExists) {
+        const opt = document.createElement('option');
+        opt.value = targetCrop;
+        opt.textContent = targetCrop.toUpperCase();
+        fertCropSelect.appendChild(opt);
+        fertCropSelect.value = targetCrop;
+      }
+    }
+
+    // 3. Sync soil parameters from advisory sliders to fertilizer sliders
+    const nVal = document.getElementById('slider-n')?.value;
+    const pVal = document.getElementById('slider-p')?.value;
+    const kVal = document.getElementById('slider-k')?.value;
+    const phVal = document.getElementById('slider-ph')?.value;
+
+    if (nVal && fertSliders.n) {
+      fertSliders.n.value = nVal;
+      const v = document.getElementById('val-fert-n');
+      if (v) v.textContent = nVal;
+    }
+    if (pVal && fertSliders.p) {
+      fertSliders.p.value = pVal;
+      const v = document.getElementById('val-fert-p');
+      if (v) v.textContent = pVal;
+    }
+    if (kVal && fertSliders.k) {
+      fertSliders.k.value = kVal;
+      const v = document.getElementById('val-fert-k');
+      if (v) v.textContent = kVal;
+    }
+    if (phVal && fertSliders.ph) {
+      fertSliders.ph.value = phVal;
+      const v = document.getElementById('val-fert-ph');
+      if (v) v.textContent = phVal;
+    }
+
+    // 4. Trigger prescription calculation
+    const fertForm = document.getElementById('fert-form');
+    if (fertForm) {
+      fertForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+
+    // 5. Smoothly scroll to results
+    setTimeout(() => {
+      const targetSection = document.getElementById('fertilizer-prescriber');
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 200);
+  }
+
   // ── Speech Synthesis & WhatsApp Kisan Helpers ──
   let activeSpeakingBtn = null;
+  window._activeSpeechUtterance = null; // Prevent Chromium Garbage Collection drop
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window._cachedSpeechVoices = window.speechSynthesis.getVoices();
+    };
+  }
 
   function toggleSpeech(text, btnElement) {
     if (!('speechSynthesis' in window)) {
@@ -4383,6 +4885,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Clear stuck pauses in Chromium
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+
     const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/[*_#]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.rate = 0.95;
@@ -4393,15 +4900,20 @@ document.addEventListener('DOMContentLoaded', () => {
       pa: 'pa-IN', gu: 'gu-IN', te: 'te-IN',
       ta: 'ta-IN', bn: 'bn-IN', kn: 'kn-IN'
     };
-    utterance.lang = langVoiceMap[lang] || 'hi-IN';
-    const voices = window.speechSynthesis.getVoices();
+    const targetTag = langVoiceMap[lang] || 'hi-IN';
+    const baseCode = targetTag.split('-')[0];
+    utterance.lang = targetTag;
+
+    const voices = (window.speechSynthesis.getVoices() && window.speechSynthesis.getVoices().length > 0)
+      ? window.speechSynthesis.getVoices()
+      : (window._cachedSpeechVoices || []);
+
     let regionalVoice = null;
-    if (lang === 'mr') {
-      regionalVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi') || v.lang.includes('IN'));
-    } else if (lang === 'hi') {
-      regionalVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN'));
-    } else {
-      regionalVoice = voices.find(v => v.lang.includes('en-IN') || v.lang.includes('en-GB') || v.lang.includes('en-US'));
+    if (voices.length > 0) {
+      regionalVoice = voices.find(v => v.lang.toLowerCase() === targetTag.toLowerCase()) ||
+                      voices.find(v => v.lang.toLowerCase().startsWith(baseCode)) ||
+                      voices.find(v => v.lang.includes('IN')) ||
+                      voices.find(v => v.lang.startsWith('en'));
     }
     if (regionalVoice) {
       utterance.voice = regionalVoice;
@@ -4410,11 +4922,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btnElement.classList.add('is-speaking');
     btnElement.innerHTML = stopLabel;
     activeSpeakingBtn = btnElement;
+    window._activeSpeechUtterance = utterance;
 
     const resetBtn = () => {
       btnElement.classList.remove('is-speaking');
       btnElement.innerHTML = listenLabel;
       activeSpeakingBtn = null;
+      window._activeSpeechUtterance = null;
     };
 
     utterance.onend = resetBtn;
@@ -4433,16 +4947,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(url, '_blank');
   }
 
-  // Initial attach for static listeners in Paddy hero card
+  // Initial attach for static listeners in Paddy hero card & Alternatives
   const staticVoiceBtn = document.getElementById('best-voice-btn');
   if (staticVoiceBtn) {
     staticVoiceBtn.addEventListener('click', () => {
       const lang = state.language || 'hi';
-      const speech = lang === 'en'
-        ? 'Recommended Crop: Paddy Indica Wet. Suitability Match 94 percent. Recommended varieties: MTU-1010, Indrayani, or PKV-HMT. Expected yield: 44 to 48 Quintals per Hectare.'
-        : (lang === 'mr'
-          ? 'शिफारस केलेले पीक: भात Indica Wet. मॅच ९४ टक्के. शिफारस केलेले वाण: MTU-१०१०, इंद्रायणी किंवा PKV-HMT. अपेक्षित उत्पादन: ४४ ते ४८ क्विंटल प्रति हेक्टर.'
-          : 'सिफारिश फसल: धान Indica Wet. मैच 94 प्रतिशत. अनुशंसित किस्में: MTU-1010, इंद्रायणी, या PKV-HMT. अपेक्षित उपज: 44 से 48 क्विंटल प्रति हेक्टेयर.');
+      const meta = getCropMeta('rice');
+      const speech = getVoiceReadoutText(meta, { confidence: 94 }, lang);
       toggleSpeech(speech, staticVoiceBtn);
     });
   }
@@ -4454,15 +4965,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const staticCalLink = document.getElementById('best-crop-calendar-link');
+  if (staticCalLink) {
+    staticCalLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openCropCalendarModal(state.lastRecommendationsData?.crop || 'rice');
+    });
+  }
+
+  const staticAlt1FertLink = document.getElementById('alt-1-fert-link');
+  if (staticAlt1FertLink) {
+    staticAlt1FertLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateToFertilizerPackage('cotton');
+    });
+  }
+
+  const staticAlt2FertLink = document.getElementById('alt-2-fert-link');
+  if (staticAlt2FertLink) {
+    staticAlt2FertLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateToFertilizerPackage('maize');
+    });
+  }
+
   const alt1VoiceBtn = document.getElementById('alt-1-voice-btn');
   if (alt1VoiceBtn) {
     alt1VoiceBtn.addEventListener('click', () => {
       const lang = state.language || 'hi';
-      const speech = lang === 'en'
-        ? 'Alternative crop 1: Cotton Bt Hybrid. Match 82 percent. Ideal for well-drained Black Cotton soil.'
-        : (lang === 'mr'
-          ? 'पर्यायी पीक १: कापूस Bt Hybrid. मॅच ८२ टक्के. काळ्या कसदार मातीसाठी योग्य.'
-          : 'वैकल्पिक फसल 1: कपास Bt Hybrid. मैच 82 प्रतिशत. काली मिट्टी के लिए उपयुक्त.');
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+      const altMeta = getCropMeta('cotton');
+      const speech = getAltVoiceReadoutText(t.altTag1, altMeta, { confidence: 82 }, lang);
       toggleSpeech(speech, alt1VoiceBtn);
     });
   }
@@ -4471,11 +5004,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (alt2VoiceBtn) {
     alt2VoiceBtn.addEventListener('click', () => {
       const lang = state.language || 'hi';
-      const speech = lang === 'en'
-        ? 'Alternative crop 2: Maize Hybrid Feed. Match 74 percent. Fast turnaround in 90 to 105 days.'
-        : (lang === 'mr'
-          ? 'पर्यायी पीक २: मका Hybrid Feed. मॅच ७४ टक्के. ९० ते १०५ दिवसांत तयार होणारे पीक.'
-          : 'वैकल्पिक फसल 2: मक्का Hybrid Feed. मैच 74 प्रतिशत. 90 से 105 दिनों में तैयार.');
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+      const altMeta = getCropMeta('maize');
+      const speech = getAltVoiceReadoutText(t.altTag2, altMeta, { confidence: 74 }, lang);
       toggleSpeech(speech, alt2VoiceBtn);
     });
   }
@@ -4970,7 +5501,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (lblBasalDose) lblBasalDose.textContent = t.lblBasalDose;
     if (valBasalDose) valBasalDose.textContent = bestMeta.basalDose;
-    if (bestCalLink) bestCalLink.textContent = t.calendarLink;
+    if (bestCalLink) {
+      bestCalLink.textContent = t.calendarLink;
+      bestCalLink.onclick = (e) => {
+        e.preventDefault();
+        openCropCalendarModal(best.crop);
+      };
+    }
 
     // Attach Voice & WhatsApp to new Best Choice
     const dynamicBestVoice = document.getElementById('best-voice-btn');
@@ -5021,10 +5558,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (alt1Yield) alt1Yield.textContent = alt1Meta.yield;
       if (alt1LblRisk) alt1LblRisk.textContent = t.altLblRisk;
       if (alt1Risk) alt1Risk.textContent = alt1Meta.priceSub;
-      if (alt1FertLink) alt1FertLink.textContent = t.altFertLink;
+      if (alt1FertLink) {
+        alt1FertLink.textContent = t.altFertLink;
+        alt1FertLink.onclick = (e) => {
+          e.preventDefault();
+          navigateToFertilizerPackage(alt1.crop);
+        };
+      }
 
       const alt1V = document.getElementById('alt-1-voice-btn');
       if (alt1V) {
+        alt1V.innerHTML = t.listenBtnText;
         alt1V.onclick = () => toggleSpeech(getAltVoiceReadoutText(t.altTag1, alt1Meta, alt1, lang), alt1V);
       }
     }
@@ -5059,10 +5603,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (alt2Yield) alt2Yield.textContent = alt2Meta.yield;
       if (alt2LblRisk) alt2LblRisk.textContent = t.altLblRisk;
       if (alt2Risk) alt2Risk.textContent = alt2Meta.priceSub;
-      if (alt2FertLink) alt2FertLink.textContent = t.altFertLink;
+      if (alt2FertLink) {
+        alt2FertLink.textContent = t.altFertLink;
+        alt2FertLink.onclick = (e) => {
+          e.preventDefault();
+          navigateToFertilizerPackage(alt2.crop);
+        };
+      }
 
       const alt2V = document.getElementById('alt-2-voice-btn');
       if (alt2V) {
+        alt2V.innerHTML = t.listenBtnText;
         alt2V.onclick = () => toggleSpeech(getAltVoiceReadoutText(t.altTag2, alt2Meta, alt2, lang), alt2V);
       }
     }
@@ -6276,6 +6827,17 @@ ${loc.symptoms.substring(0, 180)}...
   if (historyModalClose && historyModal) {
     historyModalClose.addEventListener('click', () => {
       historyModal.classList.remove('open');
+    });
+  }
+
+  const calendarModalClose = document.getElementById('calendar-modal-close-btn');
+  const calendarModal = document.getElementById('calendar-modal');
+  if (calendarModalClose && calendarModal) {
+    calendarModalClose.addEventListener('click', () => {
+      closeCropCalendarModal();
+    });
+    calendarModal.addEventListener('click', (e) => {
+      if (e.target === calendarModal) closeCropCalendarModal();
     });
   }
 

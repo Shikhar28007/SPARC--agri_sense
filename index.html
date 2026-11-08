@@ -701,7 +701,7 @@
                 </div>
                 <div class="alt-footer-row">
                   <a href="#fertilizer-prescriber" class="alt-action-link" id="alt-1-fert-link">Fertilizer Package &gt;</a>
-                  <button type="button" class="btn-mini-voice" id="alt-1-voice-btn" title="Listen in Hindi" aria-label="Listen in Hindi">🔊</button>
+                  <button type="button" class="btn-voice-readout btn-voice-alt" id="alt-1-voice-btn" title="Listen Voice Advisory" aria-label="Listen Voice Advisory">🔊 Listen</button>
                   <button type="button" class="btn-mini-share" id="alt-1-share-btn" title="Share via WhatsApp" aria-label="Share via WhatsApp">📲</button>
                 </div>
               </div>
@@ -732,7 +732,7 @@
                 </div>
                 <div class="alt-footer-row">
                   <a href="#fertilizer-prescriber" class="alt-action-link" id="alt-2-fert-link">Fertilizer Package &gt;</a>
-                  <button type="button" class="btn-mini-voice" id="alt-2-voice-btn" title="Listen in Hindi" aria-label="Listen in Hindi">🔊</button>
+                  <button type="button" class="btn-voice-readout btn-voice-alt" id="alt-2-voice-btn" title="Listen Voice Advisory" aria-label="Listen Voice Advisory">🔊 Listen</button>
                   <button type="button" class="btn-mini-share" id="alt-2-share-btn" title="Share via WhatsApp" aria-label="Share via WhatsApp">📲</button>
                 </div>
               </div>
@@ -1237,7 +1237,24 @@
     </div>
   </footer>
 
-    <!-- Search & Calculation History Modal Drawer -->
+  <!-- Sowing & Fertilizer Management Calendar Modal -->
+  <div class="modal-overlay" id="calendar-modal" aria-hidden="true">
+    <div class="modal-card calendar-modal-card">
+      <div class="modal-header">
+        <div class="calendar-modal-title-group">
+          <h3 id="calendar-modal-title">🗓️ Sowing & Fertilizer Management Calendar</h3>
+          <span class="calendar-modal-sub" id="calendar-modal-sub">Scientific stage-by-stage crop timeline, optimal sowing window, and fertilizer schedule</span>
+        </div>
+        <button type="button" class="modal-close" id="calendar-modal-close-btn" aria-label="Close calendar">&times;</button>
+      </div>
+
+      <div class="calendar-modal-body" id="calendar-modal-body">
+        <!-- Dynamically rendered by renderCropCalendar() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Calculation History Modal Drawer -->
   <div class="modal-overlay" id="history-modal" aria-hidden="true">
     <div class="modal-card history-modal-card">
       <div class="modal-header">
