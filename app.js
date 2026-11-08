@@ -384,30 +384,49 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-    const ICAR_CROP_BENCHMARKS = {
+  const ICAR_CROP_BENCHMARKS = {
     rice: { N: 120, P: 60, K: 60, ph: 6.5, staple: 'Paddy / Rice' },
     wheat: { N: 120, P: 60, K: 40, ph: 6.8, staple: 'Wheat' },
-    maize: { N: 120, P: 60, K: 40, ph: 6.5, staple: 'Maize' },
+    maize: { N: 120, P: 60, K: 50, ph: 6.5, staple: 'Maize' },
     cotton: { N: 120, P: 60, K: 60, ph: 7.2, staple: 'Cotton' },
-    sugarcane: { N: 150, P: 80, K: 90, ph: 6.8, staple: 'Sugarcane' },
+    sugarcane: { N: 250, P: 100, K: 120, ph: 6.8, staple: 'Sugarcane' },
     jute: { N: 80, P: 40, K: 40, ph: 6.5, staple: 'Jute' },
-    chickpea: { N: 40, P: 60, K: 30, ph: 7.0, staple: 'Chickpea' },
-    pigeonpeas: { N: 40, P: 60, K: 30, ph: 7.0, staple: 'Pigeonpeas (Arhar)' },
-    mothbeans: { N: 30, P: 40, K: 20, ph: 7.2, staple: 'Mothbeans' },
-    mungbean: { N: 30, P: 40, K: 20, ph: 7.0, staple: 'Mungbean' },
-    blackgram: { N: 30, P: 40, K: 20, ph: 7.0, staple: 'Blackgram (Urad)' },
-    lentil: { N: 30, P: 50, K: 20, ph: 6.8, staple: 'Lentil' },
-    pomegranate: { N: 100, P: 50, K: 50, ph: 6.8, staple: 'Pomegranate' },
-    banana: { N: 200, P: 100, K: 200, ph: 6.5, staple: 'Banana' },
-    mango: { N: 100, P: 50, K: 100, ph: 6.5, staple: 'Mango' },
-    grapes: { N: 120, P: 80, K: 120, ph: 6.8, staple: 'Grapes' },
-    watermelon: { N: 100, P: 50, K: 100, ph: 6.5, staple: 'Watermelon' },
-    muskmelon: { N: 100, P: 50, K: 80, ph: 6.5, staple: 'Muskmelon' },
+    chickpea: { N: 25, P: 50, K: 25, ph: 7.0, staple: 'Chickpea (Gram)' },
+    kidneybeans: { N: 30, P: 60, K: 40, ph: 6.5, staple: 'Kidney Beans (Rajma)' },
+    pigeonpeas: { N: 25, P: 50, K: 25, ph: 7.0, staple: 'Pigeonpeas (Arhar/Tur)' },
+    mothbeans: { N: 20, P: 40, K: 20, ph: 7.2, staple: 'Mothbeans' },
+    mungbean: { N: 20, P: 40, K: 20, ph: 7.0, staple: 'Mungbean (Moong)' },
+    blackgram: { N: 20, P: 40, K: 20, ph: 7.0, staple: 'Blackgram (Urad)' },
+    lentil: { N: 25, P: 50, K: 25, ph: 6.8, staple: 'Lentil (Masoor)' },
+    pomegranate: { N: 150, P: 75, K: 100, ph: 6.8, staple: 'Pomegranate' },
+    banana: { N: 200, P: 60, K: 200, ph: 6.5, staple: 'Banana' },
+    mango: { N: 120, P: 50, K: 100, ph: 6.5, staple: 'Mango' },
+    grapes: { N: 150, P: 80, K: 160, ph: 6.8, staple: 'Grapes' },
+    watermelon: { N: 100, P: 60, K: 60, ph: 6.5, staple: 'Watermelon' },
+    muskmelon: { N: 100, P: 60, K: 60, ph: 6.5, staple: 'Muskmelon' },
     apple: { N: 100, P: 50, K: 100, ph: 6.2, staple: 'Apple' },
     orange: { N: 120, P: 60, K: 80, ph: 6.5, staple: 'Orange / Citrus' },
-    papaya: { N: 150, P: 80, K: 150, ph: 6.5, staple: 'Papaya' },
-    coconut: { N: 100, P: 60, K: 120, ph: 6.5, staple: 'Coconut' },
-    coffee: { N: 100, P: 50, K: 80, ph: 6.0, staple: 'Coffee' }
+    papaya: { N: 150, P: 60, K: 150, ph: 6.5, staple: 'Papaya' },
+    coconut: { N: 100, P: 50, K: 140, ph: 6.5, staple: 'Coconut' },
+    coffee: { N: 140, P: 90, K: 120, ph: 6.0, staple: 'Coffee' },
+    tea: { N: 140, P: 60, K: 90, ph: 5.5, staple: 'Tea' },
+    potato: { N: 150, P: 100, K: 120, ph: 6.2, staple: 'Potato' },
+    soybean: { N: 30, P: 60, K: 40, ph: 6.5, staple: 'Soybean' },
+    mustard: { N: 80, P: 40, K: 40, ph: 6.5, staple: 'Mustard (Sarson)' },
+    groundnut: { N: 25, P: 50, K: 50, ph: 6.5, staple: 'Groundnut (Peanut)' },
+    jowar: { N: 80, P: 40, K: 40, ph: 6.8, staple: 'Sorghum (Jowar)' },
+    sorghum: { N: 80, P: 40, K: 40, ph: 6.8, staple: 'Sorghum (Jowar)' },
+    bajra: { N: 80, P: 40, K: 40, ph: 7.0, staple: 'Pearl Millet (Bajra)' },
+    pearl_millet: { N: 80, P: 40, K: 40, ph: 7.0, staple: 'Pearl Millet (Bajra)' },
+    barley: { N: 60, P: 30, K: 30, ph: 7.0, staple: 'Barley' },
+    ragi: { N: 60, P: 30, K: 30, ph: 6.5, staple: 'Finger Millet (Ragi)' },
+    onion: { N: 100, P: 50, K: 60, ph: 6.8, staple: 'Onion' },
+    garlic: { N: 100, P: 50, K: 60, ph: 6.8, staple: 'Garlic' },
+    tomato: { N: 120, P: 60, K: 60, ph: 6.5, staple: 'Tomato' },
+    brinjal: { N: 100, P: 50, K: 50, ph: 6.5, staple: 'Brinjal (Eggplant)' },
+    chilli: { N: 120, P: 60, K: 60, ph: 6.5, staple: 'Chilli' },
+    ginger: { N: 100, P: 50, K: 100, ph: 6.0, staple: 'Ginger' },
+    turmeric: { N: 120, P: 60, K: 120, ph: 6.5, staple: 'Turmeric' }
   };
 
   function calculateFertilizersLocal(payload) {
@@ -423,16 +442,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetP = bm.P;
     const targetK = bm.K;
 
-    const defN = Math.max(0, targetN - curN);
-    const defP = Math.max(0, targetP - curP);
-    const defK = Math.max(0, targetK - curK);
+    // ICAR-IISS STCR formula:
+    // Accounts for soil test contribution while preserving a minimum maintenance threshold (30-40% of RDF)
+    const netN = Math.round(Math.max(targetN * 0.40, targetN - (0.35 * curN)) * 10) / 10;
+    const netP = Math.round(Math.max(targetP * 0.35, targetP - (0.45 * curP)) * 10) / 10;
+    const netK = Math.round(Math.max(targetK * 0.30, targetK - (0.35 * curK)) * 10) / 10;
 
-    // Standard ICAR commercial doses: DAP for P, Urea for residual N, MOP for K
-    const dap_kg_ha = defP > 0 ? (defP / 0.46) : 0;
+    // DAP (18% N, 46% P2O5), Urea (46% N), MOP (60% K2O)
+    const dap_kg_ha = Math.round((netP / 0.46) * 10) / 10;
     const n_from_dap = dap_kg_ha * 0.18;
-    const net_n_needed = Math.max(0, defN - n_from_dap);
-    const urea_kg_ha = net_n_needed > 0 ? (net_n_needed / 0.46) : 0;
-    const mop_kg_ha = defK > 0 ? (defK / 0.60) : 0;
+    const net_n_needed = Math.max(0, netN - n_from_dap);
+    const urea_kg_ha = Math.round((net_n_needed / 0.46) * 10) / 10;
+    const mop_kg_ha = Math.round((netK / 0.60) * 10) / 10;
 
     return {
       success: true,
@@ -444,9 +465,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ph: curPh
       },
       fertilizers: {
-        urea_kg_ha: Math.round(urea_kg_ha * 10) / 10,
-        dap_kg_ha: Math.round(dap_kg_ha * 10) / 10,
-        mop_kg_ha: Math.round(mop_kg_ha * 10) / 10
+        urea_kg_ha: urea_kg_ha,
+        dap_kg_ha: dap_kg_ha,
+        mop_kg_ha: mop_kg_ha
       },
       deficits: {
         target_n: targetN,
@@ -455,17 +476,22 @@ document.addEventListener('DOMContentLoaded', () => {
         current_n: curN,
         current_p: curP,
         current_k: curK,
-        n_deficit: Math.round(defN * 10) / 10,
-        p_deficit: Math.round(defP * 10) / 10,
-        k_deficit: Math.round(defK * 10) / 10
+        n_deficit: Math.max(0, Math.round((targetN - curN) * 10) / 10),
+        p_deficit: Math.max(0, Math.round((targetP - curP) * 10) / 10),
+        k_deficit: Math.max(0, Math.round((targetK - curK) * 10) / 10)
       },
       prescription: {
         target_npk: { N: targetN, P: targetP, K: targetK },
         current_npk: { N: curN, P: curP, K: curK },
+        commercial_doses: {
+          urea_kg: urea_kg_ha,
+          dap_kg: dap_kg_ha,
+          mop_kg: mop_kg_ha
+        },
         deficits: {
-          N_deficit: Math.round(defN * 10) / 10,
-          P_deficit: Math.round(defP * 10) / 10,
-          K_deficit: Math.round(defK * 10) / 10
+          N_deficit: Math.max(0, Math.round((targetN - curN) * 10) / 10),
+          P_deficit: Math.max(0, Math.round((targetP - curP) * 10) / 10),
+          K_deficit: Math.max(0, Math.round((targetK - curK) * 10) / 10)
         }
       }
     };
@@ -3448,9 +3474,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function renderFertilizers(data) {
+  function renderFertilizers(data, skipHistory = false) {
     if (fertPlaceholder) fertPlaceholder.classList.add('is-hidden');
     if (fertContent) fertContent.classList.remove('is-hidden');
+
+    const fertBadge = document.getElementById('fert-badge');
+    if (fertBadge) {
+      fertBadge.textContent = 'ICAR-IISS Prescribed';
+      fertBadge.style.background = '#E8F5E9';
+      fertBadge.style.color = '#2E7D32';
+      fertBadge.style.borderColor = '#A5D6A7';
+    }
 
     let f = data.fertilizers;
     if (!f && data.prescription) {
@@ -3466,30 +3500,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     data.fertilizers = f;
     state.lastFertData = data;
-    // Auto-save fertilizer calculation to History
-    try {
-      const landSize = document.getElementById('input-fert-land-size')?.value || 1.0;
-      const landUnit = document.getElementById('select-fert-land-unit')?.value || 'acre';
-      saveSearchItem({
-        type: 'fert',
-        typeName: 'Fertilizer Prescription',
-        icon: '🧪',
-        title: `${data.target_crop || 'CROP'} • Urea: ${f.urea_kg_ha.toFixed(1)} kg, DAP: ${f.dap_kg_ha.toFixed(1)} kg, MOP: ${f.mop_kg_ha.toFixed(1)} kg/ha`,
-        inputs: {
-          nitrogen: data.inputs?.nitrogen || 90,
-          phosphorus: data.inputs?.phosphorus || 45,
-          potassium: data.inputs?.potassium || 45,
-          ph: data.inputs?.ph || 6.8,
-          target_crop: data.target_crop || '',
-          state: fertStateSelect?.value || '',
-          land_size: landSize,
-          land_unit: landUnit
-        },
-        summary: `Target: ${data.target_crop || 'Crop'} • Land: ${landSize} ${landUnit.toUpperCase()} • NPK: ${data.inputs?.nitrogen || 90}-${data.inputs?.phosphorus || 45}-${data.inputs?.potassium || 45}`,
-        details: `Prescription: ${f.urea_kg_ha.toFixed(0)} kg Urea, ${f.dap_kg_ha.toFixed(0)} kg DAP, ${f.mop_kg_ha.toFixed(0)} kg MOP/ha`
-      });
-    } catch (fertHistErr) {
-      console.warn('Fert history save error:', fertHistErr);
+    // Auto-save fertilizer calculation to History (unless bootstrap init)
+    if (!skipHistory) {
+      try {
+        const landSize = document.getElementById('input-fert-land-size')?.value || 1.0;
+        const landUnit = document.getElementById('select-fert-land-unit')?.value || 'acre';
+        saveSearchItem({
+          type: 'fert',
+          typeName: 'Fertilizer Prescription',
+          icon: '🧪',
+          title: `${data.target_crop || 'CROP'} • Urea: ${f.urea_kg_ha.toFixed(1)} kg, DAP: ${f.dap_kg_ha.toFixed(1)} kg, MOP: ${f.mop_kg_ha.toFixed(1)} kg/ha`,
+          inputs: {
+            nitrogen: data.inputs?.nitrogen || 90,
+            phosphorus: data.inputs?.phosphorus || 45,
+            potassium: data.inputs?.potassium || 45,
+            ph: data.inputs?.ph || 6.8,
+            target_crop: data.target_crop || '',
+            state: fertStateSelect?.value || '',
+            land_size: landSize,
+            land_unit: landUnit
+          },
+          summary: `Target: ${data.target_crop || 'Crop'} • Land: ${landSize} ${landUnit.toUpperCase()} • NPK: ${data.inputs?.nitrogen || 90}-${data.inputs?.phosphorus || 45}-${data.inputs?.potassium || 45}`,
+          details: `Prescription: ${f.urea_kg_ha.toFixed(0)} kg Urea, ${f.dap_kg_ha.toFixed(0)} kg DAP, ${f.mop_kg_ha.toFixed(0)} kg MOP/ha`
+        });
+      } catch (fertHistErr) {
+        console.warn('Fert history save error:', fertHistErr);
+      }
     }
 
 
@@ -4538,9 +4574,21 @@ ${loc.symptoms.substring(0, 180)}...
     state.lastRecommendationsData = initialRecData;
     renderAgronomicMatrix(initialRecData);
 
-    // 5. Auto-Detect Weather & Field Location (GPS / IP Telemetry)
+    // 5. Pre-calculate default ICAR fertilizer doses so farmers see active, non-zero commercial bags immediately
+    const defaultFertPayload = {
+      nitrogen: 92,
+      phosphorus: 46,
+      potassium: 44,
+      ph: 6.8,
+      target_crop: 'rice',
+      state: 'Maharashtra'
+    };
+    const defaultFertData = calculateFertilizersLocal(defaultFertPayload);
+    renderFertilizers(defaultFertData, true);
+
+    // 6. Auto-Detect Weather & Field Location (GPS / IP Telemetry)
     autoDetectWeather(false);
-    // 6. Initialize Search History UI & Seed Data
+    // 7. Initialize Search History UI & Seed Data
     updateHistoryUI();
 
     // Check if user previously dismissed welcome card

@@ -239,22 +239,27 @@ def get_fertilizer_prescription(req: FertilizerRequest):
             target_crop=crop_clean
         )
 
-        urea_kg = 0.0
-        dap_kg = 0.0
-        mop_kg = 0.0
+        commercial_kg_ha = calc.get("commercial_fertilizers_kg_ha", {})
+        urea_kg = float(commercial_kg_ha.get("urea", 0.0))
+        dap_kg = float(commercial_kg_ha.get("dap", 0.0))
+        mop_kg = float(commercial_kg_ha.get("mop", 0.0))
         app_schedule = []
 
         for p in calc.get("prescriptions", []):
             fert = p.get("fertilizer", "")
-            dose_acre = p.get("dose_kg_acre", 0.0)
-            dose_ha = dose_acre * 2.47105
+            dose_ha = p.get("dose_kg_ha")
+            if dose_ha is None:
+                dose_acre = p.get("dose_kg_acre", 0.0)
+                dose_ha = dose_acre * 2.47105
+            else:
+                dose_acre = p.get("dose_kg_acre", round(dose_ha * 0.404686, 1))
             timing = p.get("application_timing", "")
 
-            if "Urea" in fert:
+            if "Urea" in fert and urea_kg == 0.0:
                 urea_kg = dose_ha
-            elif "DAP" in fert or "Diammonium" in fert:
+            elif ("DAP" in fert or "Diammonium" in fert) and dap_kg == 0.0:
                 dap_kg = dose_ha
-            elif "MOP" in fert or "Potash" in fert:
+            elif ("MOP" in fert or "Potash" in fert) and mop_kg == 0.0:
                 mop_kg = dose_ha
 
             app_schedule.append({

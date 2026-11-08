@@ -36,6 +36,52 @@ SUPPORTED_CROPS = [
     'rice', 'soybean', 'sugarcane', 'tea', 'tomato', 'turmeric', 'watermelon', 'wheat'
 ]
 
+# ICAR-IISS Standard Recommended Dose of Fertilizers (RDF) in kg/ha (N, P2O5, K2O) and optimal pH
+ICAR_CROP_RDF: Dict[str, Dict[str, Any]] = {
+    "rice": {"N": 120, "P": 60, "K": 60, "ph": 6.5, "staple": "Paddy / Rice"},
+    "wheat": {"N": 120, "P": 60, "K": 40, "ph": 6.8, "staple": "Wheat"},
+    "maize": {"N": 120, "P": 60, "K": 50, "ph": 6.5, "staple": "Maize"},
+    "cotton": {"N": 120, "P": 60, "K": 60, "ph": 7.2, "staple": "Cotton"},
+    "sugarcane": {"N": 250, "P": 100, "K": 120, "ph": 6.8, "staple": "Sugarcane"},
+    "jute": {"N": 80, "P": 40, "K": 40, "ph": 6.5, "staple": "Jute"},
+    "chickpea": {"N": 25, "P": 50, "K": 25, "ph": 7.0, "staple": "Chickpea (Gram)"},
+    "kidneybeans": {"N": 30, "P": 60, "K": 40, "ph": 6.5, "staple": "Kidney Beans (Rajma)"},
+    "pigeonpeas": {"N": 25, "P": 50, "K": 25, "ph": 7.0, "staple": "Pigeonpeas (Arhar/Tur)"},
+    "mothbeans": {"N": 20, "P": 40, "K": 20, "ph": 7.2, "staple": "Mothbeans"},
+    "mungbean": {"N": 20, "P": 40, "K": 20, "ph": 7.0, "staple": "Mungbean (Moong)"},
+    "blackgram": {"N": 20, "P": 40, "K": 20, "ph": 7.0, "staple": "Blackgram (Urad)"},
+    "lentil": {"N": 25, "P": 50, "K": 25, "ph": 6.8, "staple": "Lentil (Masoor)"},
+    "pomegranate": {"N": 150, "P": 75, "K": 100, "ph": 6.8, "staple": "Pomegranate"},
+    "banana": {"N": 200, "P": 60, "K": 200, "ph": 6.5, "staple": "Banana"},
+    "mango": {"N": 120, "P": 50, "K": 100, "ph": 6.5, "staple": "Mango"},
+    "grapes": {"N": 150, "P": 80, "K": 160, "ph": 6.8, "staple": "Grapes"},
+    "watermelon": {"N": 100, "P": 60, "K": 60, "ph": 6.5, "staple": "Watermelon"},
+    "muskmelon": {"N": 100, "P": 60, "K": 60, "ph": 6.5, "staple": "Muskmelon"},
+    "apple": {"N": 100, "P": 50, "K": 100, "ph": 6.2, "staple": "Apple"},
+    "orange": {"N": 120, "P": 60, "K": 80, "ph": 6.5, "staple": "Orange / Citrus"},
+    "papaya": {"N": 150, "P": 60, "K": 150, "ph": 6.5, "staple": "Papaya"},
+    "coconut": {"N": 100, "P": 50, "K": 140, "ph": 6.5, "staple": "Coconut"},
+    "coffee": {"N": 140, "P": 90, "K": 120, "ph": 6.0, "staple": "Coffee"},
+    "tea": {"N": 140, "P": 60, "K": 90, "ph": 5.5, "staple": "Tea"},
+    "potato": {"N": 150, "P": 100, "K": 120, "ph": 6.2, "staple": "Potato"},
+    "soybean": {"N": 30, "P": 60, "K": 40, "ph": 6.5, "staple": "Soybean"},
+    "mustard": {"N": 80, "P": 40, "K": 40, "ph": 6.5, "staple": "Mustard (Sarson)"},
+    "groundnut": {"N": 25, "P": 50, "K": 50, "ph": 6.5, "staple": "Groundnut (Peanut)"},
+    "jowar": {"N": 80, "P": 40, "K": 40, "ph": 6.8, "staple": "Sorghum (Jowar)"},
+    "sorghum": {"N": 80, "P": 40, "K": 40, "ph": 6.8, "staple": "Sorghum (Jowar)"},
+    "bajra": {"N": 80, "P": 40, "K": 40, "ph": 7.0, "staple": "Pearl Millet (Bajra)"},
+    "pearl_millet": {"N": 80, "P": 40, "K": 40, "ph": 7.0, "staple": "Pearl Millet (Bajra)"},
+    "barley": {"N": 60, "P": 30, "K": 30, "ph": 7.0, "staple": "Barley"},
+    "ragi": {"N": 60, "P": 30, "K": 30, "ph": 6.5, "staple": "Finger Millet (Ragi)"},
+    "onion": {"N": 100, "P": 50, "K": 60, "ph": 6.8, "staple": "Onion"},
+    "garlic": {"N": 100, "P": 50, "K": 60, "ph": 6.8, "staple": "Garlic"},
+    "tomato": {"N": 120, "P": 60, "K": 60, "ph": 6.5, "staple": "Tomato"},
+    "brinjal": {"N": 100, "P": 50, "K": 50, "ph": 6.5, "staple": "Brinjal (Eggplant)"},
+    "chilli": {"N": 120, "P": 60, "K": 60, "ph": 6.5, "staple": "Chilli"},
+    "ginger": {"N": 100, "P": 50, "K": 100, "ph": 6.0, "staple": "Ginger"},
+    "turmeric": {"N": 120, "P": 60, "K": 120, "ph": 6.5, "staple": "Turmeric"}
+}
+
 # Agronomic profiles and market characteristics for farmer recommendations
 CROP_AGRONOMIC_PROFILES: Dict[str, Dict[str, Any]] = {
     "rice": {
@@ -1021,26 +1067,45 @@ class SparcEngine:
         ph: float,
         target_crop: str
     ) -> Dict[str, Any]:
-        """Translates raw NPK deficits and pH into exact commercial fertilizer dosages in kg per acre."""
+        """
+        Translates raw NPK soil test levels and pH into scientific ICAR-IISS STCR
+        fertilizer dosages (kg/ha and kg/acre) and commercial bag requirements.
+        """
         target = target_crop.lower().strip()
-        benchmark = self.crop_benchmarks.get(target, {
-            "N": {"mean": 80.0},
-            "P": {"mean": 45.0},
-            "K": {"mean": 45.0},
-            "ph": {"mean": 6.5}
+        rdf = ICAR_CROP_RDF.get(target, {
+            "N": 120.0,
+            "P": 60.0,
+            "K": 50.0,
+            "ph": 6.5,
+            "staple": target.capitalize()
         })
 
-        target_n = benchmark["N"]["mean"]
-        target_p = benchmark["P"]["mean"]
-        target_k = benchmark["K"]["mean"]
+        target_n = float(rdf["N"])
+        target_p = float(rdf["P"])
+        target_k = float(rdf["K"])
 
-        def_n = max(0.0, target_n - nitrogen) * 0.40
-        def_p = max(0.0, target_p - phosphorus) * 0.40
-        def_k = max(0.0, target_k - potassium) * 0.40
+        # ICAR-IISS Soil Test Crop Response (STCR) net requirement equations:
+        # Accounts for soil contribution while guaranteeing minimum maintenance threshold (30-40% of RDF)
+        net_n = round(max(target_n * 0.40, target_n - (0.35 * nitrogen)), 1)
+        net_p = round(max(target_p * 0.35, target_p - (0.45 * phosphorus)), 1)
+        net_k = round(max(target_k * 0.30, target_k - (0.35 * potassium)), 1)
 
-        urea_kg = round(def_n / 0.46, 1)
-        dap_kg = round(def_p / 0.46, 1)
-        mop_kg = round(def_k / 0.60, 1)
+        # Commercial fertilizer conversions (kg/ha):
+        # 1. DAP (18% N, 46% P2O5) supplies required phosphorus
+        dap_kg_ha = round(net_p / 0.46, 1)
+        n_from_dap = dap_kg_ha * 0.18
+
+        # 2. Urea (46% N) supplies remaining nitrogen
+        rem_n = max(0.0, net_n - n_from_dap)
+        urea_kg_ha = round(rem_n / 0.46, 1)
+
+        # 3. MOP (60% K2O) supplies potassium
+        mop_kg_ha = round(net_k / 0.60, 1)
+
+        # Acre conversions (1 ha = 2.47105 acres => factor 0.404686)
+        urea_kg_acre = round(urea_kg_ha * 0.404686, 1)
+        dap_kg_acre = round(dap_kg_ha * 0.404686, 1)
+        mop_kg_acre = round(mop_kg_ha * 0.404686, 1)
 
         soil_conditioner = "Soil conditioner not required; pH is well-balanced."
         conditioner_qty = 0.0
@@ -1057,34 +1122,48 @@ class SparcEngine:
             "target_crop": target.capitalize(),
             "target_npk": {"N": target_n, "P": target_p, "K": target_k},
             "current_npk": {"N": nitrogen, "P": phosphorus, "K": potassium},
+            "net_nutrient_demand_kg_ha": {"N": net_n, "P": net_p, "K": net_k},
+            "commercial_fertilizers_kg_ha": {
+                "urea": urea_kg_ha,
+                "dap": dap_kg_ha,
+                "mop": mop_kg_ha
+            },
             "deficits": {
                 "N_deficit": round(max(0.0, target_n - nitrogen), 1),
                 "P_deficit": round(max(0.0, target_p - phosphorus), 1),
                 "K_deficit": round(max(0.0, target_k - potassium), 1),
             },
-            "deficits_kg_per_acre": {"N": round(def_n, 1), "P": round(def_p, 1), "K": round(def_k, 1)},
+            "deficits_kg_per_acre": {
+                "N": round(net_n * 0.404686, 1),
+                "P": round(net_p * 0.404686, 1),
+                "K": round(net_k * 0.404686, 1)
+            },
             "prescriptions": [
                 {
                     "fertilizer": "Urea (46% N)",
-                    "dose_kg_acre": urea_kg,
+                    "dose_kg_acre": urea_kg_acre,
+                    "dose_kg_ha": urea_kg_ha,
                     "application_timing": "Split into 3 stages: 30% basal, 40% active tillering, 30% panicle emergence.",
                     "role": "Rapid vegetative growth & chlorophyll synthesis."
                 },
                 {
                     "fertilizer": "Diammonium Phosphate / DAP (18-46-0)",
-                    "dose_kg_acre": dap_kg,
+                    "dose_kg_acre": dap_kg_acre,
+                    "dose_kg_ha": dap_kg_ha,
                     "application_timing": "Apply 100% as basal dressing at 5cm below seed depth during sowing.",
                     "role": "Accelerates seedling root vigor and early structural establishment."
                 },
                 {
                     "fertilizer": "Muriate of Potash / MOP (60% K2O)",
-                    "dose_kg_acre": mop_kg,
+                    "dose_kg_acre": mop_kg_acre,
+                    "dose_kg_ha": mop_kg_ha,
                     "application_timing": "50% basal at sowing, 50% at reproductive flag leaf initiation.",
                     "role": "Stomatal regulation, disease resilience, and starch accumulation."
                 },
                 {
                     "fertilizer": "Well-Decomposed Farm Yard Manure (FYM)",
                     "dose_kg_acre": organic_compost_kg,
+                    "dose_kg_ha": round(organic_compost_kg * 2.47105, 1),
                     "application_timing": "Broadcast and disc-plow into topsoil 2-3 weeks prior to seeding.",
                     "role": "Improves cation exchange capacity (CEC) and moisture retention."
                 }
