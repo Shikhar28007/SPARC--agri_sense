@@ -2540,71 +2540,346 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // MULTILINGUAL AGRONOMIC EXPLANATION ENGINE (9 LANGUAGES)
+  // ─────────────────────────────────────────────────────────────────────────
+  function getCropRationale(cropKey, cropLocal, n, rain, lang) {
+    const k = (cropKey || '').toLowerCase();
+    const l = lang || 'hi';
+    const templates = {
+      rice: {
+        en: `Your soil Nitrogen (${n} kg/ha) and seasonal rainfall (${rain} mm) provide optimal conditions for ${cropLocal} tillering and grain formation.`,
+        hi: `आपकी मिट्टी में नाइट्रोजन (${n} kg/ha) और स्थानीय वर्षा (${rain} mm) ${cropLocal} के कल्ले फूटने और दाना भराव के लिए सर्वोत्तम परिस्थितियाँ प्रदान करते हैं।`,
+        mr: `आपल्या जमिनीतील नत्र (${n} किलो/हे.) आणि स्थानिक पाऊस (${rain} मिमी) ${cropLocal} पिकाच्या फुटव्यांसाठी आणि दाणे भरण्यासाठी अत्यंत पोषक आहेत.`,
+        pa: `ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਵਿੱਚ ਨਾਈਟ੍ਰੋਜਨ (${n} ਕਿਲੋ/ਹੈ.) ਅਤੇ ਮੀਂਹ (${rain} ਮਿਲੀਮੀਟਰ) ${cropLocal} ਦੇ ਵਧੀਆ ਫੁਟਾਰੇ ਅਤੇ ਦਾਣੇ ਭਰਨ ਲਈ ਬਹੁਤ ਵਧੀਆ ਹਾਲਾਤ ਬਣਾਉਂਦੇ ਹਨ।`,
+        gu: `તમારી જમીનમાં નાઇટ્રોજન (${n} કિગ્રા/હે.) અને વરસાદ (${rain} મીમી) ${cropLocal} ના ફૂટવા અને દાણા ભરાવવા માટે ઉત્તમ વાતાવરણ પૂરું પાડે છે.`,
+        te: `మీ నేలలోని నత్రజని (${n} కిలోలు/హెక్టారు) మరియు వర్షపాతం (${rain} మి.మీ.) ${cropLocal} దుబ్బులు చేయడం మరియు గింజ పక్వానికి రావడం కోసం అత్యంత అనుకూలం.`,
+        ta: `உங்கள் மண்ணின் தழைச்சத்து (${n} கிலோ/ஹெக்) மற்றும் மழை அளவு (${rain} மிமீ) ${cropLocal} தூர்கட்டுவதற்கும் மணி பிடிப்பதற்கும் மிகச் சிறந்த சூழலை வழங்குகிறது.`,
+        bn: `আপনার মাটির নাইট্রোজেন (${n} কেজি/হেক্টর) এবং বৃষ্টিপাত (${rain} মিমি) ${cropLocal} ফসলের কুশি বের হওয়া এবং ভালো দানা গঠনের জন্য আদর্শ অনুকূল পরিবেশ তৈরি করে।`,
+        kn: `ನಿಮ್ಮ ಮಣ್ಣಿನ ಸಾರಜನಕ (${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್) ಮತ್ತು ಮಳೆಯ ಪ್ರಮಾಣ (${rain} ಮಿಮೀ) ${cropLocal} ಕವಲೊಡೆಯುವಿಕೆ ಮತ್ತು ಧಾನ್ಯ ಕಟ್ಟುವಿಕೆಗೆ ಅತ್ಯುತ್ತಮ ವಾತಾವರಣ ಒದಗಿಸುತ್ತದೆ.`
+      },
+      cotton: {
+        en: `Balanced soil conditions (N=${n} kg/ha) and weather baseline (${rain} mm) are ideal for vegetative frame and boll development in ${cropLocal}.`,
+        hi: `संतुलित मिट्टी पोषण (N=${n} kg/ha) और स्थानीय मौसम (${rain} mm) ${cropLocal} की वानस्पतिक बढ़वार और टिंडे (Bolls) के विकास के लिए पूर्णतः अनुकूल हैं।`,
+        mr: `संतुलित माती पोषण (नत्र=${n} किलो/हे.) आणि हवामान (${rain} मिमी) ${cropLocal} पिकाच्या कायिक वाढीसाठी आणि बोंडांच्या उत्तम विकासासाठी आदर्श आहेत.`,
+        pa: `ਸੰਤੁਲਿਤ ਮਿੱਟੀ ਖੁਰਾਕ (N=${n} ਕਿਲੋ/ਹੈ.) ਅਤੇ ਮੌਸਮ (${rain} ਮਿਲੀਮੀਟਰ) ${cropLocal} ਦੇ ਬੂਟੇ ਅਤੇ ਟੀਂਡਿਆਂ ਦੇ ਵਾਧੇ ਲਈ ਬਹੁਤ ਢੁਕਵੇਂ ਹਨ।`,
+        gu: `સંતુલિત જમીન પોષક તત્ત્વો (N=${n} કિગ્રા/હે.) અને વાતાવરણ (${rain} મીમી) ${cropLocal} ના વાનસ્પતિક વિકાસ અને જીંડવા માટે સંપૂર્ણ અનુકૂળ છે.`,
+        te: `సమతుల్య నేల పోషకాలు (N=${n} కిలోలు/హెక్టారు) మరియు వాతావరణం (${rain} మి.మీ.) ${cropLocal} ఏపుగా పెరగడానికి మరియు కాయలు పట్టడానికి అనుకూలం.`,
+        ta: `சீரான மண் ஊட்டச்சத்துக்கள் (N=${n} கிலோ/ஹெக்) மற்றும் காலநிலை (${rain} மிமீ) ${cropLocal} செழித்து வளர்வதற்கும் காய்கள் பிடிப்பதற்கும் உகந்தது.`,
+        bn: `সুষম মাটির পুষ্টি (N=${n} কেজি/হেক্টর) এবং আবহাওয়া (${rain} মিমি) ${cropLocal} ফসলের অঙ্গজ বৃদ্ধি এবং গুটি গঠনের জন্য সম্পূর্ণ উপযোগী।`,
+        kn: `ಸಮತೋಲಿತ ಮಣ್ಣಿನ ಪೋಷಕಾಂಶಗಳು (N=${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್) ಮತ್ತು ಹವಾಮಾನ (${rain} ಮಿಮೀ) ${cropLocal} ಬೆಳೆಯ ಹುಲುಸಾದ ಬೆಳವಣಿಗೆಗೆ ಮತ್ತು ಕಾಯಿ ಕಚ್ಚಲು ಸೂಕ್ತವಾಗಿದೆ.`
+      },
+      maize: {
+        en: `Moderate rainfall (${rain} mm) and available soil N (${n} kg/ha) drive rapid cob development and starch synthesis in ${cropLocal}.`,
+        hi: `मध्यम वर्षा (${rain} mm) और उपलब्ध मिट्टी नाइट्रोजन (${n} kg/ha) ${cropLocal} के भुट्टे के तेजी से विकास और दाना भराव के लिए आदर्श हैं।`,
+        mr: `मध्यम पाऊस (${rain} मिमी) आणि उपलब्ध नत्र (${n} किलो/हे.) ${cropLocal} पिकाच्या कणसाच्या जलद वाढीसाठी व दाणे भरण्यासाठी उत्कृष्ट आहेत.`,
+        pa: `ਦਰਮਿਆਨਾ ਮੀਂਹ (${rain} ਮਿਲੀਮੀਟਰ) ਅਤੇ ਨਾਈਟ੍ਰੋਜਨ (${n} ਕਿਲੋ/ਹੈ.) ${cropLocal} ਦੀ ਛੱਲੀ ਦੇ ਵਾਧੇ ਅਤੇ ਦਾਣੇ ਪੱਕਣ ਲਈ ਵਧੀਆ ਹਨ।`,
+        gu: `મધ્યમ વરસાદ (${rain} મીમી) અને જમીન નાઇટ્રોજન (${n} કિગ્રા/હે.) ${cropLocal} ના ડોડાના ઝડપી વિકાસ અને દાણા ભરાવવા માટે ઉત્તમ છે.`,
+        te: `మితమైన వర్షపాతం (${rain} మి.మీ.) మరియు నేల నత్రజని (${n} కిలోలు/హెక్టారు) ${cropLocal} కంకి త్వరగా ఎదగడానికి మరియు గింజ బలం కోసం అనుకూలం.`,
+        ta: `மிதமான மழை (${rain} மிமீ) மற்றும் மண் தழைச்சத்து (${n} கிலோ/ஹெக்) ${cropLocal} பயிரின் கதிர் வளர்ச்சிக்கும் மணி முற்றுவதற்கும் சிறந்தது.`,
+        bn: `মাঝারি বৃষ্টিপাত (${rain} মিমি) এবং মাটির নাইট্রোজেন (${n} কেজি/হেক্টর) ${cropLocal} ফসলের মোচার দ্রুত বিকাশ ও ভালো দানা গঠনের জন্য সেরা।`,
+        kn: `ಮಧ್ಯಮ ಮಳೆ (${rain} ಮಿಮೀ) ಮತ್ತು ಮಣ್ಣಿನ ಸಾರಜನಕ (${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್) ${cropLocal} ತೆನೆಯ ಶೀಘ್ರ ಬೆಳವಣಿಗೆಗೆ ಮತ್ತು ಕಾಳು ತುಂಬಲು ಸೂಕ್ತವಾಗಿದೆ.`
+      },
+      wheat: {
+        en: `Winter temperature baseline and responsive root zone (N=${n} kg/ha) promote excellent crown root initiation and high tiller survival for ${cropLocal}.`,
+        hi: `शीतकालीन तापमान और जड़ क्षेत्र में उपलब्ध N (${n} kg/ha) ${cropLocal} में ताज जड़ (CRI) के विकास और अधिक कल्ले बनने में सहायक हैं।`,
+        mr: `हिवाळी पोषक हवामान आणि जमिनीतील उपलब्ध नत्र (${n} किलो/हे.) ${cropLocal} पिकाच्या मुळांच्या फुटव्यासाठी अत्यंत लाभदायक आहेत.`,
+        pa: `ਸਰਦੀਆਂ ਦਾ ਢੁਕਵਾਂ ਤਾਪਮਾਨ ਅਤੇ ਮਿੱਟੀ ਵਿਚਲੀ ਨਾਈਟ੍ਰੋਜਨ (${n} ਕਿਲੋ/ਹੈ.) ${cropLocal} ਦੇ ਵਧੀਆ ਫੁਟਾਰੇ ਅਤੇ ਵੱਧ ਝਾੜ ਲਈ ਸਹਾਈ ਹਨ।`,
+        gu: `શિયાળુ વાતાવરણ અને ઉપલબ્ધ નાઇટ્રોજન (${n} કિગ્રા/હે.) ${cropLocal} માં મૂળના સારા વિકાસ અને ઉત્તમ ઉત્પાદન માટે અનુકૂળ છે.`,
+        te: `శీతాకాల ఉష్ణోగ్రత మరియు నేలలోని నత్రజని (${n} కిలోలు/హెక్టారు) ${cropLocal} వేర్లు దృఢంగా విస్తరించడానికి మరియు అధిక దిగుబడికి అనుకూలం.`,
+        ta: `குளிர்கால சூழல் மற்றும் மண்ணில் உள்ள தழைச்சத்து (${n} கிலோ/ஹெக்) ${cropLocal} வேர் வளர்ச்சிக்கும் அதிக தூர் பிடிப்பதற்கும் உதவுகிறது.`,
+        bn: `শীতকালীন আবহাওয়া এবং মাটির নাইট্রোজেন (${n} কেজি/হেক্টর) ${cropLocal} ফসলের শক্ত শিকড় গঠন ও অধিক ফলনের জন্য অত্যন্ত উপযোগী।`,
+        kn: `ಚಳಿಗಾಲದ ಹವಾಮಾನ ಮತ್ತು ಮಣ್ಣಿನ ಸಾರಜನಕ (${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್) ${cropLocal} ಬೆಳೆಯ ಬೇರುಗಳ ಬೆಳವಣಿಗೆಗೆ ಮತ್ತು ಅಧಿಕ ಇಳುವರಿಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ.`
+      },
+      sugarcane: {
+        en: `High water retention and steady nutrient availability (N=${n} kg/ha) ensure superior cane elongation and sucrose accumulation for ${cropLocal}.`,
+        hi: `पर्याप्त जल उपलब्धता और स्थिर पोषण (N=${n} kg/ha) ${cropLocal} की लंबाई में तीव्र वृद्धि और रस में शर्करा प्रतिशत बढ़ाने के लिए सर्वोत्तम हैं।`,
+        mr: `भरपूर पाणी आणि संतुलित अन्नद्रव्ये (${n} किलो/हे. नत्र) ${cropLocal} पिकाच्या कांड्यांची लांबी वाढवण्यासाठी व साखर उतारा वाढवण्यासाठी आदर्श आहेत.`,
+        pa: `ਭਰਪੂਰ ਪਾਣੀ ਅਤੇ ਜ਼ਮੀਨ ਦੀ ਖੁਰਾਕ (N=${n} ਕਿਲੋ/ਹੈ.) ${cropLocal} ਦੇ ਗੰਨੇ ਦੇ ਕੱਦ ਅਤੇ ਮਿਠਾਸ ਵਧਾਉਣ ਲਈ ਬਹੁਤ ਵਧੀਆ ਹਨ।`,
+        gu: `પૂરતું પાણી અને પોષક તત્ત્વો (${n} કિગ્રા/હે. N) ${cropLocal} ની લંબાઈ વધારવા અને ખાંડની ટકાવારી સુધારવા માટે શ્રેષ્ઠ છે.`,
+        te: `సమృద్ధిగా నీరు మరియు పోషకాలు (${n} కిలోలు/హెక్టారు N) ${cropLocal} ఎదుగుదలకు మరియు చెరకులో చక్కెర శాతం పెరగడానికి తోడ్పడతాయి.`,
+        ta: `அதிக நீர் வசதி மற்றும் சத்துக்கள் (${n} கிலோ/ஹெக் N) ${cropLocal} தண்டு வளர்ச்சிக்கும் சர்க்கரை அளவு கூடுவதற்கும் சிறந்தது.`,
+        bn: `পর্যাপ্ত জল ও সুষম পুষ্টি (${n} কেজি/হেক্টর N) ${cropLocal} গাছের বৃদ্ধি এবং রসে শর্করার পরিমাণ বাড়াতে দারুণ সাহায্য করে।`,
+        kn: `ಹೇರಳ ನೀರು ಮತ್ತು ಸಮತೋಲಿತ ಪೋಷಕಾಂಶಗಳು (${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್ N) ${cropLocal} ಕಬ್ಬಿನ ಎತ್ತರ ಬೆಳೆಯಲು ಮತ್ತು ಸಕ್ಕರೆ ಅಂಶ ಹೆಚ್ಚಿಸಲು ಅತ್ಯುತ್ತಮವಾಗಿವೆ.`
+      },
+      general: {
+        en: `Your soil Nitrogen (${n} kg/ha) and rainfall profile (${rain} mm) strongly favor healthy biomass and yield potential for ${cropLocal}.`,
+        hi: `आपकी मिट्टी में उपलब्ध नाइट्रोजन (${n} kg/ha) और वर्षा स्तर (${rain} mm) ${cropLocal} के स्वस्थ वानस्पतिक विकास और उच्च पैदावार के लिए सर्वोत्तम हैं।`,
+        mr: `आपल्या शेतातील उपलब्ध नत्र (${n} किलो/हे.) आणि पावसाचे प्रमाण (${rain} मिमी) ${cropLocal} पिकाच्या निरोगी वाढीसाठी व चांगल्या उत्पादनासाठी पोषक आहे.`,
+        pa: `ਤੁਹਾਡੀ ਜ਼ਮੀਨ ਵਿੱਚ ਉਪਲਬਧ ਨਾਈਟ੍ਰੋਜਨ (${n} ਕਿਲੋ/ਹੈ.) ਅਤੇ ਮੀਂਹ (${rain} ਮਿਲੀਮੀਟਰ) ${cropLocal} ਦੇ ਵਧੀਆ ਵਾਧੇ ਅਤੇ ਭਰਪੂਰ ਝਾੜ ਲਈ ਬਹੁਤ ਲਾਭਦਾਇਕ ਹਨ।`,
+        gu: `તમારી જમીનમાં ઉપલબ્ધ નાઇટ્રોજન (${n} કિગ્રા/હે.) અને વરસાદ (${rain} મીમી) ${cropLocal} ના તંદુરસ્ત વિકાસ અને શ્રેષ્ઠ ઉત્પાદન માટે અત્યંત યોગ્ય છે.`,
+        te: `మీ నేలలోని నత్రజని (${n} కిలోలు/హెక్టారు) మరియు వర్షపాతం (${rain} మి.మీ.) ${cropLocal} పంట ఆరోగ్యకరమైన పెరుగుదలకు మరియు మంచి దిగుబడికి ఎంతగానో తోడ్పడతాయి.`,
+        ta: `உங்கள் மண்ணில் உள்ள தழைச்சத்து (${n} கிலோ/ஹெக்) மற்றும் மழை அளவு (${rain} மிமீ) ${cropLocal} பயிரின் ஆரோக்கியமான வளர்ச்சிக்கும் நல்ல விளைச்சலுக்கும் சாதகமாக உள்ளது.`,
+        bn: `আপনার জমিতে উপস্থিত নাইট্রোজেন (${n} কেজি/হেক্টর) এবং বৃষ্টিপাতের পরিমাণ (${rain} মিমি) ${cropLocal} ফসলের স্বাস্থ্যকর বৃদ্ধি ও উচ্চ ফলনের জন্য অত্যন্ত উপযোগী।`,
+        kn: `ನಿಮ್ಮ ಮಣ್ಣಿನಲ್ಲಿರುವ ಸಾರಜನಕ (${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್) ಮತ್ತು ಮಳೆಯ ಪ್ರಮಾಣ (${rain} ಮಿಮೀ) ${cropLocal} ಬೆಳೆಯ ಸಮೃದ್ಧ ಬೆಳವಣಿಗೆಗೆ ಮತ್ತು ಉತ್ತಮ ಇಳುವರಿಗೆ ಸಹಕಾರಿಯಾಗಿದೆ.`
+      }
+    };
+    const cropTpl = templates[k] || templates.general;
+    return cropTpl[l] || cropTpl['hi'] || cropTpl['en'];
+  }
+
+  function getAlternativeCropRationale(cropLocal, n, rain, lang) {
+    const l = lang || 'hi';
+    const dict = {
+      en: `Solid secondary alternative: resilient root system well-adapted to current soil N (${n} kg/ha) and seasonal rain (${rain} mm).`,
+      hi: `मजबूत द्वितीयक विकल्प: वर्तमान मिट्टी N (${n} kg/ha) और स्थानीय वर्षा (${rain} mm) के लिए अनुकूलित सहनशील फसल।`,
+      mr: `उत्तम पर्यायी पीक: सध्याच्या जमिनीतील नत्र (${n} किलो/हे.) आणि स्थानिक पावसासाठी (${rain} मिमी) अत्यंत अनुकूल आणि सहनशील.`,
+      pa: `ਵਧੀਆ ਬਦਲਵੀਂ ਫ਼ਸਲ: ਮੌਜੂਦਾ ਮਿੱਟੀ ਨਾਈਟ੍ਰੋਜਨ (${n} ਕਿਲੋ/ਹੈ.) ਅਤੇ ਮੀਂਹ (${rain} ਮਿਲੀਮੀਟਰ) ਵਿੱਚ ਸਥਿਰ ਝਾੜ ਦੇਣ ਵਾਲੀ ਫ਼ਸਲ।`,
+      gu: `શ્રેષ્ઠ વૈકલ્પિક પાક: હાલની જમીન નાઇટ્રોજન (${n} કિગ્રા/હે.) અને વરસાદ (${rain} મીમી) માં સ્થિર અને સારું ઉત્પાદન આપવા સક્ષમ.`,
+      te: `మంచి ప్రత్యామ్నాయ పంట: ప్రస్తుత నేల నత్రజని (${n} కిలోలు/హెక్టారు) మరియు వర్షపాతం (${rain} మి.మీ.) వద్ద నిలకడైన దిగుబడినిస్తుంది.`,
+      ta: `சிறந்த மாற்றுப் பயிர்: தற்போதைய மண் தழைச்சத்து (${n} கிலோ/ஹெக்) மற்றும் மழை அளவுக்கு (${rain} மிமீ) நன்கு ஒத்துப்போகும் பயிர்.`,
+      bn: `চমৎকার বিকল্প ফসল: বর্তমান মাটির নাইট্রোজেন (${n} কেজি/হেক্টর) এবং বৃষ্টিপাতে (${rain} মিমি) স্থিতিশীল ফলনশীল।`,
+      kn: `ಉತ್ತಮ ಪರ್ಯಾಯ ಬೆಳೆ: ಪ್ರಸ್ತುತ ಮಣ್ಣಿನ ಸಾರಜನಕ (${n} ಕೆಜಿ/ಹೆಕ್ಟೇರ್) ಮತ್ತು ಮಳೆಗೆ (${rain} ಮಿಮೀ) ಹೊಂದಿಕೊಂಡು ಸ್ಥಿರ ಇಳುವರಿ ನೀಡುತ್ತದೆ.`
+    };
+    return dict[l] || dict['hi'] || dict['en'];
+  }
+
+  function getPreferredCropDescription(topCrop, targetCrop, currentN, currentRain, yieldVal, priceSubVal, lang) {
+    const l = lang || 'hi';
+    const dict = {
+      en: `💡 <strong>Why switch to ${topCrop}:</strong> Rather than risking losses with ${targetCrop}, ${topCrop} naturally matches your available soil nutrients (${currentN} kg/ha N) and rainfall (${currentRain} mm), delivering a protected harvest of ${yieldVal} with ${priceSubVal}.`,
+      hi: `💡 <strong>${topCrop} क्यों चुनें:</strong> ${targetCrop} में फसल विफलता का जोखिम लेने के बजाय, ${topCrop} आपकी मिट्टी (${currentN} N) और वर्षा (${currentRain} mm) के पूर्णतः अनुकूल है, जिससे ${yieldVal} की सुरक्षित पैदावार मिलती है।`,
+      mr: `💡 <strong>${topCrop} का निवडावे:</strong> ${targetCrop} मधील नुकसान टाळून, ${topCrop} आपल्या जमिनीतील घटक (${currentN} नत्र) आणि मान्सून पावसाचा (${currentRain} मिमी) परिपूर्ण वापर करते, आणि ${yieldVal} हमखास उत्पन्न देते.`,
+      pa: `💡 <strong>${topCrop} ਕਿਉਂ ਚੁਣੋ:</strong> ${targetCrop} ਵਿੱਚ ਨੁਕਸਾਨ ਦੇ ਜੋਖਮ ਦੀ ਬਜਾਏ, ${topCrop} ਤੁਹਾਡੀ ਮਿੱਟੀ (${currentN} N) ਅਤੇ ਮੀਂਹ (${currentRain} ਮਿਲੀਮੀਟਰ) ਦੇ ਪੂਰੀ ਤਰ੍ਹਾਂ ਅਨੁਕੂਲ ਹੈ, ਜਿਸ ਨਾਲ ${yieldVal} ਦਾ ਸੁਰੱਖਿਅਤ ਝਾੜ ਮਿਲਦਾ ਹੈ।`,
+      gu: `💡 <strong>${topCrop} શા માટે પસંદ કરવું:</strong> ${targetCrop} માં નુકસાનના જોખમને બદલે, ${topCrop} તમારી જમીન (${currentN} N) અને વરસાદ (${currentRain} મીમી) માટે અત્યંત અનુકૂળ છે, જે ${yieldVal} નું સુરક્ષિત ઉત્પાદન આપે છે।`,
+      te: `💡 <strong>${topCrop} ఎందుకు ఎంచుకోవాలి:</strong> ${targetCrop} లో నష్టపోయే ప్రమాదం లేకుండా, ${topCrop} మీ నేల పోషకాలు (${currentN} N) మరియు వర్షపాతం (${currentRain} మి.మీ.) కు సరిగ్గా సరిపోతుంది, ${yieldVal} సురక్షిత దిగుబడిని ఇస్తుంది.`,
+      ta: `💡 <strong>${topCrop} ஏன் தேர்வு செய்ய வேண்டும்:</strong> ${targetCrop} பயிரிட்டு நஷ்டமடைவதை விட, ${topCrop} உங்கள் மண் சத்துக்கள் (${currentN} N) மற்றும் மழையளவுக்கு (${currentRain} மிமீ) மிகச் சரியாக பொருந்தி, ${yieldVal} பாதுகாப்பான மகசூலைத் தருகிறது.`,
+      bn: `💡 <strong>কেন ${topCrop} বেছে নেবেন:</strong> ${targetCrop} চাষে লোকসানের ঝুঁকি না নিয়ে, ${topCrop} আপনার মাটির পুষ্টি (${currentN} N) এবং বৃষ্টিপাতের (${currentRain} মিমি) সাথে সম্পূর্ণ সামঞ্জস্যপূর্ণ হয়ে ${yieldVal} নিরাপদ ফলন প্রদান করে।`,
+      kn: `💡 <strong>${topCrop} ಅನ್ನು ಏಕೆ ಆಯ್ಕೆ ಮಾಡಬೇಕು:</strong> ${targetCrop} ನಲ್ಲಿ ನಷ್ಟ ಅನುಭವಿಸುವ ಬದಲು, ${topCrop} ನಿಮ್ಮ ಮಣ್ಣಿನ ಪೋಷಕಾಂಶಗಳು (${currentN} N) ಮತ್ತು ಮಳೆಗೆ (${currentRain} ಮಿಮೀ) ಸಂಪೂರ್ಣವಾಗಿ ಹೊಂದಿಕೊಳ್ಳುತ್ತದೆ, ಮತ್ತು ${yieldVal} ಸುರಕ್ಷಿತ ಇಳುವರಿಯನ್ನು ನೀಡುತ್ತದೆ.`
+    };
+    return dict[l] || dict['hi'] || dict['en'];
+  }
+
+  function getVoiceReadoutText(bestMeta, best, lang) {
+    const l = lang || 'hi';
+    const dict = {
+      en: `Top Agro Recommendation: ${bestMeta.fullName}. Agronomic match ${best.confidence} percent. Expected yield: ${bestMeta.yield}. Water need: ${bestMeta.water}. Duration: ${bestMeta.duration}.`,
+      hi: `शीर्ष अनुशंसित फसल: ${bestMeta.fullName}। मैच आत्मविश्वास ${best.confidence} प्रतिशत। संभावित उपज: ${bestMeta.yield}। जल आवश्यकता: ${bestMeta.water}। फसल अवधि: ${bestMeta.duration}।`,
+      mr: `अव्वल शिफारस केलेले पीक: ${bestMeta.fullName}. योग्यतेचे प्रमाण ${best.confidence} टक्के. अपेक्षित उत्पादन: ${bestMeta.yield}. पाण्याची गरज: ${bestMeta.water}. कालावधी: ${bestMeta.duration}.`,
+      pa: `ਸਿਖਰਲੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਫ਼ਸਲ: ${bestMeta.fullName}। ਅਨੁਕੂਲਤਾ ${best.confidence} ਪ੍ਰਤੀਸ਼ਤ। ਸੰਭਾਵਿਤ ਝਾੜ: ${bestMeta.yield}। ਪਾਣੀ ਦੀ ਲੋੜ: ${bestMeta.water}। ਸਮਾਂ: ${bestMeta.duration}।`,
+      gu: `શ્રેષ્ઠ ભલામણ કરેલ પાક: ${bestMeta.fullName}. અનુકૂળતા ${best.confidence} ટકા. અપેક્ષિત ઉત્પાદન: ${bestMeta.yield}. પાણીની જરૂરિયાત: ${bestMeta.water}. પાક સમય: ${bestMeta.duration}।`,
+      te: `అగ్రశ్రేణి సిఫార్సు చేసిన పంట: ${bestMeta.fullName}. అనుకూలత ${best.confidence} శాతం. ఆశించిన దిగుబడి: ${bestMeta.yield}. నీటి అవసరం: ${bestMeta.water}. పంట కాలం: ${bestMeta.duration}.`,
+      ta: `முதன்மைப் பரிந்துரைக்கப்படும் பயிர்: ${bestMeta.fullName}. பொருத்தம் ${best.confidence} சதவீதம். எதிர்பார்க்கப்படும் மகசூல்: ${bestMeta.yield}. நீர் தேவை: ${bestMeta.water}. காலம்: ${bestMeta.duration}.`,
+      bn: `শীর্ষ সুপারিশকৃত ফসল: ${bestMeta.fullName}। উপযোগিতা ${best.confidence} শতাংশ। প্রত্যাশিত ফলন: ${bestMeta.yield}। জলের প্রয়োজনীয়তা: ${bestMeta.water}। সময়কাল: ${bestMeta.duration}।`,
+      kn: `ಅತ್ಯುತ್ತಮ ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ: ${bestMeta.fullName}. ಹೊಂದಾಣಿಕೆ ${best.confidence} ಪ್ರತಿಶತ. ನಿರೀಕ್ಷಿತ ಇಳುವರಿ: ${bestMeta.yield}. ನೀರಿನ ಅವಶ್ಯಕತೆ: ${bestMeta.water}. ಬೆಳೆ ಕಾಲ: ${bestMeta.duration}.`
+    };
+    return dict[l] || dict['hi'] || dict['en'];
+  }
+
+  function getAltVoiceReadoutText(tag, altMeta, alt, lang) {
+    const l = lang || 'hi';
+    const dict = {
+      en: `${tag}: ${altMeta.fullName}. Match ${alt.confidence} percent.`,
+      hi: `${tag}: ${altMeta.fullName}। अनुकूलता ${alt.confidence} प्रतिशत।`,
+      mr: `${tag}: ${altMeta.fullName}. जुळणी ${alt.confidence} टक्के.`,
+      pa: `${tag}: ${altMeta.fullName}। ਅਨੁਕੂਲਤਾ ${alt.confidence} ਪ੍ਰਤੀਸ਼ਤ।`,
+      gu: `${tag}: ${altMeta.fullName}. અનુકૂળતા ${alt.confidence} ટકા.`,
+      te: `${tag}: ${altMeta.fullName}. అనుకూలత ${alt.confidence} శాతం.`,
+      ta: `${tag}: ${altMeta.fullName}. பொருத்தம் ${alt.confidence} சதவீதம்.`,
+      bn: `${tag}: ${altMeta.fullName}। উপযোগিতা ${alt.confidence} শতাংশ।`,
+      kn: `${tag}: ${altMeta.fullName}. ಹೊಂದಾಣಿಕೆ ${alt.confidence} ಪ್ರತಿಶತ.`
+    };
+    return dict[l] || dict['hi'] || dict['en'];
+  }
+
   function getCropMeta(cropKey, fallbackProfile = {}) {
     const key = (cropKey || '').toLowerCase();
     const lang = state.language || 'hi';
-    const base = AGRONOMIC_METADATA[key];
-
-    if (base) {
-      const getL = (field, fallback = '') => {
-        if (!field) return fallback;
-        if (typeof field === 'string') return field;
-        return field[lang] || field['hi'] || field['en'] || fallback;
-      };
-
-      const ratFn = base.rationale ? (base.rationale[lang] || base.rationale['hi'] || base.rationale['en']) : null;
-
-      return {
-        fullName: getL(base.fullName, cropKey),
-        seasonBadge: getL(base.seasonBadge, 'Kharif Prime'),
-        varieties: getL(base.varieties, 'Certified Regional Varieties'),
-        yield: getL(base.yield, '40 – 48 Q/Ha'),
-        yieldSub: getL(base.yieldSub, 'Optimal Management'),
-        water: getL(base.water, 'Moderate'),
-        waterSub: getL(base.waterSub, 'Well-drained Soil'),
-        price: getL(base.price, 'MSP Protected'),
-        priceSub: getL(base.priceSub, 'High Liquidity'),
-        duration: getL(base.duration, '120 Days'),
-        durationSub: getL(base.durationSub, 'Full Cycle'),
-        basalDose: getL(base.basalDose, 'Apply balanced NPK as per SAU guidelines.'),
-        rationale: ratFn || ((n, rain) => `Strong agronomic fit for current field conditions.`)
-      };
-    }
-
-    const cleanName = cropKey.charAt(0).toUpperCase() + cropKey.slice(1);
+    const cleanName = (cropKey || '').charAt(0).toUpperCase() + (cropKey || '').slice(1);
     const cropLocal = CROP_NAME_I18N[key] ? (CROP_NAME_I18N[key][lang] || cleanName) : cleanName;
 
-    let waterText = fallbackProfile.water_demand || 'Moderate';
-    if (lang === 'hi') {
-      if (waterText.toLowerCase().includes('high') || waterText.toLowerCase().includes('standing')) waterText = 'अधिक (जलभराव सहिष्णु)';
-      else if (waterText.toLowerCase().includes('low')) waterText = 'कम (सूखा सहिष्णु)';
-      else waterText = 'मध्यम (नियमित सिंचाई)';
-    } else if (lang === 'mr') {
-      if (waterText.toLowerCase().includes('high') || waterText.toLowerCase().includes('standing')) waterText = 'जास्त (पाणी धरून ठेवणारी जमीन)';
-      else if (waterText.toLowerCase().includes('low')) waterText = 'कमी (कमी पाण्यात येणारे)';
-      else waterText = 'मध्यम (नियमित सिंचन)';
+    const attrDict = {
+      seasonBadge: {
+        en: 'Agro Recommended',
+        hi: 'प्रमुख अनुशंसित फसल',
+        mr: 'शिफारस केलेले प्रमुख पीक',
+        pa: 'ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਮੁੱਖ ਫ਼ਸਲ',
+        gu: 'ભલામણ કરેલ મુખ્ય પાક',
+        te: 'సిఫార్సు చేయబడిన ప్రధాన పంట',
+        ta: 'பரிந்துரைக்கப்பட்ட முதன்மைப் பயிர்',
+        bn: 'সুপারিশকৃত প্রধান ফসল',
+        kn: 'ಶಿಫಾರಸು ಮಾಡಲಾದ ಮುಖ್ಯ ಬೆಳೆ'
+      },
+      yieldSub: {
+        en: 'Optimal Management',
+        hi: 'इष्टतम प्रबंधन',
+        mr: 'उत्तम व्यवस्थापन',
+        pa: 'ਸਰਵੋਤਮ ਦੇਖਭਾਲ',
+        gu: 'શ્રેષ્ઠ વ્યવસ્થાપન',
+        te: 'సరైన యాజమాన్యం',
+        ta: 'முறையான மேலாண்மை',
+        bn: 'সঠিক পরিচর্যা',
+        kn: 'ಉತ್ತಮ ನಿರ್ವಹಣೆ'
+      },
+      priceSub: {
+        en: 'Active Mandi Demand (MSP)',
+        hi: 'सक्रिय मंडी मांग (MSP)',
+        mr: 'बाजारपेठेत चांगली मागणी (MSP)',
+        pa: 'ਮੰਡੀ ਵਿੱਚ ਚੰਗੀ ਮੰਗ (MSP)',
+        gu: 'માર્કેટ યાર્ડમાં સારી માંગ (MSP)',
+        te: 'మార్కెట్ డిమాండ్ (MSP)',
+        ta: 'சந்தை தேவை (MSP)',
+        bn: 'বাজার চাহিদা (MSP)',
+        kn: 'ಮಾರುಕಟ್ಟೆ ಬೇಡಿಕೆ (MSP)'
+      },
+      durationSub: {
+        en: 'Season Duration',
+        hi: 'मौसम चक्र अवधि',
+        mr: 'हंगाम कालावधी',
+        pa: 'ਫ਼ਸਲੀ ਚੱਕਰ ਸਮਾਂ',
+        gu: 'પાક ઋતુ ચક્ર',
+        te: 'పంట కాల పరిమితి',
+        ta: 'பயிர் கால அளவு',
+        bn: 'মৌসুম সময়কাল',
+        kn: 'ಬೆಳೆ ಕಾಲಾವಧಿ'
+      },
+      basalDose: {
+        en: 'Apply balanced NPK as per SAU guidelines at sowing.',
+        hi: 'बुवाई के समय कृषि विश्वविद्यालय की सिफारिश अनुसार संतुलित NPK खुराक दें।',
+        mr: 'पेरणीच्या वेळी कृषी विद्यापीठाच्या शिफारशीनुसार संतुलित खतांचा डोस द्या.',
+        pa: 'ਬਿਜਾਈ ਸਮੇਂ ਖੇਤੀਬਾੜੀ ਯੂਨੀਵਰਸਿਟੀ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਅਨੁਸਾਰ ਸੰਤੁਲਿਤ NPK ਖੁਰਾਕ ਦਿਓ।',
+        gu: 'વાવણી વખતે કૃષિ યુનિવર્સિટીની ભલામણ મુજબ સંતુલિત NPK ખાતર આપો.',
+        te: 'విత్తే సమయంలో వ్యవసాయ విశ్వవిద్యాలయ మార్గదర్శకాల ప్రకారం సమతుల్య NPK మోతాదు ఇవ్వండి.',
+        ta: 'விதைப்பின் போது வேளாண் பல்கலைக்கழக பரிந்துரைப்படி சீரான NPK உரமிடுங்கள்.',
+        bn: 'বপনের সময় কৃষি বিশ্ববিদ্যালয়ের নির্দেশিকা অনুযায়ী সুষম NPK সার প্রয়োগ করুন।',
+        kn: 'ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿ ಕೃಷಿ ವಿಶ್ವವಿದ್ಯಾಲಯದ ಮಾರ್ಗಸೂಚಿಯಂತೆ ಸಮತೋಲಿತ NPK ಗೊಬ್ಬರ ನೀಡಿ.'
+      }
+    };
+
+    const getL = (dict, fallback = '') => dict[lang] || dict['hi'] || dict['en'] || fallback;
+
+    let waterLvl = 'Moderate';
+    let waterRaw = (fallbackProfile.water_demand || 'Moderate').toLowerCase();
+    if (waterRaw.includes('high') || waterRaw.includes('standing') || key === 'rice' || key === 'sugarcane' || key === 'jute') {
+      waterLvl = 'High';
+    } else if (waterRaw.includes('low') || key === 'chickpea' || key === 'mothbeans' || key === 'lentil') {
+      waterLvl = 'Low';
     }
 
-    const yieldText = lang === 'en' ? '30 – 40 Q/Ha' : (lang === 'mr' ? '३० – ४० क्विंटल/हे.' : '30 – 40 क्विंटल/हेक्टेयर');
+    const waterI18n = {
+      High: {
+        en: 'High', hi: 'अधिक (High)', mr: 'जास्त (High)', pa: 'ਵੱਧ (High)',
+        gu: 'વધારે (High)', te: 'అధికం (High)', ta: 'அதிகம் (High)', bn: 'বেশি (High)', kn: 'ಹೆಚ್ಚು (High)'
+      },
+      Low: {
+        en: 'Low', hi: 'कम (Low)', mr: 'कमी (Low)', pa: 'ਘੱਟ (Low)',
+        gu: 'ઓછું (Low)', te: 'తక్కువ (Low)', ta: 'குறைவு (Low)', bn: 'কম (Low)', kn: 'ಕಡಿಮೆ (Low)'
+      },
+      Moderate: {
+        en: 'Moderate', hi: 'मध्यम (Moderate)', mr: 'मध्यम (Moderate)', pa: 'ਦਰਮਿਆਨਾ (Moderate)',
+        gu: 'મધ્યમ (Moderate)', te: 'మితం (Moderate)', ta: 'மிதமான (Moderate)', bn: 'মাঝারি (Moderate)', kn: 'ಮಧ್ಯಮ (Moderate)'
+      }
+    };
+
+    const waterSubI18n = {
+      High: {
+        en: 'Canal / Submerged', hi: 'नहर / जलमग्न सिंचाई', mr: 'कालवा / पाणी साचलेली शेती',
+        pa: 'ਨਹਿਰੀ / ਭਰਪੂਰ ਪਾਣੀ', gu: 'નહેર / પૂરતું પાણી', te: 'కాలువ / సమృద్ధి నీరు',
+        ta: 'கால்வாய் / அதிக நீர்', bn: 'খাল / পর্যাপ্ত জল', kn: 'ಕಾಲುವೆ / ಹೇರಳ ನೀರು'
+      },
+      Low: {
+        en: 'Rainfed / Low Water', hi: 'वर्षा आधारित / कम जल', mr: 'कोरडवाहू / कमी पाणी',
+        pa: 'ਬਰਸਾਤੀ / ਘੱਟ ਪਾਣੀ', gu: 'વરસાદ આધારિત / ઓછું પાણી', te: 'వర్షాధార / తక్కువ నీరు',
+        ta: 'மானாவாரி / குறைந்த நீர்', bn: 'বৃষ্টি নির্ভর / কম জল', kn: 'ಮಳೆ ಆಶ್ರಿತ / ಕಡಿಮೆ ನೀರು'
+      },
+      Moderate: {
+        en: 'Well-drained Loam', hi: 'नियमित सिंचाई / दोमट', mr: 'नियमित सिंचन / निचऱ्याची जमीन',
+        pa: 'ਨਿਯਮਤ ਸਿੰਚਾਈ / ਦੋਮਟ', gu: 'નિયમિત પિયત / ગોરાડુ જમીન', te: 'క్రమబద్ధమైన నీరు / సారవంతమైన నేల',
+        ta: 'வழக்கமான பாசனம் / வண்டல் மண்', bn: 'নিয়মিত সেচ / দোআঁশ মাটি', kn: 'ನಿಯಮಿತ ನೀರಾವರಿ / ಗೋಡು ಮಣ್ಣು'
+      }
+    };
+
+    const varietiesI18n = {
+      en: `Certified High-Yield Varieties (${cleanName})`,
+      hi: `प्रमाणित उन्नत किस्में (${cropLocal})`,
+      mr: `प्रमाणित सुधारित वाण (${cropLocal})`,
+      pa: `ਪ੍ਰਮਾਣਿਤ ਉੱਨਤ ਕਿਸਮਾਂ (${cropLocal})`,
+      gu: `પ્રમાણિત સુધારેલી જાતો (${cropLocal})`,
+      te: `ధృవీకరించబడిన అధిక దిగుబడి రకాలు (${cropLocal})`,
+      ta: `சான்றளிக்கப்பட்ட உயர் விளைச்சல் ரகங்கள் (${cropLocal})`,
+      bn: `অনুমোদিত উচ্চ ফলনশীল জাত (${cropLocal})`,
+      kn: `ಪ್ರಮಾಣೀಕೃತ ಸುಧಾರಿತ ತಳಿಗಳು (${cropLocal})`
+    };
+
+    const SPECIFIC_VARIETIES = {
+      rice: {
+        en: 'MTU-1010, Indrayani, or PKV-HMT', hi: 'MTU-1010, इंद्रायणी, या PKV-HMT', mr: 'MTU-1010, इंद्रायणी, किंवा PKV-HMT',
+        pa: 'MTU-1010, ਪੀ.ਆਰ.-126, ਜਾਂ ਇੰਦਰਾਇਣੀ', gu: 'MTU-1010, ઇન્દ્રાયણી, અથવા ગુર્જરી', te: 'MTU-1010, బిపిటి-5204 (సాంబ మసూరి)',
+        ta: 'MTU-1010, ஏடிடீ-45, அல்லது ஐஆர்டி-20', bn: 'MTU-1010, শতাব্দী, বা স্বর্ণ', kn: 'MTU-1010, ಜಯಾ, ಅಥವಾ ಸೋನಾ ಮಸೂರಿ'
+      },
+      cotton: {
+        en: 'Bt Cotton Bollgard II (RCH-659 / Bunny)', hi: 'बी.टी. कपास बोलगार्ड II (RCH-659 / बनी)', mr: 'बीटी कापूस बोलगार्ड II (RCH-659 / बनी)',
+        pa: 'ਬੀ.ਟੀ. ਕਪਾਹ ਬੋਲਗਾਰਡ II (RCH-659)', gu: 'બીટી કપાસ બોલગાર્ડ II (RCH-659)', te: 'బిటి పత్తి బోల్‌గార్డ్ II (RCH-659)',
+        ta: 'பிடி பருத்தி போல்வார்ட் II (RCH-659)', bn: 'বিটি তুলা বোলগার্ড II (RCH-659)', kn: 'ಬಿಟಿ ಹತ್ತಿ ಬೋಲ್‌ಗಾರ್ಡ್ II (RCH-659)'
+      },
+      maize: {
+        en: 'DHM-117, Pioneer P3396, or Bio-9681', hi: 'DHM-117, पायनियर P3396, या बायो-9681', mr: 'DHM-117, पायोनियर P3396, किंवा बायो-9681',
+        pa: 'DHM-117, ਪਾਇਨੀਅਰ P3396, ਜਾਂ ਬਾਇਓ-9681', gu: 'DHM-117, પાયોનિયર P3396, અથવા બાયો-9681', te: 'DHM-117, పయనీర్ P3396, లేదా బయో-9681',
+        ta: 'DHM-117, பயனியர் P3396, அல்லது பயோ-9681', bn: 'DHM-117, পায়োনিয়ার P3396, বা বায়ো-9681', kn: 'DHM-117, ಪಯೋನಿಯರ್ P3396, ಅಥವಾ ಬಯೋ-9681'
+      },
+      wheat: {
+        en: 'HD-2967, PBW-550, or Lok-1', hi: 'HD-2967, PBW-550, या लोक-1', mr: 'HD-2967, PBW-550, किंवा लोक-1',
+        pa: 'HD-2967, ਪੀ.ਬੀ.ਡਬਲਯੂ.-550, ਜਾਂ ਲੋਕ-1', gu: 'HD-2967, PBW-550, અથવા લોક-1', te: 'HD-2967, పిబిడబ్ల్యూ-550, లేదా లోక్-1',
+        ta: 'HD-2967, பிபிடபிள்யூ-550, அல்லது லோக்-1', bn: 'HD-2967, পিবিডব্লিউ-550, বা লোক-1', kn: 'HD-2967, ಪಿಬಿಡಬ್ಲ್ಯೂ-550, ಅಥವಾ ಲೋಕ್-1'
+      },
+      sugarcane: {
+        en: 'Co-0238, Co-86032 (Nira)', hi: 'Co-0238, Co-86032 (नीरा)', mr: 'Co-0238, Co-86032 (निरा)',
+        pa: 'Co-0238, Co-86032', gu: 'Co-0238, Co-86032 (નીરા)', te: 'Co-0238, Co-86032 (నీరా)',
+        ta: 'Co-0238, Co-86032 (நீரா)', bn: 'Co-0238, Co-86032', kn: 'Co-0238, Co-86032 (ನೀರಾ)'
+      }
+    };
+
+    const SPECIFIC_BASAL = {
+      rice: {
+        en: '50% N + 100% P + 100% K at transplanting.', hi: 'रोपाई के समय 50% N + 100% P + 100% K बेसल खुराक दें।', mr: 'लावणीच्या वेळी ५०% नत्र + १००% स्फुरद + १००% पालाश बेसल डोस द्या.',
+        pa: 'ਲਵਾਈ ਸਮੇਂ 50% ਨਾਈਟ੍ਰੋਜਨ + 100% ਫਾਸਫੋਰਸ + 100% ਪੋਟਾਸ਼ ਪਾਓ।', gu: 'રોપણી વખતે 50% N + 100% P + 100% K આપો.', te: 'నాటే సమయంలో 50% నత్రజని + 100% భాస్వరం + 100% పొటాష్ ఇవ్వండి.',
+        ta: 'நடவு செய்யும்போது 50% N + 100% P + 100% K அடியுரமாக இடவும்.', bn: 'রোপণের সময় ৫০% N + ১০০% P + ১০০% K প্রয়োগ করুন।', kn: 'ನಾಟಿ ಮಾಡುವಾಗ 50% N + 100% P + 100% K ಬುಡ ಗೊಬ್ಬರವಾಗಿ ನೀಡಿ.'
+      },
+      cotton: {
+        en: '20% N + 100% P + 100% K at dibbling.', hi: 'बिजाई के समय 20% N + 100% P + 100% K बेसल खुराक दें।', mr: 'टोकण करताना २०% नत्र + १००% स्फुरद + १००% पालाश बेसल डोस द्या.',
+        pa: 'ਬਿਜਾਈ ਸਮੇਂ 20% ਨਾਈਟ੍ਰੋਜਨ + 100% ਫਾਸਫੋਰਸ + 100% ਪੋਟਾਸ਼ ਪਾਓ।', gu: 'વાવણી વખતે 20% N + 100% P + 100% K આપો.', te: 'విత్తే సమయంలో 20% నత్రజని + 100% భాస్వరం + 100% పొటాష్ ఇవ్వండి.',
+        ta: 'விதைக்கும்போது 20% N + 100% P + 100% K அடியுரமாக இடவும்.', bn: 'বপনের সময় ২০% N + ১০০% P + ১০০% K প্রয়োগ করুন।', kn: 'ಬಿತ್ತನೆ ಮಾಡುವಾಗ 20% N + 100% P + 100% K ಬುಡ ಗೊಬ್ಬರವಾಗಿ ನೀಡಿ.'
+      },
+      maize: {
+        en: '33% N + 100% P + 100% K at sowing.', hi: 'बुवाई के समय 33% N + 100% P + 100% K बेसल खुराक दें।', mr: 'पेरणीच्या वेळी ३३% नत्र + १००% स्फुरद + १००% पालाश बेसल डोस द्या.',
+        pa: 'ਬਿਜਾਈ ਸਮੇਂ 33% ਨਾਈਟ੍ਰੋਜਨ + 100% ਫਾਸਫੋਰਸ + 100% ਪੋਟਾਸ਼ ਪਾਓ।', gu: 'વાવણી વખતે 33% N + 100% P + 100% K આપો.', te: 'విత్తే సమయంలో 33% నత్రజని + 100% భాస్వరం + 100% పొటాష్ ఇవ్వండి.',
+        ta: 'விதைக்கும்போது 33% N + 100% P + 100% K அடியுரமாக இடவும்.', bn: 'বপনের সময় ৩৩% N + ১০০% P + ১০০% K প্রয়োগ করুন।', kn: 'ಬಿತ್ತನೆ ಮಾಡುವಾಗ 33% N + 100% P + 100% K ಬುಡ ಗೊಬ್ಬರವಾಗಿ ನೀಡಿ.'
+      },
+      wheat: {
+        en: '50% N + 100% P + 100% K at crown root initiation.', hi: 'बुवाई के समय 50% N + 100% P + 100% K बेसल खुराक दें।', mr: 'पेरणीच्या वेळी ५०% नत्र + १००% स्फुरद + १००% पालाश बेसल डोस द्या.',
+        pa: 'ਬਿਜਾਈ ਸਮੇਂ 50% ਨਾਈਟ੍ਰੋਜਨ + 100% ਫਾਸਫੋਰਸ + 100% ਪੋਟਾਸ਼ ਪਾਓ।', gu: 'વાવણી વખતે 50% N + 100% P + 100% K આપો.', te: 'విత్తే సమయంలో 50% నత్రజని + 100% భాస్వరం + 100% పొటాష్ ఇవ్వండి.',
+        ta: 'விதைக்கும்போது 50% N + 100% P + 100% K அடியுரமாக இடவும்.', bn: 'বপনের সময় ৫০% N + ১০০% P + ১০০% K প্রয়োগ করুন।', kn: 'ಬಿತ್ತನೆ ಮಾಡುವಾಗ 50% N + 100% P + 100% K ಬುಡ ಗೊಬ್ಬರವಾಗಿ ನೀಡಿ.'
+      },
+      sugarcane: {
+        en: 'Apply 33% N + 100% P + 100% K in furrows at planting.', hi: 'रोपण के समय 33% N + 100% P + 100% K कतारों में बेसल खुराक दें।', mr: 'लागवडीच्या वेळी ३३% नत्र + १००% स्फुरद + १००% पालाश चरीत टाकावे.',
+        pa: 'ਬਿਜਾਈ ਵੇਲੇ 33% ਨਾਈਟ੍ਰੋਜਨ + 100% ਫਾਸਫੋਰਸ + 100% ਪੋਟਾਸ਼ ਸਿਆੜਾਂ ਵਿੱਚ ਪਾਓ।', gu: 'રોપણી વખતે 33% N + 100% P + 100% K ચાસમાં આપો.', te: 'నాటే సమయంలో 33% నత్రజని + 100% భాస్వరం + 100% పొటాష్ సాలులలో వేయండి.',
+        ta: 'நடவு செய்யும்போது 33% N + 100% P + 100% K பாரில் இடவும்.', bn: 'রোপণের সময় ৩৩% N + ১০০% P + ১০০% K নালায় প্রয়োগ করুন।', kn: 'ನಾಟಿ ಮಾಡುವಾಗ 33% N + 100% P + 100% K ಸಾಲುಗಳಲ್ಲಿ ನೀಡಿ.'
+      }
+    };
+
+    const yieldUnit = (lang === 'en' || lang === 'pa') ? 'Q/Ha' : ((lang === 'mr' || lang === 'gu') ? 'ક્વિન્ટલ/હે.' : 'क्विंटल/हेक्टेयर');
+    const yieldRange = (fallbackProfile.yield_range) || (key === 'rice' ? '44 – 48' : (key === 'cotton' ? '22 – 28' : (key === 'wheat' ? '45 – 52' : (key === 'sugarcane' ? '850 – 1100' : '32 – 42'))));
+    const fullYield = `${yieldRange} ${yieldUnit}`;
+
+    const cycleDays = fallbackProfile.cycle_days || (key === 'rice' ? '120 – 135 Days' : (key === 'cotton' ? '150 – 170 Days' : (key === 'sugarcane' ? '300 – 360 Days' : '90 – 120 Days')));
+
+    const chosenVarieties = SPECIFIC_VARIETIES[key] ? (SPECIFIC_VARIETIES[key][lang] || SPECIFIC_VARIETIES[key]['en']) : (varietiesI18n[lang] || varietiesI18n['en']);
+    const chosenBasal = SPECIFIC_BASAL[key] ? (SPECIFIC_BASAL[key][lang] || SPECIFIC_BASAL[key]['en']) : getL(attrDict.basalDose);
 
     return {
-      fullName: `${cropLocal} (${fallbackProfile.cycle_days || 'Standard'})`,
-      seasonBadge: lang === 'en' ? 'Agro Recommended' : (lang === 'mr' ? 'शिफारस केलेले पीक' : 'अनुशंसित फसल'),
-      varieties: lang === 'en' ? `Certified Regional Varieties (${cleanName})` : (lang === 'mr' ? `प्रमाणित विभागीय वाण (${cropLocal})` : `प्रमाणित क्षेत्रीय किस्में (${cropLocal})`),
-      yield: yieldText,
-      yieldSub: lang === 'en' ? 'Optimal Management' : (lang === 'mr' ? 'उत्तम व्यवस्थापन' : 'इष्टतम प्रबंधन'),
-      water: waterText,
-      waterSub: fallbackProfile.soil_type || (lang === 'hi' ? 'दोमट मिट्टी' : 'Loamy Soils'),
-      price: fallbackProfile.economic_outlook ? fallbackProfile.economic_outlook.split(' ')[0] : 'High Liquidity',
-      priceSub: lang === 'en' ? 'Active Mandi Trade' : (lang === 'mr' ? 'बाजारपेठेत चांगली मागणी' : 'सक्रिय मंडी मांग'),
-      duration: fallbackProfile.cycle_days || '90 – 120 Days',
-      durationSub: lang === 'en' ? 'Season Duration' : (lang === 'mr' ? 'हंगाम कालावधी' : 'मौसम अवधि'),
-      basalDose: lang === 'en' ? 'Apply balanced NPK dose as per University guidelines.' : (lang === 'mr' ? 'विद्यापीठाच्या शिफारशीनुसार संतुलित खतांचा डोस द्या.' : 'विश्वविद्यालय दिशानिर्देशों के अनुसार संतुलित NPK खुराक दें।'),
-      rationale: (n, rain) => lang === 'en'
-        ? `Strong agronomic fit for current field conditions with balanced soil test indices.`
-        : (lang === 'mr'
-          ? `सध्याच्या माती चाचणीनुसार व हवामानानुसार हे पीक आपल्या शेतासाठी अत्यंत अनुकूल आहे.`
-          : `वर्तमान मिट्टी परीक्षण और जलवायु के अनुसार यह फसल आपके खेत के लिए बहुत अनुकूल है।`)
+      fullName: `${cropLocal} (${cleanName})`,
+      seasonBadge: getL(attrDict.seasonBadge),
+      varieties: chosenVarieties,
+      yield: fullYield,
+      yieldSub: getL(attrDict.yieldSub),
+      water: waterI18n[waterLvl][lang] || waterI18n[waterLvl]['en'],
+      waterSub: waterSubI18n[waterLvl][lang] || waterSubI18n[waterLvl]['en'],
+      price: fallbackProfile.economic_outlook ? fallbackProfile.economic_outlook.split(' ')[0] : 'MSP Protected',
+      priceSub: getL(attrDict.priceSub),
+      duration: cycleDays,
+      durationSub: getL(attrDict.durationSub),
+      basalDose: chosenBasal,
+      rationale: (n, rain) => getCropRationale(key, cropLocal, n, rain, lang)
     };
   }
 
@@ -2887,6 +3162,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const lblSymptomTap = document.getElementById('lbl-symptom-tap');
     if (lblSymptomTap) lblSymptomTap.textContent = t.symptomTapLabel;
 
+    // Soil Texture Radio Card Labels
+    const lblSoilTexture = document.getElementById('lbl-soil-texture');
+    const lblStBlack = document.getElementById('lbl-st-black');
+    const lblStLoamy = document.getElementById('lbl-st-loamy');
+    const lblStRed = document.getElementById('lbl-st-red');
+    const lblStLaterite = document.getElementById('lbl-st-laterite');
+    if (lblSoilTexture && t.lblSoilTexture) lblSoilTexture.textContent = `🧱 ${t.lblSoilTexture}`;
+    if (lblStBlack && t.stBlack) lblStBlack.textContent = t.stBlack;
+    if (lblStLoamy && t.stLoamy) lblStLoamy.textContent = t.stLoamy;
+    if (lblStRed && t.stRed) lblStRed.textContent = t.stRed;
+    if (lblStLaterite && t.stLaterite) lblStLaterite.textContent = t.stLaterite;
+
+    // Symptom Filter Chips
+    const chipSymYellow = document.getElementById('chip-sym-yellow');
+    const chipSymSpot = document.getElementById('chip-sym-spot');
+    const chipSymWilt = document.getElementById('chip-sym-wilt');
+    const chipSymRot = document.getElementById('chip-sym-rot');
+    const chipSymPowdery = document.getElementById('chip-sym-powdery');
+    const chipSymBorer = document.getElementById('chip-sym-borer');
+    if (chipSymYellow && t.symptomYellow) chipSymYellow.textContent = t.symptomYellow;
+    if (chipSymSpot && t.symptomSpot) chipSymSpot.textContent = t.symptomSpot;
+    if (chipSymWilt && t.symptomWilt) chipSymWilt.textContent = t.symptomWilt;
+    if (chipSymRot && t.symptomRot) chipSymRot.textContent = t.symptomRot;
+    if (chipSymPowdery && t.symptomPowdery) chipSymPowdery.textContent = t.symptomPowdery;
+    if (chipSymBorer && t.symptomBorer) chipSymBorer.textContent = t.symptomBorer;
+
     // Bottom Section Subtabs
     const subAdvisory = document.getElementById('btn-subtab-advisory');
     const subSpectrum = document.getElementById('btn-subtab-spectrum');
@@ -3049,7 +3350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="advisory-status-icon">✅</span>
                 <div>
                   <h4 class="advisory-title">${vTitle}</h4>
-                  <p class="advisory-summary-text">${diag.summary || (lang === 'en' ? 'Your field soil and current rainfall naturally support cultivating this crop.' : (lang === 'mr' ? 'आपली जमीन आणि स्थानिक हवामान या पिकासाठी अत्यंत अनुकूल आहे.' : 'आपकी मिट्टी और जलवायु इस फसल के लिए पूरी तरह अनुकूल है।'))}</p>
+                  <p class="advisory-summary-text">${diag.summary || t.targetViableSummary || 'Your field soil test and weather baseline naturally support cultivating this crop with high yield potential.'}</p>
                 </div>
               </div>
               <span class="advisory-score-pill badge-success">${diag.compatibility_score}% Feasibility (${diag.risk_level})</span>
@@ -3061,7 +3362,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           const issuesHtml = (diag.issues && diag.issues.length > 0)
             ? `<div class="advisory-issues-list">
-                 <div class="advisory-issues-title">${lang === 'en' ? '⚠️ Key Limiting Factors for' : (lang === 'mr' ? '⚠️ अपयशाची मुख्य कारणे:' : '⚠️ विफलता के मुख्य कारण:')} ${targetMeta.fullName}:</div>
+                 <div class="advisory-issues-title">${t.keyLimitingFactors || '⚠️ Key Limiting Factors for'} ${targetMeta.fullName}:</div>
                  ${diag.issues.map(iss => `<div class="advisory-issue-item">❌ <strong>${iss.param} (${iss.status}):</strong> ${iss.detail}</div>`).join('')}
                </div>`
             : '';
@@ -3071,7 +3372,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const rescueHtml = (diag.rescue_roadmap && diag.rescue_roadmap.length > 0)
             ? `<button type="button" class="rescue-accordion-btn" id="btn-toggle-rescue">${rescueTitle}</button>
                <div class="rescue-roadmap-panel is-hidden" id="rescue-panel">
-                 <div class="rescue-roadmap-title">${lang === 'en' ? 'Intensive Rescue & Soil Amendment Protocol:' : (lang === 'mr' ? 'विशेष जमीन सुधारणा व तांत्रिक उपाय:' : 'विशेष मिट्टी सुधार व तकनीकी बचाव उपाय:')}</div>
+                 <div class="rescue-roadmap-title">${t.rescueProtocolTitle || 'Intensive Rescue & Soil Amendment Protocol:'}</div>
                  ${diag.rescue_roadmap.map(step => `<div class="rescue-item"><strong>${step.category}:</strong> ${step.action}<span class="impact">💡 ${step.impact}</span></div>`).join('')}
                </div>`
             : '';
@@ -3100,11 +3401,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div class="preferred-crop-highlight">${topMeta.fullName}</div>
               <p class="preferred-desc">
-                ${lang === 'en' 
-                  ? `💡 <strong>Why switch to ${topMeta.fullName}:</strong> Rather than risking losses with ${targetMeta.fullName}, ${topMeta.fullName} naturally matches your available soil nutrients (${currentN} kg/ha N) and rainfall (${currentRain} mm), delivering a protected harvest of ${topMeta.yield} with ${topMeta.priceSub}.`
-                  : (lang === 'mr'
-                    ? `💡 <strong>${topMeta.fullName} का निवडावे:</strong> ${targetMeta.fullName} मधील नुकसान टाळून, ${topMeta.fullName} आपल्या जमिनीतील घटक (${currentN} नत्र) आणि मान्सून पावसाचा (${currentRain} मिमी) परिपूर्ण वापर करते, आणि ${topMeta.yield} हमखास उत्पन्न देते.`
-                    : `💡 <strong>${topMeta.fullName} क्यों चुनें:</strong> ${targetMeta.fullName} में फसल विफलता का जोखिम लेने के बजाय, ${topMeta.fullName} आपकी मिट्टी (${currentN} N) और वर्षा (${currentRain} mm) के पूर्णतः अनुकूल है, जिससे ${topMeta.yield} की सुरक्षित पैदावार मिलती है।`)}
+                ${getPreferredCropDescription(topMeta.fullName, targetMeta.fullName, currentN, currentRain, topMeta.yield, topMeta.priceSub, lang)}
               </p>
             </div>
             ${rescueHtml}
@@ -3202,11 +3499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dynamicBestVoice = document.getElementById('best-voice-btn');
     if (dynamicBestVoice) {
       dynamicBestVoice.innerHTML = t.listenBtnText;
-      const spText = lang === 'en'
-        ? `Top recommended crop: ${bestMeta.fullName}. Match confidence ${best.confidence} percent. Expected yield: ${bestMeta.yield}. Water need: ${bestMeta.water}. Duration: ${bestMeta.duration}.`
-        : (lang === 'mr'
-          ? `प्रथम शिफारस केलेले पीक: ${bestMeta.fullName}. योग्यतेचे प्रमाण ${best.confidence} टक्के. अपेक्षित उत्पादन: ${bestMeta.yield}. पाण्याची गरज: ${bestMeta.water}. कालावधी: ${bestMeta.duration}.`
-          : `शीर्ष अनुशंसित फसल: ${bestMeta.fullName}. मैच आत्मविश्वास ${best.confidence} प्रतिशत. अपेक्षित उपज: ${bestMeta.yield}. जल आवश्यकता: ${bestMeta.water}. फसल अवधि: ${bestMeta.duration}.`);
+      const spText = getVoiceReadoutText(bestMeta, best, lang);
       dynamicBestVoice.onclick = () => toggleSpeech(spText, dynamicBestVoice);
     }
 
@@ -3244,7 +3537,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (alt1Score) alt1Score.textContent = `${match1}% ${t.altMatchText}`;
       if (alt1Title) alt1Title.textContent = alt1Meta.fullName;
-      if (alt1Desc) alt1Desc.textContent = alt1Meta.rationale(currentN, currentRain, lang);
+      if (alt1Desc) alt1Desc.textContent = getAlternativeCropRationale(alt1Meta.fullName, currentN, currentRain, lang);
       if (alt1LblWater) alt1LblWater.textContent = t.altLblWater;
       if (alt1Water) alt1Water.textContent = alt1Meta.water;
       if (alt1LblYield) alt1LblYield.textContent = t.altLblYield;
@@ -3255,7 +3548,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const alt1V = document.getElementById('alt-1-voice-btn');
       if (alt1V) {
-        alt1V.onclick = () => toggleSpeech(`${t.altTag1}: ${alt1Meta.fullName}. ${t.altMatchText} ${alt1.confidence}%.`, alt1V);
+        alt1V.onclick = () => toggleSpeech(getAltVoiceReadoutText(t.altTag1, alt1Meta, alt1, lang), alt1V);
       }
     }
 
@@ -3282,7 +3575,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (alt2Score) alt2Score.textContent = `${match2}% ${t.altMatchText}`;
       if (alt2Title) alt2Title.textContent = alt2Meta.fullName;
-      if (alt2Desc) alt2Desc.textContent = alt2Meta.rationale(currentN, currentRain, lang);
+      if (alt2Desc) alt2Desc.textContent = getAlternativeCropRationale(alt2Meta.fullName, currentN, currentRain, lang);
       if (alt2LblWater) alt2LblWater.textContent = t.altLblWater;
       if (alt2Water) alt2Water.textContent = alt2Meta.water;
       if (alt2LblYield) alt2LblYield.textContent = t.altLblYield;
@@ -3293,7 +3586,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const alt2V = document.getElementById('alt-2-voice-btn');
       if (alt2V) {
-        alt2V.onclick = () => toggleSpeech(`${t.altTag2}: ${alt2Meta.fullName}. ${t.altMatchText} ${alt2.confidence}%.`, alt2V);
+        alt2V.onclick = () => toggleSpeech(getAltVoiceReadoutText(t.altTag2, alt2Meta, alt2, lang), alt2V);
       }
     }
   }
@@ -3326,10 +3619,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const th = matrixHeaders[lang] || matrixHeaders['en'];
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
     const rankBadges = [
-      { badge: '🥇 #1 Best Match', color: '#1B4332', bg: '#D8F3DC' },
-      { badge: '🥈 Alternative #1', color: '#854D0E', bg: '#FEF08A' },
-      { badge: '🥉 Alternative #2', color: '#374151', bg: '#E5E7EB' }
+      { badge: t.matrixRank1 || '🥇 #1 Best Match', color: '#1B4332', bg: '#D8F3DC' },
+      { badge: t.matrixAlt1 || '🥈 Alternative #1', color: '#854D0E', bg: '#FEF08A' },
+      { badge: t.matrixAlt2 || '🥉 Alternative #2', color: '#374151', bg: '#E5E7EB' }
     ];
 
     const rowsHtml = recs.slice(0, 5).map((rec, idx) => {
@@ -3351,7 +3645,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="matrix-match-fill" style="width: ${conf}%;"></div>
               </div>
             </div>
-            <span class="matrix-stat-sub">${conf >= 85 ? '🌟 Ideal Field Fit' : (conf >= 70 ? '✓ High Viability' : '⚠️ Moderate')}</span>
+            <span class="matrix-stat-sub">${conf >= 85 ? (t.matrixIdealFit || '🌟 Ideal Field Fit') : (conf >= 70 ? '✓ High Viability' : '⚠️ Moderate')}</span>
           </td>
           <td>
             <div class="matrix-stat-val">${meta.yield}</div>
@@ -3370,7 +3664,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="matrix-stat-sub">${meta.priceSub}</span>
           </td>
           <td>
-            <a href="#fertilizer-prescriber" class="matrix-fert-btn">🧪 ${lang === 'en' ? 'Prescribe' : (lang === 'mr' ? 'खत नियोजन' : 'उर्वरक पर्चा')}</a>
+            <a href="#fertilizer-prescriber" class="matrix-fert-btn">🧪 ${t.matrixPrescribe || 'Prescribe'}</a>
           </td>
         </tr>
       `;
@@ -3558,9 +3852,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (timelineEl) {
       timelineEl.innerHTML = `
         <div class="timeline-schedule-box">
-          <div class="timeline-step-item">🌱 <strong>Basal Application (बुवाई/रोपाई के समय):</strong> 100% DAP (${f.dap_kg_ha.toFixed(0)} kg/ha), 100% MOP (${f.mop_kg_ha.toFixed(0)} kg/ha), and 33% Urea.</div>
-          <div class="timeline-step-item">🌿 <strong>First Top Dressing (25–30 दिन बाद):</strong> 33% Urea during active tillering/vegetative phase.</div>
-          <div>🌾 <strong>Second Top Dressing (50–55 दिन बाद):</strong> Remaining 34% Urea before panicle initiation/flowering.</div>
+          <div class="timeline-step-item"><strong>${t.timelineBasalLabel || '🌱 Basal Application (बुवाई/रोपाई के समय)'}:</strong> 100% DAP (${f.dap_kg_ha.toFixed(0)} kg/ha), 100% MOP (${f.mop_kg_ha.toFixed(0)} kg/ha), and 33% Urea.</div>
+          <div class="timeline-step-item"><strong>${t.timelineTop1Label || '🌿 First Top Dressing (25–30 दिन बाद)'}:</strong> 33% Urea during active tillering/vegetative phase.</div>
+          <div><strong>${t.timelineTop2Label || '🌾 Second Top Dressing (50–55 दिन बाद)'}:</strong> Remaining 34% Urea before panicle initiation/flowering.</div>
         </div>
       `;
     }

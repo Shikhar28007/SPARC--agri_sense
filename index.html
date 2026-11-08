@@ -467,34 +467,34 @@
 
               <!-- Dominant Soil Texture (Radio Matrix) -->
               <div class="form-section soil-texture-section">
-                <span class="section-label">🧱 Dominant Soil Texture (मिट्टी का प्रकार)</span>
+                <span class="section-label" id="lbl-soil-texture">🧱 Dominant Soil Texture (मिट्टी का प्रकार)</span>
                 <div class="texture-radio-grid">
                   <div class="texture-radio-card active">
                     <input type="radio" id="st-black" name="soil_texture" value="black" checked title="Black Cotton Soil" aria-label="Black Cotton Soil">
                     <label for="st-black" class="texture-label-wrap">
                       <span class="radio-dot"></span>
-                      <span class="texture-label-text">Black Cotton Soil (काली)</span>
+                      <span class="texture-label-text" id="lbl-st-black">Black Cotton Soil (काली)</span>
                     </label>
                   </div>
                   <div class="texture-radio-card">
                     <input type="radio" id="st-loamy" name="soil_texture" value="alluvial" title="Alluvial and Loamy Soil" aria-label="Alluvial and Loamy Soil">
                     <label for="st-loamy" class="texture-label-wrap">
                       <span class="radio-dot"></span>
-                      <span class="texture-label-text">Alluvial / Loamy (दोमट)</span>
+                      <span class="texture-label-text" id="lbl-st-loamy">Alluvial / Loamy (दोमट)</span>
                     </label>
                   </div>
                   <div class="texture-radio-card">
                     <input type="radio" id="st-red" name="soil_texture" value="red" title="Red Sandy Soil" aria-label="Red Sandy Soil">
                     <label for="st-red" class="texture-label-wrap">
                       <span class="radio-dot"></span>
-                      <span class="texture-label-text">Red Sandy (लाल रेतीली)</span>
+                      <span class="texture-label-text" id="lbl-st-red">Red Sandy (लाल रेतीली)</span>
                     </label>
                   </div>
                   <div class="texture-radio-card">
                     <input type="radio" id="st-laterite" name="soil_texture" value="laterite" title="Laterite or Gravelly Soil" aria-label="Laterite or Gravelly Soil">
                     <label for="st-laterite" class="texture-label-wrap">
                       <span class="radio-dot"></span>
-                      <span class="texture-label-text">Laterite / Gravelly (मुरुम)</span>
+                      <span class="texture-label-text" id="lbl-st-laterite">Laterite / Gravelly (मुरुम)</span>
                     </label>
                   </div>
                 </div>
@@ -1202,12 +1202,12 @@
       <div class="symptom-quick-bar">
         <span class="symptom-label" id="lbl-symptom-tap">👀 Tap What You See on the Plant (लक्षण चुनिए):</span>
         <div class="symptom-chips">
-          <button type="button" class="symptom-chip" data-keyword="yellow">🟡 Yellowing Leaves (पीली पत्तियां)</button>
-          <button type="button" class="symptom-chip" data-keyword="spot">🟤 Brown Spots & Blight (धब्बे व झुलसा)</button>
-          <button type="button" class="symptom-chip" data-keyword="wilt">🥀 Wilting & Drooping (मुरझाना व सूखना)</button>
-          <button type="button" class="symptom-chip" data-keyword="rot">🪵 Stem / Root Rot (सड़न व गलन)</button>
-          <button type="button" class="symptom-chip" data-keyword="powdery">⚪ White Powdery Coating (सफेद चूर्ण फफूंद)</button>
-          <button type="button" class="symptom-chip" data-keyword="borer">🐛 Worms / Stem Holes (कीट व छेदक)</button>
+          <button type="button" class="symptom-chip" id="chip-sym-yellow" data-keyword="yellow">🟡 Yellowing Leaves (पीली पत्तियां)</button>
+          <button type="button" class="symptom-chip" id="chip-sym-spot" data-keyword="spot">🟤 Brown Spots & Blight (धब्बे व झुलसा)</button>
+          <button type="button" class="symptom-chip" id="chip-sym-wilt" data-keyword="wilt">🥀 Wilting & Drooping (मुरझाना व सूखना)</button>
+          <button type="button" class="symptom-chip" id="chip-sym-rot" data-keyword="rot">🪵 Stem / Root Rot (सड़न व गलन)</button>
+          <button type="button" class="symptom-chip" id="chip-sym-powdery" data-keyword="powdery">⚪ White Powdery Coating (सफेद चूर्ण फफूंद)</button>
+          <button type="button" class="symptom-chip" id="chip-sym-borer" data-keyword="borer">🐛 Worms / Stem Holes (कीट व छेदक)</button>
         </div>
       </div>
 
