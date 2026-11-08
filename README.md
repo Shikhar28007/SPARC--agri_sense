@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # SPARC AgriSense AI
 
 ## *Smart Python-based Agriculture Recommendation, Classification & Precision Agronomy System*
@@ -8,7 +10,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-99.3%25_Accuracy-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Supported Crops](https://img.shields.io/badge/Supported_Crops-38_Species-2E7D32?style=for-the-badge&logo=leaf&logoColor=white)](#supported-crops-index-38-crops)
-[![Languages](https://img.shields.io/badge/Languages-9_Indian_Languages-E59B2E?style=for-the-badge)](#-multilingual-localization-9-languages)
+[![Languages](https://img.shields.io/badge/Languages-9_Indian_Languages-E59B2E?style=for-the-badge)](#6-multilingual-localization-9-languages)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 > **An enterprise-grade, luxury-styled AI agronomy and crop intelligence platform for Indian and global agriculture.**  
@@ -48,13 +50,15 @@ SPARC AgriSense AI combines a high-speed **FastAPI REST API**, a modern **respon
 
 ## Flagship Modules
 
-### 1. 🌾 AI Multi-Crop Recommendation Engine
+### 1. AI Multi-Crop Recommendation Engine
+
 - **38 Crop Species:** Spans cereals, pulses, cash crops, oilseeds, spices, horticulture, and commercial plantations.
 - **Trained Scikit-Learn Model:** 3,800-row agro-climatic dataset with **99.3% cross-validated classification accuracy** using Random Forest and Gradient Boosting.
 - **Physiological Stress Diagnostics:** Multi-parameter evaluation assessing soil pH acidity/alkalinity, heat stress, drought/flood hazards, and nutrient hunger.
 - **Actionable Rescue Protocols:** "How to Grow Anyway" mitigation recommendations even for suboptimal or secondary crop matches.
 
-### 2. 🧪 Precision Soil Health & Commercial Fertilizer Prescriber
+### 2. Precision Soil Health & Commercial Fertilizer Prescriber
+
 - **Elemental Deficit Mapping:** Translates macronutrient deficits ($\Delta N, \Delta P, \Delta K$ in kg/ha) into exact field requirements.
 - **Direct Commercial Mandi Bag Conversions:** Instantly computes the exact number of bags farmers need to buy:
   - **Urea** ($46\% \text{ N}$ - 45 kg standard bags)
@@ -63,7 +67,8 @@ SPARC AgriSense AI combines a high-speed **FastAPI REST API**, a modern **respon
 - **Flexible Land Area Units:** Supports conversions across **Acre**, **Bigha** (0.62 Acre), **Hectare** (2.47 Acre), and **Guntha** (0.025 Acre).
 - **Soil pH Conditioners:** Calculates agricultural lime or gypsum applications (kg/acre) to correct soil acidity or alkalinity.
 
-### 3. 📊 Official Past Season Cultivation & Realized Benchmark Records
+### 3. Official Past Season Cultivation & Realized Benchmark Records
+
 - **Top 5 Benchmark Crops:** **Paddy / Rice** (*PR-126*), **Wheat** (*HD-2967*), **Cotton** (*RCH-659*), **Maize** (*DKC-9108*), and **Sugarcane** (*Co-0238*).
 - **Mandi Realized Prices vs. MSP:** Displays actual harvest prices received in Mandis per quintal alongside government Minimum Support Prices (MSP).
 - **Financial Realization:** Clear breakdown of gross revenue per hectare and net profit per acre.
@@ -71,20 +76,24 @@ SPARC AgriSense AI combines a high-speed **FastAPI REST API**, a modern **respon
 - **ICAR/SAU Mitigation Packages:** Proven foliar sprays, split nutrition applications, and IPM packages applied to recover yield.
 - **Interactive Multi-Crop Filtering:** Filter chips to instantly switch between benchmark crops.
 
-### 4. 🩺 Crop Doctor (Plant Pathology & Integrated Pest Management)
+### 4. Crop Doctor (Plant Pathology & Integrated Pest Management)
+
 - **100% Crop Coverage (All 38 Crops):** Comprehensive disease diagnosis and management protocols for every supported crop.
 - **68+ Pathogen Clinical Knowledgebase:** Deep coverage of fungal blights, rusts, smuts, bacterial wilts, tospoviruses, geminiviruses, and destructive insect borers.
 - **Dual-Track Treatment Roadmaps:**
   - 🌿 **Biological Bio-Controls:** *Trichoderma harzianum*, *Bacillus subtilis*, *Pseudomonas fluorescens*, and Neem-based biopesticides.
   - ⚡ **Targeted Chemical Treatments:** Approved fungicide/insecticide formulations (e.g., Hexaconazole, Validamycin, Chlorantraniliprole) with exact dosage and spray guidance.
 
-### 5. 📜 Search & Diagnostic History Manager
+### 5. Search & Diagnostic History Manager
+
 - **Complete Activity Tracking:** Automatically saves every crop recommendation, fertilizer calculation, and disease diagnosis to SQLite and local storage.
 - **One-Click Restoration:** Re-populates all form sliders and inputs with a single click to compare or re-run historical tests.
 - **Category Filtering & Cleanup:** Filter history by *All*, *Crop Advisory*, *Fertilizer*, or *Pest Doctor*, with individual delete or full history clearing.
 
-### 6. 🌐 Multilingual Localization (9 Languages)
+### 6. Multilingual Localization (9 Languages)
+
 SPARC AgriSense AI natively supports 9 Indian languages with dynamic real-time language switching:
+
 - **English** (`en`)
 - **हिन्दी - Hindi** (`hi`)
 - **मराठी - Marathi** (`mr`)
@@ -97,7 +106,8 @@ SPARC AgriSense AI natively supports 9 Indian languages with dynamic real-time l
 
 Translates all interface elements, input labels, diagnostics, disease symptoms, treatments, and past-season benchmark descriptions.
 
-### 7. 🚀 Interactive Launch Preloader
+### 7. Interactive Launch Preloader
+
 - A modern, high-tech preloader simulating real-time telemetry connections to **ISRO Bhuvan satellites**, **IMD Agromet radar**, and **ICAR soil health registries**.
 - 5-second automatic launch with an instant **"Skip to App →"** override button.
 
@@ -122,6 +132,7 @@ Translates all interface elements, input labels, diagnostics, disease symptoms, 
 SPARC AgriSense AI provides a full set of JSON REST API endpoints powered by FastAPI:
 
 ### 1. Crop Recommendation
+
 ```http
 POST /api/predict
 Content-Type: application/json
@@ -138,6 +149,7 @@ Content-Type: application/json
 ```
 
 ### 2. Fertilizer Prescription & Commercial Bags
+
 ```http
 POST /api/fertilizer-calc
 Content-Type: application/json
@@ -154,17 +166,21 @@ Content-Type: application/json
 ```
 
 ### 3. Past Season Benchmark Records
+
 ```http
 GET /api/past-season-records
 ```
+
 *Returns official benchmark records for the top 5 crops including realized Mandi prices, MSP, gross revenue, net profit per acre, problems faced, and mitigation packages.*
 
 ### 4. Disease Diagnostics (Crop Doctor)
+
 ```http
 GET /api/diseases?crop=rice
 ```
 
 ### 5. State Soil Baseline Profiles
+
 ```http
 GET /api/soil-states
 GET /api/soil-profile?state=punjab
@@ -175,12 +191,14 @@ GET /api/soil-profile?state=punjab
 ## Quickstart & Installation
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/Shikhar28007/SPARC--agri_sense.git
 cd SPARC--agri_sense
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -188,15 +206,19 @@ pip install -r requirements.txt
 ### 3. Launch the Application
 
 #### Option A: Modern Web App (FastAPI Backend + Responsive Client)
+
 ```bash
 python -m uvicorn api.index:app --reload --port 8000
 ```
+
 Open your browser to `http://localhost:8000`.
 
 #### Option B: Streamlit 3D WebGL Dashboard
+
 ```bash
 streamlit run app.py
 ```
+
 *(or `streamlit run agrisense.py`)*  
 Open your browser to `http://localhost:8501`.
 
@@ -207,14 +229,18 @@ Open your browser to `http://localhost:8501`.
 This repository includes synchronization scripts to push local edits automatically:
 
 ### One-Click Sync (`sync.bat`)
+
 Double-click **[`sync.bat`](sync.bat)** in Windows:
+
 - **Option [1]:** Stage, commit, and push changes immediately.
 - **Option [2]:** Start the real-time background file watcher.
 
 ### Hands-Free Background Watcher (`auto_sync_watcher.py`)
+
 ```bash
 python auto_sync_watcher.py
 ```
+
 Monitors project files and automatically commits and pushes changes directly to `origin main`.
 
 ---
