@@ -29,7 +29,8 @@ from backend import (
     search_crop_diseases,
     evaluate_disease_outbreak_risk,
     get_all_disease_crops,
-    calculate_fertilizers
+    calculate_fertilizers,
+    get_past_season_crop_records
 )
 
 app = FastAPI(
@@ -359,6 +360,11 @@ def state_soil_profile(state: str = Query(..., description="Indian State name"))
 def get_weather(query: str = Query("New Delhi", description="City name or query")):
     telemetry = engine_instance.fetch_live_weather(query)
     return {"success": True, "telemetry": telemetry}
+
+@router.get("/past-season-records")
+def list_past_season_records(crop: Optional[str] = Query(None, description="Optional crop filter")):
+    records = get_past_season_crop_records(crop=crop, limit=5)
+    return {"success": True, "count": len(records), "records": records}
 
 # Mount router with BOTH prefix="" and prefix="/api"
 # This guarantees that whether Vercel preserves or strips '/api', the endpoint matches!

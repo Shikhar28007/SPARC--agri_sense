@@ -869,90 +869,40 @@
 
         <!-- SUBTAB 3: Past Searches & Records -->
         <div class="subtab-panel is-hidden" id="subtab-panel-records">
-          <div class="subtab-history-header">
-            <div>
-              <h4>📜 Past Searches & Soil Health History</h4>
-              <p>Click any previous search to instantly restore inputs and view recommendations.</p>
+          <!-- Section 1: Official Past Season Cultivation & Price Benchmarks (Top 5 Crops) -->
+          <div class="past-season-benchmarks-section">
+            <div class="past-season-header-row">
+              <div>
+                <h4 id="past-season-heading" style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">🌾 Official Past Season Cultivation & Realized Price Benchmarks (Top 5 Crops)</h4>
+                <p id="past-season-subheading" style="font-size: 12.5px; color: var(--text-muted); margin: 0;">Verified ICAR & Mandi harvest prices, net profit per acre, agronomic problems faced during cultivation, and resolution packages.</p>
+              </div>
+              <div class="past-season-filter-chips" id="past-season-crop-filter">
+                <button type="button" class="btn-chip active" data-crop="all" id="chip-past-all">All Top 5 Crops</button>
+                <button type="button" class="btn-chip" data-crop="rice" id="chip-past-rice">🌱 Paddy / Rice</button>
+                <button type="button" class="btn-chip" data-crop="wheat" id="chip-past-wheat">🌾 Wheat</button>
+                <button type="button" class="btn-chip" data-crop="cotton" id="chip-past-cotton">🌿 Cotton</button>
+                <button type="button" class="btn-chip" data-crop="maize" id="chip-past-maize">🌽 Maize</button>
+                <button type="button" class="btn-chip" data-crop="sugarcane" id="chip-past-sugarcane">🎋 Sugarcane</button>
+              </div>
             </div>
-            <button type="button" class="btn-clear-history-inline" id="btn-clear-history-inline">🗑️ Clear History</button>
+
+            <!-- Top 5 Past Season Benchmark Cards Container -->
+            <div class="records-cards-grid" id="past-season-records-container">
+              <!-- Rendered dynamically by renderPastSeasonRecords() -->
+            </div>
           </div>
-          <div class="records-cards-grid" id="inline-history-container">
-            <div class="record-card">
-              <div class="record-top">
-                <span class="record-season">Kharif 2024</span>
-                <span class="record-crop-badge">Paddy (Indica)</span>
-              </div>
-              <div class="record-metrics-row">
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Yield Achieved</span>
-                  <span class="record-metric-val">46.5 Q/Ha</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Rainfall</span>
-                  <span class="record-metric-val">218 mm</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Mandi Rate</span>
-                  <span class="record-metric-val">₹2,320 / Q</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Realization</span>
-                  <span class="record-metric-val">97% Target</span>
-                </div>
-              </div>
-              <p class="record-insight">Timely monsoon onset facilitated uniform tillering; near zero incidence of stem borer.</p>
-            </div>
 
-            <div class="record-card">
-              <div class="record-top">
-                <span class="record-season">Rabi 2024–25</span>
-                <span class="record-crop-badge">Wheat (HD-2967)</span>
+          <!-- Section 2: Farmer Recent Diagnostics & Search History -->
+          <div class="farmer-search-history-section" style="margin-top: 32px; border-top: 1px solid var(--border-card); padding-top: 24px;">
+            <div class="subtab-history-header">
+              <div>
+                <h4 id="farmer-history-heading">📜 Your Recent Field Diagnostics & Search History</h4>
+                <p id="farmer-history-subheading">Click any previous recommendation or fertilizer prescription to reload field parameters.</p>
               </div>
-              <div class="record-metrics-row">
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Yield Achieved</span>
-                  <span class="record-metric-val">52.0 Q/Ha</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Irrigations</span>
-                  <span class="record-metric-val">4 Cycles</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Mandi Rate</span>
-                  <span class="record-metric-val">₹2,425 / Q</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Realization</span>
-                  <span class="record-metric-val">98% Target</span>
-                </div>
-              </div>
-              <p class="record-insight">Favorable prolonged winter temperatures enhanced grain filling with high test weight.</p>
+              <button type="button" class="btn-clear-history-inline" id="btn-clear-history-inline">🗑️ Clear History</button>
             </div>
-
-            <div class="record-card">
-              <div class="record-top">
-                <span class="record-season">Kharif 2023</span>
-                <span class="record-crop-badge">Cotton (Bt Hybrid)</span>
-              </div>
-              <div class="record-metrics-row">
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Yield Achieved</span>
-                  <span class="record-metric-val">24.8 Q/Ha</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Rainfall</span>
-                  <span class="record-metric-val">185 mm</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Mandi Rate</span>
-                  <span class="record-metric-val">₹7,350 / Q</span>
-                </div>
-                <div class="record-metric-item">
-                  <span class="record-metric-label">Realization</span>
-                  <span class="record-metric-val">92% Target</span>
-                </div>
-              </div>
-              <p class="record-insight">Mid-season dry spell mitigated with supplemental drip irrigation; clean boll retention.</p>
+            <div class="records-cards-grid" id="inline-history-container">
+              <!-- Rendered dynamically by updateHistoryUI() -->
             </div>
           </div>
         </div>

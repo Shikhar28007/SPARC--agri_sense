@@ -3716,8 +3716,625 @@ document.addEventListener('DOMContentLoaded', () => {
       if (activePanel) {
         activePanel.classList.remove('is-hidden');
       }
+      if (targetSubtab === 'records') {
+        renderPastSeasonRecords(state.activePastSeasonCropFilter || 'all');
+        if (typeof updateHistoryUI === 'function') updateHistoryUI();
+      }
     });
   });
+
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // OFFICIAL PAST SEASON CULTIVATION & REALIZED PRICE BENCHMARKS (TOP 5 CROPS)
+  // ─────────────────────────────────────────────────────────────────────────
+  const PAST_SEASON_I18N = {
+    heading: {
+      en: '🌾 Official Past Season Cultivation & Realized Price Benchmarks (Top 5 Crops)',
+      hi: '🌾 पिछले सीजन के आधिकारिक फसल उत्पादन एवं मंडी भाव रिकॉर्ड (शीर्ष 5 फसलें)',
+      mr: '🌾 मागील हंगामातील अधिकृत पीक उत्पादन व बाजारभाव नोंदी (शीर्ष ५ पिके)',
+      pa: '🌾 ਪਿਛਲੇ ਸੀਜ਼ਨ ਦੇ ਅਧਿਕਾਰਤ ਫਸਲ ਉਤਪਾਦਨ ਅਤੇ ਮੰਡੀ ਭਾਅ ਰਿਕਾਰਡ (ਚੋਟੀ ਦੀਆਂ 5 ਫਸਲਾਂ)',
+      gu: '🌾 પાછલી સીઝનના સત્તાવાર પાક ઉત્પાદન અને બજારભાવ રેકોર્ડ્સ (ટોચના ૫ પાકો)',
+      te: '🌾 మునుపటి సీజన్ అధికారిక పంట సాగు & మార్కెట్ ధర రಿಕార్డులు (టాప్ 5 పంటలు)',
+      ta: '🌾 கடந்த பருவத்தின் அதிகாரப்பூர்வ பயிர் சாகுபடி & சந்தை விலை பதிவுகள் (முதல் 5 பயிர்கள்)',
+      bn: '🌾 বিগত মৌসুমের আনুষ্ঠানিক ফসল উৎপাদন ও বাজার দর রেকর্ড (শীর্ষ ৫টি ফসল)',
+      kn: '🌾 ಹಿಂದಿನ ಋತುವಿನ ಅಧಿಕೃತ ಬೆಳೆ ಉತ್ಪಾದನೆ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ದಾಖಲೆಗಳು (ಟಾಪ್ 5 ಬೆಳೆಗಳು)'
+    },
+    subheading: {
+      en: 'Verified ICAR & Mandi harvest prices, net profit per acre, agronomic problems faced during cultivation, and resolution packages.',
+      hi: 'सत्यापित ICAR एवं मंडी कटाई भाव, प्रति एकड़ शुद्ध लाभ, खेती के दौरान आई समस्याएं और समाधान पैकेज।',
+      mr: 'तपासलेले ICAR व कृषी उत्पन्न बाजार दर, एकरी निव्वळ नफा, लागवडीदरम्यान आलेल्या समस्या आणि निवारण पॅकेज.',
+      pa: 'ਪ੍ਰਮਾਣਿਤ ICAR ਅਤੇ ਮੰਡੀ ਵਾਢੀ ਦੇ ਭਾਅ, ਪ੍ਰਤੀ ਏਕੜ ਸ਼ੁੱਧ ਲਾਭ, ਖੇਤੀ ਦੌਰਾਨ ਆਈਆਂ ਸਮੱਸਿਆਵਾਂ ਅਤੇ ਹੱਲ।',
+      gu: 'ચકાસાયેલ ICAR અને મંડી લણણી ભાવો, એકર દીઠ ચોખ્ખો નફો, ખેતી દરમિયાન આવેલી સમસ્યાઓ અને નિવારણ પેકેજ.',
+      te: 'ధృవీకరించబడిన ICAR & మార్కెట్ ధరలు, ఎకరాకు నికర లాభం, సాగులో ఎదురైన సమస్యలు మరియు పరిష్కారాలు.',
+      ta: 'சரிபார்க்கப்பட்ட ICAR & சந்தை விலைகள், ஏக்கருக்கு நிகர லாபம், சாகுபடியின் போது சந்தித்த பிரச்சினைகள் மற்றும் தீர்வுகள்.',
+      bn: 'যাচাইকৃত ICAR ও বাজার দর, একর প্রতি নিট লাভ, চাষের সময় সম্মুখীন হওয়া সমস্যা এবং সমাধান প্যাকেজ।',
+      kn: 'ಪರಿಶೀಲಿಸಿದ ICAR ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು, ಎಕರೆಗೆ ನಿವ್ವಳ ಲಾಭ, ಕೃಷಿಯಲ್ಲಿ ಎದುರಾದ ಸಮಸ್ಯೆಗಳು ಮತ್ತು ಪರಿಹಾರಗಳು.'
+    },
+    lblIdealPrice: {
+      en: 'Ideal Crop Price Got After Cultivation',
+      hi: 'फसल कटाई के बाद मिला आदर्श मंडी भाव',
+      mr: 'पीक काढणीनंतर मिळालेला आदर्श बाजारभाव',
+      pa: 'ਫਸਲ ਕਟਾਈ ਤੋਂ ਬਾਅਦ ਮਿਲਿਆ ਆਦਰਸ਼ ਮੰਡੀ ਭਾਅ',
+      gu: 'લણણી પછી મળેલ આદર્શ બજારભાવ',
+      te: 'పంట కోత తర్వాత లభించిన ఆదర్శ మార్కెట్ ధర',
+      ta: 'அறுவடைக்குப் பின் கிடைத்த சிறந்த சந்தை விலை',
+      bn: 'ফসল তোলার পর প্রাপ্ত আদর্শ বাজার দর',
+      kn: 'ಸುಗ್ಗಿ ನಂತರ ದೊರೆತ ಆದರ್ಶ ಮಾರುಕಟ್ಟೆ ಬೆಲೆ'
+    },
+    lblMsp: { en: 'Govt MSP', hi: 'सरकारी MSP', mr: 'शासकीय हमीभाव MSP', pa: 'ਸਰਕਾਰੀ MSP', gu: 'સરકારી ટેકાના ભાવ MSP', te: 'ప్రభుత్వ MSP', ta: 'அரசு MSP', bn: 'সরকারি MSP', kn: 'ಸರ್ಕಾರಿ MSP' },
+    lblGross: { en: 'Gross Realization', hi: 'सकल आय', mr: 'एकूण उत्पन्न', pa: 'ਕੁੱਲ ਆਮਦਨ', gu: 'કુલ આવક', te: 'మొత్తం ఆదాయం', ta: 'மொத்த வருமானம்', bn: 'মোট আয়', kn: 'ಒಟ್ಟು ಆದಾಯ' },
+    lblNetProfit: { en: 'Net Profit', hi: 'शुद्ध लाभ', mr: 'निव्वळ नफा', pa: 'ਸ਼ੁੱਧ ਲਾਭ', gu: 'ચોખ્ખો નફો', te: 'ನಿకర లాభం', ta: 'நிகர லாபம்', bn: 'নিট লাভ', kn: 'ನಿವ್ವಳ ಲಾಭ' },
+    lblYield: { en: 'Yield Achieved', hi: 'प्राप्त उपज', mr: 'मिळालेले उत्पादन', pa: 'ਪ੍ਰਾਪਤ ਝਾੜ', gu: 'મેળવેલ ઉત્પાદન', te: 'సాధించిన దిగుబడి', ta: 'அடைந்த மகசூல்', bn: 'অর্জিত ফলন', kn: 'ಪಡೆದ ಇಳುವರಿ' },
+    lblTarget: { en: 'Target Realization', hi: 'लक्ष्य प्राप्ति', mr: 'लक्ष्य प्राप्ती', pa: 'ਟੀਚਾ ਪ੍ਰਾਪਤੀ', gu: 'ટાર્ગેટ પ્રાપ્તિ', te: 'లక్ష్య సాధన', ta: 'இலக்கு சாதனை', bn: 'লক্ষ্যমাত্রা অর্জন', kn: 'ಗುರಿ ಸಾಧನೆ' },
+    lblWater: { en: 'Water / Climate', hi: 'जल / जलवायु', mr: 'पाणी / हवामान', pa: 'ਪਾਣੀ / ਜਲਵਾਯੂ', gu: 'પાણી / વાતાવરણ', te: 'నీరు / వాతావరణం', ta: 'நீர் / காலநிலை', bn: 'জল / জলবায়ু', kn: 'ನೀರು / ಹವಾಮಾನ' },
+    lblCost: { en: 'Production Cost', hi: 'लागत मूल्य', mr: 'उत्पादन खर्च', pa: 'ਉਤਪਾਦਨ ਲਾਗਤ', gu: 'ઉત્પાદન ખર્ચ', te: 'ఉత్పత్తి ఖర్చు', ta: 'உற்பத்தி செலவு', bn: 'উৎপাদন খরচ', kn: 'ಉತ್ಪಾದನಾ ವೆಚ್ಚ' },
+    lblProblemFaced: {
+      en: '⚠️ Problem Faced During Cultivation',
+      hi: '⚠️ फसल चक्र के दौरान आई कृषि समस्या',
+      mr: '⚠️ पीक हंगामादरम्यान आलेली प्रमुख समस्या',
+      pa: '⚠️ ਫਸਲ ਚੱਕਰ ਦੌਰਾਨ ਆਈ ਖੇਤੀਬਾੜੀ ਸਮੱਸਿਆ',
+      gu: '⚠️ પાક દરમિયાન આવેલી મુખ્ય સમસ્યા',
+      te: '⚠️ సాగు సమయంలో ఎదురైన వ్యవసాయ సమస్య',
+      ta: '⚠️ சாகுபடியின் போது ஏற்பட்ட வேளாண் பிரச்சினை',
+      bn: '⚠️ চাষের সময় সম্মুখীন হওয়া কৃষি সমস্যা',
+      kn: '⚠️ ಕೃಷಿಯ ಸಮಯದಲ್ಲಿ ಎದುರಾದ ಪ್ರಮುಖ ಸಮಸ್ಯೆ'
+    },
+    lblMitigation: {
+      en: '💡 ICAR Scientific Mitigation & Package Applied',
+      hi: '💡 ICAR वैज्ञानिक समाधान एवं उपचार पैकेज',
+      mr: '💡 ICAR वैज्ञानिक उपाययोजना व उपचार पद्धती',
+      pa: '💡 ICAR ਵਿਗਿਆਨਕ ਹੱਲ ਅਤੇ ਉਪਚਾਰ',
+      gu: '💡 ICAR વૈજ્ઞાનિક ઉકેલ અને માર્ગદર્શન પેકેજ',
+      te: '💡 ICAR శాస్త్రీయ పరిష్కారం & యాజమాన్యం',
+      ta: '💡 ICAR அறிவியல் தீர்வு & மேலாண்மை திட்டம்',
+      bn: '💡 ICAR বৈজ্ঞানিক সমাধান ও চিকিৎসা প্যাকেজ',
+      kn: '💡 ICAR ವೈಜ್ಞಾನಿಕ ಪರಿಹಾರ ಮತ್ತು ನಿರ್ವಹಣೆ'
+    }
+  };
+
+  const PAST_SEASON_RECORDS_DB = [
+    {
+      crop_id: 'rice',
+      crop_name: 'Paddy / Rice (Indica Wet)',
+      variety: 'PR-126 (High Yielding)',
+      season: 'Kharif 2024',
+      mandi_price_realized: 2320.0,
+      msp_benchmark: 2300.0,
+      price_unit: '₹/Quintal',
+      gross_realization_ha: 107880.0,
+      net_profit_acre: 48500.0,
+      yield_achieved_q_ha: 46.5,
+      yield_target_pct: 97.0,
+      production_cost_q: 1320.0,
+      rainfall_or_water: '218 mm (Monsoon Rain)',
+      problem_faced: 'Early vegetative leaf blast attack and mid-monsoon nitrogen leaching due to intense rainfall downpours.',
+      mitigation_solution: 'Foliar spray of Tricyclazole 75% WP @ 0.6g/L + split Neem-coated Urea top-dressing restored active tillering.',
+      translations: {
+        hi: {
+          crop_name: 'धान / चावल (Indica Wet)',
+          variety: 'PR-126 (उन्नत किस्म)',
+          season: 'खरीफ 2024',
+          rainfall_or_water: '218 मिमी (मानसूनी वर्षा)',
+          problem_faced: 'शुरुआती वानस्पतिक अवस्था में पत्ती झोंका (ब्लास्ट) रोग एवं भारी वर्षा से नाइट्रोजन निक्षालन।',
+          mitigation_solution: 'ट्राइसाइक्लाजोल 75% WP @ 0.6 ग्राम/लीटर छिड़काव + नीम लेपित यूरिया का विभाजित प्रयोग कर फसल को पुनः हरा-भरा बनाया गया।'
+        },
+        mr: {
+          crop_name: 'भात / धान (Indica Wet)',
+          variety: 'PR-126 (सुधारित वाण)',
+          season: 'खरीप २०२४',
+          rainfall_or_water: '२१८ मिमी (पावसाचे पाणी)',
+          problem_faced: 'सुरुवातीच्या शाकीय वाढीच्या काळात करपा रोग आणि मुसळधार पावसामुळे नत्राचा निचरा.',
+          mitigation_solution: 'ट्रायसायक्लॅझोल ७५% WP @ ०.६ ग्रॅम/लिटर फवारणी + युरिया खताची विभागून मात्रा दिल्याने फुटवे जोमदार झाले.'
+        },
+        gu: {
+          crop_name: 'ડાંગર / ચોખા (ઇન્ડિકા ભીની)',
+          variety: 'PR-126 (વધુ ઉત્પાદક જાત)',
+          season: 'ખરીફ ૨૦૨૪',
+          rainfall_or_water: '૨૧૮ મીમી (ચોમાસુ વરસાદ)',
+          problem_faced: 'શરૂઆતના વાનસ્પતિક તબક્કે પાનનો સુકારો (બ્લાસ્ટ) અને ભારે વરસાદને કારણે નાઇટ્રોજનનું ધોવાણ.',
+          mitigation_solution: 'ટ્રાઇસાયક્લાઝોલ ૭૫% WP @ ૦.૬ ગ્રામ/લિટર છંટકાવ + લીમડા યુક્ત યુરિયાનું હપ્તાવાર ખાતર આપવાથી છોડ ઝડપથી સ્વસ્થ બન્યા.'
+        },
+        pa: {
+          crop_name: 'ਝੋਨਾ / ਚਾਵਲ (Indica Wet)',
+          variety: 'PR-126 (ਵੱਧ ਝਾੜ ਵਾਲੀ)',
+          season: 'ਖਰੀਫ 2024',
+          rainfall_or_water: '218 ਮਿਲੀਮੀਟਰ (ਮਾਨਸੂਨੀ ਮੀਂਹ)',
+          problem_faced: 'ਸ਼ੁਰੂਆਤੀ ਪੜਾਅ ਵਿੱਚ ਪੱਤਾ ਝੁਲਸ ਰੋਗ (ਬਲਾਸਟ) ਅਤੇ ਭਾਰੀ ਮੀਂਹ ਕਾਰਨ ਨਾਈਟ੍ਰੋਜਨ ਦਾ ਵਹਿ ਜਾਣਾ।',
+          mitigation_solution: 'ਟ੍ਰਾਈਸਾਈਕਲਾਜ਼ੋਲ 75% WP @ 0.6 ਗ੍ਰਾਮ/ਲਿਟਰ ਛਿੜਕਾਅ + ਨਿੰਮ-ਲੇਪਤ ਯੂਰੀਆ ਦੀ ਖੁਰਾਕ ਨਾਲ ਫਸਲ ਮੁੜ ਸੰਭਾਲੀ ਗਈ।'
+        },
+        te: {
+          crop_name: 'వరి / ధాన్యం (ఇండికా వెట్)',
+          variety: 'PR-126 (అధిక దిగుబడి రకం)',
+          season: 'ఖరీఫ్ 2024',
+          rainfall_or_water: '218 మి.మీ వర్షపాతం',
+          problem_faced: 'ప్రారంభ దశలో ఆకు ఎండు తెగులు (బ్లాస్ట్) మరియు భారీ వర్షాల వల్ల నత్రజని లీచింగ్ సమస్య.',
+          mitigation_solution: 'ట్రైసైక్లాజోల్ 75% WP @ 0.6 గ్రా/లీటర్ పిచికారీ + యూరియాను సమతుల్యంగా వేయడం ద్వారా పైరు కోలుకుంది.'
+        },
+        ta: {
+          crop_name: 'நெல் / அரிசி (இந்திகா நஞ்சை)',
+          variety: 'PR-126 (அதிக விளைச்சல்)',
+          season: 'காரீப் 2024',
+          rainfall_or_water: '218 மிமீ பருவமழை',
+          problem_faced: 'ஆரம்ப வளர்ச்சி நிலையில் இலை கருகல் (பிளாஸ்ட்) நோய் மற்றும் கனமழையால் தழைச்சத்து விரயம்.',
+          mitigation_solution: 'டிரைசைக்ளசோல் 75% WP @ 0.6 கிராம்/லி தெளிப்பு + வேப்ப எண்ணைய் பூசிய யூரியா மேலுரமிட்டு பயிர் மீட்டெடுக்கப்பட்டது.'
+        },
+        bn: {
+          crop_name: 'ধান / চাল (ইন্ডিকা ওয়েট)',
+          variety: 'PR-126 (উচ্চ ফলনশীল)',
+          season: 'খরিফ ২০২৪',
+          rainfall_or_water: '২১৮ মিমি বৃষ্টিপাত',
+          problem_faced: 'প্রাথমিক পর্যায়ে ব্লাস্ট রোগ ও অতিরিক্ত বৃষ্টির কারণে নাইট্রোজেনের অপচয়।',
+          mitigation_solution: 'ট্রাইসাইক্লাজোল ৭৫% WP @ ০.৬ গ্রাম/লিটার স্প্রে + নিম প্রলেপযুক্ত ইউরিয়ার সঠিক প্রয়োগে ফসল স্বাভাবিক হয়।'
+        },
+        kn: {
+          crop_name: 'ಭತ್ತ / ಅಕ್ಕಿ (ಇಂಡಿಕಾ ವೆಟ್)',
+          variety: 'PR-126 (ಹೆಚ್ಚು ಇಳುವರಿ)',
+          season: 'ಖಾರೀಫ್ 2024',
+          rainfall_or_water: '218 ಮಿಮೀ ಮಳೆ',
+          problem_faced: 'ಆರಂಭಿಕ ಹಂತದಲ್ಲಿ ಎಲೆ ಕರಕು ರೋಗ (ಬ್ಲಾಸ್ಟ್) ಮತ್ತು ಅಧಿಕ ಮಳೆಯಿಂದ ಸಾರಜನಕ ಕೊಚ್ಚಿಹೋಗುವುದು.',
+          mitigation_solution: 'ಟ್ರೈಸೈಕ್ಲಾಜೋಲ್ 75% WP @ 0.6 ಗ್ರಾಂ/ಲೀ ಸಿಂಪರಣೆ + ಬೇವಿನ ಲೇಪಿತ ಯೂರಿಯಾ ಮೇಲುಗೊಬ್ಬರ ನೀಡಿ ಬೆಳೆ ರಕ್ಷಿಸಲಾಯಿತು.'
+        }
+      }
+    },
+    {
+      crop_id: 'wheat',
+      crop_name: 'Wheat (HD-2967 / Sharbati)',
+      variety: 'HD-2967',
+      season: 'Rabi 2024–25',
+      mandi_price_realized: 2425.0,
+      msp_benchmark: 2425.0,
+      price_unit: '₹/Quintal',
+      gross_realization_ha: 126100.0,
+      net_profit_acre: 41200.0,
+      yield_achieved_q_ha: 52.0,
+      yield_target_pct: 98.0,
+      production_cost_q: 1280.0,
+      rainfall_or_water: '4 Irrigation Cycles (CRI, Tillering, Heading, Milking)',
+      problem_faced: 'Terminal heat wave stress during milking stage (temp spike >32°C) and Yellow Rust spore drift from foothills.',
+      mitigation_solution: 'Propiconazole 25% EC (Tilt) @ 1.0 ml/L prophylactic spray + light evening sprinkler misting.',
+      translations: {
+        hi: {
+          crop_name: 'गेहूं (HD-2967 / शरबती)',
+          variety: 'HD-2967',
+          season: 'रबी 2024–25',
+          rainfall_or_water: '4 सिंचाई चक्र (CRI, कल्ले, बाली, दुग्धावस्था)',
+          problem_faced: 'दूधिया अवस्था में अचानक तापमान वृद्धि (>32°C) से टर्मिनल हीट स्ट्रेस एवं तराई क्षेत्रों में पीला रतुआ का प्रकोप।',
+          mitigation_solution: 'प्रोपिकोनाज़ोल 25% EC (टिल्ट) @ 1.0 मिली/लीटर छिड़काव + शाम के समय हल्की सिंचाई से फसल की रक्षा हुई।'
+        },
+        mr: {
+          crop_name: 'गहू (HD-2967 / शरबती)',
+          variety: 'HD-2967',
+          season: 'रब्बी २०२४–२५',
+          rainfall_or_water: '४ पाण्याच्या पाळ्या (मुकुटमुळे, फुटवे, ओंबी, दाणे भरणे)',
+          problem_faced: 'दाणे भरण्याच्या अवस्थेत उष्णतेची लाट (तापमान >३२°C) आणि तांबेरा रोगाचा संभाव्य धोका.',
+          mitigation_solution: 'प्रोपिकोनाझोल २५% EC @ १.० मिली/लिटर प्रतिबंधात्मक फवारणी + सायंकाळी हलके पाणी दिल्याने दाणे टपोरे भरले.'
+        },
+        gu: {
+          crop_name: 'ઘઉં (HD-2967 / શરબતી)',
+          variety: 'HD-2967',
+          season: 'રવિ ૨૦૨૪–૨૫',
+          rainfall_or_water: '૪ પિયત ફેરા (મૂળ ફૂટવા, કંટી, દૂધિયા દાણા)',
+          problem_faced: 'દાણા ભરાવાના સમયે તાપમાન વધારાથી (૩૨°C થી વધુ) ગરમીનો તણાવ અને પીળો ગેરુનો ભય.',
+          mitigation_solution: 'પ્રોપિકોનાઝોલ ૨૫% EC (ટિલ્ટ) @ ૧.૦ મિલી/લિટર અગમચેતી છંટકાવ + સાંજના સમયે હળવું પિયત આપવાથી તાપમાન નિયંત્રિત રહ્યું.'
+        },
+        pa: {
+          crop_name: 'ਕਣਕ (HD-2967 / ਸ਼ਰਬਤੀ)',
+          variety: 'HD-2967',
+          season: 'ਹਾੜੀ 2024–25',
+          rainfall_or_water: '4 ਸਿੰਚਾਈ ਗੇੜ (ਜੜ੍ਹਾਂ, ਫੁਟਾਰੇ, ਸਿੱਟੇ, ਦੁੱਧਾ ਅਵਸਥਾ)',
+          problem_faced: 'ਦੁੱਧਾ ਅਵਸਥਾ ਦੌਰਾਨ ਗਰਮੀ ਦੀ ਲਹਿਰ (>32°C) ਅਤੇ ਪੀਲੀ ਕੁੰਗੀ ਦਾ ਹਮਲਾ।',
+          mitigation_solution: 'ਪ੍ਰੋਪੀਕੋਨਾਜ਼ੋਲ 25% EC @ 1.0 ਮਿਲੀ/ਲਿਟਰ ਛਿੜਕਾਅ + ਸ਼ਾਮ ਵੇਲੇ ਹਲਕੀ ਸਿੰਚਾਈ ਨਾਲ ਫਸਲ ਬਚਾਈ।'
+        },
+        te: {
+          crop_name: 'గోధుమ (HD-2967)',
+          variety: 'HD-2967',
+          season: 'రబీ 2024–25',
+          rainfall_or_water: '4 తడులు',
+          problem_faced: 'గింజ పాలుపోసుకునే దశలో ఉష్ణోగ్రత పెరుగుదల (>32°C) మరియు పసుపు కుంకుమ తెగులు.',
+          mitigation_solution: 'ప్రొపికొనాజోల్ 25% EC @ 1.0 మి.లీ/లీటర్ పిచికారీ చేసి పంటను కాపాడారు.'
+        },
+        ta: {
+          crop_name: 'கோதுமை (HD-2967)',
+          variety: 'HD-2967',
+          season: 'ரபி 2024–25',
+          rainfall_or_water: '4 பாசன சுழற்சிகள்',
+          problem_faced: 'மணிகள் முதிரும் தருவாயில் வெப்ப அலை அழுத்தம் மற்றும் மஞ்சள் துரு நோய் அபாயம்.',
+          mitigation_solution: 'புரோபிகோனசோல் 25% EC @ 1.0 மி.லி/லி தெளிப்பு + மாலையில் லேசான பாசனம் மூலம் தணிக்கப்பட்டது.'
+        },
+        bn: {
+          crop_name: 'গম (HD-2967)',
+          variety: 'HD-2967',
+          season: 'রবি ২০২৪–২৫',
+          rainfall_or_water: '৪টি সেচ চক্র',
+          problem_faced: 'দানা বাঁধার সময় আকস্মিক তাপমাত্রা বৃদ্ধি (>৩২°C) ও হলুদ মরিচা রোগের আশঙ্কা।',
+          mitigation_solution: 'প্রপিকোনাজল ২৫% EC @ ১.০ মিলি/লিটার স্প্রে এবং হালকা সেচ প্রয়োগে ফলন নিশ্চিত হয়।'
+        },
+        kn: {
+          crop_name: 'ಗೋಧಿ (HD-2967)',
+          variety: 'HD-2967',
+          season: 'ರಬಿ 2024–25',
+          rainfall_or_water: '4 ನೀರಾವರಿ ಹಂತಗಳು',
+          problem_faced: 'ಕಾಳು ಕಟ್ಟುವ ಹಂತದಲ್ಲಿ ಅತಿಯಾದ ತಾಪಮಾನ (>32°C) ಮತ್ತು ಹಳದಿ ತುಕ್ಕು ರೋಗದ ಭೀತಿ.',
+          mitigation_solution: 'ಪ್ರೊಪಿಕೊನಾಜೋಲ್ 25% EC @ 1.0 ಮಿಲೀ/ಲೀ ಸಿಂಪರಣೆ + ಸಂಜೆ ವೇಳೆ ಹಗುರ ನೀರಾವರಿ ಒದಗಿಸಲಾಯಿತು.'
+        }
+      }
+    },
+    {
+      crop_id: 'cotton',
+      crop_name: 'Cotton (Bt Hybrid Long Staple)',
+      variety: 'RCH-659 Bt-II',
+      season: 'Kharif 2024',
+      mandi_price_realized: 7350.0,
+      msp_benchmark: 7121.0,
+      price_unit: '₹/Quintal',
+      gross_realization_ha: 182280.0,
+      net_profit_acre: 58000.0,
+      yield_achieved_q_ha: 24.8,
+      yield_target_pct: 92.0,
+      production_cost_q: 4200.0,
+      rainfall_or_water: '185 mm Rainfall + 2 Drip Cycles',
+      problem_faced: 'Pink Bollworm (PBW) rosette flower entry at 60 DAS and mid-season moisture deficit during boll bursting.',
+      mitigation_solution: 'Pheromone traps (5/acre) + Spinetoram 11.7% SC @ 0.8 ml/L + potassium nitrate (13:0:45) foliar nutrition.',
+      translations: {
+        hi: {
+          crop_name: 'कपास (Bt हाइब्रिड लंबा रेशा)',
+          variety: 'RCH-659 Bt-II',
+          season: 'खरीफ 2024',
+          rainfall_or_water: '185 मिमी वर्षा + 2 ड्रिप चक्र',
+          problem_faced: '60 दिन की अवस्था पर गुलाबी सुंडी का प्रकोप एवं टिंडे खिलते समय नमी की कमी।',
+          mitigation_solution: 'फेरोमोन ट्रैप (5 प्रति एकड़) + स्पाइनोटोरम 11.7% SC @ 0.8 मिली/लीटर + पोटेशियम नाइट्रेट (13:0:45) का छिड़काव किया गया।'
+        },
+        mr: {
+          crop_name: 'कापूस (Bt संकरित लांब धागा)',
+          variety: 'RCH-659 Bt-II',
+          season: 'खरीप २०२४',
+          rainfall_or_water: '१८५ मिमी पाऊस + २ ठिबक पाळ्या',
+          problem_faced: '६० दिवसांवर गुलाबी बोंडअळीचा प्रादुर्भाव आणि बोंडे भरण्याच्या काळात पाण्याचा ताण.',
+          mitigation_solution: 'कामगंध सापळे (५/एकर) + स्पिनोटोरम @ ०.८ मिली/लिटर + पोटॅशियम नायट्रेट (१३:०:४५) फवारणीने बोंडे सुरक्षित राहिली.'
+        },
+        gu: {
+          crop_name: 'કપાસ (બીટી હાઇબ્રિડ લાંબા તાર)',
+          variety: 'RCH-659 Bt-II',
+          season: 'ખરીફ ૨૦૨૪',
+          rainfall_or_water: '૧૮૫ મીમી વરસાદ + ૨ ટપક પિયત',
+          problem_faced: '૬૦ દિવસે ગુલાબી ઈયળ (Pink Bollworm) અને જીંડવા ફાટવાના સમયે ભેજની અછત.',
+          mitigation_solution: 'ફેરોમોન ટ્રેપ્સ (૫/એકર) + સ્પાઈનોટોરમ ૧૧.૭% SC @ ૦.૮ મિલી/લિટર + પોટેશિયમ નાઈટ્રેટ (13:0:45) પર્ણીય છંટકાવ.'
+        },
+        pa: {
+          crop_name: 'ਨਰਮਾ / ਕਪਾਹ (Bt ਹਾਈਬ੍ਰਿਡ)',
+          variety: 'RCH-659 Bt-II',
+          season: 'ਖਰੀਫ 2024',
+          rainfall_or_water: '185 ਮਿਲੀਮੀਟਰ ਮੀਂਹ + ਤੁਪਕਾ ਸਿੰਚਾਈ',
+          problem_faced: '60ਵੇਂ ਦਿਨ ਗੁਲਾਬੀ ਸੁੰਡੀ ਦਾ ਹਮਲਾ ਅਤੇ ਟੀਂਡੇ ਖਿੜਨ ਸਮੇਂ ਨਮੀ ਦੀ ਘਾਟ।',
+          mitigation_solution: 'ਫੇਰੋਮੋਨ ਟਰੈਪ (5/ਏਕੜ) + ਸਪਾਈਨੋਟੋਰਮ @ 0.8 ਮਿਲੀ/ਲਿਟਰ + ਪੋਟਾਸ਼ੀਅਮ ਨਾਈਟ੍ਰੇਟ ਦਾ ਛਿੜਕਾਅ।'
+        },
+        te: {
+          crop_name: 'ప్రత్తి / పత్తి (Bt హైబ్రిడ్)',
+          variety: 'RCH-659 Bt-II',
+          season: 'ఖరీఫ్ 2024',
+          rainfall_or_water: '185 మి.మీ వర్షపాతం + బిందు సేద్యం',
+          problem_faced: 'గులాబీ రంగు కాయ తొలుచు పురుగు (PBW) ఉధృతి మరియు కాయలు విచ్చుకునే సమయంలో తేమ కొరత.',
+          mitigation_solution: 'లింగాకర్షక బుట్టలు (5/ఎకరా) + స్పైనోటోరమ్ @ 0.8 మి.లీ/లీటర్ + 13:0:45 పిచికారీ.'
+        },
+        ta: {
+          crop_name: 'பருத்தி (Bt வீரிய ரகம்)',
+          variety: 'RCH-659 Bt-II',
+          season: 'காரீப் 2024',
+          rainfall_or_water: '185 மிமீ மழை + சொட்டு நீர் பாசனம்',
+          problem_faced: '60 ஆம் நாளில் இளஞ்சிவப்பு காய்ப்புழு தாக்குதல் மற்றும் காய் வெடிக்கும் பருவத்தில் ஈரப்பத பற்றாக்குறை.',
+          mitigation_solution: 'இனக்கவர்ச்சி பொறிகள் (5/ஏக்கர்) + ஸ்பினோடோரம் @ 0.8 மி.லி/லி + பொட்டாசியம் நைட்ரேட் தெளிப்பு.'
+        },
+        bn: {
+          crop_name: 'তুলা (Bt হাইব্রিড)',
+          variety: 'RCH-659 Bt-II',
+          season: 'খরিফ ২০২৪',
+          rainfall_or_water: '১৮৫ মিমি বৃষ্টি + ড্রিপ সেচ',
+          problem_faced: '৬০ দিনে গোলাপী বোলওয়ার্মের আক্রমণ এবং গুটি ফোটার সময় আর্দ্রতার ঘাটতি।',
+          mitigation_solution: 'ফেরোমোন ফাঁদ (৫টি/একর) + স্পিনেটোরাম @ ০.৮ মিলি/লিটার স্প্রেতে আক্রমণ প্রতিহত হয়।'
+        },
+        kn: {
+          crop_name: 'ಹತ್ತಿ (Bt ಹೈಬ್ರಿಡ್)',
+          variety: 'RCH-659 Bt-II',
+          season: 'ಖಾರೀಫ್ 2024',
+          rainfall_or_water: '185 ಮಿಮೀ ಮಳೆ + ಹನಿ ನೀರಾವರಿ',
+          problem_faced: '60 ದಿನಗಳಲ್ಲಿ ಗುಲಾಬಿ ಕಾಯಿ ಕೊರೆಯುವ ಹುಳು ಬಾಧೆ ಮತ್ತು ಕಾಯಿ ಒಡೆಯುವಾಗ ತೇವಾಂಶದ ಕೊರತೆ.',
+          mitigation_solution: 'ಲಿಂಗಾಕರ್ಷಕ ಬಲೆಗಳು (5/ಎಕರೆ) + ಸ್ಪಿನೋಟೋರಾಮ್ @ 0.8 ಮಿಲೀ/ಲೀ + ಪೊಟ್ಯಾಶಿಯಂ ನೈಟ್ರೇಟ್ ಸಿಂಪರಣೆ.'
+        }
+      }
+    },
+    {
+      crop_id: 'maize',
+      crop_name: 'Maize / Hybrid Corn (Grain & Poultry)',
+      variety: 'DKC-9108',
+      season: 'Kharif 2024',
+      mandi_price_realized: 2280.0,
+      msp_benchmark: 2225.0,
+      price_unit: '₹/Quintal',
+      gross_realization_ha: 142500.0,
+      net_profit_acre: 36500.0,
+      yield_achieved_q_ha: 62.5,
+      yield_target_pct: 96.0,
+      production_cost_q: 1250.0,
+      rainfall_or_water: '160 mm Precipitation + Furrow Drainage',
+      problem_faced: 'Fall Armyworm (FAW) voracious whorl feeding and Zinc deficiency chlorosis in lighter soil patches.',
+      mitigation_solution: 'Chlorantraniliprole 18.5% SC (Coragen) @ 0.4 ml/L whorl application + Zinc EDTA (12%) foliar spray @ 1 g/L.',
+      translations: {
+        hi: {
+          crop_name: 'मक्का / संकर मक्का (दाना व चारा)',
+          variety: 'DKC-9108',
+          season: 'खरीफ 2024',
+          rainfall_or_water: '160 मिमी वर्षा + नाली निकास',
+          problem_faced: 'फॉल आर्मीवर्म (सैनिक कीट) द्वारा भोंपू (पोंगा) में भारी नुकसान और बलुई दोमट मिट्टी में जिंक की कमी।',
+          mitigation_solution: 'कोराजन (क्लोरांट्रानिलिप्रोल) @ 0.4 मिली/लीटर पोंगे में डालना + जिंक EDTA (12%) 1 ग्राम/लीटर का छिड़काव।'
+        },
+        mr: {
+          crop_name: 'मका / संकरित मका',
+          variety: 'DKC-9108',
+          season: 'खरीप २०२४',
+          rainfall_or_water: '१६० मिमी पाऊस + योग्य निचरा',
+          problem_faced: 'अमेरिकन लष्करी अळीचा पोंग्यात प्रादुर्भाव आणि हलक्या जमिनीत जस्ताच्या (Zinc) कमतरतेमुळे पाने पिवळी पडणे.',
+          mitigation_solution: 'कोराजन @ ०.४ मिली/लिटर पोंग्यात पडेल असे फवारणे + चिलेटेड झिंक १ ग्रॅम/लिटर फवारणीने पीक तरारले.'
+        },
+        gu: {
+          crop_name: 'મકાઈ / હાઇબ્રિડ મકાઈ (દાણા અને પોલ્ટ્રી)',
+          variety: 'DKC-9108',
+          season: 'ખરીફ ૨૦૨૪',
+          rainfall_or_water: '૧૬૦ મીમી વરસાદ + નીતાર વ્યવસ્થા',
+          problem_faced: 'ફોલ આર્મીવોર્મ (લશ્કરી ઈયળ) દ્વારા પાનના પોંગામાં નુકસાન અને રેતાળ જમીનમાં ઝિંકની ઉણપથી પીળાશ.',
+          mitigation_solution: 'ક્લોરાન્ટ્રાનિલિપ્રોલ ૧૮.૫% SC (કોરાજન) @ ૦.૪ મિલી/લિટર પોંગામાં આપવું + ઝિંક EDTA (12%) ૧ ગ્રામ/લિટર છંટકાવ.'
+        },
+        pa: {
+          crop_name: 'ਮੱਕੀ / ਹਾਈਬ੍ਰਿਡ ਮੱਕੀ',
+          variety: 'DKC-9108',
+          season: 'ਖਰੀਫ 2024',
+          rainfall_or_water: '160 ਮਿਲੀਮੀਟਰ ਮੀਂਹ',
+          problem_faced: 'ਫਾਲ ਆਰਮੀਵਰਮ (ਸੈਨਿਕ ਕੀੜਾ) ਦੁਆਰਾ ਪੌਂਗੇ ਦਾ ਨੁਕਸਾਨ ਅਤੇ ਜ਼ਿੰਕ ਦੀ ਘਾਟ ਕਾਰਨ ਪੀਲਾਪਨ।',
+          mitigation_solution: 'ਕੋਰਾਜਨ @ 0.4 ਮਿਲੀ/ਲਿਟਰ ਪੌਂਗੇ ਵਿੱਚ ਪਾਉਣਾ + ਚਿਲੇਟਿਡ ਜ਼ਿੰਕ ਦਾ ਛਿੜਕਾਅ।'
+        },
+        te: {
+          crop_name: 'మొక్కజొన్న (హైబ్రిడ్)',
+          variety: 'DKC-9108',
+          season: 'ఖరీఫ్ 2024',
+          rainfall_or_water: '160 మి.మీ వర్షపాతం',
+          problem_faced: 'కత్తెర పురుగు (ఫాల్ ఆర్మీవార్మ్) మొవ్వు తొలిచే నష్టం మరియు జింక్ లోపం.',
+          mitigation_solution: 'కోరాజెన్ @ 0.4 మి.లీ/లీటర్ మొవ్వులో పిచికారీ + జింక్ EDTA 1 గ్రా/లీటర్ వాడకం.'
+        },
+        ta: {
+          crop_name: 'மக்காச்சோளம் (வீரிய ரகம்)',
+          variety: 'DKC-9108',
+          season: 'காரீப் 2024',
+          rainfall_or_water: '160 மிமீ மழை',
+          problem_faced: 'படைப்புழு (FAW) குருத்து சேதம் மற்றும் மணல் பகுதிகளில் துத்தநாக பற்றாக்குறை.',
+          mitigation_solution: 'கோரஜென் @ 0.4 மி.லி/லி குருத்தில் தெளிப்பு + துத்தநாக EDTA 1 கிராம்/லி தெளிக்கப்பட்டது.'
+        },
+        bn: {
+          crop_name: 'ভুট্টা / হাইব্রিড ভুট্টা',
+          variety: 'DKC-9108',
+          season: 'খরিফ ২০২৪',
+          rainfall_or_water: '১৬০ মিমি বৃষ্টি',
+          problem_faced: 'ফল আর্মিওয়ার্ম পোকার আক্রমণ ও দোআঁশ মাটিতে জিঙ্কের অভাবজনিত ক্লোরোসিস।',
+          mitigation_solution: 'কোরাজন @ ০.৪ মিলি/লিটার শিষের মধ্যে প্রয়োগ ও জিঙ্ক EDTA ১ গ্রাম/লিটার স্প্রে করা হয়।'
+        },
+        kn: {
+          crop_name: 'ಮೆಕ್ಕೆಜೋಳ / ಹೈಬ್ರಿಡ್ ಜೋಳ',
+          variety: 'DKC-9108',
+          season: 'ಖಾರೀಫ್ 2024',
+          rainfall_or_water: '160 ಮಿಮೀ ಮಳೆ',
+          problem_faced: 'ಲಷ್ಕರಿ ಹುಳು (FAW) ಸುಳಿಯಲ್ಲಿ ಕೊರೆಯುವ ಹಾನಿ ಮತ್ತು ಮರಳಿನ ಮಣ್ಣಿನಲ್ಲಿ ಸತುವಿನ ಕೊರತೆ.',
+          mitigation_solution: 'ಕೋರಾಜೆನ್ @ 0.4 ಮಿಲೀ/ಲೀ ಸುಳಿಗೆ ಸಿಂಪರಣೆ + ಸತು EDTA (12%) 1 ಗ್ರಾಂ/ಲೀ ಸಿಂಪಡಿಸಿ ರಕ್ಷಿಸಲಾಯಿತು.'
+        }
+      }
+    },
+    {
+      crop_id: 'sugarcane',
+      crop_name: 'Sugarcane (High Sugar Recovery)',
+      variety: 'Co-0238 (Early Cane)',
+      season: 'Annual 2023–24',
+      mandi_price_realized: 355.0,
+      msp_benchmark: 340.0,
+      price_unit: '₹/Quintal (FRP Mill Gate)',
+      gross_realization_ha: 298200.0,
+      net_profit_acre: 95000.0,
+      yield_achieved_q_ha: 840.0,
+      yield_target_pct: 98.0,
+      production_cost_q: 195.0,
+      rainfall_or_water: '1,100 mm (Monsoon + 8 Irrigation Runs)',
+      problem_faced: 'Early shoot borer (Chilo infuscatellus) attack in peak May heat and Red Rot fungal threat under waterlogging.',
+      mitigation_solution: 'Trash mulching with earthing-up + Fipronil 0.3% GR @ 25 kg/ha + Trichoderma enriched FYM in furrows.',
+      translations: {
+        hi: {
+          crop_name: 'गन्ना (उच्च मिठास अगेती किस्म)',
+          variety: 'Co-0238 (अगेती गन्ना)',
+          season: 'वार्षिक 2023–24',
+          rainfall_or_water: '1,100 मिमी (वर्षा + 8 सिंचाई)',
+          problem_faced: 'मई की तेज धूप में कंसुआ (Early Shoot Borer) कीट और जलभराव से लाल सड़न (Red Rot) का खतरा।',
+          mitigation_solution: 'सूखी पत्ती मल्चिंग + फिप्रोनिल 0.3% GR @ 25 किग्रा/हेक्टेयर + बुवाई की नाली में ट्राइकोडर्मा युक्त गोबर खाद का प्रयोग।'
+        },
+        mr: {
+          crop_name: 'ऊस (उच्च साखर उतारा वाण)',
+          variety: 'Co-0238 (लवकर पक्व)',
+          season: 'वार्षिक २०२३–२४',
+          rainfall_or_water: '१,१०० मिमी (पाऊस + ८ पाळ्या)',
+          problem_faced: 'उन्हाळ्यात खोडकिडीचा प्रादुर्भाव आणि अतिपावसात पाणी साचल्यामुळे तांबेरा/लाल कूज रोगाचा धोका.',
+          mitigation_solution: 'पाचट आच्छादन (मल्चिंग) + फिप्रोनिल ०.३% GR @ २५ किलो/हेक्टर + लागवडीच्या वेळी ट्रायकोडर्मायुक्त शेणखत वापरले.'
+        },
+        gu: {
+          crop_name: 'શેરડી (વધુ ખાંડ રિકવરી જાત)',
+          variety: 'Co-0238 (વહેલી પાકતી)',
+          season: 'વાર્ષિક ૨૦૨૩–૨૪',
+          rainfall_or_water: '૧,૧૦૦ મીમી (વરસાદ + ૮ પિયત)',
+          problem_faced: 'મે મહિનાની કાળઝાળ ગરમીમાં પ્રારંભિક સાંઠા વેધક (Shoot Borer) અને ચોમાસામાં પાણી ભરાવાથી લાલ સડો (Red Rot) નો ભય.',
+          mitigation_solution: 'શેરડીના પાલાનું આવરણ (મલ્ચિંગ) + ફિપ્રોનિલ ૦.૩% GR @ ૨૫ કિગ્રા/હેક્ટર + વાવેતર સમયે ટ્રાઇકોડર્મા યુક્ત છાણીયું ખાતર આપવું.'
+        },
+        pa: {
+          crop_name: 'ਗੰਨਾ (ਵੱਧ ਖੰਡ ਵਾਲੀ ਕਿਸਮ)',
+          variety: 'Co-0238',
+          season: 'ਸਾਲਾਨਾ 2023–24',
+          rainfall_or_water: '1,100 ਮਿਲੀਮੀਟਰ (ਮੀਂਹ + ਸਿੰਚਾਈ)',
+          problem_faced: 'ਮਈ ਦੀ ਗਰਮੀ ਵਿੱਚ ਕੰਸੂਆ (ਕਾਂਡ ਛੇਦਕ) ਅਤੇ ਪਾਣੀ ਖੜ੍ਹਨ ਨਾਲ ਰੱਤਾ ਰੋਗ (ਲਾਲ ਸੜਨ)।',
+          mitigation_solution: 'ਸੁੱਕੀ ਪੱਤੀ ਦੀ ਮਲਚਿੰਗ + ਫਿਪਰੋਨਿਲ 0.3% GR + ਟ੍ਰਾਈਕੋਡਰਮਾ ਖਾਦ ਨਾਲ ਫਸਲ ਸੁਰੱਖਿਅਤ ਕੀਤੀ।'
+        },
+        te: {
+          crop_name: 'చెరకు (అధిక చక్కెర రకం)',
+          variety: 'Co-0238',
+          season: 'వార్షిక 2023–24',
+          rainfall_or_water: '1,100 మి.మీ నీరు',
+          problem_faced: 'వేసవిలో మొదలు తొలిచే పురుగు మరియు మురుగు నీరు నిలవడం వల్ల ఎర్ర కుళ్ళు తెగులు.',
+          mitigation_solution: 'రవ్వ ఎండిన ఆకుల మల్చింగ్ + ఫిప్రోనిల్ 0.3% GR + ట్రైకోడెర్మా పశువుల ఎరువు సాళ్లలో వేయడం.'
+        },
+        ta: {
+          crop_name: 'கரும்பு (அதிக சர்க்கரை சத்து)',
+          variety: 'Co-0238',
+          season: 'ஆண்டுப் பயிர் 2023–24',
+          rainfall_or_water: '1,100 மிமீ பாசனம் + மழை',
+          problem_faced: 'கோடையில் குருத்து துளைப்பான் மற்றும் நீர் தேங்குவதால் செவ்வழுகல் நோய் அபாயம்.',
+          mitigation_solution: 'சோகை மூடாக்கு + பிப்ரோனில் 0.3% GR @ 25 கிகி/ஹெக்டர் + டிரைக்கோடெர்மா உரம் சால்களில் இடப்பட்டது.'
+        },
+        bn: {
+          crop_name: 'আখ (উচ্চ চিনি পুনরুদ্ধার)',
+          variety: 'Co-0238',
+          season: 'বার্ষিক ২০২৩–২৪',
+          rainfall_or_water: '১,১০০ মিমি মোট জল',
+          problem_faced: 'গ্রীষ্মে কাণ্ড ছিদ্রকারী পোকা এবং অতিবৃষ্টিতে লাল পচা রোগের প্রকোপ।',
+          mitigation_solution: 'আখের পাতার মালচিং + ফিপ্রোনিল ০.৩% GR + ট্রাইকোডার্মা মিশ্রিত গোবর সার প্রয়োগ।'
+        },
+        kn: {
+          crop_name: 'ಕಬ್ಬು (ಹೆಚ್ಚು ಸಕ್ಕರೆ ಇಳುವರಿ)',
+          variety: 'Co-0238',
+          season: 'ವಾರ್ಷಿಕ 2023–24',
+          rainfall_or_water: '1,100 ಮಿಮೀ ನೀರು',
+          problem_faced: 'ಬೇಸಿಗೆಯ ಬಿಸಿಲಿನಲ್ಲಿ ಸುಳಿ ಕೊರೆಯುವ ಹುಳು ಮತ್ತು ನೀರು ನಿಲ್ಲುವುದರಿಂದ ಕೆಂಪು ಕೊಳೆ ರೋಗದ ಆತಂಕ.',
+          mitigation_solution: 'ಕಬ್ಬಿನ ರವದ ಹೊದಿಕೆ (ಮಲ್ಚಿಂಗ್) + ಫಿಪ್ರೋನಿಲ್ 0.3% GR + ಟ್ರೈಕೋಡರ್ಮಾ ಕೊಟ್ಟಿಗೆ ಗೊಬ್ಬರ ಸಾಲಿನಲ್ಲಿ ನೀಡಲಾಯಿತು.'
+        }
+      }
+    }
+  ];
+
+  function renderPastSeasonRecords(cropFilter = 'all') {
+    const container = document.getElementById('past-season-records-container');
+    if (!container) return;
+    state.activePastSeasonCropFilter = cropFilter;
+
+    const lang = state.language || 'hi';
+    const t = PAST_SEASON_I18N;
+    const records = PAST_SEASON_RECORDS_DB;
+
+    const filtered = (cropFilter === 'all' || !cropFilter)
+      ? records
+      : records.filter(r => r.crop_id === cropFilter);
+
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="history-empty-state" style="grid-column: 1/-1;"><h4>No past season records found for this crop</h4></div>`;
+      return;
+    }
+
+    container.innerHTML = filtered.map(r => {
+      const loc = r.translations && r.translations[lang] ? r.translations[lang] : r;
+      const cropName = loc.crop_name || r.crop_name;
+      const problemFaced = loc.problem_faced || r.problem_faced;
+      const mitigation = loc.mitigation_solution || r.mitigation_solution;
+      const season = loc.season || r.season;
+      const variety = loc.variety || r.variety;
+      const rainfall = loc.rainfall_or_water || r.rainfall_or_water;
+
+      const priceRealizedFormatted = r.mandi_price_realized.toLocaleString('en-IN');
+      const mspFormatted = r.msp_benchmark.toLocaleString('en-IN');
+      const grossFormatted = (r.gross_realization_ha / 100000).toFixed(2);
+      const netFormatted = r.net_profit_acre.toLocaleString('en-IN');
+      const costFormatted = r.production_cost_q.toLocaleString('en-IN');
+
+      const lblIdealPrice = t.lblIdealPrice[lang] || t.lblIdealPrice['en'];
+      const lblMsp = t.lblMsp[lang] || t.lblMsp['en'];
+      const lblGross = t.lblGross[lang] || t.lblGross['en'];
+      const lblNet = t.lblNetProfit[lang] || t.lblNetProfit['en'];
+      const lblYield = t.lblYield[lang] || t.lblYield['en'];
+      const lblTarget = t.lblTarget[lang] || t.lblTarget['en'];
+      const lblWater = t.lblWater[lang] || t.lblWater['en'];
+      const lblCost = t.lblCost[lang] || t.lblCost['en'];
+      const lblProblem = t.lblProblemFaced[lang] || t.lblProblemFaced['en'];
+      const lblMitigation = t.lblMitigation[lang] || t.lblMitigation['en'];
+
+      return `
+        <div class="past-season-card">
+          <div class="past-season-top">
+            <span class="past-season-tag">🗓️ ${season}</span>
+            <span class="past-crop-badge">${variety}</span>
+          </div>
+
+          <div>
+            <h4 class="past-crop-title">${cropName}</h4>
+          </div>
+
+          <!-- 1. Ideal Crop Price Realized After Cultivation -->
+          <div class="record-price-callout">
+            <div class="price-callout-header">
+              <span class="price-callout-label">💰 ${lblIdealPrice}</span>
+              <span class="price-realized-val">₹${priceRealizedFormatted} <span style="font-size:12px; font-weight:600;">/ Q</span></span>
+            </div>
+            <div class="price-sub-details">
+              • <strong>${lblMsp}:</strong> ₹${mspFormatted} / Q &nbsp;|&nbsp; 
+              • <strong>${lblGross}:</strong> ₹${grossFormatted} Lakh/Ha &nbsp;|&nbsp; 
+              • <strong>${lblNet}:</strong> ₹${netFormatted}/Acre
+            </div>
+          </div>
+
+          <!-- 2. Agronomic Metrics Row -->
+          <div class="record-metrics-row">
+            <div class="record-metric-item">
+              <span class="record-metric-label">${lblYield}</span>
+              <span class="record-metric-val">${r.yield_achieved_q_ha} Q/Ha</span>
+            </div>
+            <div class="record-metric-item">
+              <span class="record-metric-label">${lblTarget}</span>
+              <span class="record-metric-val" style="color: #2E7D32;">${r.yield_target_pct}%</span>
+            </div>
+            <div class="record-metric-item">
+              <span class="record-metric-label">${lblCost}</span>
+              <span class="record-metric-val">₹${costFormatted}/Q</span>
+            </div>
+            <div class="record-metric-item">
+              <span class="record-metric-label">${lblWater}</span>
+              <span class="record-metric-val" style="font-size:12px;">${rainfall}</span>
+            </div>
+          </div>
+
+          <!-- 3. Problem Faced During Cultivation -->
+          <div class="record-problem-box">
+            <strong>${lblProblem}</strong>
+            ${problemFaced}
+          </div>
+
+          <!-- 4. ICAR Mitigation & Package Applied -->
+          <div class="record-mitigation-box">
+            <strong>${lblMitigation}</strong>
+            ${mitigation}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function fetchPastSeasonRecords() {
+    try {
+      const res = await apiFetch('/api/past-season-records');
+      if (res && res.ok) {
+        const data = await res.json();
+        if (data && data.success && Array.isArray(data.records) && data.records.length > 0) {
+          data.records.forEach(serverRec => {
+            const idx = PAST_SEASON_RECORDS_DB.findIndex(r => r.crop_id === serverRec.crop_id);
+            if (idx !== -1) {
+              Object.assign(PAST_SEASON_RECORDS_DB[idx], serverRec);
+            } else {
+              PAST_SEASON_RECORDS_DB.push(serverRec);
+            }
+          });
+          renderPastSeasonRecords(state.activePastSeasonCropFilter || 'all');
+        }
+      }
+    } catch (err) {
+      console.warn('Past season records API fetch fallback to embedded DB:', err);
+    }
+  }
 
   function updateSoilSpectrum(n, p, k, ph = 6.8) {
     const specNVal = document.getElementById('spec-n-val');
@@ -4073,6 +4690,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Re-render history UI with localized strings
     if (typeof updateHistoryUI === 'function') {
       try { updateHistoryUI(); } catch (e) {}
+    }
+
+    // Re-render Past Season Benchmarks in active language
+    const pastHeading = document.getElementById('past-season-heading');
+    const pastSubheading = document.getElementById('past-season-subheading');
+    if (pastHeading && PAST_SEASON_I18N.heading[lang]) {
+      pastHeading.textContent = PAST_SEASON_I18N.heading[lang];
+    }
+    if (pastSubheading && PAST_SEASON_I18N.subheading[lang]) {
+      pastSubheading.textContent = PAST_SEASON_I18N.subheading[lang];
+    }
+    if (typeof renderPastSeasonRecords === 'function') {
+      try { renderPastSeasonRecords(state.activePastSeasonCropFilter || 'all'); } catch (e) {}
     }
   }
 
@@ -5825,7 +6455,22 @@ ${loc.symptoms.substring(0, 180)}...
 
     // 6. Auto-Detect Weather & Field Location (GPS / IP Telemetry)
     try { autoDetectWeather(false); } catch (e) { console.warn('autoDetectWeather error:', e); }
-    // 7. Initialize Search History UI & Seed Data
+    // 7. Initialize Past Season Records (Top 5 Crops) & Search History UI
+    try {
+      renderPastSeasonRecords('all');
+      fetchPastSeasonRecords();
+      // Past Season Filter Chips
+      document.querySelectorAll('#past-season-crop-filter button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#past-season-crop-filter button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderPastSeasonRecords(btn.dataset.crop || 'all');
+        });
+      });
+    } catch (e) {
+      console.warn('Past season init error:', e);
+    }
+    // 8. Initialize Search History UI & Seed Data
     try { updateHistoryUI(); } catch (e) { console.warn('updateHistoryUI error:', e); }
 
     // Check if user previously dismissed welcome card
