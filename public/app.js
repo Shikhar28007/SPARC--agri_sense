@@ -4224,7 +4224,7 @@ document.addEventListener('DOMContentLoaded', () => {
       : records.filter(r => r.crop_id === cropFilter);
 
     if (filtered.length === 0) {
-      container.innerHTML = `<div class="history-empty-state" style="grid-column: 1/-1;"><h4>No past season records found for this crop</h4></div>`;
+      container.innerHTML = `<div class="history-empty-state history-empty-full-width"><h4>No past season records found for this crop</h4></div>`;
       return;
     }
 
@@ -4269,7 +4269,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="record-price-callout">
             <div class="price-callout-header">
               <span class="price-callout-label">💰 ${lblIdealPrice}</span>
-              <span class="price-realized-val">₹${priceRealizedFormatted} <span style="font-size:12px; font-weight:600;">/ Q</span></span>
+              <span class="price-realized-val">₹${priceRealizedFormatted} <span class="price-realized-unit">/ Q</span></span>
             </div>
             <div class="price-sub-details">
               • <strong>${lblMsp}:</strong> ₹${mspFormatted} / Q &nbsp;|&nbsp; 
@@ -4286,7 +4286,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="record-metric-item">
               <span class="record-metric-label">${lblTarget}</span>
-              <span class="record-metric-val" style="color: #2E7D32;">${r.yield_target_pct}%</span>
+              <span class="record-metric-val is-success">${r.yield_target_pct}%</span>
             </div>
             <div class="record-metric-item">
               <span class="record-metric-label">${lblCost}</span>
@@ -4294,7 +4294,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="record-metric-item">
               <span class="record-metric-label">${lblWater}</span>
-              <span class="record-metric-val" style="font-size:12px;">${rainfall}</span>
+              <span class="record-metric-val is-compact">${rainfall}</span>
             </div>
           </div>
 
