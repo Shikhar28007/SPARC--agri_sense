@@ -121,6 +121,112 @@ document.addEventListener('DOMContentLoaded', () => {
   const statePlaceholder = document.getElementById('state-placeholder');
   const stateContent = document.getElementById('state-content');
 
+// ─────────────────────────────────────────────────────────────────────────
+  // OPENING SEQUENCE LOADING SPLASH SCREEN (5-SECOND INTRO CALIBRATION)
+  // ─────────────────────────────────────────────────────────────────────────
+  const splashScreen = document.getElementById('opening-splash-screen');
+  const splashProgressFill = document.getElementById('splash-progress-fill');
+  const splashStatusText = document.getElementById('splash-status-text');
+  const splashPctText = document.getElementById('splash-pct-text');
+  const splashCountdown = document.getElementById('splash-seconds-countdown');
+  const btnSplashSkip = document.getElementById('btn-splash-skip');
+
+  const calibSteps = [
+    document.getElementById('calib-step-1'),
+    document.getElementById('calib-step-2'),
+    document.getElementById('calib-step-3'),
+    document.getElementById('calib-step-4')
+  ];
+
+  const splashMessages = [
+    { atPct: 0, text: '🛰️ Connecting to ISRO Bhuvan & IMD Meteorological Satellites...', step: 0 },
+    { atPct: 22, text: '🌱 Calibrating ICAR-IISS Soil Health & Regional NPK Matrices...', step: 1 },
+    { atPct: 52, text: '🔬 Loading 68+ Crop Pathology Diagnostic Doctor Models...', step: 2 },
+    { atPct: 78, text: '🌾 Synchronizing State Agricultural University Fertilizer Packages...', step: 3 },
+    { atPct: 96, text: '✅ Calibration Complete: Launching SPARC AgriSense Workspace...', step: 3 }
+  ];
+
+  let splashStartTime = null;
+  const SPLASH_DURATION = 5000; // Exact 5-second delay rate
+  let splashAnimId = null;
+
+  function dismissSplashScreen() {
+    if (!splashScreen || splashScreen.classList.contains('is-dismissed')) return;
+    if (splashAnimId) cancelAnimationFrame(splashAnimId);
+    splashScreen.classList.add('is-dismissed');
+    splashScreen.style.pointerEvents = 'none';
+    setTimeout(() => {
+      splashScreen.style.display = 'none';
+    }, 650);
+  }
+
+  let splashStarted = false;
+  function initOpeningSequence() {
+    if (!splashScreen || splashStarted) return;
+    splashStarted = true;
+
+    // Attach skip button listener immediately
+    if (btnSplashSkip) {
+      btnSplashSkip.onclick = (e) => {
+        if (e) e.preventDefault();
+        dismissSplashScreen();
+      };
+    }
+
+    // Safety fallback timer: guarantee dismissal after 5.3s even if rAF stalls
+    setTimeout(dismissSplashScreen, 5300);
+
+    // Escape key shortcut to skip
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') dismissSplashScreen();
+    }, { once: true });
+
+    function updateSplashProgress(timestamp) {
+      if (!splashStartTime) splashStartTime = timestamp;
+      const elapsed = timestamp - splashStartTime;
+      const progress = Math.min(1, elapsed / SPLASH_DURATION);
+      const pct = Math.round(progress * 100);
+
+      if (splashProgressFill) {
+        splashProgressFill.style.width = `${pct}%`;
+      }
+      if (splashPctText) {
+        splashPctText.textContent = `${pct}%`;
+      }
+
+      const remainingSecs = Math.max(1, Math.ceil((SPLASH_DURATION - elapsed) / 1000));
+      if (splashCountdown) {
+        splashCountdown.textContent = remainingSecs;
+      }
+
+      for (let i = splashMessages.length - 1; i >= 0; i--) {
+        if (pct >= splashMessages[i].atPct) {
+          if (splashStatusText) splashStatusText.textContent = splashMessages[i].text;
+          const activeIdx = splashMessages[i].step;
+          calibSteps.forEach((st, sIdx) => {
+            if (st) {
+              if (sIdx <= activeIdx) st.classList.add('active');
+              else st.classList.remove('active');
+            }
+          });
+          break;
+        }
+      }
+
+      if (progress < 1) {
+        splashAnimId = requestAnimationFrame(updateSplashProgress);
+      } else {
+        setTimeout(dismissSplashScreen, 300);
+      }
+    }
+
+    splashAnimId = requestAnimationFrame(updateSplashProgress);
+  }
+
+  // Start Opening Sequence immediately
+  initOpeningSequence();
+
+
   // ─────────────────────────────────────────────────────────────────────────
   // 1. TAB NAVIGATION
   // ─────────────────────────────────────────────────────────────────────────
@@ -1937,10 +2043,50 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const PATHOGEN_TYPE_I18N = {
-    'fungal': { en: 'Fungal', hi: 'फफूंद जनित (Fungal)', mr: 'बुरशीजन्य (Fungal)' },
-    'bacterial': { en: 'Bacterial', hi: 'जीवाणु जनित (Bacterial)', mr: 'जिवाणूजन्य (Bacterial)' },
-    'viral': { en: 'Viral', hi: 'विषाणु जनित (Viral)', mr: 'विषाणूजन्य (Viral)' },
-    'insect pest': { en: 'Insect Pest', hi: 'कीट प्रकोप (Insect Pest)', mr: 'कीटक प्रादुर्भाव (Insect Pest)' }
+    'fungal': {
+      en: 'Fungal Pathogen',
+      hi: 'फफूंद जनित (Fungal)',
+      mr: 'बुरशीजन्य (Fungal)',
+      pa: 'ਉੱਲੀ ਰੋਗ (Fungal)',
+      gu: 'ફૂગજન્ય રોગ (Fungal)',
+      te: 'శిలీంద్ర తెగులు (Fungal)',
+      ta: 'பூஞ்சை நோய் (Fungal)',
+      bn: 'ছত্রাকজনিত রোগ (Fungal)',
+      kn: 'ಶಿಲೀಂಧ್ರ ರೋಗ (Fungal)'
+    },
+    'bacterial': {
+      en: 'Bacterial Pathogen',
+      hi: 'जीवाणु जनित (Bacterial)',
+      mr: 'जिवाणूजन्य (Bacterial)',
+      pa: 'ਜੀਵਾਣੂ ਰੋਗ (Bacterial)',
+      gu: 'જીવાણુજન્ય રોગ (Bacterial)',
+      te: 'బాక్టీరియా తెగులు (Bacterial)',
+      ta: 'பாக்டீரியா நோய் (Bacterial)',
+      bn: 'ব্যাকটেরিয়াজনিত রোগ (Bacterial)',
+      kn: 'ಬ್ಯಾಕ್ಟೀರಿಯಾ ರೋಗ (Bacterial)'
+    },
+    'viral': {
+      en: 'Viral Pathogen',
+      hi: 'विषाणु जनित (Viral)',
+      mr: 'विषाणूजन्य (Viral)',
+      pa: 'ਵਿਸ਼ਾਣੂ ਰੋਗ (Viral)',
+      gu: 'વિષાણુજન્ય રોગ (Viral)',
+      te: 'వైరస్ తెగులు (Viral)',
+      ta: 'வைரஸ் நோய் (Viral)',
+      bn: 'ভাইরাসজনিত রোগ (Viral)',
+      kn: 'ವೈರಸ್ ರೋಗ (Viral)'
+    },
+    'insect pest': {
+      en: 'Insect Pest Infestation',
+      hi: 'कीट प्रकोप (Insect Pest)',
+      mr: 'कीटक प्रादुर्भाव (Insect Pest)',
+      pa: 'ਕੀੜੇ-ਮਕੌੜੇ (Insect Pest)',
+      gu: 'જીવાત ઉપદ્રવ (Insect Pest)',
+      te: 'పురుగు తెగులు (Insect Pest)',
+      ta: 'பூச்சி தாக்குதல் (Insect Pest)',
+      bn: 'কীটপতঙ্গের আক্রমণ (Insect Pest)',
+      kn: 'ಕೀಟ ಬಾಧೆ (Insect Pest)'
+    }
   };
 
   const DISEASE_I18N_DB = {
@@ -3772,6 +3918,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fertPlaceholder) fertPlaceholder.classList.add('is-hidden');
     if (fertContent) fertContent.classList.remove('is-hidden');
 
+    const lang = state.language || 'hi';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+
     const fertBadge = document.getElementById('fert-badge');
     if (fertBadge) {
       fertBadge.textContent = 'ICAR-IISS Prescribed';
@@ -4777,8 +4926,8 @@ ${loc.symptoms.substring(0, 180)}...
 
 
   async function initApp() {
-    applyLanguage(state.language);
-    updateSoilSpectrum(92, 46, 44, 6.8);
+    try { applyLanguage(state.language); } catch (e) { console.warn('applyLanguage error:', e); }
+    try { updateSoilSpectrum(92, 46, 44, 6.8); } catch (e) { console.warn('updateSoilSpectrum error:', e); }
     // 1. Initialize Crops from embedded dataset immediately
     const initialCrops = EMBEDDED_CROPS || ['rice', 'wheat', 'maize', 'cotton', 'sugarcane', 'jute', 'chickpea'];
     state.crops = initialCrops;
@@ -4866,7 +5015,7 @@ ${loc.symptoms.substring(0, 180)}...
       ]
     };
     state.lastRecommendationsData = initialRecData;
-    renderAgronomicMatrix(initialRecData);
+    try { renderAgronomicMatrix(initialRecData); } catch (e) { console.warn('renderAgronomicMatrix init error:', e); }
 
     // 5. Pre-calculate default ICAR fertilizer doses so farmers see active, non-zero commercial bags immediately
     const defaultFertPayload = {
@@ -4877,13 +5026,17 @@ ${loc.symptoms.substring(0, 180)}...
       target_crop: 'rice',
       state: 'Maharashtra'
     };
-    const defaultFertData = calculateFertilizersLocal(defaultFertPayload);
-    renderFertilizers(defaultFertData, true);
+    try {
+      const defaultFertData = calculateFertilizersLocal(defaultFertPayload);
+      renderFertilizers(defaultFertData, true);
+    } catch (e) {
+      console.warn('default fert calc error:', e);
+    }
 
     // 6. Auto-Detect Weather & Field Location (GPS / IP Telemetry)
-    autoDetectWeather(false);
+    try { autoDetectWeather(false); } catch (e) { console.warn('autoDetectWeather error:', e); }
     // 7. Initialize Search History UI & Seed Data
-    updateHistoryUI();
+    try { updateHistoryUI(); } catch (e) { console.warn('updateHistoryUI error:', e); }
 
     // Check if user previously dismissed welcome card
     if (localStorage.getItem(WELCOME_DISMISSED_KEY) === '1') {
@@ -4894,92 +5047,6 @@ ${loc.symptoms.substring(0, 180)}...
     // 7. Initialize Opening Sequence Loading Splash Screen (5-second calibration)
     initOpeningSequence();
 
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // OPENING SEQUENCE LOADING SPLASH SCREEN (5-SECOND INTRO CALIBRATION)
-  // ─────────────────────────────────────────────────────────────────────────
-  const splashScreen = document.getElementById('opening-splash-screen');
-  const splashProgressFill = document.getElementById('splash-progress-fill');
-  const splashStatusText = document.getElementById('splash-status-text');
-  const splashPctText = document.getElementById('splash-pct-text');
-  const splashCountdown = document.getElementById('splash-seconds-countdown');
-  const btnSplashSkip = document.getElementById('btn-splash-skip');
-
-  const calibSteps = [
-    document.getElementById('calib-step-1'),
-    document.getElementById('calib-step-2'),
-    document.getElementById('calib-step-3'),
-    document.getElementById('calib-step-4')
-  ];
-
-  const splashMessages = [
-    { atPct: 0, text: '🛰️ Connecting to ISRO Bhuvan & IMD Meteorological Satellites...', step: 0 },
-    { atPct: 22, text: '🌱 Calibrating ICAR-IISS Soil Health & Regional NPK Matrices...', step: 1 },
-    { atPct: 52, text: '🔬 Loading 68+ Crop Pathology Diagnostic Doctor Models...', step: 2 },
-    { atPct: 78, text: '🌾 Synchronizing State Agricultural University Fertilizer Packages...', step: 3 },
-    { atPct: 96, text: '✅ Calibration Complete: Launching SPARC AgriSense Workspace...', step: 3 }
-  ];
-
-  let splashStartTime = null;
-  const SPLASH_DURATION = 5000; // Exact 5-second delay rate
-  let splashAnimId = null;
-
-  function dismissSplashScreen() {
-    if (!splashScreen || splashScreen.classList.contains('is-dismissed')) return;
-    if (splashAnimId) cancelAnimationFrame(splashAnimId);
-    splashScreen.classList.add('is-dismissed');
-    setTimeout(() => {
-      splashScreen.style.display = 'none';
-    }, 650);
-  }
-
-  function initOpeningSequence() {
-    if (!splashScreen) return;
-    if (btnSplashSkip) {
-      btnSplashSkip.addEventListener('click', dismissSplashScreen);
-    }
-
-    function updateSplashProgress(timestamp) {
-      if (!splashStartTime) splashStartTime = timestamp;
-      const elapsed = timestamp - splashStartTime;
-      const progress = Math.min(1, elapsed / SPLASH_DURATION);
-      const pct = Math.round(progress * 100);
-
-      if (splashProgressFill) {
-        splashProgressFill.style.width = `${pct}%`;
-      }
-      if (splashPctText) {
-        splashPctText.textContent = `${pct}%`;
-      }
-
-      const remainingSecs = Math.max(1, Math.ceil((SPLASH_DURATION - elapsed) / 1000));
-      if (splashCountdown) {
-        splashCountdown.textContent = remainingSecs;
-      }
-
-      for (let i = splashMessages.length - 1; i >= 0; i--) {
-        if (pct >= splashMessages[i].atPct) {
-          if (splashStatusText) splashStatusText.textContent = splashMessages[i].text;
-          const activeIdx = splashMessages[i].step;
-          calibSteps.forEach((st, sIdx) => {
-            if (st) {
-              if (sIdx <= activeIdx) st.classList.add('active');
-              else st.classList.remove('active');
-            }
-          });
-          break;
-        }
-      }
-
-      if (progress < 1) {
-        splashAnimId = requestAnimationFrame(updateSplashProgress);
-      } else {
-        setTimeout(dismissSplashScreen, 300);
-      }
-    }
-
-    splashAnimId = requestAnimationFrame(updateSplashProgress);
   }
 
   initApp();
