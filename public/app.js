@@ -6354,7 +6354,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 };
 
-  function downloadCropAdvisoryPDF() {
+  async function downloadCropAdvisoryPDF() {
     const lang = state.language || 'hi';
     const labels = PDF_REPORT_I18N[lang] || PDF_REPORT_I18N['hi'];
     const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
@@ -6393,6 +6393,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rationaleText = bestMeta.rationale(currentN, rain, lang);
 
+    // Provide visual button feedback
+    const pdfButtons = document.querySelectorAll('#best-pdf-btn, #header-pdf-btn');
+    const origTexts = [];
+    pdfButtons.forEach((b, idx) => {
+      origTexts[idx] = b.textContent;
+      b.textContent = lang === 'en' ? '⏳ Generating PDF...' : '⏳ पीडीएफ तैयार हो रहा है...';
+      b.style.pointerEvents = 'none';
+      b.style.opacity = '0.7';
+    });
+
     // Build Alternatives HTML
     let altsHtml = '';
     for (let i = 1; i < Math.min(3, recs.length); i++) {
@@ -6430,18 +6440,18 @@ document.addEventListener('DOMContentLoaded', () => {
       </tr>
     `;
 
-    // Complete 3-Page Report Container
+    // Complete 3-Page Report Container (Pixel-perfect A4 794px x 1122px)
     const reportHtml = `
-      <div id="agrisense-pdf-report" style="width: 794px; margin: 0 auto; background: #FFFFFF; font-family: 'Nirmala UI', 'Segoe UI', 'Noto Sans Devanagari', 'Noto Sans', Arial, sans-serif; color: #1F2937; line-height: 1.35;">
+      <div id="agrisense-pdf-report" style="width: 794px; margin: 0; padding: 0; background: #FFFFFF; font-family: 'Nirmala UI', 'Segoe UI', 'Noto Sans Devanagari', 'Noto Sans', Arial, sans-serif; color: #1F2937; line-height: 1.35;">
         
         <!-- ================= PAGE 1 ================= -->
-        <div class="pdf-page" style="width: 794px; min-height: 1115px; box-sizing: border-box; padding: 18px 22px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="pdf-page" style="width: 794px; height: 1122px; max-height: 1122px; overflow: hidden; box-sizing: border-box; padding: 22px 26px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <!-- HEADER -->
             <div style="border-bottom: 2.5px solid #065F46; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
               <div>
                 <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;">
-                  <span style="font-size: 19px;">🌾</span>
+                  <span style="font-size: 20px;">🌾</span>
                   <span style="font-size: 16px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
                   <span style="background: #D1FAE5; color: #065F46; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR-IISS Benchmark</span>
                 </div>
@@ -6465,71 +6475,71 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- TWO COLUMN DIAGNOSTICS & TELEMETRY -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 10px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
               <!-- Soil Diagnostics -->
-              <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 9px; background: #FAFAFA;">
-                <h3 style="font-size: 10.5px; font-weight: 700; color: #065F46; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E5E7EB; padding-bottom: 2px;">
+              <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 10px; background: #FAFAFA;">
+                <h3 style="font-size: 10.5px; font-weight: 700; color: #065F46; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
                   🌱 ${labels.sectionField}
                 </h3>
                 <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Nitrogen (N):</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Nitrogen (N):</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
                   </tr>
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Phosphorus (P):</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Medium</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Phosphorus (P):</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Medium</span></td>
                   </tr>
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Potassium (K):</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Optimum</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Potassium (K):</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Optimum</span></td>
                   </tr>
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Soil Reaction (pH):</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentPh}</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Neutral</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Soil Reaction (pH):</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentPh}</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Neutral</span></td>
                   </tr>
                 </table>
               </div>
 
               <!-- Climate Telemetry -->
-              <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 9px; background: #FAFAFA;">
-                <h3 style="font-size: 10.5px; font-weight: 700; color: #065F46; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E5E7EB; padding-bottom: 2px;">
+              <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 10px; background: #FAFAFA;">
+                <h3 style="font-size: 10.5px; font-weight: 700; color: #065F46; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
                   🌤️ ${labels.sectionWeather}
                 </h3>
                 <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Ambient Temperature:</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Normal</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Ambient Temperature:</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Normal</span></td>
                   </tr>
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Relative Humidity:</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Favorable</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Relative Humidity:</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Favorable</span></td>
                   </tr>
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Expected Monsoon:</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Adequate</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Expected Monsoon:</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Adequate</span></td>
                   </tr>
                   <tr>
-                    <td style="padding: 2px 0; color: #4B5563;">Agro-Thermal Window:</td>
-                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
-                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Active</span></td>
+                    <td style="padding: 2.5px 0; color: #4B5563;">Agro-Thermal Window:</td>
+                    <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
+                    <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Active</span></td>
                   </tr>
                 </table>
               </div>
             </div>
 
             <!-- TOP RECOMMENDED CROP HERO BOX -->
-            <div style="border: 2px solid #059669; border-radius: 7px; padding: 9px 12px; background: #FFFFFF; margin-bottom: 10px;">
+            <div style="border: 2px solid #059669; border-radius: 7px; padding: 10px 12px; background: #FFFFFF; margin-bottom: 10px;">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
                 <div>
-                  <span style="background: #059669; color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 8px; text-transform: uppercase;">
+                  <span style="background: #059669; color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 8px; text-transform: uppercase;">
                     ⭐ ${labels.sectionTopCrop}
                   </span>
                   <h2 style="font-size: 15px; font-weight: 800; color: #064E3B; margin: 3px 0 2px 0;">
@@ -6552,7 +6562,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <!-- 4 STATS ROW -->
-              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; text-align: center;">
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
                 <div style="background: #F9FAFB; padding: 4px; border-radius: 4px; border: 1px solid #E5E7EB;">
                   <div style="font-size: 8.5px; color: #6B7280; font-weight: 600;">${labels.lblYield}</div>
                   <div style="font-size: 10.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.yield}</div>
@@ -6627,17 +6637,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- PAGE BREAK 1 -> 2 -->
-        <div class="html2pdf__page-break" style="page-break-before: always; break-before: page; height: 0; margin: 0; padding: 0;"></div>
-
         <!-- ================= PAGE 2 ================= -->
-        <div class="pdf-page" style="width: 794px; min-height: 1115px; box-sizing: border-box; padding: 18px 22px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="pdf-page" style="width: 794px; height: 1122px; max-height: 1122px; overflow: hidden; box-sizing: border-box; padding: 22px 26px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <!-- PAGE 2 HEADER -->
             <div style="border-bottom: 2.5px solid #065F46; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
               <div>
                 <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;">
-                  <span style="font-size: 19px;">🌱</span>
+                  <span style="font-size: 20px;">🌱</span>
                   <span style="font-size: 15px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
                   <span style="background: #D1FAE5; color: #065F46; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR Package of Practices</span>
                 </div>
@@ -6661,9 +6668,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- 6 CULTIVATION STEP CARDS -->
-            <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px;">
               <!-- Step 1 -->
-              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
                 <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
                   1️⃣ ${labels.step1Title}
                 </div>
@@ -6673,7 +6680,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <!-- Step 2 -->
-              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
                 <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
                   2️⃣ ${labels.step2Title}
                 </div>
@@ -6683,7 +6690,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <!-- Step 3 -->
-              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
                 <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
                   3️⃣ ${labels.step3Title}
                 </div>
@@ -6693,7 +6700,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <!-- Step 4 -->
-              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
                 <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
                   4️⃣ ${labels.step4Title}
                 </div>
@@ -6703,7 +6710,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <!-- Step 5 -->
-              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
                 <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
                   5️⃣ ${labels.step5Title}
                 </div>
@@ -6713,7 +6720,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <!-- Step 6 -->
-              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
                 <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
                   6️⃣ ${labels.step6Title}
                 </div>
@@ -6724,12 +6731,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- PRO FARMER TIPS BOX -->
-            <div class="pdf-avoid-break" style="background: #F0FDF4; border: 1.5px solid #A7F3D0; border-radius: 6px; padding: 8px 10px; font-size: 9.5px; margin-bottom: 6px;">
-              <div style="font-weight: 800; color: #065F46; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+            <div style="background: #F0FDF4; border: 1.5px solid #A7F3D0; border-radius: 6px; padding: 7px 10px; font-size: 9.5px;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 3px; display: flex; align-items: center; gap: 5px;">
                 <span>💡</span>
                 <span>${labels.sectionProTips}</span>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 3px; color: #166534; line-height: 1.35;">
+              <div style="display: flex; flex-direction: column; gap: 2.5px; color: #166534; line-height: 1.35;">
                 <div><strong>• ${labels.tipCropRotation}</strong></div>
                 <div><strong>• ${labels.tipGreenManure}</strong></div>
                 <div><strong>• ${labels.tipSoilHealth}</strong></div>
@@ -6748,17 +6755,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
-        <!-- PAGE BREAK 2 -> 3 -->
-        <div class="html2pdf__page-break" style="page-break-before: always; break-before: page; height: 0; margin: 0; padding: 0;"></div>
-
         <!-- ================= PAGE 3 ================= -->
-        <div class="pdf-page" style="width: 794px; min-height: 1115px; box-sizing: border-box; padding: 18px 22px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="pdf-page" style="width: 794px; height: 1122px; max-height: 1122px; overflow: hidden; box-sizing: border-box; padding: 22px 26px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <!-- PAGE 3 HEADER -->
             <div style="border-bottom: 2.5px solid #DC2626; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
               <div>
                 <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;">
-                  <span style="font-size: 19px;">🚨</span>
+                  <span style="font-size: 20px;">🚨</span>
                   <span style="font-size: 15px; font-weight: 800; color: #B91C1C; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
                   <span style="background: #FEF2F2; color: #B91C1C; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">Diagnostic Clinic & Welfare</span>
                 </div>
@@ -6782,7 +6786,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- 8 DIAGNOSTIC MATRIX ROWS -->
-            <table class="pdf-avoid-break" style="width: 100%; border-collapse: collapse; font-size: 8.5px; text-align: left; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 5px; overflow: hidden; margin-bottom: 10px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 8.5px; text-align: left; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 5px; overflow: hidden; margin-bottom: 8px;">
               <thead>
                 <tr style="background: #FEF2F2; color: #991B1B;">
                   <th style="padding: 4px 6px; border-bottom: 1.5px solid #FCA5A5; width: 25%; font-weight: 800;">${labels.thProblem}</th>
@@ -6835,12 +6839,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </table>
 
             <!-- GOVERNMENT SCHEMES & SUBSIDIES FOR FARMERS -->
-            <div class="pdf-avoid-break" style="background: #EFF6FF; border: 1.5px solid #BFDBFE; border-radius: 6px; padding: 7px 9px; font-size: 9px; margin-bottom: 9px;">
-              <div style="font-weight: 800; color: #1E3A8A; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+            <div style="background: #EFF6FF; border: 1.5px solid #BFDBFE; border-radius: 6px; padding: 6px 9px; font-size: 8.5px; margin-bottom: 8px;">
+              <div style="font-weight: 800; color: #1E3A8A; margin-bottom: 3px; display: flex; align-items: center; gap: 5px;">
                 <span>🏛️</span>
                 <span>${labels.sectionSchemes}</span>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 3px; color: #1E40AF; line-height: 1.35;">
+              <div style="display: flex; flex-direction: column; gap: 2px; color: #1E40AF; line-height: 1.35;">
                 <div><strong>• ${labels.schemePmKisan}</strong></div>
                 <div><strong>• ${labels.schemePmfby}</strong></div>
                 <div><strong>• ${labels.schemeShc}</strong></div>
@@ -6850,7 +6854,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- KISAN EMERGENCY HELPLINE & ESCALATION -->
-            <div class="pdf-avoid-break" style="background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 6px; padding: 6px 9px; font-size: 9px; margin-bottom: 9px;">
+            <div style="background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 6px; padding: 6px 9px; font-size: 8.5px; margin-bottom: 8px;">
               <div style="font-weight: 800; color: #92400E; margin-bottom: 2px; display: flex; align-items: center; gap: 5px;">
                 <span>📞</span>
                 <span>${labels.sectionEmergency}</span>
@@ -6862,7 +6866,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- OFFICIAL DISCLAIMER -->
-            <div style="font-size: 8px; color: #6B7280; line-height: 1.3; background: #F9FAFB; padding: 5px 8px; border-radius: 4px; border: 1px solid #E5E7EB;">
+            <div style="font-size: 8px; color: #6B7280; line-height: 1.3; background: #F9FAFB; padding: 4px 7px; border-radius: 4px; border: 1px solid #E5E7EB;">
               <strong>Disclaimer:</strong> ${labels.disclaimer}
             </div>
           </div>
@@ -6881,53 +6885,67 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    const opt = {
-      margin: 0,
-      filename: `SPARC_AgriSense_Advisory_${best.crop}_${lang}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        letterRendering: true,
-        scrollY: 0,
-        scrollX: 0,
-        windowWidth: 794
-      },
-      jsPDF: {
-        unit: 'mm',
-        format: 'a4',
-        orientation: 'portrait'
-      },
-      pagebreak: {
-        mode: ['css', 'legacy'],
-        before: '.html2pdf__page-break',
-        avoid: '.pdf-avoid-break'
-      }
-    };
-
+    // Attach container with position fixed at (0, 0)
     const container = document.createElement('div');
     container.id = 'agrisense-pdf-render-root';
-    container.style.position = 'absolute';
-    container.style.left = '0';
+    container.style.position = 'fixed';
     container.style.top = '0';
+    container.style.left = '0';
     container.style.width = '794px';
-    container.style.backgroundColor = '#ffffff';
+    container.style.background = '#ffffff';
     container.style.zIndex = '-99999';
-    container.style.opacity = '1';
+    container.style.overflow = 'visible';
     container.innerHTML = reportHtml;
     document.body.appendChild(container);
 
-    if (window.html2pdf) {
-      window.html2pdf().set(opt).from(container.firstElementChild).save().then(() => {
+    try {
+      const pages = container.querySelectorAll('.pdf-page');
+
+      if (window.jspdf && window.html2canvas) {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+          compress: true
+        });
+
+        for (let i = 0; i < pages.length; i++) {
+          const page = pages[i];
+          const canvas = await window.html2canvas(page, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff',
+            x: 0,
+            y: 0,
+            width: 794,
+            height: 1122
+          });
+
+          const imgData = canvas.toDataURL('image/jpeg', 0.96);
+          if (i > 0) {
+            pdf.addPage('a4', 'portrait');
+          }
+          pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+        }
+
+        pdf.save(`SPARC_AgriSense_Advisory_${best.crop}_${lang}.pdf`);
         if (container.parentNode) document.body.removeChild(container);
-      }).catch(err => {
-        console.warn('html2pdf save error, using print fallback:', err);
+      } else {
         if (container.parentNode) document.body.removeChild(container);
         printViaIframe(reportHtml);
-      });
-    } else {
+      }
+    } catch (err) {
+      console.warn('Direct jsPDF export error, falling back to printViaIframe:', err);
       if (container.parentNode) document.body.removeChild(container);
       printViaIframe(reportHtml);
+    } finally {
+      pdfButtons.forEach((b, idx) => {
+        b.textContent = origTexts[idx] || labels.btnText;
+        b.style.pointerEvents = 'auto';
+        b.style.opacity = '1';
+      });
     }
   }
 
@@ -6966,29 +6984,21 @@ document.addEventListener('DOMContentLoaded', () => {
               print-color-adjust: exact;
             }
             .pdf-page {
-              width: 100%;
-              min-height: 297mm;
-              padding: 16mm 14mm;
-              box-sizing: border-box;
-              page-break-after: always;
-              break-after: page;
-              display: flex;
-              flex-direction: column;
-              justify-content: space-between;
+              width: 210mm !important;
+              height: 297mm !important;
+              max-height: 297mm !important;
+              padding: 16mm 18mm !important;
+              box-sizing: border-box !important;
+              page-break-after: always !important;
+              break-after: page !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: space-between !important;
+              overflow: hidden !important;
             }
             .pdf-page:last-child {
-              page-break-after: avoid;
-              break-after: avoid;
-            }
-            .html2pdf__page-break {
-              page-break-before: always;
-              break-before: page;
-              height: 0;
-              display: block;
-            }
-            .pdf-avoid-break {
-              page-break-inside: avoid;
-              break-inside: avoid;
+              page-break-after: avoid !important;
+              break-after: avoid !important;
             }
           </style>
         </head>
