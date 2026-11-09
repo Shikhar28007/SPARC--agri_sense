@@ -1286,8 +1286,17 @@ class SparcEngine:
                 )
             })
 
+        target_profile = CROP_AGRONOMIC_PROFILES.get(target, {
+            "cycle_days": "100 - 130 days",
+            "water_demand": "Moderate",
+            "soil_type": "Loamy to sandy loam",
+            "benefits": ["Key commercial and regional crop"],
+            "economic_outlook": "Stable regional market demand"
+        })
+
         return {
             "target_crop": target.capitalize(),
+            "profile": target_profile,
             "recommended_crop": top_crop.capitalize(),
             "recommended_confidence": top_conf,
             "top_predictions": top_predictions,

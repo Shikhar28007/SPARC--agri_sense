@@ -3920,6 +3920,22 @@ document.addEventListener('DOMContentLoaded', () => {
     return dict[l] || dict['hi'] || dict['en'];
   }
 
+  function getTargetCropVoiceReadoutText(targetMeta, diag, lang) {
+    const l = lang || 'hi';
+    const dict = {
+      en: `Cultivation Feasibility Verified for ${targetMeta.fullName}. Agronomic suitability score is ${diag.compatibility_score} percent with ${diag.risk_level}. Expected yield is ${targetMeta.yield}. Water requirement is ${targetMeta.water}. Growth duration is ${targetMeta.duration}.`,
+      hi: `${targetMeta.fullName} की खेती के लिए भूमि और मौसम सर्वथा अनुकूल है। कृषि उपयुक्तता स्कोर ${diag.compatibility_score} प्रतिशत (${diag.risk_level}) है। संभावित उपज ${targetMeta.yield} है। जल आवश्यकता ${targetMeta.water} है। फसल अवधि ${targetMeta.duration} है।`,
+      mr: `${targetMeta.fullName} च्या लागवडीसाठी जमीन आणि हवामान पूर्णपणे अनुकूल आहे. कृषी योग्यता ${diag.compatibility_score} टक्के (${diag.risk_level}) आहे. अपेक्षित उत्पादन ${targetMeta.yield} आहे. पाण्याची गरज ${targetMeta.water} आहे. कालावधी ${targetMeta.duration} आहे.`,
+      pa: `${targetMeta.fullName} ਦੀ ਖੇਤੀ ਲਈ ਜ਼ਮੀਨ ਅਤੇ ਮੌਸਮ ਬਿਲਕੁਲ ਸਹੀ ਹੈ। ਅਨੁਕੂਲਤਾ ਸਕੋਰ ${diag.compatibility_score} ਪ੍ਰਤੀਸ਼ਤ ਹੈ। ਸੰਭਾਵਿਤ ਝਾੜ ${targetMeta.yield} ਹੈ। ਪਾਣੀ ਦੀ ਲੋੜ ${targetMeta.water} ਹੈ। ਸਮਾਂ ${targetMeta.duration} ਹੈ।`,
+      gu: `${targetMeta.fullName} ની ખેતી માટે જમીન અને વાતાવરણ એકદમ અનુકૂળ છે. યોગ્યતા સ્કોર ${diag.compatibility_score} ટકા છે. અપેક્ષિત ઉત્પાદન ${targetMeta.yield} છે. પાણીની જરૂરિયાત ${targetMeta.water} છે. પાક સમય ${targetMeta.duration} છે.`,
+      te: `${targetMeta.fullName} సాగుకు నేల మరియు వాతావరణం సంపూర్ಣంగా అనుకూలంగా ఉంది. అనుకూలత స్కోర్ ${diag.compatibility_score} శాతం. ఆశించిన దిగుబడి ${targetMeta.yield}. నీటి అవసరం ${targetMeta.water}. పంట కాలం ${targetMeta.duration}.`,
+      ta: `${targetMeta.fullName} சாகுபடிக்கு நிலமும் காலநிலையும் மிகவும் பொருத்தமானது. பொருத்தம் ${diag.compatibility_score} சதவீதம். எதிர்பார்க்கப்படும் மகசூல் ${targetMeta.yield}. நீர் தேவை ${targetMeta.water}. காலம் ${targetMeta.duration}.`,
+      bn: `${targetMeta.fullName} চাষের জন্য জমি এবং আবহাওয়া সম্পূর্ণ অনুকূল। উপযোগিতা স্কোর ${diag.compatibility_score} শতাংশ। প্রত্যাশিত ফলন ${targetMeta.yield}। জলের প্রয়োজনীয়ता ${targetMeta.water}। সময়কাল ${targetMeta.duration}।`,
+      kn: `${targetMeta.fullName} ಕೃಷಿಗೆ ಮಣ್ಣು ಮತ್ತು ಹವಾಮಾನ ಸಂಪೂರ್ಣವಾಗಿ ಅನುಕೂಲಕರವಾಗಿದೆ. ಹೊಂದಾಣಿಕೆ ಸ್ಕೋರ್ ${diag.compatibility_score} ಪ್ರತಿಶತ. ನಿರೀಕ್ಷಿತ ಇಳುವರಿ ${targetMeta.yield}. ನೀರಿನ ಅವಶ್ಯಕತೆ ${targetMeta.water}. ಬೆಳೆ ಕಾಲ ${targetMeta.duration}.`
+    };
+    return dict[l] || dict['hi'] || dict['en'];
+  }
+
   function getCropMeta(cropKey, fallbackProfile = {}) {
     const key = (cropKey || '').toLowerCase();
     const lang = state.language || 'hi';
@@ -4105,7 +4121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const chosenBasal = SPECIFIC_BASAL[key] ? (SPECIFIC_BASAL[key][lang] || SPECIFIC_BASAL[key]['en']) : getL(attrDict.basalDose);
 
     return {
-      fullName: `${cropLocal} (${cleanName})`,
+      fullName: (cropLocal.toLowerCase() === cleanName.toLowerCase()) ? cleanName : `${cropLocal} (${cleanName})`,
       seasonBadge: getL(attrDict.seasonBadge),
       varieties: chosenVarieties,
       yield: fullYield,
@@ -7458,7 +7474,97 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <span class="advisory-score-pill badge-success">${diag.compatibility_score}% Feasibility (${diag.risk_level})</span>
             </div>
+
+            <!-- KEY AGRONOMIC CULTIVATION METRICS (4 CARDS) -->
+            <div class="viable-crop-metrics-grid">
+              <div class="viable-stat-card">
+                <span class="viable-stat-label">${t.lblYield || '🌾 Expected Yield'}</span>
+                <span class="viable-stat-val">${targetMeta.yield}</span>
+                <span class="viable-stat-sub">${targetMeta.yieldSub || 'ICAR Standard Farm Yield'}</span>
+              </div>
+              <div class="viable-stat-card">
+                <span class="viable-stat-label">${t.lblDuration || '⏱️ Growth Duration'}</span>
+                <span class="viable-stat-val">${targetMeta.duration}</span>
+                <span class="viable-stat-sub">${targetMeta.durationSub || 'Seed to Harvest Cycle'}</span>
+              </div>
+              <div class="viable-stat-card">
+                <span class="viable-stat-label">${t.lblWater || '💧 Water Need'}</span>
+                <span class="viable-stat-val">${targetMeta.water}</span>
+                <span class="viable-stat-sub">${targetMeta.waterSub || 'Critical Irrigation Frequency'}</span>
+              </div>
+              <div class="viable-stat-card">
+                <span class="viable-stat-label">${t.lblPrice || '₹ Mandi Outlook'}</span>
+                <span class="viable-stat-val">${targetMeta.price}</span>
+                <span class="viable-stat-sub">${targetMeta.priceSub || 'Active Mandi Demand'}</span>
+              </div>
+            </div>
+
+            <!-- WHY YOUR FIELD IS OPTIMAL & AGRONOMIC RATIONALE -->
+            <div class="viable-crop-rationale-box">
+              <div class="viable-rationale-header">
+                <span>💡</span>
+                <strong>${t.whyFitsTitle || 'Why this crop fits your land:'}</strong>
+              </div>
+              <p class="viable-rationale-text">${targetMeta.rationale(currentN, currentRain, lang)}</p>
+              <div class="viable-varieties-row">
+                <span>🌱 <strong>${t.recVarietiesPrefix || 'Recommended Varieties: '}</strong>${targetMeta.varieties}</span>
+              </div>
+              <div class="viable-basal-row">
+                <span>🧪 <strong>${t.lblBasalDose || 'Basal fertilizer dose:'}</strong> ${targetMeta.basalDose}</span>
+              </div>
+            </div>
+
+            <!-- ACTION BUTTONS TOOLBAR -->
+            <div class="viable-crop-actions-bar">
+              <button type="button" class="btn-viable-action btn-calendar" id="target-cal-btn">
+                📅 ${t.calendarLink || 'View Sowing & Fertilizer Calendar →'}
+              </button>
+              <button type="button" class="btn-viable-action btn-fertilizer" id="target-fert-btn">
+                🧪 ${t.altFertLink || 'Fertilizer Package >'}
+              </button>
+              <button type="button" class="btn-viable-action btn-voice" id="target-voice-btn">
+                ${t.listenBtnText || '🔊 Listen'}
+              </button>
+              <button type="button" class="btn-viable-action btn-share" id="target-share-btn">
+                ${t.shareBtnText || '📲 WhatsApp'}
+              </button>
+            </div>
           `;
+
+          // Hook event listeners for the viable crop action buttons
+          const tgtCalBtn = document.getElementById('target-cal-btn');
+          if (tgtCalBtn) {
+            tgtCalBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              openCropCalendarModal(targetCropKey);
+            });
+          }
+
+          const tgtFertBtn = document.getElementById('target-fert-btn');
+          if (tgtFertBtn) {
+            tgtFertBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              navigateToFertilizerPackage(targetCropKey);
+            });
+          }
+
+          const tgtVoiceBtn = document.getElementById('target-voice-btn');
+          if (tgtVoiceBtn) {
+            const speechText = getTargetCropVoiceReadoutText(targetMeta, diag, lang);
+            tgtVoiceBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              toggleSpeech(speechText, tgtVoiceBtn);
+            });
+          }
+
+          const tgtShareBtn = document.getElementById('target-share-btn');
+          if (tgtShareBtn) {
+            tgtShareBtn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const shareMsg = `✅ *${targetMeta.fullName}* is *Feasible* on my field with *${diag.compatibility_score}%* suitability!\n🌾 *Yield:* ${targetMeta.yield}\n⏱️ *Duration:* ${targetMeta.duration}\n💧 *Water:* ${targetMeta.water}\n🌱 *Varieties:* ${targetMeta.varieties}`;
+              shareOnWhatsApp(targetMeta.fullName, shareMsg);
+            });
+          }
         } else {
           // Chosen crop CANNOT happen or has high risk! Suggest preferred crop!
           const rTitle = (t.targetRiskyTitle || '⚠️ Cultivation Alert: {crop} has High Agronomic Risk on this land').replace('{crop}', targetMeta.fullName);
