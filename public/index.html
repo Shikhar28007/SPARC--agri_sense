@@ -578,6 +578,9 @@
               <button type="button" class="view-pill" id="view-matrix-btn">
                 <span>☷</span> Agronomic Matrix
               </button>
+              <button type="button" class="btn-download-pdf-header" id="header-pdf-btn" title="Download Soil & Crop Advisory PDF">
+                <span>📄</span> <span id="header-pdf-btn-text">Download PDF</span>
+              </button>
             </div>
           </div>
 
@@ -667,6 +670,7 @@
                 <div class="footer-actions-group">
                   <button type="button" class="btn-voice-readout btn-voice-rec" id="best-voice-btn">🔊 सुनिए / Listen</button>
                   <button type="button" class="btn-whatsapp-share btn-whatsapp-rec" id="best-whatsapp-btn">📲 WhatsApp Share</button>
+                  <button type="button" class="btn-download-pdf btn-download-rec" id="best-pdf-btn">📄 Download PDF</button>
                   <a href="#fertilizer-prescriber" class="link-calendar" id="best-crop-calendar-link">View Sowing & Fertilizer Calendar →</a>
                 </div>
               </div>
@@ -1289,6 +1293,7 @@
     <span class="toast-message" id="toast-message">Restored previous search successfully!</span>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

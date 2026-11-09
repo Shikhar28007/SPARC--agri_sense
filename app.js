@@ -1478,6 +1478,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'No diseases matched your search criteria. Try a different crop or broader symptom keyword.',
       listenBtnText: '🔊 Listen',
       shareBtnText: '📲 WhatsApp Share',
+      pdfBtnText: '📄 Download PDF',
       fertPrescriptionTitle: 'Prescription & Commercial Doses',
       kisanBagTitle: '🎒 Total Commercial Bags to Buy From Mandi / Shop',
       bagUreaLabel: 'Bags Urea (45 kg)',
@@ -1561,6 +1562,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'आपके खोज मानदंडों से कोई बीमारी मेल नहीं खाती। कृपया अन्य फसल या सामान्य लक्षण खोजें।',
       listenBtnText: '🔊 सुनिए / Listen',
       shareBtnText: '📲 WhatsApp शेयर',
+      pdfBtnText: '📄 पीडीएफ डाउनलोड',
       fertPrescriptionTitle: 'उर्वरक नुस्खा एवं वाणिज्यिक मात्रा',
       kisanBagTitle: '🎒 मंडी/दुकान से खरीदने के लिए कुल खाद की बोरियां',
       bagUreaLabel: 'यूरिया बोरी (45 किग्रा)',
@@ -1645,6 +1647,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'आपल्या शोधाशी जुळणारा कोणताही रोग आढळला नाही. कृपया इतर पीक निवडा किंवा वेगळे लक्षण शोधा.',
       listenBtnText: '🔊 ऐका / Listen',
       shareBtnText: '📲 WhatsApp शेअर',
+      pdfBtnText: '📄 पीडीएफ डाउनलोड',
       fertPrescriptionTitle: 'खत मात्रा व व्यापारी डोस',
       kisanBagTitle: '🎒 कृषी केंद्रातून खरेदी करावयाच्या एकूण खतांच्या गोण्या',
       bagUreaLabel: 'युरिया गोणी (४५ किलो)',
@@ -1727,6 +1730,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'ਤੁਹਾਡੀ ਖੋਜ ਨਾਲ ਕੋਈ ਬਿਮਾਰੀ ਮੇਲ ਨਹੀਂ ਖਾਂਦੀ।',
       listenBtnText: '🔊 ਸੁਣੋ / Listen',
       shareBtnText: '📲 WhatsApp ਸ਼ੇਅਰ',
+      pdfBtnText: '📄 ਪੀਡੀਐਫ ਡਾਊਨਲੋਡ',
       fertPrescriptionTitle: 'ਖਾਦ ਨੁਸਖਾ ਅਤੇ ਵਪਾਰਕ ਖੁਰਾਕਾਂ',
       kisanBagTitle: '🎒 ਮੰਡੀ/ਦੁਕਾਨ ਤੋਂ ਖਰੀਦਣ ਲਈ ਕੁੱਲ ਖਾਦ ਦੀਆਂ ਬੋਰੀਆਂ',
       bagUreaLabel: 'ਯੂਰੀਆ ਬੋਰੀ (45 ਕਿਲੋ)',
@@ -1809,6 +1813,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'આપના શોધ માપદંડ સાથે કોઈ રોગ મળ્યો નથી.',
       listenBtnText: '🔊 સાંભળો / Listen',
       shareBtnText: '📲 WhatsApp શેર',
+      pdfBtnText: '📄 પીડીએફ ડાઉનલોડ',
       fertPrescriptionTitle: 'ખાતર પ્રિસ્ક્રિપ્શન અને વ્યાપારી માત્રા',
       kisanBagTitle: '🎒 મંડી/દુકાનમાંથી ખરીદવા માટેની કુલ ખાતરની ગુણીઓ (બેગ)',
       bagUreaLabel: 'યુરિયા ગુણી (૪૫ કિગ્રા)',
@@ -1890,7 +1895,8 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensTitle: 'ఎలాంటి వ్యాధి కనుగొనబడలేదు',
       noPathogensDesc: 'మీ శోధన ప్రమాణాలకు సరిపోలే వ్యాధులు ఏవీ లేవు.',
       listenBtnText: '🔊 వినండి / Listen',
-      shareBtnText: '📲 WhatsApp షేర్'
+      shareBtnText: '📲 WhatsApp షేర్',
+      pdfBtnText: '📄 PDF డౌన్‌లోడ్',
     },
     ta: {
       navAdvisory: 'பயிர் ஆலோசனை',
@@ -1957,6 +1963,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'உங்கள் தேடலுக்குரிய நோய்கள் எதுவும் கண்டறியப்படவில்லை.',
       listenBtnText: '🔊 கேளுங்கள் / Listen',
       shareBtnText: '📲 WhatsApp பகிர்',
+      pdfBtnText: '📄 PDF பதிவிறக்கம்',
       fertPrescriptionTitle: 'உர பரிந்துரை & வணிக அளவுகள்',
       kisanBagTitle: '🎒 கடையில் வாங்க வேண்டிய மொத்த உர மூட்டைகள்',
       bagUreaLabel: 'யூரியா மூட்டை (45 கிகி)',
@@ -2039,6 +2046,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'আপনার অনুসন্ধানের সাথে মেলে এমন কোনো রোগ মেলেনি।',
       listenBtnText: '🔊 শুনুন / Listen',
       shareBtnText: '📲 WhatsApp শেয়ার',
+      pdfBtnText: '📄 পিডিএফ ডাউনলোড',
       fertPrescriptionTitle: 'সার নির্ধারণ ও বাণিজ্যিক মাত্রা',
       kisanBagTitle: '🎒 বাজার থেকে কেনার জন্য মোট সারের বস্তা',
       bagUreaLabel: 'ইউরিয়া বস্তা (৪৫ কেজি)',
@@ -2121,6 +2129,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noPathogensDesc: 'ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ರೋಗಗಳು ಹೊಂದಿಕೆಯಾಗಿಲ್ಲ.',
       listenBtnText: '🔊 ಆಲಿಸಿ / Listen',
       shareBtnText: '📲 WhatsApp ಹಂಚಿಕೊಳ್ಳಿ',
+      pdfBtnText: '📄 PDF ಡೌನ್‌ಲೋಡ್',
       fertPrescriptionTitle: 'ಗೊಬ್ಬರ ಶಿಫಾರಸು ಮತ್ತು ವಾಣಿಜ್ಯ ಪ್ರಮಾಣ',
       kisanBagTitle: '🎒 ಅಂಗಡಿಯಿಂದ ಖರೀದಿಸಬೇಕಾದ ಒಟ್ಟು ರಸಗೊಬ್ಬರ ಚೀಲಗಳು',
       bagUreaLabel: 'ಯೂರಿಯಾ ಚೀಲ (45 ಕೆಜಿ)',
@@ -5484,6 +5493,659 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(url, '_blank');
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // MULTILINGUAL PDF ADVISORY REPORT GENERATOR
+  // ─────────────────────────────────────────────────────────────────────────
+  const PDF_REPORT_I18N = {
+    en: {
+      btnText: '📄 Download PDF',
+      reportTitle: 'KISAN AGRONOMIC ADVISORY & SOIL HEALTH REPORT',
+      reportSubtitle: 'SPARC AgriSense AI • National Mission on Sustainable Agriculture (NMSA)',
+      sectionField: 'Field Diagnostics & Soil Health',
+      sectionWeather: 'Agro-Meteorological Telemetry',
+      sectionTopCrop: 'Top Recommended Crop (#1 Best Choice)',
+      sectionAlts: 'Alternative Crop Options',
+      sectionFert: 'Elemental Fertilizer Package (1 Acre)',
+      sectionKvk: 'Krishi Vigyan Kendra (KVK) Advisory',
+      lblDate: 'Generated On:',
+      lblLocation: 'Field Location:',
+      lblAgroZone: 'Agro-Climatic Zone:',
+      lblMatch: 'Suitability Match',
+      lblVarieties: 'Recommended Varieties:',
+      lblYield: 'Expected Yield',
+      lblWater: 'Water Need',
+      lblDuration: 'Duration',
+      lblPrice: 'Mandi Outlook',
+      lblBasal: 'Basal Dose at Sowing:',
+      lblWhyFits: 'Agronomic Rationale:',
+      thCrop: 'Crop Option',
+      thMatch: 'Match %',
+      thYield: 'Est. Yield',
+      thWater: 'Water Need',
+      thRisk: 'Market Risk',
+      thFertilizer: 'Fertilizer Type',
+      thBags: 'Bags / Acre (50 kg)',
+      thTiming: 'Application Stage',
+      ureaTiming: 'Split: 50% Basal + 25% Tillering + 25% Panicle Initiation',
+      dapTiming: '100% Basal application at sowing or transplanting',
+      mopTiming: '100% Basal or split 50% Sowing + 50% Flowering',
+      disclaimer: 'Validated under ICAR-IISS and State Agricultural University (SAU) packages of practices. Recommendations are calibrated to current field nutrient levels and precipitation telemetry.'
+    },
+    hi: {
+      btnText: '📄 पीडीएफ डाउनलोड / Download PDF',
+      reportTitle: 'किसान कृषि परामर्श एवं मृदा स्वास्थ्य रिपोर्ट',
+      reportSubtitle: 'SPARC AgriSense AI • राष्ट्रीय सतत कृषि मिशन (NMSA) एवं ICAR मानक',
+      sectionField: 'खेत निदान एवं मृदा स्वास्थ्य परीक्षण',
+      sectionWeather: 'मौसम एवं जलवायु टेलीमेट्री',
+      sectionTopCrop: 'शीर्ष अनुशंसित फसल (सर्वश्रेष्ठ विकल्प #1)',
+      sectionAlts: 'वैकल्पिक फसल विकल्प',
+      sectionFert: 'उर्वरक प्रबंधन पैकेज (प्रति एकड़ संस्तुति)',
+      sectionKvk: 'कृषि विज्ञान केंद्र (KVK) विशेष परामर्श',
+      lblDate: 'रिपोर्ट दिनांक:',
+      lblLocation: 'खेत का स्थान:',
+      lblAgroZone: 'कृषि-जलवायु क्षेत्र:',
+      lblMatch: 'अनुकूलता मैच',
+      lblVarieties: 'अनुशंसित उन्नत किस्में:',
+      lblYield: 'संभावित उपज',
+      lblWater: 'जल आवश्यकता',
+      lblDuration: 'फसल अवधि',
+      lblPrice: 'मंडी भाव अनुमान',
+      lblBasal: 'बुवाई के समय आधारीय खुराक:',
+      lblWhyFits: 'वैज्ञानिक औचित्य:',
+      thCrop: 'फसल का नाम',
+      thMatch: 'मैच %',
+      thYield: 'अनुमानित उपज',
+      thWater: 'जल की जरूरत',
+      thRisk: 'बाजार जोखिम',
+      thFertilizer: 'उर्वरक का प्रकार',
+      thBags: 'मात्रा (50 किग्रा बैग/एकड़)',
+      thTiming: 'प्रयोग का समय',
+      ureaTiming: 'विभाजित: 50% बुवाई + 25% कल्ले फूटते समय + 25% बाली बनते समय',
+      dapTiming: '100% बुवाई अथवा रोपाई के समय बेसल डोज के रूप में',
+      mopTiming: '100% बुवाई के समय अथवा 50% बुवाई + 50% फूल आते समय',
+      disclaimer: 'यह रिपोर्ट ICAR-IISS तथा राज्य कृषि विश्वविद्यालय (SAU) के वैज्ञानिक मानकों पर आधारित है। संस्तुतियां वर्तमान मृदा पोषक तत्वों एवं मानसूनी वर्षा मॉडल के अनुरूप तैयार की गई हैं।'
+    },
+    mr: {
+      btnText: '📄 पीडीएफ डाउनलोड / Download PDF',
+      reportTitle: 'शेतकरी कृषी सल्ला आणि मृदा आरोग्य अहवाल',
+      reportSubtitle: 'SPARC AgriSense AI • राष्ट्रीय शाश्वत शेती अभियान (NMSA) व ICAR मानके',
+      sectionField: 'शेत चाचणी आणि मातीचे आरोग्य',
+      sectionWeather: 'हवामान आणि पर्जन्यमान टेलीमेट्री',
+      sectionTopCrop: 'अव्वल शिफारस केलेले पीक (उत्कृष्ट पर्याय #1)',
+      sectionAlts: 'पर्यायी पिके',
+      sectionFert: 'खत व्यवस्थापन संच (प्रति एकर शिफारस)',
+      sectionKvk: 'कृषी विज्ञान केंद्र (KVK) तज्ज्ञ सल्ला',
+      lblDate: 'अहवाल दिनांक:',
+      lblLocation: 'शेताचे ठिकाण:',
+      lblAgroZone: 'कृषी-हवामान क्षेत्र:',
+      lblMatch: 'योग्यतेचे प्रमाण',
+      lblVarieties: 'शिफारस केलेली वाणे:',
+      lblYield: 'अपेक्षित उत्पादन',
+      lblWater: 'पाण्याची गरज',
+      lblDuration: 'कालावधी',
+      lblPrice: 'बाजारभाव अंदाज',
+      lblBasal: 'पेरणीच्या वेळचा बेसल डोस:',
+      lblWhyFits: 'कृषी वैज्ञानिक कारण:',
+      thCrop: 'पिकाचे नाव',
+      thMatch: 'जुळणी %',
+      thYield: 'अपेक्षित उत्पादन',
+      thWater: 'पाण्याची गरज',
+      thRisk: 'बाजार जोखीम',
+      thFertilizer: 'खताचा प्रकार',
+      thBags: 'प्रमाण (५० किलो बॅग/एकर)',
+      thTiming: 'वापराची वेळ',
+      ureaTiming: 'विभागून: ५०% पेरणी + २५% फुटवे फुटताना + २५% फुलोऱ्यात',
+      dapTiming: '१००% पेरणीच्या वेळी बेसल डोस म्हणून द्यावे',
+      mopTiming: '१००% पेरणीच्या वेळी किंवा ५०% पेरणी + ५०% फुलोरा',
+      disclaimer: 'हा अहवाल ICAR-IISS व राज्य कृषी विद्यापीठाच्या पॅकेज ऑफ प्रॅक्टिसेसवर आधारित आहे. उपलब्ध माती घटक व पर्जन्यमानानुसार शिफारसी तयार केल्या आहेत.'
+    },
+    pa: {
+      btnText: '📄 ਪੀਡੀਐਫ ਡਾਊਨਲੋਡ / Download PDF',
+      reportTitle: 'ਕਿਸਾਨ ਖੇਤੀਬਾੜੀ ਸਲਾਹ ਅਤੇ ਮਿੱਟੀ ਸਿਹਤ ਰਿਪੋਰਟ',
+      reportSubtitle: 'SPARC AgriSense AI • ਕੌਮੀ ਟਿਕਾਊ ਖੇਤੀਬਾੜੀ ਮਿਸ਼ਨ (NMSA)',
+      sectionField: 'ਖੇਤ ਨਿਦਾਨ ਅਤੇ ਮਿੱਟੀ ਦੀ ਸਿਹਤ',
+      sectionWeather: 'ਮੌਸਮ ਅਤੇ ਵਰਖਾ ਟੈਲੀਮੈਟਰੀ',
+      sectionTopCrop: 'ਸਿਖਰਲੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਫ਼ਸਲ (#1 ਵਧੀਆ ਵਿਕਲਪ)',
+      sectionAlts: 'ਬਦਲਵੇਂ ਫ਼ਸਲੀ ਵਿਕਲਪ',
+      sectionFert: 'ਖਾਦ ਪ੍ਰਬੰਧਨ ਪੈਕੇਜ (ਪ੍ਰਤੀ ਏਕੜ)',
+      sectionKvk: 'ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ (KVK) ਸਲਾਹ',
+      lblDate: 'ਰਿਪੋਰਟ ਮਿਤੀ:',
+      lblLocation: 'ਖੇਤ ਦਾ ਸਥਾਨ:',
+      lblAgroZone: 'ਖੇਤੀ-ਜਲਵਾਯੂ ਖੇਤਰ:',
+      lblMatch: 'ਅਨੁਕੂਲਤਾ ਮੈਚ',
+      lblVarieties: 'ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀਆਂ ਕਿਸਮਾਂ:',
+      lblYield: 'ਸੰਭਾਵਿਤ ਝਾੜ',
+      lblWater: 'ਪਾਣੀ ਦੀ ਲੋੜ',
+      lblDuration: 'ਸਮਾਂ',
+      lblPrice: 'ਮੰਡੀ ਭਾਅ ਅੰਦਾਜ਼ਾ',
+      lblBasal: 'ਬਿਜਾਈ ਵੇਲੇ ਬੇਸਲ ਖ਼ੁਰਾਕ:',
+      lblWhyFits: 'ਵਿਗਿਆਨਕ ਆਧਾਰ:',
+      thCrop: 'ਫ਼ਸਲ ਦਾ ਨਾਮ',
+      thMatch: 'ਮੈਚ %',
+      thYield: 'ਅੰਦਾਜ਼ਨ ਝਾੜ',
+      thWater: 'ਪਾਣੀ ਦੀ ਲੋੜ',
+      thRisk: 'ਮੰਡੀ ਜੋਖਮ',
+      thFertilizer: 'ਖਾਦ ਦੀ ਕਿਸਮ',
+      thBags: 'ਮਾਤਰਾ (50 ਕਿਲੋ ਥੈਲੇ/ਏਕੜ)',
+      thTiming: 'ਵਰਤੋਂ ਦਾ ਸਮਾਂ',
+      ureaTiming: 'ਵੰਡ: 50% ਬਿਜਾਈ + 25% ਫੁੱਟ ਵੇਲੇ + 25% ਨਿਸਰਣ ਵੇਲੇ',
+      dapTiming: '100% ਬਿਜਾਈ ਸਮੇਂ ਬੇਸਲ ਡੋਜ਼ ਵਜੋਂ ਪਾਓ',
+      mopTiming: '100% ਬਿਜਾਈ ਸਮੇਂ ਜਾਂ 50% ਬਿਜਾਈ + 50% ਫੁੱਲ ਪੈਣ ਵੇਲੇ',
+      disclaimer: 'ਇਹ ਰਿਪੋਰਟ ICAR-IISS ਅਤੇ ਰਾਜ ਖੇਤੀਬਾੜੀ ਯੂਨੀਵਰਸਿਟੀਆਂ ਦੇ ਵਿਗਿਆਨਕ ਮਾਪਦੰਡਾਂ ਤੇ ਆਧਾਰਿਤ ਹੈ।'
+    },
+    gu: {
+      btnText: '📄 પીડીએફ ડાઉનલોડ / Download PDF',
+      reportTitle: 'ખેડૂત કૃષિ સલાહ અને જમીન આરોગ્ય અહેવાલ',
+      reportSubtitle: 'SPARC AgriSense AI • રાષ્ટ્રીય ટકાઉ કૃષિ મિશન (NMSA) અને ICAR ધોરણો',
+      sectionField: 'જમીન ચકાસણી અને પોષક તત્વો',
+      sectionWeather: 'હવામાન અને વરસાદ ટેલિમેટ્રી',
+      sectionTopCrop: 'શ્રેષ્ઠ ભલામણ કરેલ પાક (#1 શ્રેષ્ઠ વિકલ્પ)',
+      sectionAlts: 'વૈકલ્પિક પાક વિકલ્પો',
+      sectionFert: 'ખાતર વ્યવસ્થાપન પેકેજ (પ્રતિ એકર ભલામણ)',
+      sectionKvk: 'કૃષિ વિજ્ઞાન કેન્દ્ર (KVK) માર્ગદર્શન',
+      lblDate: 'રિપોર્ટ તારીખ:',
+      lblLocation: 'ખેતરનું સ્થળ:',
+      lblAgroZone: 'કૃષિ-આબોહવા ઝોન:',
+      lblMatch: 'સુસંગતતા મેચ',
+      lblVarieties: 'ભલામણ કરેલ જાતો:',
+      lblYield: 'અપેક્ષિત ઉત્પાદન',
+      lblWater: 'પાણીની જરૂરિયાત',
+      lblDuration: 'પાક સમયગાળો',
+      lblPrice: 'બજાર ભાવ અંદાજ',
+      lblBasal: 'વાવણી સમયે પાયાનું ખાતર:',
+      lblWhyFits: 'વૈજ્ઞાનિક કારણ:',
+      thCrop: 'પાકનું નામ',
+      thMatch: 'મેચ %',
+      thYield: 'અંદાજિત ઉત્પાદન',
+      thWater: 'પાણીની જરૂરિયાત',
+      thRisk: 'બજાર જોખમ',
+      thFertilizer: 'ખાતરનો પ્રકાર',
+      thBags: 'જથ્થો (૫૦ કિગ્રા બેગ/એકર)',
+      thTiming: 'વાપરવાનો સમય',
+      ureaTiming: 'વિભાજિત: ૫૦% વાવણી + ૨૫% ફુટવે સમયે + ૨૫% કંકી સમયે',
+      dapTiming: '૧૦૦% વાવણી સમયે પાયાના ખાતર તરીકે',
+      mopTiming: '૧૦૦% વાવણી વખતે અથવા ૫૦% વાવણી + ૫૦% ફૂલ સમયે',
+      disclaimer: 'આ અહેવાલ ICAR-IISS અને રાજ્ય કૃષિ યુનિવર્સિટીના વૈજ્ઞાનિક માપદંડો પર આધારિત છે.'
+    },
+    te: {
+      btnText: '📄 PDF డౌన్‌లోడ్ / Download PDF',
+      reportTitle: 'రైతు వ్యవసాయ సలహా మరియు నేల ఆరోగ్య నివేదిక',
+      reportSubtitle: 'SPARC AgriSense AI • జాతీయ స్థిరమైన వ్యవసాయ మిషన్ (NMSA)',
+      sectionField: 'క్షేత్ర విశ్లేషణ మరియు నేల ఆరోగ్యం',
+      sectionWeather: 'వాతావరణం మరియు వర్షపాతం టెలిమెట్రీ',
+      sectionTopCrop: 'అత్యుత్తమ సిఫార్సు చేసిన పంట (#1 ఉత్తమ ఎంపిక)',
+      sectionAlts: 'ప్రత్యామ్నాయ పంట ఎంపికలు',
+      sectionFert: 'ఎరువుల యాజమాన్య ప్యాకేజీ (ఎకరాకు)',
+      sectionKvk: 'కృషి విజ్ఞాన కేంద్రం (KVK) సలహా',
+      lblDate: 'నివేదిక తేదీ:',
+      lblLocation: 'పొలం ప్రాంతం:',
+      lblAgroZone: 'వ్యవసాయ-శీతోష్ణస్థితి మండలం:',
+      lblMatch: 'సరిపోలిక శాతం',
+      lblVarieties: 'సిఫార్సు చేయబడిన రకాలు:',
+      lblYield: 'ఆశించిన దిగుబడి',
+      lblWater: 'నీటి అవసరం',
+      lblDuration: 'పంట కాలం',
+      lblPrice: 'మార్కెట్ ధర అంచనా',
+      lblBasal: 'విత్తే సమయంలో ప్రాథమిక మోతాదు:',
+      lblWhyFits: 'శాస్త్రీయ సమర్థన:',
+      thCrop: 'పంట పేరు',
+      thMatch: 'మ్యాచ్ %',
+      thYield: 'అంచనా దిగుబడి',
+      thWater: 'నీటి అవసరం',
+      thRisk: 'మార్కెట్ రిస్క్',
+      thFertilizer: 'ఎరువుల రకం',
+      thBags: 'మొత్తం (50 కేజీల సంచులు/ఎకరా)',
+      thTiming: 'వేసే సమయం',
+      ureaTiming: 'విడతలుగా: 50% విత్తేటప్పుడు + 25% పిలకల దశ + 25% ఈనిక దశ',
+      dapTiming: '100% విత్తే సమయంలోనే ప్రాథమిక మోతాదుగా వేయాలి',
+      mopTiming: '100% విత్తే సమయంలో లేదా 50% విత్తేటప్పుడు + 50% పూత దశలో',
+      disclaimer: 'ఈ నివేదిక ICAR-IISS మరియు రాష్ట్ర వ్యవసాయ విశ్వవిద్యాలయ మార్గదర్శకాల ఆధారంగా రూపొందించబడింది.'
+    },
+    ta: {
+      btnText: '📄 PDF பதிவிறக்கம் / Download PDF',
+      reportTitle: 'விவசாயி வேளாண்மை ஆலோசனை மற்றும் மண் நல அறிக்கை',
+      reportSubtitle: 'SPARC AgriSense AI • தேசிய நிலையான வேளாண்மை இயக்கம் (NMSA)',
+      sectionField: 'வயல் பரிசோதனை மற்றும் மண் வளம்',
+      sectionWeather: 'வானிலை மற்றும் மழைப்பொழிவு தரவு',
+      sectionTopCrop: 'முதன்மைப் பரிந்துரைக்கப்படும் பயிர் (#1 சிறந்த தேர்வு)',
+      sectionAlts: 'மாற்றுப் பயிர் தேர்வுகள்',
+      sectionFert: 'உர மேலாண்மை தொகுப்பு (ஏக்கருக்கு)',
+      sectionKvk: 'வேளாண் அறிவியல் மையம் (KVK) ஆலோசனை',
+      lblDate: 'அறிக்கை நாள்:',
+      lblLocation: 'வயலின் அமைவிடம்:',
+      lblAgroZone: 'வேளாண்-காலநிலை மண்டலம்:',
+      lblMatch: 'பொருத்தம் சதவீதம்',
+      lblVarieties: 'பரிந்துரைக்கப்பட்ட ரகங்கள்:',
+      lblYield: 'எதிர்பார்க்கப்படும் மகசூல்',
+      lblWater: 'நீர் தேவை',
+      lblDuration: 'பயிர் காலம்',
+      lblPrice: 'சந்தை விலை மதிப்பீடு',
+      lblBasal: 'விதைக்கும்போது அடியுர அளவு:',
+      lblWhyFits: 'அறிவியல் காரணம்:',
+      thCrop: 'பயிர் பெயர்',
+      thMatch: 'பொருத்தம் %',
+      thYield: 'எதிர்பார்ப்பு மகசூல்',
+      thWater: 'நீர் தேவை',
+      thRisk: 'சந்தை ஆபத்து',
+      thFertilizer: 'உர வகை',
+      thBags: 'அளவு (50 கிலோ பை/ஏக்கர்)',
+      thTiming: 'இடும் பருவம்',
+      ureaTiming: 'பிரித்து இடவும்: 50% அடியுரம் + 25% தூர் கட்டும்போது + 25% கதிர் வரும்போது',
+      dapTiming: '100% விதைக்கும் போதே அடியுரமாக இடவும்',
+      mopTiming: '100% அடியுரமாக அல்லது 50% அடியுரம் + 50% பூக்கும் பருவம்',
+      disclaimer: 'இந்த அறிக்கை ICAR-IISS மற்றும் தமிழ்நாடு வேளாண் பல்கலைக்கழக வழிகாட்டுதலின்படி தயாரிக்கப்பட்டது.'
+    },
+    bn: {
+      btnText: '📄 পিডিএফ ডাউনলোড / Download PDF',
+      reportTitle: 'কৃষক কৃষি পরামর্শ ও মৃত্তিকা স্বাস্থ্য প্রতিবেদন',
+      reportSubtitle: 'SPARC AgriSense AI • জাতীয় টেকসই কৃষি মিশন (NMSA) ও ICAR মানদণ্ড',
+      sectionField: 'মাঠ পরিদর্শন ও মৃত্তিকা স্বাস্থ্য পরীক্ষা',
+      sectionWeather: 'আবহাওয়া ও বৃষ্টিপাত টেলিমেট্রি',
+      sectionTopCrop: 'শীর্ষ সুপারিশকৃত ফসল (সেরা বিকল্প #1)',
+      sectionAlts: 'বিকল্প ফসল নির্বাচন',
+      sectionFert: 'সার ব্যবস্থাপনা প্যাকেজ (প্রতি একর সুপারিশ)',
+      sectionKvk: 'কৃষি বিজ্ঞান কেন্দ্র (KVK) বিশেষজ্ঞ পরামর্শ',
+      lblDate: 'প্রতিবেদনের তারিখ:',
+      lblLocation: 'জমির অবস্থান:',
+      lblAgroZone: 'কৃষি-আবহাওয়া অঞ্চল:',
+      lblMatch: 'উপযোগিতা ম্যাচ',
+      lblVarieties: 'সুপারিশকৃত জাতসমূহ:',
+      lblYield: 'প্রত্যাশিত ফলন',
+      lblWater: 'জলের প্রয়োজনীয়তা',
+      lblDuration: 'ফসলের সময়কাল',
+      lblPrice: 'বাজার দর পূর্বাভাস',
+      lblBasal: 'বপনের সময় প্রাথমিক সার:',
+      lblWhyFits: 'বিজ্ঞানসম্মত কারণ:',
+      thCrop: 'ফসলের নাম',
+      thMatch: 'ম্যাচ %',
+      thYield: 'আনুমানিক ফলন',
+      thWater: 'জলের চাহিদা',
+      thRisk: 'বাজার ঝুঁকি',
+      thFertilizer: 'সারের প্রকার',
+      thBags: 'পরিমাণ (৫০ কেজি বস্তা/একর)',
+      thTiming: 'প্রয়োগের সময়',
+      ureaTiming: 'ভাগ করে প্রয়োগ: ৫০% প্রাথমিক + ২৫% কুশি বের হওয়ার সময় + ২৫% শিষ আসার সময়',
+      dapTiming: '১০০% বপন অথবা রোপণের সময় বেসাল ডোজ হিসাবে',
+      mopTiming: '১০০% বপনের সময় অথবা ৫০% প্রাথমিক + ৫০% ফুল আসার সময়',
+      disclaimer: 'এই প্রতিবেদনটি ICAR-IISS এবং রাজ্য কৃষি বিশ্ববিদ্যালয়ের বৈজ্ঞানিক নির্দেশিকা অনুসারে প্রস্তুত করা হয়েছে।'
+    },
+    kn: {
+      btnText: '📄 PDF ಡೌನ್‌ಲೋಡ್ / Download PDF',
+      reportTitle: 'ರೈತ ಕೃಷಿ ಸಲಹಾ ಮತ್ತು ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವರದಿ',
+      reportSubtitle: 'SPARC AgriSense AI • ರಾಷ್ಟ್ರೀಯ ಸುಸ್ಥಿರ ಕೃಷಿ ಮಿಷನ್ (NMSA)',
+      sectionField: 'ಕ್ಷೇತ್ರ ಪರೀಕ್ಷೆ ಮತ್ತು ಮಣ್ಣಿನ ಫಲವತ್ತತೆ',
+      sectionWeather: 'ಹವಾಮಾನ ಮತ್ತು ಮಳೆ ಮಾಹಿತಿ',
+      sectionTopCrop: 'ಅತ್ಯುತ್ತಮ ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ (#1 ಅತ್ಯುತ್ತಮ ಆಯ್ಕೆ)',
+      sectionAlts: 'ಪರ್ಯಾಯ ಬೆಳೆಗಳ ಆಯ್ಕೆ',
+      sectionFert: 'ಗೊಬ್ಬರ ನಿರ್ವಹಣಾ ಪ್ಯಾಕೇಜ್ (ಪ್ರತಿ ಎಕರೆಗೆ)',
+      sectionKvk: 'ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (KVK) ತಜ್ಞರ ಸಲಹೆ',
+      lblDate: 'ವರದಿ ದಿನಾಂಕ:',
+      lblLocation: 'ಜಮೀನಿನ ಸ್ಥಳ:',
+      lblAgroZone: 'ಕೃಷಿ-ಹವಾಮಾನ ವಲಯ:',
+      lblMatch: 'ಹೊಂದಾಣಿಕೆ ಪ್ರಮಾಣ',
+      lblVarieties: 'ಶಿಫಾರಸು ಮಾಡಿದ ತಳಿಗಳು:',
+      lblYield: 'ನಿರೀಕ್ಷಿತ ಇಳುವರಿ',
+      lblWater: 'ನೀರಿನ ಅವಶ್ಯಕತೆ',
+      lblDuration: 'ಬೆಳೆ ಅವಧಿ',
+      lblPrice: 'ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಅಂದಾಜು',
+      lblBasal: 'ಬಿತ್ತನೆ ಸಮಯದ ಮೂಲ ಗೊಬ್ಬರ:',
+      lblWhyFits: 'ವೈಜ್ಞಾನಿಕ ಸಮರ್ಥನೆ:',
+      thCrop: 'ಬೆಳೆಯ ಹೆಸರು',
+      thMatch: 'ಹೊಂದಾಣಿಕೆ %',
+      thYield: 'ಅಂದಾಜು ಇಳುವರಿ',
+      thWater: 'ನೀರಿನ ಅಗತ್ಯ',
+      thRisk: 'ಮಾರುಕಟ್ಟೆ ಅಪಾಯ',
+      thFertilizer: 'ರಸಗೊಬ್ಬರದ ವಿಧ',
+      thBags: 'ಪ್ರಮಾಣ (50 ಕೆಜಿ ಚೀಲ/ಎಕರೆ)',
+      thTiming: 'ಹಾಕುವ ಸಮಯ',
+      ureaTiming: 'ವಿಭಾಗಿಸಿ: 50% ಬಿತ್ತನೆಗೆ + 25% ಕವಲೊಡೆಯುವಾಗ + 25% ತೆನೆ ಬರುವಾಗ',
+      dapTiming: '100% ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿಯೇ ಮೂಲ ಗೊಬ್ಬರವಾಗಿ ನೀಡಬೇಕು',
+      mopTiming: '100% ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿ ಅಥವಾ 50% ಬಿತ್ತನೆಗೆ + 50% ಹೂವಾಡುವಾಗ',
+      disclaimer: 'ಈ ವರದಿಯು ICAR-IISS ಮತ್ತು ಕೃಷಿ ವಿಶ್ವವಿದ್ಯಾಲಯದ ವೈಜ್ಞಾನಿಕ ಮಾರ್ಗಸೂಚಿಗಳ ಅನ್ವಯ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ.'
+    }
+  };
+
+  function downloadCropAdvisoryPDF() {
+    const lang = state.language || 'hi';
+    const labels = PDF_REPORT_I18N[lang] || PDF_REPORT_I18N['hi'];
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+    const recData = state.lastRecommendationsData || {
+      crop: 'rice',
+      confidence: 94,
+      recommendations: [
+        { crop: 'rice', confidence: 94, profile: 'Indica Wet' },
+        { crop: 'cotton', confidence: 82, compatibility_score: 82, profile: 'Bt Hybrid' },
+        { crop: 'maize', confidence: 74, compatibility_score: 74, profile: 'Hybrid Feed' }
+      ]
+    };
+
+    const recs = recData.recommendations || [];
+    const best = recs[0] || { crop: 'rice', confidence: 94, profile: 'Indica Wet' };
+    const bestMeta = getCropMeta(best.crop, best.profile);
+
+    const currentN = parseFloat(inputs.n?.value || 92);
+    const currentP = parseFloat(inputs.p?.value || 46);
+    const currentK = parseFloat(inputs.k?.value || 44);
+    const currentPh = parseFloat(sliders.ph?.value || inputs.ph?.value || 6.8);
+
+    const temp = parseFloat(sliders.temp?.value || 26.5);
+    const hum = parseFloat(sliders.hum?.value || 72);
+    const rain = parseFloat(sliders.rain?.value || 210);
+
+    const specificLocEl = document.getElementById('specific-location-val');
+    const locationName = specificLocEl?.textContent?.replace('📍', '').trim() || (state.currentCity ? `${state.currentCity}, India` : 'Local Farm');
+    const zoneEl = document.getElementById('zone-label');
+    const agroZoneName = zoneEl?.textContent || (state.currentZone || 'National Agro-Climatic Zone');
+
+    const now = new Date();
+    const dateFormatted = now.toLocaleDateString(lang === 'en' ? 'en-IN' : 'hi-IN', {
+      year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+
+    const rationaleText = bestMeta.rationale(currentN, rain, lang);
+
+    // Build Alternatives HTML
+    let altsHtml = '';
+    for (let i = 1; i < Math.min(3, recs.length); i++) {
+      const alt = recs[i];
+      const altMeta = getCropMeta(alt.crop, alt.profile);
+      const matchScore = Number(alt.compatibility_score) || (i === 1 ? 82 : 74);
+      const altTag = i === 1 ? t.altTag1 : t.altTag2;
+      altsHtml += `
+        <tr>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">${altTag}: ${altMeta.fullName}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #047857; font-weight: 700;">${matchScore}%</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.yield}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.water}</td>
+          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.priceSub}</td>
+        </tr>
+      `;
+    }
+
+    // Build Fertilizer Guidance Table
+    const fertRowsHtml = `
+      <tr>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">Urea (46% N)</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">2.0 Bags (100 kg)</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.ureaTiming}</td>
+      </tr>
+      <tr>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">DAP (18-46-0)</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">1.2 Bags (60 kg)</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.dapTiming}</td>
+      </tr>
+      <tr>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">MOP (60% K₂O)</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">0.8 Bags (40 kg)</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.mopTiming}</td>
+      </tr>
+    `;
+
+    // Complete Report Container
+    const reportHtml = `
+      <div id="agrisense-pdf-report" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1F2937; background: #FFFFFF; padding: 20px 24px; max-width: 800px; margin: 0 auto; line-height: 1.4;">
+        
+        <!-- HEADER -->
+        <div style="border-bottom: 3px solid #065F46; padding-bottom: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
+              <span style="font-size: 20px;">🌾</span>
+              <span style="font-size: 17px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
+              <span style="background: #D1FAE5; color: #065F46; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR-IISS Benchmark</span>
+            </div>
+            <h1 style="font-size: 15px; font-weight: 800; color: #111827; margin: 3px 0 2px 0;">${labels.reportTitle}</h1>
+            <p style="font-size: 10.5px; color: #6B7280; margin: 0;">${labels.reportSubtitle}</p>
+          </div>
+          <div style="text-align: right; font-size: 10px; color: #4B5563; background: #F9FAFB; padding: 5px 10px; border-radius: 6px; border: 1px solid #E5E7EB;">
+            <div><strong>${labels.lblDate}</strong> ${dateFormatted}</div>
+            <div style="margin-top: 2px;"><strong>Cycle:</strong> Kharif 2025 Advisory</div>
+          </div>
+        </div>
+
+        <!-- LOCATION & AGRO-ZONE STRIP -->
+        <div style="background: #F0FDF4; border-left: 4px solid #10B981; padding: 8px 12px; border-radius: 0 6px 6px 0; margin-bottom: 14px; font-size: 11.5px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong>📍 ${labels.lblLocation}</strong> <span style="font-weight: 700; color: #065F46;">${locationName}</span>
+          </div>
+          <div style="font-size: 10.5px; color: #047857;">
+            ${agroZoneName}
+          </div>
+        </div>
+
+        <!-- TWO COLUMN DIAGNOSTICS & TELEMETRY -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+          
+          <!-- Soil Diagnostics -->
+          <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; background: #FAFAFA;">
+            <h3 style="font-size: 11.5px; font-weight: 700; color: #065F46; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
+              🌱 ${labels.sectionField}
+            </h3>
+            <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Nitrogen (N):</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Phosphorus (P):</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Medium</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Potassium (K):</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Optimum</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Soil Reaction (pH):</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentPh}</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Neutral</span></td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Climate Telemetry -->
+          <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; background: #FAFAFA;">
+            <h3 style="font-size: 11.5px; font-weight: 700; color: #065F46; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
+              🌤️ ${labels.sectionWeather}
+            </h3>
+            <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Ambient Temperature:</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Normal</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Relative Humidity:</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Favorable</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Expected Monsoon:</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Adequate</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 3px 0; color: #4B5563;">Agro-Thermal Window:</td>
+                <td style="padding: 3px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
+                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Kharif Active</span></td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- TOP RECOMMENDED CROP HERO BOX -->
+        <div style="border: 2px solid #059669; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; margin-bottom: 14px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <span style="background: #059669; color: #FFFFFF; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">
+                ⭐ ${labels.sectionTopCrop}
+              </span>
+              <h2 style="font-size: 17px; font-weight: 800; color: #064E3B; margin: 6px 0 2px 0;">
+                ${bestMeta.fullName}
+              </h2>
+              <div style="font-size: 11px; color: #047857;">
+                <strong>${labels.lblVarieties}</strong> ${bestMeta.varieties}
+              </div>
+            </div>
+            
+            <div style="text-align: center; background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 6px; padding: 4px 10px;">
+              <div style="font-size: 18px; font-weight: 900; color: #047857;">${best.confidence}%</div>
+              <div style="font-size: 9.5px; font-weight: 700; color: #065F46;">${labels.lblMatch}</div>
+            </div>
+          </div>
+
+          <!-- RATIONALE CALLOUT -->
+          <div style="background: #F0FDF4; border-radius: 5px; padding: 7px 10px; margin-bottom: 10px; font-size: 11px; color: #166534; border-left: 3px solid #059669;">
+            <strong>✓ ${labels.lblWhyFits}</strong> ${rationaleText}
+          </div>
+
+          <!-- 4 STATS ROW -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
+            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblYield}</div>
+              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.yield}</div>
+            </div>
+            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblWater}</div>
+              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.water}</div>
+            </div>
+            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblPrice}</div>
+              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.price}</div>
+            </div>
+            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblDuration}</div>
+              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.duration}</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ALTERNATIVE CROPS TABLE -->
+        <div style="margin-bottom: 14px;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #111827; margin: 0 0 5px 0;">
+            🌾 ${labels.sectionAlts}
+          </h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; text-align: left;">
+            <thead>
+              <tr style="background: #F3F4F6; color: #374151;">
+                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thCrop}</th>
+                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thMatch}</th>
+                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thYield}</th>
+                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thWater}</th>
+                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thRisk}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${altsHtml}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- FERTILIZER PRESCRIPTION PACKAGE -->
+        <div style="margin-bottom: 14px; border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; background: #FAFAFA;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #1E3A8A; margin: 0 0 5px 0;">
+            🧪 ${labels.sectionFert}
+          </h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; text-align: left;">
+            <thead>
+              <tr style="background: #EEF2FF; color: #1E3A8A;">
+                <th style="padding: 5px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thFertilizer}</th>
+                <th style="padding: 5px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thBags}</th>
+                <th style="padding: 5px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thTiming}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${fertRowsHtml}
+            </tbody>
+          </table>
+          <div style="margin-top: 6px; font-size: 10px; color: #4B5563;">
+            <strong>${labels.lblBasal}</strong> ${bestMeta.basalDose}
+          </div>
+        </div>
+
+        <!-- FOOTER & OFFICIAL DISCLAIMER -->
+        <div style="border-top: 1px solid #E5E7EB; padding-top: 8px; font-size: 9px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
+          <div style="max-width: 82%;">
+            <strong>Disclaimer:</strong> ${labels.disclaimer}
+          </div>
+          <div style="text-align: right; font-weight: 700; color: #047857;">
+            SPARC AI Precision Agronomy<br>
+            sparc-agri-sense-omega.vercel.app
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    const opt = {
+      margin: 6,
+      filename: `SPARC_AgriSense_Advisory_${best.crop}_${lang}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    const container = document.createElement('div');
+    container.innerHTML = reportHtml;
+    document.body.appendChild(container);
+
+    if (window.html2pdf) {
+      window.html2pdf().set(opt).from(container.firstElementChild).save().then(() => {
+        document.body.removeChild(container);
+      }).catch(err => {
+        console.warn('html2pdf save error, using print fallback:', err);
+        document.body.removeChild(container);
+        printViaIframe(reportHtml);
+      });
+    } else {
+      document.body.removeChild(container);
+      printViaIframe(reportHtml);
+    }
+  }
+
+  function printViaIframe(htmlContent) {
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>SPARC Kisan Advisory Report</title>
+          <meta charset="utf-8">
+          <style>
+            @page { size: A4 portrait; margin: 8mm; }
+            body { margin: 0; padding: 0; }
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+      }, 2000);
+    }, 500);
+  }
+
   // ── Language Switcher Controller ──
   const langSelect = document.getElementById('lang-select');
 
@@ -5636,6 +6298,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.btn-whatsapp-share').forEach(btn => {
       btn.innerHTML = t.shareBtnText;
     });
+
+    // PDF Download button labels & click handlers
+    const bestPdfBtn = document.getElementById('best-pdf-btn');
+    if (bestPdfBtn) {
+      bestPdfBtn.innerHTML = t.pdfBtnText || '📄 Download PDF';
+      bestPdfBtn.onclick = () => downloadCropAdvisoryPDF();
+    }
+    const headerPdfBtn = document.getElementById('header-pdf-btn');
+    const headerPdfText = document.getElementById('header-pdf-btn-text');
+    if (headerPdfBtn) {
+      if (headerPdfText) headerPdfText.textContent = t.pdfBtnText?.replace('📄', '').trim() || 'Download PDF';
+      headerPdfBtn.onclick = () => downloadCropAdvisoryPDF();
+    }
 
     // Re-render recommendations (initialize defaults if empty so initial page is localized)
     if (!state.lastRecommendationsData) {
@@ -6000,6 +6675,19 @@ document.addEventListener('DOMContentLoaded', () => {
 ⏱️ *Duration:* ${bestMeta.duration}
 💰 *Mandi:* ${bestMeta.price}`;
       dynamicBestWa.onclick = () => shareOnWhatsApp(bestMeta.fullName, waDet);
+    }
+
+    const dynamicBestPdf = document.getElementById('best-pdf-btn');
+    if (dynamicBestPdf) {
+      dynamicBestPdf.innerHTML = t.pdfBtnText || '📄 Download PDF';
+      dynamicBestPdf.onclick = () => downloadCropAdvisoryPDF();
+    }
+
+    const dynamicHeaderPdf = document.getElementById('header-pdf-btn');
+    const dynamicHeaderPdfText = document.getElementById('header-pdf-btn-text');
+    if (dynamicHeaderPdf) {
+      if (dynamicHeaderPdfText) dynamicHeaderPdfText.textContent = t.pdfBtnText?.replace('📄', '').trim() || 'Download PDF';
+      dynamicHeaderPdf.onclick = () => downloadCropAdvisoryPDF();
     }
 
     // Alternative #1 (Index 1)
