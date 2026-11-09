@@ -5501,6 +5501,10 @@ document.addEventListener('DOMContentLoaded', () => {
     "btnText": "📄 Download PDF",
     "reportTitle": "KISAN AGRONOMIC ADVISORY & SOIL HEALTH REPORT",
     "reportSubtitle": "SPARC AgriSense AI • National Mission on Sustainable Agriculture (NMSA)",
+    "page2Title": "STAGE-BY-STAGE CULTIVATION & FIELD AGRONOMY GUIDE",
+    "page2Subtitle": "ICAR Good Agricultural Practices (GAP) & State Agricultural University Standards",
+    "page3Title": "FIELD EMERGENCY TROUBLESHOOTING & GOVERNMENT SCHEMES",
+    "page3Subtitle": "Diagnostic Symptom Matrix, Immediate Remedies & National Farmer Welfare Schemes",
     "sectionField": "Field Diagnostics & Soil Health",
     "sectionWeather": "Agro-Meteorological Telemetry",
     "sectionTopCrop": "Top Recommended Crop (#1 Best Choice)",
@@ -5529,18 +5533,25 @@ document.addEventListener('DOMContentLoaded', () => {
     "ureaTiming": "Split: 50% Basal + 25% Tillering + 25% Panicle Initiation",
     "dapTiming": "100% Basal application at sowing or transplanting",
     "mopTiming": "100% Basal or split 50% Sowing + 50% Flowering",
-    "disclaimer": "Validated under ICAR-IISS and State Agricultural University (SAU) packages of practices. Recommendations are calibrated to current field nutrient levels and precipitation telemetry.",
+    "page1Footer": "Page 1 of 3 • Executive Diagnostics & Crop Strategy • SPARC AgriSense AI",
     "sectionSteps": "Stage-by-Stage Cultivation Guide (How To Do Things)",
-    "step1Title": "Step 1: Land Preparation & Organic Enrichment",
-    "step1Desc": "2–3 deep ploughings with cultivator/rotavator; level using laser leveller for uniform irrigation. Incorporate 4–5 tonnes well-decomposed FYM or vermicompost per acre 2–3 weeks before sowing. Seed treatment: Treat seeds with Trichoderma viride @ 4 g/kg or Pseudomonas fluorescens @ 10 g/kg + Azotobacter/Rhizobium culture to prevent soil-borne seedling rot and damping-off.",
-    "step2Title": "Step 2: Sowing / Transplanting & Spatial Geometry",
-    "step2Desc": "Maintain certified seed rate (15–20 kg/acre for direct drilling, 8–10 kg for nursery transplanting). Optimal spacing: 20 cm row-to-row x 15 cm plant-to-plant at 2–3 cm depth. Apply basal DAP (1.2 bags/acre) + MOP (0.8 bags/acre) + 10 kg Zinc Sulphate (21%) during final ploughing; avoid placing concentrated urea directly in the seed furrow.",
-    "step3Title": "Step 3: Precision Water & Irrigation Management",
-    "step3Desc": "Maintain shallow standing moisture (2–3 cm) during vegetative phase. Ensure non-stressed irrigation at 4 critical stages: Crown Root Initiation / Tillering, Panicle Initiation, Flowering, and Grain Filling. Withhold and drain field water 10–12 days prior to harvest for uniform grain drying.",
-    "step4Title": "Step 4: Weed Control, Top-Dressing & Foliar Care",
-    "step4Desc": "Apply pre-emergence herbicide (Pendimethalin 30% EC @ 1.0 L/acre within 48h of sowing) or run mechanical weeder at 20 & 40 DAS. Split Urea application: First top-dress (25%) at active tillering (21–25 DAS) and second top-dress (25%) at panicle initiation with light irrigation. Foliar spray 0.5% ZnSO4 + 0.25% lime or Nano Urea (4 ml/L) for leaf greening.",
-    "step5Title": "Step 5: Timely Harvest, Threshing & Safe Storage",
-    "step5Desc": "Harvest crop when 80–85% grains turn golden-yellow and grain moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops to 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "step1Title": "Step 1: Land Preparation, Deep Tilth & Organic Basal Dose",
+    "step1Desc": "Conduct 2–3 deep ploughings with cultivator/rotavator; level using laser land leveller for uniform water infiltration. Incorporate 4–5 tonnes well-decomposed FYM or vermicompost per acre 2–3 weeks before sowing. Seed treatment: Bio-inoculate seeds with Trichoderma viride @ 4 g/kg seed or Pseudomonas fluorescens @ 10 g/kg + Azotobacter/Rhizobium culture to prevent seed rot & damping-off.",
+    "step2Title": "Step 2: Certified Sowing / Nursery Transplanting & Geometry",
+    "step2Desc": "Sow certified high-germination seed (15–20 kg/acre for direct drilling, 8–10 kg for nursery transplanting). Optimal crop geometry: 20 cm row-to-row × 15 cm plant-to-plant at 2–3 cm depth. Apply basal DAP (1.2 bags/acre) + MOP (0.8 bags/acre) + 10 kg Zinc Sulphate (21%) at final tilth; avoid placing concentrated urea directly in seed furrows.",
+    "step3Title": "Step 3: Integrated Weed Management & Canopy Care",
+    "step3Desc": "Apply pre-emergence herbicide (Pendimethalin 30% EC @ 1.0 L/acre within 48h of sowing in moist soil) or operate a mechanical rotary/cono-weeder at 20 & 40 days after sowing. Maintain clean bunds and apply paddy straw / organic mulch between rows to conserve moisture and suppress broadleaf weeds.",
+    "step4Title": "Step 4: Precision Water & Critical Irrigation Windows",
+    "step4Desc": "Maintain shallow standing moisture (2–3 cm) during vegetative phase. Never allow moisture stress during 4 critical phenological stages: Crown Root Initiation / Tillering, Panicle Initiation, Flowering, and Grain Milking. Drain standing water completely 10–12 days prior to expected harvest for uniform grain drying.",
+    "step5Title": "Step 5: Split Nutrient Top-Dressing & Foliar Boosters",
+    "step5Desc": "Split Urea top-dress: 1st dose (25%) at active tillering (21–25 DAS) and 2nd dose (25%) at panicle emergence with light irrigation. Foliar spray 0.5% Zinc Sulphate + 0.25% Lime or Nano-Urea (4 ml/L water) at 35–40 DAS to enhance chlorophyll synthesis, active tillers, and spikelet fertility.",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "Pro-Farmer Sustainable Agriculture & Soil Conservation Tips",
+    "tipCropRotation": "Crop Rotation: Always rotate cereals with leguminous pulses (Moong/Urad/Chickpea) to biologically fix 30–40 kg atmospheric nitrogen per hectare and break soil pest cycles.",
+    "tipGreenManure": "Green Manuring: Sow Dhaincha (Sesbania) or Sunnhemp and incorporate into the soil at 45 days before Kharif sowing to elevate organic carbon and soil porosity.",
+    "tipSoilHealth": "Periodic Testing: Conduct a comprehensive soil health test every 2 years to recalibrate fertilizer dosages and prevent secondary soil salinity.",
+    "page2Footer": "Page 2 of 3 • Agronomic Practices & Cultural Operations • SPARC AgriSense AI",
     "sectionTroubleshoot": "Field Emergency & Problem Troubleshooting (What To Do If Any Problem Arises)",
     "thProblem": "Observed Symptom / Emergency",
     "thCause": "Agronomic Root Cause",
@@ -5563,14 +5574,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Title": "Unseasonal Heavy Rain & Waterlogging",
     "prob6Cause": "Poor drainage stagnation leading to root asphyxiation.",
     "prob6Action": "Cut field bunds to discharge excess water within 24 hours. Post drainage, spray 19:19:19 NPK (10 g/L) + micronutrient mix to revive roots.",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "Key Government Agricultural Schemes & Subsidies for Farmers",
+    "schemePmKisan": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi): ₹6,000/year direct financial income support in 3 equal installments of ₹2,000 directly into farmer Aadhaar-linked bank accounts.",
+    "schemePmfby": "PMFBY (Pradhan Mantri Fasal Bima Yojana): Comprehensive yield and localized crop insurance with low farmer share (1.5% for Rabi, 2% for Kharif) covering non-preventable natural risks.",
+    "schemeShc": "Soil Health Card Scheme: Free/subsidized macro- and micronutrient testing and customized fertilizer recommendations provided every 2 years by State Agriculture Departments.",
+    "schemeSmam": "SMAM (Sub-Mission on Agricultural Mechanization): 40% to 50% capital subsidy on tractors, rotavators, seed drills, power tillers, and laser land levellers for small/marginal farmers.",
+    "schemeKcc": "Kisan Credit Card (KCC): Concessional institutional credit up to ₹3 Lakh at an effective 4% interest rate (inclusive of prompt repayment incentive) for crop inputs.",
     "sectionEmergency": "Emergency Kisan Helpline & ICAR Escalation",
     "kisanCallCenter": "Kisan Call Center (Toll-Free Helpline): 1800-180-1551 (Available 6:00 AM – 10:00 PM, 365 Days in all Indian regional languages)",
-    "kvkEscalation": "District KVK Escalation: For unidentified disease or pest outbreaks, collect leaf samples in a sealed pouch and consult your nearest Krishi Vigyan Kendra (KVK) Agronomist or Block Agriculture Officer (BAO) immediately."
+    "kvkEscalation": "District KVK Consultation: For unidentified disease or pest outbreaks, collect leaf samples in a sealed pouch and consult your nearest Krishi Vigyan Kendra (KVK) Agronomist or Block Agriculture Officer (BAO) immediately.",
+    "disclaimer": "Validated under ICAR-IISS and State Agricultural University (SAU) packages of practices. Recommendations are calibrated to current field nutrient levels and precipitation telemetry.",
+    "page3Footer": "Page 3 of 3 • Plant Protection & Institutional Support • SPARC AgriSense AI"
   },
   "hi": {
     "btnText": "📄 पीडीएफ डाउनलोड / Download PDF",
     "reportTitle": "किसान कृषि परामर्श एवं मृदा स्वास्थ्य रिपोर्ट",
     "reportSubtitle": "SPARC AgriSense AI • राष्ट्रीय सतत कृषि मिशन (NMSA) एवं ICAR मानक",
+    "page2Title": "चरणबद्ध फसल उत्पादन एवं कृषि कार्य मार्गदर्शिका",
+    "page2Subtitle": "भारतीय कृषि अनुसंधान परिषद (ICAR) उत्तम कृषि पद्धतियाँ (GAP) एवं विश्वविद्यालय मानक",
+    "page3Title": "खेत आपातकालीन समस्या निवारण एवं सरकारी योजनाएं",
+    "page3Subtitle": "लक्षण आधारित निदान, तत्काल उपचार एवं प्रमुख किसान कल्याणकारी योजनाएं",
     "sectionField": "खेत निदान एवं मृदा स्वास्थ्य परीक्षण",
     "sectionWeather": "मौसम एवं जलवायु टेलीमेट्री",
     "sectionTopCrop": "शीर्ष अनुशंसित फसल (सर्वश्रेष्ठ विकल्प #1)",
@@ -5586,33 +5615,40 @@ document.addEventListener('DOMContentLoaded', () => {
     "lblWater": "जल आवश्यकता",
     "lblDuration": "फसल अवधि",
     "lblPrice": "मंडी भाव अनुमान",
-    "lblBasal": "बुवाई के समय आधारीय खुराक:",
-    "lblWhyFits": "वैज्ञानिक औचित्य:",
-    "thCrop": "फसल का नाम",
+    "lblBasal": "बुवाई के समय आधारीय खाद:",
+    "lblWhyFits": "वैज्ञानिक चयन आधार:",
+    "thCrop": "फसल विकल्प",
     "thMatch": "मैच %",
     "thYield": "अनुमानित उपज",
-    "thWater": "जल की जरूरत",
-    "thRisk": "बाजार जोखिम",
-    "thFertilizer": "उर्वरक का प्रकार",
-    "thBags": "मात्रा (50 किग्रा बैग/एकड़)",
-    "thTiming": "प्रयोग का समय",
-    "ureaTiming": "विभाजित: 50% बुवाई + 25% कल्ले फूटते समय + 25% बाली बनते समय",
-    "dapTiming": "100% बुवाई अथवा रोपाई के समय बेसल डोज के रूप में",
-    "mopTiming": "100% बुवाई के समय अथवा 50% बुवाई + 50% फूल आते समय",
-    "disclaimer": "यह रिपोर्ट ICAR-IISS तथा राज्य कृषि विश्वविद्यालय (SAU) के वैज्ञानिक मानकों पर आधारित है। संस्तुतियां वर्तमान मृदा पोषक तत्वों एवं मानसूनी वर्षा मॉडल के अनुरूप तैयार की गई हैं।",
+    "thWater": "जल जरूरत",
+    "thRisk": "मंडी जोखिम",
+    "thFertilizer": "उर्वरक का नाम",
+    "thBags": "बोरी / एकड़ (50 किग्रा)",
+    "thTiming": "डालने का सही समय",
+    "ureaTiming": "विभाजित मात्रा: 50% बुवाई पर + 25% कल्ले फूटते समय + 25% बाली बनते समय",
+    "dapTiming": "100% बुवाई या रोपाई के समय आखिरी जुताई में",
+    "mopTiming": "100% बुवाई पर अथवा 50% बुवाई + 50% फूल आने पर",
+    "page1Footer": "पृष्ठ 1 / 3 • प्रारंभिक निदान एवं फसल चयन रणनीति • SPARC AgriSense AI",
     "sectionSteps": "चरणबद्ध खेती मार्गदर्शिका (खेती कैसे करें)",
-    "step1Title": "चरण 1: खेत की तैयारी एवं जैविक खाद",
-    "step1Desc": "कल्टीवेटर व रोटावेटर से 2-3 गहरी जुताई करें; लेजर लैंड लेवलर से समतलीकरण करें। बुवाई से 2-3 सप्ताह पहले 4-5 टन अच्छी तरह सड़ी गोबर की खाद या केंचुआ खाद प्रति एकड़ मिलाएं। बीज उपचार: बीजों को ट्राइकोडर्मा विरिडी (4 ग्राम/किग्रा) या स्यूडोमोनास फ्लोरेसेंस (10 ग्राम/किग्रा) + एजोटोबैक्टर/राइजोबियम कल्चर से उपचारित करें ताकि जड़ सड़न व उकठा से बचाव हो सके।",
-    "step2Title": "चरण 2: बुवाई / रोपाई एवं पौध अंतरण",
-    "step2Desc": "प्रमाणित बीज दर (सीधी बुवाई 15-20 किग्रा/एकड़, नर्सरी रोपाई 8-10 किग्रा) का उपयोग करें। कतार से कतार 20 सेमी व पौधे से पौधा 15 सेमी की दूरी पर 2-3 सेमी गहराई में बोएं। अंतिम जुताई पर डीएपी (1.2 बोरी), एमओपी (0.8 बोरी) एवं 10 किग्रा जिंक सल्फेट (21%) डालें; यूरिया को सीधे बीज के साथ न डालें।",
-    "step3Title": "चरण 3: जल प्रबंधन एवं क्रांतिक सिंचाई",
-    "step3Desc": "वानस्पतिक अवस्था में 2-3 सेमी उथला पानी रखें। 4 क्रांतिक अवस्थाओं पर सिंचाई सुनिश्चित करें: कल्ले फूटते समय (टिल्लरिंग), बाली बनते समय, फूल आते समय एवं दाना भरते समय। कटाई से 10-12 दिन पहले खेत का पानी पूरी तरह निकाल दें ताकि दाने समान रूप से पक सकें।",
-    "step4Title": "चरण 4: खरपतवार नियंत्रण एवं शीर्ष उर्वरक",
-    "step4Desc": "बुवाई के 48 घंटे के भीतर पेंडीमेथालिन 30% ईसी @ 1.0 लीटर/एकड़ का छिड़काव करें या 20 व 40 दिन पर निराई-गुड़ाई करें। यूरिया का दो बार टॉप-ड्रेसिंग: पहला कल्ले फूटते समय (25%) और दूसरा बाली बनते समय (25%) हल्की सिंचाई के साथ। पत्तियों के हरेपन हेतु 0.5% जिंक सल्फेट + 0.25% चूना या नैनो यूरिया (4 मिली/लीटर) का छिड़काव करें।",
-    "step5Title": "चरण 5: कटाई, गहाई एवं सुरक्षित भंडारण",
-    "step5Desc": "जब बालियों के 80-85% दाने सुनहरे पीले हो जाएं और दानों में नमी 18-20% रह जाए, तब कटाई करें। गहाई के बाद दानों को तिरपाल पर 3-4 दिन सुखाकर नमी 12-14% पर लाएं। कीटों से सुरक्षा हेतु नीम तेल या सेल्फास से उपचारित हवादार व वायुरोधी कोठियों/थैलों में भंडारण करें।",
-    "sectionTroubleshoot": "खेत आपातकाल एवं समस्या निवारण (समस्या आने पर क्या करें)",
-    "thProblem": "लक्षण / समस्या",
+    "step1Title": "चरण 1: खेत की तैयारी, गहरी जुताई एवं जैविक आधारीय खाद",
+    "step1Desc": "कल्टीवेटर व रोटावेटर से 2-3 गहरी जुताई करें; लेजर लैंड लेवलर से समतलीकरण करें ताकि पानी का समान फैलाव हो। बुवाई से 2-3 सप्ताह पूर्व 4-5 टन अच्छी तरह सड़ी गोबर की खाद या केंचुआ खाद प्रति एकड़ मिलाएं। बीज उपचार: बीजों को ट्राइकोडर्मा विरिडी (4 ग्राम/किग्रा) या स्यूडोमोनास फ्लोरेसेंस (10 ग्राम/किग्रा) + एजोटोबैक्टर/राइजोबियम कल्चर से उपचारित करें ताकि उकठा व जड़ सड़न से बचाव हो सके।",
+    "step2Title": "चरण 2: प्रमाणित बीज बुवाई / रोपाई एवं पौध अंतरण",
+    "step2Desc": "प्रमाणित उच्च अंकुरण वाले बीज (सीधी बुवाई 15-20 किग्रा/एकड़, नर्सरी रोपाई 8-10 किग्रा) का उपयोग करें। कतार से कतार 20 सेमी व पौधे से पौधा 15 सेमी की दूरी पर 2-3 सेमी गहराई में बोएं। अंतिम जुताई पर डीएपी (1.2 बोरी), एमओपी (0.8 बोरी) एवं 10 किग्रा जिंक सल्फेट (21%) डालें; यूरिया को सीधे बीज के साथ न डालें।",
+    "step3Title": "चरण 3: एकीकृत खरपतवार नियंत्रण एवं फसल सुरक्षा",
+    "step3Desc": "बुवाई के 48 घंटे के भीतर नम मिट्टी में पेंडीमेथालिन 30% ईसी @ 1.0 लीटर/एकड़ का छिड़काव करें या 20 व 40 दिन पर कोनो-वीडर/खुरपी से निराई-गुड़ाई करें। मेड़ों को साफ रखें तथा कतारों के बीच पुआल की मल्चिंग करें जिससे नमी संरक्षित रहे और चौड़ी पत्ती वाले खरपतवार नष्ट हों।",
+    "step4Title": "चरण 4: जल प्रबंधन एवं क्रांतिक सिंचाई अवस्थाएं",
+    "step4Desc": "वानस्पतिक अवस्था में 2-3 सेमी उथला पानी रखें। 4 क्रांतिक अवस्थाओं पर सिंचाई अवश्य सुनिश्चित करें: कल्ले फूटते समय (टिल्लरिंग), बाली बनते समय, फूल आते समय एवं दाना भरते समय। कटाई से 10-12 दिन पहले खेत का पानी पूरी तरह निकाल दें ताकि दाने समान रूप से पक सकें।",
+    "step5Title": "चरण 5: शीर्ष उर्वरक (यूरिया स्प्लिट) एवं पर्णीय पोषण",
+    "step5Desc": "यूरिया का दो बार टॉप-ड्रेसिंग: पहला कल्ले फूटते समय (25%) और दूसरा बाली बनते समय (25%) हल्की सिंचाई के साथ दें। 35-40 दिन पर 0.5% जिंक सल्फेट + 0.25% चूना या नैनो यूरिया (4 मिली/लीटर पानी) का पर्णीय छिड़काव करें जिससे कल्ले अधिक निकलें और बालियां मजबूत बनें।",
+    "step6Title": "चरण 6: परिपक्वता पहचान, कटाई, गहाई एवं सुरक्षित भंडारण",
+    "step6Desc": "जब बालियों के 80-85% दाने सुनहरे पीले हो जाएं और दानों में नमी 18-20% रह जाए, तब कटाई करें। गहाई के बाद दानों को तिरपाल पर 3-4 दिन सुखाकर नमी 12-14% पर लाएं। कीटों से सुरक्षा हेतु नीम तेल या सेल्फास से उपचारित हवादार व वायुरोधी कोठियों/थैलों में भंडारण करें।",
+    "sectionProTips": "उन्नत किसान सुझाव: सतत कृषि एवं मृदा संरक्षण",
+    "tipCropRotation": "फसल चक्र: दलहनी फसलों (मूंग/उड़द/चना) के साथ फसल चक्र अपनाएं जिससे प्रति हेक्टेयर 30-40 किग्रा वायुमंडलीय नाइट्रोजन का जैविक स्थिरीकरण हो सके।",
+    "tipGreenManure": "हरी खाद: खरीफ से पहले ढैंचा या सनई की बुवाई करें और 45 दिन पर मिट्टी में पलटें, जिससे जैविक कार्बन और मिट्टी की जलधारण क्षमता बढ़े।",
+    "tipSoilHealth": "मृदा स्वास्थ्य कार्ड: हर 2 वर्ष में मिट्टी की जांच कराएं और संस्तुति अनुसार ही संतुलित खाद का प्रयोग करें।",
+    "page2Footer": "पृष्ठ 2 / 3 • कृषि पद्धतियाँ एवं सस्य क्रियाएँ • SPARC AgriSense AI",
+    "sectionTroubleshoot": "खेत आपातकालीन समस्या निवारण (समस्या आने पर क्या करें)",
+    "thProblem": "लक्षण / आपात स्थिति",
     "thCause": "संभावित कृषि कारण",
     "thAction": "तत्काल खेत उपाय व उपचार",
     "prob1Title": "पत्तियों का पीला पड़ना व वृद्धि रुकना",
@@ -5633,54 +5669,79 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Title": "असमय भारी बारिश व खेत में जलभराव",
     "prob6Cause": "खराब जल निकासी जिससे जड़ों में ऑक्सीजन की कमी हो जाती है।",
     "prob6Action": "खेत की मेड़ काटकर 24 घंटे के भीतर पानी बाहर निकालें। पानी निकलने के बाद जड़ों को सक्रिय करने हेतु 19:19:19 एनपीके (10 ग्राम/लीटर) का छिड़काव करें।",
+    "prob7Title": "फली छेदक, तंबाकू इल्ली व फली नाशक",
+    "prob7Cause": "हेलिकोवर्पा/स्पोडोप्टेरा इल्लियां जो पत्तियों व फलियों को खाती हैं।",
+    "prob7Action": "इमामेक्टिन बेंजोएट 5% एसजी @ 0.5 ग्राम/लीटर या बीटी कल्चर @ 2 ग्राम/लीटर का छिड़काव करें। पक्षी बैठने के लिए टी-आकार की खूंटियां लगाएं।",
+    "prob8Title": "सूक्ष्म पोषक तत्व कमी (खैरा रोग / आयरन क्लोरोसिस)",
+    "prob8Cause": "क्षारीय या चूनायुक्त मिट्टी में जिंक/लोहे का अनुपलब्ध होना।",
+    "prob8Action": "0.5% जिंक सल्फेट (21%) + 0.25% बुझा चूना या 1% फेरस सल्फेट का 10 दिन के अंतराल पर 2 बार छिड़काव करें।",
+    "sectionSchemes": "किसानों के लिए प्रमुख सरकारी कृषि योजनाएं एवं अनुदान",
+    "schemePmKisan": "पीएम-किसान (PM-KISAN): किसानों को ₹6,000 प्रति वर्ष की प्रत्यक्ष आर्थिक सहायता तीन किस्तों (₹2,000 प्रत्येक) में सीधे बैंक खाते में।",
+    "schemePmfby": "प्रधानमंत्री फसल बीमा योजना (PMFBY): प्राकृतिक आपदाओं, बेमौसम बारिश व सूखे से सुरक्षा; नाममात्र प्रीमियम (रबी 1.5%, खरीफ 2%)।",
+    "schemeShc": "मृदा स्वास्थ्य कार्ड योजना: राज्य कृषि विभाग द्वारा प्रत्येक 2 वर्ष में खेत की निःशुल्क/सस्ती जांच एवं संतुलित खाद का निर्धारण।",
+    "schemeSmam": "कृषि यंत्रीकरण उप-मिशन (SMAM): ट्रैक्टर, रोटावेटर, सीड-ड्रिल व लेजर लेवलर पर लघु व सीमांत किसानों को 40% से 50% तक सरकारी अनुदान।",
+    "schemeKcc": "किसान क्रेडिट कार्ड (KCC): समय पर भुगतान करने पर मात्र 4% प्रभावी ब्याज दर पर ₹3 लाख तक का सस्ता कृषि ऋण।",
     "sectionEmergency": "आपातकालीन किसान हेल्पलाइन व संस्थागत सहायता",
     "kisanCallCenter": "किसान कॉल सेंटर (टोल-फ्री हेल्पलाइन): 1800-180-1551 (सुबह 6:00 से रात 10:00 बजे, वर्ष भर सभी भारतीय भाषाओं में उपलब्ध)",
-    "kvkEscalation": "कृषि विज्ञान केंद्र (KVK) परामर्श: किसी भी अज्ञात कीट या बीमारी के प्रकोप पर प्रभावित पत्ती के नमूने प्लास्टिक की थैली में लेकर निकटतम कृषि विज्ञान केंद्र या प्रखंड कृषि पदाधिकारी (BAO) से तुरंत संपर्क करें।"
+    "kvkEscalation": "कृषि विज्ञान केंद्र (KVK) परामर्श: किसी भी अज्ञात कीट या बीमारी के प्रकोप पर प्रभावित पत्ती के नमूने प्लास्टिक की थैली में लेकर निकटतम कृषि विज्ञान केंद्र या प्रखंड कृषि पदाधिकारी (BAO) से तुरंत संपर्क करें।",
+    "disclaimer": "यह परामर्श ICAR-IISS एवं राज्य कृषि विश्वविद्यालय के वैज्ञानिक मानकों पर आधारित है। संस्तुतियां वर्तमान मृदा परीक्षण एवं मौसम टेलीमेट्री के आधार पर तैयार की गई हैं।",
+    "page3Footer": "पृष्ठ 3 / 3 • पादप संरक्षण एवं संस्थागत सहायता • SPARC AgriSense AI"
   },
   "mr": {
     "btnText": "📄 पीडीएफ डाउनलोड / Download PDF",
     "reportTitle": "शेतकरी कृषी सल्ला आणि मृदा आरोग्य अहवाल",
-    "reportSubtitle": "SPARC AgriSense AI • राष्ट्रीय शाश्वत शेती अभियान (NMSA) व ICAR मानके",
-    "sectionField": "शेत चाचणी आणि मातीचे आरोग्य",
-    "sectionWeather": "हवामान आणि पर्जन्यमान टेलीमेट्री",
-    "sectionTopCrop": "अव्वल शिफारस केलेले पीक (उत्कृष्ट पर्याय #1)",
-    "sectionAlts": "पर्यायी पिके",
-    "sectionFert": "खत व्यवस्थापन संच (प्रति एकर शिफारस)",
-    "sectionKvk": "कृषी विज्ञान केंद्र (KVK) तज्ज्ञ सल्ला",
+    "reportSubtitle": "SPARC AgriSense AI • राष्ट्रीय शाश्वत कृषी अभियान (NMSA) आणि ICAR मानके",
+    "page2Title": "टप्प्याटप्प्याने पीक लागवड आणि सस्यक्रिया मार्गदर्शिका",
+    "page2Subtitle": "भारतीय कृषी संशोधन परिषद (ICAR) उत्तम कृषी पद्धती (GAP) आणि विद्यापीठ मानके",
+    "page3Title": "शेत आणीबाणी समस्या निवारण आणि शासकीय योजना",
+    "page3Subtitle": "लक्षण आधारित निदान, तात्काळ उपाय आणि प्रमुख शेतकरी कल्याणकारी योजना",
+    "sectionField": "शेत तपासणी आणि मृदा आरोग्य चाचणी",
+    "sectionWeather": "हवामान आणि पर्जन्य टेलीमेट्री",
+    "sectionTopCrop": "सर्वोत्कृष्ट अनुशंसित पीक (प्रथम पसंती #1)",
+    "sectionAlts": "पर्यायी पीक पर्याय",
+    "sectionFert": "खत व्यवस्थापन पॅकेज (प्रति एकरी शिफारस)",
+    "sectionKvk": "कृषी विज्ञान केंद्र (KVK) विशेष सल्ला",
     "lblDate": "अहवाल दिनांक:",
     "lblLocation": "शेताचे ठिकाण:",
-    "lblAgroZone": "कृषी-हवामान क्षेत्र:",
-    "lblMatch": "योग्यतेचे प्रमाण",
-    "lblVarieties": "शिफारस केलेली वाणे:",
+    "lblAgroZone": "कृषी-हवामान विभाग:",
+    "lblMatch": "अनुकूलता गुणोत्तर",
+    "lblVarieties": "शिफारस केलेली सुधारित वाणे:",
     "lblYield": "अपेक्षित उत्पादन",
     "lblWater": "पाण्याची गरज",
-    "lblDuration": "कालावधी",
+    "lblDuration": "पीक कालावधी",
     "lblPrice": "बाजारभाव अंदाज",
-    "lblBasal": "पेरणीच्या वेळचा बेसल डोस:",
-    "lblWhyFits": "कृषी वैज्ञानिक कारण:",
-    "thCrop": "पिकाचे नाव",
-    "thMatch": "जुळणी %",
+    "lblBasal": "पेरणीच्या वेळी द्यावयाचे खत:",
+    "lblWhyFits": "शास्त्रीय निवडीचा आधार:",
+    "thCrop": "पीक पर्याय",
+    "thMatch": "मॅच %",
     "thYield": "अपेक्षित उत्पादन",
     "thWater": "पाण्याची गरज",
     "thRisk": "बाजार जोखीम",
-    "thFertilizer": "खताचा प्रकार",
-    "thBags": "प्रमाण (५० किलो बॅग/एकर)",
-    "thTiming": "वापराची वेळ",
-    "ureaTiming": "विभागून: ५०% पेरणी + २५% फुटवे फुटताना + २५% फुलोऱ्यात",
-    "dapTiming": "१००% पेरणीच्या वेळी बेसल डोस म्हणून द्यावे",
-    "mopTiming": "१००% पेरणीच्या वेळी किंवा ५०% पेरणी + ५०% फुलोरा",
-    "disclaimer": "हा अहवाल ICAR-IISS व राज्य कृषी विद्यापीठाच्या पॅकेज ऑफ प्रॅक्टिसेसवर आधारित आहे. उपलब्ध माती घटक व पर्जन्यमानानुसार शिफारसी तयार केल्या आहेत.",
+    "thFertilizer": "खताचे नाव",
+    "thBags": "पोती / एकर (५० किलो)",
+    "thTiming": "वापराची योग्य वेळ",
+    "ureaTiming": "विभागून वापर: ५०% पेरणीवेळी + २५% फुटवे फुटताना + २५% लोंबी भरताना",
+    "dapTiming": "१००% पेरणी किंवा पुनर्लागवडीवेळी शेवटच्या पाळीत",
+    "mopTiming": "१००% पेरणीवेळी किंवा ५०% पेरणी + ५०% फुलधारणेवेळी",
+    "page1Footer": "पृष्ठ १ / ३ • प्राथमिक तपासणी आणि पीक धोरण • SPARC AgriSense AI",
     "sectionSteps": "टप्प्याटप्प्याने लागवड मार्गदर्शिका (शेती कशी करावी)",
-    "step1Title": "टप्पा १: जमिनीची तयारी आणि सेंद्रिय खत",
+    "step1Title": "टप्पा १: जमिनीची तयारी, खोल नांगरट आणि सेंद्रिय खत",
     "step1Desc": "कुळव आणि रोटाव्हेटरने २-३ खोल नांगरट करा; लेझर लँड लेव्हलरने जमीन सपाट करा. पेरणीच्या २-३ आठवडे आधी एकरी ४-५ टन चांगले कुजलेले शेणखत किंवा गांडूळ खत मिसळा. बीजप्रक्रिया: ट्रायकोडर्मा व्हिरिडी (४ ग्रॅम/किलो) किंवा स्यूडोमोनस फ्लोरेसेन्स (१० ग्रॅम/किलो) + अझोटोबॅक्टर/रायझोबियम कल्चरने प्रक्रिया करा.",
-    "step2Title": "टप्पा २: पेरणी / पुनर्लागवड आणि अंतराचे व्यवस्थापन",
-    "step2Desc": "प्रमाणित बियाणे वापरा. ओळीतील अंतर २० सेमी व रोपांमधील अंतर १५ सेमी ठेवून २-३ सेमी खोलीवर पेरणी करा. शेवटच्या पाळीत डीएपी (१.२ पोती), एमओपी (०.८ पोती) आणि १० किलो झिंक सल्फेट (२१%) टाका; युरिया थेट बियाण्याजवळ टाकू नका.",
-    "step3Title": "टप्पा ३: काटेकोर पाणी व सिंचन व्यवस्थापन",
-    "step3Desc": "वाढीच्या काळात २-३ सेमी उथळ पाणी किंवा वाफसा ठेवा. ४ महत्त्वाच्या टप्प्यांवर पाणी द्या: फुटवे फुटताना, लोंबी भरताना, फुलधारणा आणि दाणे भरताना. काढणीच्या १०-१२ दिवस आधी शेतातील पाणी पूर्णपणे काढून टाका.",
-    "step4Title": "टप्पा ४: तण नियंत्रण आणि खतांचा हप्ता",
-    "step4Desc": "पेरणीनंतर ४८ तासांत पेंडीमेथालिन ३०% ईसी @ १.० लिटर/एकरी फवारा किंवा २० व ४० दिवसांनी खुरपणी करा. युरियाचे दोन हप्ते द्या: २५% फुटवे फुटताना आणि २५% लोंबी निघताना. हिरवेपणासाठी ०.५% झिंक सल्फेट किंवा नॅनो युरिया (४ मिली/लिटर) फवारा.",
-    "step5Title": "टप्पा ५: वेळेवर काढणी, मळणी आणि सुरक्षित साठवण",
-    "step5Desc": "८०-८५% दाणे पिवळे पडल्यावर आणि आर्द्रता १८-२०% असताना काढणी करा. मळणीनंतर दाणे उन्हात ३-४ दिवस वाळवून आर्द्रता १२-१४% वर आणा. कडधान्य भुंग्यांपासून संरक्षणासाठी निंबोळी तेल किंवा सेल्फॉसच्या गोळ्या वापरून हवाबंद कोठारात साठवा.",
+    "step2Title": "टप्पा २: प्रमाणित बियाणे पेरणी / पुनर्लागवड आणि अंतर व्यवस्थापन",
+    "step2Desc": "प्रमाणित बियाणे वापरा (सरळ पेरणी १५-२० किलो/एकर, रोपवाटिका ८-१० किलो). ओळीतील अंतर २० सेमी व रोपांमधील अंतर १५ सेमी ठेवून २-३ सेमी खोलीवर पेरणी करा. शेवटच्या पाळीत डीएपी (१.२ पोती), एमओपी (०.८ पोती) आणि १० किलो झिंक सल्फेट (२१%) टाका; युरिया थेट बियाण्याजवळ टाकू नका.",
+    "step3Title": "टप्पा ३: एकात्मिक तण नियंत्रण आणि पीक निगा",
+    "step3Desc": "पेरणीनंतर ४८ तासांत ओल असताना पेंडीमेथालिन ३०% ईसी @ १.० लिटर/एकरी फवारा किंवा २० व ४० दिवसांनी खुरपणी करा. बांध स्वच्छ ठेवा आणि ओळींमध्ये गवताचे आच्छादन करा.",
+    "step4Title": "टप्पा ४: काटेकोर पाणी आणि सिंचनाच्या महत्त्वाच्या अवस्था",
+    "step4Desc": "वाढीच्या काळात २-३ सेमी उथळ पाणी किंवा वाफसा ठेवा. ४ महत्त्वाच्या टप्प्यांवर पाणी द्या: फुटवे फुटताना, लोंबी भरताना, फुलधारणा आणि दाणे भरताना. काढणीच्या १०-१२ दिवस आधी शेतातील पाणी पूर्णपणे काढून टाका.",
+    "step5Title": "टप्पा ५: युरियाचे हप्ते आणि पानांवरील पोषण फवारणी",
+    "step5Desc": "युरियाचे दोन हप्ते द्या: २५% फुटवे फुटताना आणि २५% लोंबी निघताना. हिरवेपणासाठी ३५-४० दिवसांनी ०.५% झिंक सल्फेट किंवा नॅनो युरिया (४ मिली/लिटर) फवारा.",
+    "step6Title": "टप्पा ६: पक्वता ओळख, काढणी, मळणी आणि सुरक्षित साठवण",
+    "step6Desc": "८०-८५% दाणे पिवळे पडल्यावर आणि आर्द्रता १८-२०% असताना काढणी करा. मळणीनंतर दाणे उन्हात ३-४ दिवस वाळवून आर्द्रता १२-१४% वर आणा. कडधान्य भुंग्यांपासून संरक्षणासाठी निंबोळी तेल किंवा सेल्फॉस वापरून हवाबंद कोठारात साठवा.",
+    "sectionProTips": "प्रगतीशील शेतकरी सल्ला: शाश्वत शेती व जमीन संवर्धन",
+    "tipCropRotation": "पीक फेरपालट: तृणधान्य पिकांनंतर कडधान्य (मूग/उडीद/हरभरा) लावा जेणेकरून जमिनीत नत्राचे नैसर्गिक स्थिरीकरण होईल.",
+    "tipGreenManure": "हिरवळीचे खत: खरीप हंगामापूर्वी ताग किंवा धैंचा जमिनीत ४५ दिवसांनी गाडा, ज्यामुळे सेंद्रिय कर्ब वाढेल.",
+    "tipSoilHealth": "मृदा आरोग्य: दर २ वर्षांनी माती परीक्षण करून समतोल खतांचा वापर करा.",
+    "page2Footer": "पृष्ठ २ / ३ • कृषी पद्धती आणि शेतीविषयक कामे • SPARC AgriSense AI",
     "sectionTroubleshoot": "शेत आणीबाणी आणि समस्या निवारण (समस्या उद्भवल्यास काय करावे)",
     "thProblem": "दिसणारी लक्षणे / अडचण",
     "thCause": "संभाव्य कृषी कारण",
@@ -5703,9 +5764,23 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Title": "अवेळी अतिवृष्टी आणि शेतात पाणी साचणे",
     "prob6Cause": "पाण्याचा निचरा न झाल्याने मुळांचा श्वास कोंडणे.",
     "prob6Action": "शेताचे बांध कापून २४ तासांच्या आत पाणी काढून टाका. पाणी ओसरल्यावर मुळांच्या वाढीसाठी १९:१९:१९ एनपीके (१० ग्रॅम/लिटर) फवारा.",
+    "prob7Title": "घाटे अळी, लष्करी अळी व पाने खाणारी अळी",
+    "prob7Cause": "हेलिकोव्हर्पा/स्पोडोप्टेरा अळ्या शेंगा आणि पाने कुरतडतात.",
+    "prob7Action": "इमामेक्टिन बेंझोएट ५% एसजी @ ०.५ ग्रॅम/लिटर किंवा बीटी कल्चर @ २ ग्रॅम/लिटर फवारा. शेतात पक्षी थांबण्यासाठी इंग्रजी T आकाराचे १५ बांबू रोवा.",
+    "prob8Title": "सूक्ष्म अन्नद्रव्य कमतरता (खैरा रोग / लोह कमतरता)",
+    "prob8Cause": "चुनखडीयुक्त जमिनीत जस्त आणि लोहाची अनुपलब्धता.",
+    "prob8Action": "०.५% झिंक सल्फेट + ०.२५% चुना किंवा १% फेरस सल्फेट १० दिवसांच्या अंतराने दोनदा फवारा.",
+    "sectionSchemes": "शेतकऱ्यांसाठी महत्त्वाच्या शासकीय कृषी योजना आणि अनुदान",
+    "schemePmKisan": "पीएम-किसान (PM-KISAN): शेतकऱ्यांना दरवर्षी ₹६,००० चे थेट आर्थिक साहाय्य ३ हप्त्यांमध्ये (प्रत्येकी ₹२,०००) थेट बँक खात्यात.",
+    "schemePmfby": "प्रधानमंत्री पीक विमा योजना (PMFBY): नैसर्गिक आपत्ती आणि अवकाळी पावसात पिकांना संरक्षण; नाममात्र विमा हप्ता (रब्बी १.५%, खरीप २%).",
+    "schemeShc": "मृदा आरोग्य पत्रिका योजना: दर २ वर्षांनी शेतातील मातीची मोफत तपासणी आणि आवश्यक खतांचा अचूक सल्ला.",
+    "schemeSmam": "कृषी यांत्रिकीकरण उप-अभियान (SMAM): ट्रॅक्टर, रोटाव्हेटर, सीड-ड्रिल आणि लेझर लेव्हलर खरेदीवर ४०% ते ५०% पर्यंत शासकीय अनुदान.",
+    "schemeKcc": "किसान क्रेडिट कार्ड (KCC): वेळेवर कर्जफेड केल्यास केवळ ४% प्रभावी व्याजदराने ₹३ लाखांपर्यंत सवलतीचे पीक कर्ज.",
     "sectionEmergency": "तातडीची शेतकरी हेल्पलाइन आणि केव्हीके मदत",
     "kisanCallCenter": "किसान कॉल सेंटर (टोल-फ्री हेल्पलाइन): 1800-180-1551 (सकाळी ६:०० ते रात्री १०:००, सर्व प्रादेशिक भाषांत उपलब्ध)",
-    "kvkEscalation": "कृषी विज्ञान केंद्र (KVK) सल्ला: कोणत्याही अज्ञात रोगासाठी पानांचे नमुने प्लास्टिक पिशवीत घेऊन जवळच्या कृषी विज्ञान केंद्र किंवा तालुका कृषी अधिकाऱ्यांशी संपर्क साधा."
+    "kvkEscalation": "कृषी विज्ञान केंद्र (KVK) सल्ला: कोणत्याही अज्ञात रोगासाठी पानांचे नमुने प्लास्टिक पिशवीत घेऊन जवळच्या कृषी विज्ञान केंद्र किंवा तालुका कृषी अधिकाऱ्यांशी संपर्क साधा.",
+    "disclaimer": "हा अहवाल ICAR-IISS आणि कृषी विद्यापीठांच्या वैज्ञानिक शिफारशींवर आधारित असून चालू मृदा चाचणी व हवामान टेलीमेट्रीनुसार तयार करण्यात आला आहे.",
+    "page3Footer": "पृष्ठ ३ / ३ • वनस्पती संरक्षण आणि शासकीय साहाय्य • SPARC AgriSense AI"
   },
   "pa": {
     "btnText": "📄 ਪੀਡੀਐਫ ਡਾਊਨਲੋਡ / Download PDF",
@@ -5775,7 +5850,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Action": "ਖੇਤ ਦੇ ਵੱਟ ਤੋੜ ਕੇ 24 ਘੰਟਿਆਂ ਵਿੱਚ ਪਾਣੀ ਕੱਢੋ। ਪਾਣੀ ਉਤਰਨ ਪਿੱਛੋਂ 19:19:19 ਐਨਪੀਕੇ (10 ਗ੍ਰਾਮ/ਲੀਟਰ) ਛਿੜਕੋ।",
     "sectionEmergency": "ਐਮਰਜੈਂਸੀ ਕਿਸਾਨ ਹੈਲਪਲਾਈਨ ਅਤੇ ਕੇਵੀਕੇ ਸਹਾਇਤਾ",
     "kisanCallCenter": "ਕਿਸਾਨ ਕਾਲ ਸੈਂਟਰ (ਟੋਲ-ਫ੍ਰੀ ਹੈਲਪਲਾਈਨ): 1800-180-1551 (ਸਵੇਰੇ 6:00 ਤੋਂ ਰਾਤ 10:00 ਵਜੇ ਤੱਕ, ਸਾਰੀਆਂ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਉਪਲਬਧ)",
-    "kvkEscalation": "ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ (KVK) ਸਲਾਹ: ਕਿਸੇ ਵੀ ਅਣਪਛਾਤੀ ਬਿਮਾਰੀ ਜਾਂ ਕੀੜੇ ਲਈ ਪੱਤਿਆਂ ਦਾ ਨਮੂਨਾ ਲੈ ਕੇ ਨੇੜਲੇ ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ ਜਾਂ ਖੇਤੀਬਾੜੀ ਅਫ਼ਸਰ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।"
+    "kvkEscalation": "ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ (KVK) ਸਲਾਹ: ਕਿਸੇ ਵੀ ਅਣਪਛਾਤੀ ਬਿਮਾਰੀ ਜਾਂ ਕੀੜੇ ਲਈ ਪੱਤਿਆਂ ਦਾ ਨਮੂਨਾ ਲੈ ਕੇ ਨੇੜਲੇ ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ ਜਾਂ ਖੇਤੀਬਾੜੀ ਅਫ਼ਸਰ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।",
+    "page2Title": "ਕਿਸਾਨ ਖੇਤੀਬਾੜੀ ਸਲਾਹ ਅਤੇ ਮਿੱਟੀ ਸਿਹਤ ਰਿਪੋਰਟ",
+    "page2Subtitle": "SPARC AgriSense AI • ਕੌਮੀ ਟਿਕਾਊ ਖੇਤੀਬਾੜੀ ਮਿਸ਼ਨ (NMSA)",
+    "page3Title": "ਕਿਸਾਨ ਖੇਤੀਬਾੜੀ ਸਲਾਹ ਅਤੇ ਮਿੱਟੀ ਸਿਹਤ ਰਿਪੋਰਟ",
+    "page3Subtitle": "SPARC AgriSense AI • ਕੌਮੀ ਟਿਕਾਊ ਖੇਤੀਬਾੜੀ ਮਿਸ਼ਨ (NMSA)",
+    "page1Footer": "ਪੰਨਾ 1 / 3 • ਮੁੱਢਲੀ ਜਾਂਚ ਅਤੇ ਫਸਲ ਰਣਨੀਤੀ • SPARC AgriSense AI",
+    "page2Footer": "ਪੰਨਾ 2 / 3 • ਖੇਤੀਬਾੜੀ ਅਭਿਆਸ ਅਤੇ ਕਾਰਜ • SPARC AgriSense AI",
+    "page3Footer": "ਪੰਨਾ 3 / 3 • ਪੌਦਾ ਸੁਰੱਖਿਆ ਅਤੇ ਸਰਕਾਰੀ ਸਹਾਇਤਾ • SPARC AgriSense AI",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "ਅਗਾਂਹਵਧੂ ਕਿਸਾਨ ਸੁਝਾਅ: ਟਿਕਾਊ ਖੇਤੀ ਅਤੇ ਜ਼ਮੀਨ ਦੀ ਸਾਂਭ-ਸੰਭਾਲ",
+    "tipCropRotation": "ਫਸਲੀ ਚੱਕਰ: ਦਾਲਾਂ (ਮੂੰਗੀ/ਮਾਂਹ/ਛੋਲੇ) ਨਾਲ ਫਸਲੀ ਚੱਕਰ ਅਪਣਾਓ ਤਾਂ ਜੋ ਜ਼ਮੀਨ ਵਿੱਚ ਕੁਦਰਤੀ ਨਾਈਟ੍ਰੋਜਨ ਵਧ ਸਕੇ।",
+    "tipGreenManure": "ਹਰੀ ਖਾਦ: ਝੋਨੇ ਤੋਂ ਪਹਿਲਾਂ ਜੰਤਰ ਜਾਂ ਸਣ ਬੀਜ ਕੇ 45 ਦਿਨਾਂ ਬਾਅਦ ਜ਼ਮੀਨ ਵਿੱਚ ਵਾਹੋ।",
+    "tipSoilHealth": "ਮਿੱਟੀ ਪਰਖ: ਹਰ 2 ਸਾਲ ਬਾਅਦ ਮਿੱਟੀ ਦੀ ਪਰਖ ਕਰਵਾਓ ਅਤੇ ਸੰਤੁਲਿਤ ਖਾਦਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ।",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "ਕਿਸਾਨਾਂ ਲਈ ਅਹਿਮ ਸਰਕਾਰੀ ਖੇਤੀ ਸਕੀਮਾਂ ਅਤੇ ਸਬਸਿਡੀਆਂ",
+    "schemePmKisan": "ਪੀਐਮ-ਕਿਸਾਨ (PM-KISAN): ਕਿਸਾਨਾਂ ਨੂੰ ਸਾਲਾਨਾ ₹6,000 ਦੀ ਸਿੱਧੀ ਵਿੱਤੀ ਸਹਾਇਤਾ ਤਿੰਨ ਕਿਸ਼ਤਾਂ ਵਿੱਚ।",
+    "schemePmfby": "ਪ੍ਰਧਾਨ ਮੰਤਰੀ ਫਸਲ ਬੀਮਾ ਯੋਜਨਾ (PMFBY): ਕੁਦਰਤੀ ਆਫ਼ਤਾਂ ਖ਼ਿਲਾਫ਼ ਨਿਗੂਣੇ ਪ੍ਰੀਮੀਅਮ (1.5% - 2%) ਤੇ ਫਸਲ ਬੀਮਾ।",
+    "schemeShc": "ਮਿੱਟੀ ਸਿਹਤ ਕਾਰਡ: ਹਰ 2 ਸਾਲ ਬਾਅਦ ਮਿੱਟੀ ਦੀ ਮੁਫ਼ਤ ਜਾਂਚ ਅਤੇ ਲੋੜੀਂਦੀਆਂ ਖਾਦਾਂ ਦੀ ਸਿਫ਼ਾਰਸ਼।",
+    "schemeSmam": "ਖੇਤੀ ਮਸ਼ੀਨਰੀ ਸਬਸਿਡੀ (SMAM): ਟਰੈਕਟਰ, ਰੋਟਾਵੇਟਰ ਅਤੇ ਲੇਜ਼ਰ ਲੈਵਲਰ ਤੇ 40% ਤੋਂ 50% ਤੱਕ ਸਰਕਾਰੀ ਸਬਸਿਡੀ।",
+    "schemeKcc": "ਕਿਸਾਨ ਕ੍ਰੈਡਿਟ ਕਾਰਡ (KCC): ਸਮੇਂ ਸਿਰ ਮੋੜਨ ਤੇ ਸਿਰਫ਼ 4% ਵਿਆਜ ਦਰ ਤੇ ₹3 ਲੱਖ ਤੱਕ ਦਾ ਸਸਤਾ ਕਰਜ਼ਾ।"
   },
   "gu": {
     "btnText": "📄 પીડીએફ ડાઉનલોડ / Download PDF",
@@ -5845,7 +5945,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Action": "પાળા કાપીને 24 કલાકમાં પાણી બહાર કાઢો. પાણી ઓસર્યા પછી મૂળના વિકાસ માટે 19:19:19 એનપીકે (10 ગ્રામ/લિટર) છાંટો.",
     "sectionEmergency": "કટોકટી ખેડૂત હેલ્પલાઇન અને કેવીકે સહાય",
     "kisanCallCenter": "કિસાન કૉલ સેન્ટર (ટોલ-ફ્રી હેલ્પલાઇન): 1800-180-1551 (સવારે 6:00 થી રાત્રે 10:00, બધી પ્રાદેશિક ભાષાઓમાં ઉપલબ્ધ)",
-    "kvkEscalation": "કૃષિ વિજ્ઞાન કેન્દ્ર (KVK) સંપર્ક: અજાણી જીવાત કે રોગ માટે પાનના નમૂના લઈ નજીકના કેવીકે અથવા તાલુકા ખેતીવાડી અધિકારીનો તાત્કાલિક સંપર્ક કરો."
+    "kvkEscalation": "કૃષિ વિજ્ઞાન કેન્દ્ર (KVK) સંપર્ક: અજાણી જીવાત કે રોગ માટે પાનના નમૂના લઈ નજીકના કેવીકે અથવા તાલુકા ખેતીવાડી અધિકારીનો તાત્કાલિક સંપર્ક કરો.",
+    "page2Title": "ખેડૂત કૃષિ સલાહ અને જમીન આરોગ્ય અહેવાલ",
+    "page2Subtitle": "SPARC AgriSense AI • રાષ્ટ્રીય ટકાઉ કૃષિ મિશન (NMSA) અને ICAR ધોરણો",
+    "page3Title": "ખેડૂત કૃષિ સલાહ અને જમીન આરોગ્ય અહેવાલ",
+    "page3Subtitle": "SPARC AgriSense AI • રાષ્ટ્રીય ટકાઉ કૃષિ મિશન (NMSA) અને ICAR ધોરણો",
+    "page1Footer": "પૃષ્ઠ 1 / 3 • પ્રાથમિક નિદાન અને પાક પસંદગી • SPARC AgriSense AI",
+    "page2Footer": "પૃષ્ઠ 2 / 3 • કૃષિ પદ્ધતિઓ અને ખેત કાર્યો • SPARC AgriSense AI",
+    "page3Footer": "પૃષ્ઠ 3 / 3 • વનસ્પતિ સંરક્ષણ અને સરકારી સહાય • SPARC AgriSense AI",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "પ્રગતિશીલ ખેડૂત માર્ગદર્શન: ટકાઉ ખેતી અને જમીન સંરક્ષણ",
+    "tipCropRotation": "પાક ફેરબદલી: કઠોળ પાકો (મગ/અડદ/ચણા) સાથે પાક ફેરબદલી કરો જેથી જમીનમાં કુદરતી નાઇટ્રોજન સ્થિર થાય.",
+    "tipGreenManure": "લીલો ખાતર: ખરીફ પહેલાં શણ અથવા ઇકડ વાવો અને 45 દિવસે જમીનમાં દાટો જેથી સેન્દ્રિય કાર્બન વધે.",
+    "tipSoilHealth": "મૃદા ચકાસણી: દર 2 વર્ષે જમીન પરીક્ષણ કરાવો અને ભલામણ મુજબ સંતુલિત ખાતર આપો.",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "ખેડૂતો માટે મહત્વપૂર્ણ સરકારી કૃષિ યોજનાઓ અને સબસિડી",
+    "schemePmKisan": "પીએમ-કિસાન (PM-KISAN): ખેડૂતોને વાર્ષિક ₹6,000 ની સીધી સહાય ત્રણ હપ્તામાં સીધી બેંક ખાતામાં.",
+    "schemePmfby": "પ્રધાનમંત્રી ફસલ બીમા યોજના (PMFBY): કુદરતી આપત્તિઓ સામે પાક રક્ષણ; માત્ર 1.5% થી 2% પ્રીમિયમ.",
+    "schemeShc": "સોઇલ હેલ્થ કાર્ડ યોજના: દર 2 વર્ષે જમીનનું મફત પરીક્ષણ અને જરૂરી ખાતરોની વિગતવાર ભલામણ.",
+    "schemeSmam": "કૃષિ યાંત્રીકરણ યોજના (SMAM): ટ્રેક્ટર, રોટાવેટર અને લેસર લેવલર પર નાના ખેડૂતોને 40% થી 50% સબસિડી.",
+    "schemeKcc": "કિસાન ક્રેડિટ કાર્ડ (KCC): સમયસર ચુકવણી પર માત્ર 4% વ્યાજ દરે ₹3 લાખ સુધીનું સસ્તું ધિરાણ."
   },
   "te": {
     "btnText": "📄 PDF డౌన్‌లోడ్ / Download PDF",
@@ -5915,7 +6040,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Action": "గట్లు తెంపి 24 గంటల్లో నీటిని బయటకు పంపండి. నీరు తగ్గాక వేర్ల పునరుద్ధరణకు 19:19:19 ఎన్పీకే (10 గ్రా/లీటరు) పిచికారీ చేయండి.",
     "sectionEmergency": "రైతు అత్యవసర హెల్ప్‌లైన్ మరియు కేవీకే సహాయం",
     "kisanCallCenter": "కిసాన్ కాల్ సెంటర్ (టోల్-ఫ్రీ హెల్ప్‌లైన్): 1800-180-1551 (ఉదయం 6:00 నుండి రాత్రి 10:00 వరకు అన్ని ప్రాంతీయ భాషల్లో)",
-    "kvkEscalation": "కృషి విజ్ఞాన కేంద్రం (KVK) సంప్రదింపులు: గుర్తించని చీడపీడల కోసం ఆకు నమూనాలను సేకరించి సమీప కేవీకే శాస్త్రవేత్తలు లేదా వ్యవసాయ విస్తరణ అధికారిని సంప్రదించండి."
+    "kvkEscalation": "కృషి విజ్ఞాన కేంద్రం (KVK) సంప్రదింపులు: గుర్తించని చీడపీడల కోసం ఆకు నమూనాలను సేకరించి సమీప కేవీకే శాస్త్రవేత్తలు లేదా వ్యవసాయ విస్తరణ అధికారిని సంప్రదించండి.",
+    "page2Title": "రైతు వ్యవసాయ సలహా మరియు నేల ఆరోగ్య నివేదిక",
+    "page2Subtitle": "SPARC AgriSense AI • జాతీయ స్థిరమైన వ్యవసాయ మిషన్ (NMSA)",
+    "page3Title": "రైతు వ్యవసాయ సలహా మరియు నేల ఆరోగ్య నివేదిక",
+    "page3Subtitle": "SPARC AgriSense AI • జాతీయ స్థిరమైన వ్యవసాయ మిషన్ (NMSA)",
+    "page1Footer": "పేజీ 1 / 3 • ప్రాథమిక పరీక్ష మరియు పంట వ్యూహం • SPARC AgriSense AI",
+    "page2Footer": "పేజీ 2 / 3 • వ్యవసాయ పద్ధతులు మరియు సాగు పనులు • SPARC AgriSense AI",
+    "page3Footer": "పేజీ 3 / 3 • సస్యరక్షణ మరియు ప్రభుత్వ సహాయం • SPARC AgriSense AI",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "ఆదర్శ రైతు సూచనలు: స్థిరమైన వ్యవసాయం మరియు నేల పరిరక్షణ",
+    "tipCropRotation": "పంట మార్పిడి: పప్పుధాన్యాల (మినుము/పెసర/శనగ) తో పంట మార్పిడి చేసి నేలలో సహజ నత్రజనిని పెంచండి.",
+    "tipGreenManure": "పచ్చిరొట్ట ఎరువు: ఖరీఫ్ ముందు జీలుగ లేదా జనుము వేసి 45 రోజులకు కలియదున్నండి.",
+    "tipSoilHealth": "నేల పరీక్ష: ప్రతి 2 సంవత్సరాలకు ఒకసారి నేల పరీక్ష చేయించి సమతుల్య ఎరువులను వాడండి.",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "రైతుల కోసం ముఖ్యమైన ప్రభుత్వ వ్యవసాయ పథకాలు మరియు రాయితీలు",
+    "schemePmKisan": "పీఎం-కిసాన్ (PM-KISAN): రైతులకు ఏడాదికి ₹6,000 నేరుగా బ్యాంకు ఖాతాల్లో 3 విడతల్లో జమ.",
+    "schemePmfby": "ప్రధాన మంత్రి ఫసల్ బీమా యోజన (PMFBY): ప్రకృతి విపత్తుల నుంచి రక్షణ; స్వల్ప ప్రీమియం (1.5% - 2%).",
+    "schemeShc": "సాయిల్ హెల్త్ కార్డ్: ప్రతి 2 ఏళ్లకు ఉచిత నేల పరీక్ష మరియు పోషకాల యాజమాన్య సలహాలు.",
+    "schemeSmam": "వ్యవసాయ యాంత్రీకరణ సబ్సిడీ (SMAM): ట్రాక్టర్లు, రోటవేటర్లపై 40% నుండి 50% వరకు రాయితీ.",
+    "schemeKcc": "కిసాన్ క్రెడిట్ కార్డ్ (KCC): సకాలంలో చెల్లిస్తే కేవలం 4% వడ్డీకే ₹3 లక్షల వరకు పంట రుణం."
   },
   "ta": {
     "btnText": "📄 PDF பதிவிறக்கம் / Download PDF",
@@ -5985,7 +6135,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Action": "வரப்புகளை வெட்டி 24 மணி நேரத்திற்குள் நீரை வடிக்கவும். நீர் வடிந்ததும் வேர் வளர்ச்சிக்கு 19:19:19 என்பிகே (10 கிராம்/லிட்டர்) தெளிக்கவும்.",
     "sectionEmergency": "அவசர விவசாய உதவி எண் மற்றும் கேவிகே தொடர்பு",
     "kisanCallCenter": "கிசான் கால் சென்டர் (இலவச உதவி எண்): 1800-180-1551 (காலை 6:00 முதல் இரவு 10:00 வரை அனைத்து பிராந்திய மொழிகளிலும்)",
-    "kvkEscalation": "வேளாண் அறிவியல் மையம் (KVK) ஆலோசனை: விவரிக்க முடியாத நோய்களுக்கு இலை மாதிரிகளை சேகரித்து அருகிலுள்ள கேவிகே அல்லது வட்டார வேளாண்மை அலுவலரை அணுகவும்."
+    "kvkEscalation": "வேளாண் அறிவியல் மையம் (KVK) ஆலோசனை: விவரிக்க முடியாத நோய்களுக்கு இலை மாதிரிகளை சேகரித்து அருகிலுள்ள கேவிகே அல்லது வட்டார வேளாண்மை அலுவலரை அணுகவும்.",
+    "page2Title": "விவசாயி வேளாண்மை ஆலோசனை மற்றும் மண் நல அறிக்கை",
+    "page2Subtitle": "SPARC AgriSense AI • தேசிய நிலையான வேளாண்மை இயக்கம் (NMSA)",
+    "page3Title": "விவசாயி வேளாண்மை ஆலோசனை மற்றும் மண் நல அறிக்கை",
+    "page3Subtitle": "SPARC AgriSense AI • தேசிய நிலையான வேளாண்மை இயக்கம் (NMSA)",
+    "page1Footer": "பக்கம் 1 / 3 • மண் ஆய்வு மற்றும் பயிர் உத்தி • SPARC AgriSense AI",
+    "page2Footer": "பக்கம் 2 / 3 • சாகுபடி முறைகள் மற்றும் களப்பணிகள் • SPARC AgriSense AI",
+    "page3Footer": "பக்கம் 3 / 3 • பயிர் பாதுகாப்பு மற்றும் அரசு உதவிகள் • SPARC AgriSense AI",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "முன்னோடி விவசாயி குறிப்புகள்: நிலையான வேளாண்மை & மண் வளம்",
+    "tipCropRotation": "பயிர் சுழற்சி: பயறு வகைகளுடன் (உளுந்து/பாசிப்பயறு) பயிர் சுழற்சி செய்து வளிமண்டல தழைச்சத்தை நிலைநிறுத்துங்கள்.",
+    "tipGreenManure": "பசும் தாள் உரம்: காரீப் முன் தக்கைப்பூண்டு அல்லது சணப்பை பயிரிட்டு 45 நாளில் மடக்கி உழுங்கள்.",
+    "tipSoilHealth": "மண் பரிசோதனை: 2 ஆண்டுகளுக்கு ஒருமுறை மண் பரிசோதனை செய்து உரமிடுங்கள்.",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "விவசாயிகளுக்கான முக்கிய அரசு வேளாண் திட்டங்கள் & மானியங்கள்",
+    "schemePmKisan": "பிஎம்-கிசான் (PM-KISAN): விவசாயிகளுக்கு ஆண்டுதோறும் ₹6,000 நேரடி வங்கி நிதி உதவி.",
+    "schemePmfby": "பிரதமரின் பயிர் காப்பீட்டுத் திட்டம் (PMFBY): இயற்கை இடர்பாடுகளிலிருந்து குறைந்த பிரீமியத்தில் பயிர் பாதுகாப்பு.",
+    "schemeShc": "மண் வள அட்டை திட்டம்: 2 ஆண்டுகளுக்கு ஒருமுறை இலவச மண் ஆய்வு & உரப் பரிந்துரை.",
+    "schemeSmam": "வேளாண் இயந்திரமயமாக்கல் திட்டம் (SMAM): டிராக்டர், ரோட்டவேட்டருக்கு 40% முதல் 50% வரை மானியம்.",
+    "schemeKcc": "கிசான் கிரெடிட் கார்டு (KCC): குறித்த நேரத்தில் செலுத்தினால் வெறும் 4% வட்டியில் ₹3 லட்சம் வரை பயிர்க் கடன்."
   },
   "bn": {
     "btnText": "📄 পিডিএফ ডাউনলোড / Download PDF",
@@ -6055,7 +6230,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Action": "আইল কেটে ২৪ ঘণ্টার মধ্যে জল বের করে দিন। জল নেমে গেলে শিকড় সতেজ করতে ১৯:১৯:১৯ এনপিকে (১০ গ্রাম/লিটার) স্প্রে করুন।",
     "sectionEmergency": "জরুরি কৃষক হেল্পলাইন ও কেভিকে সহায়তা",
     "kisanCallCenter": "কিষাণ কল সেন্টার (টোল-ফ্রি হেল্পলাইন): 1800-180-1551 (সকাল ৬:০০ থেকে রাত ১০:০০ পর্যন্ত সব আঞ্চলিক ভাষায় উপলব্ধ)",
-    "kvkEscalation": "কৃষি বিজ্ঞান কেন্দ্র (KVK) পরামর্শ: কোনো অজানা রোগ বা পোকার আক্রমণের ক্ষেত্রে ক্ষতিগ্রস্ত পাতা প্লাস্টিক ব্যাগে নিয়ে নিকটস্থ কেভিকে বা ব্লক কৃষি আধিকারিকের সাথে যোগাযোগ করুন।"
+    "kvkEscalation": "কৃষি বিজ্ঞান কেন্দ্র (KVK) পরামর্শ: কোনো অজানা রোগ বা পোকার আক্রমণের ক্ষেত্রে ক্ষতিগ্রস্ত পাতা প্লাস্টিক ব্যাগে নিয়ে নিকটস্থ কেভিকে বা ব্লক কৃষি আধিকারিকের সাথে যোগাযোগ করুন।",
+    "page2Title": "কৃষক কৃষি পরামর্শ ও মৃত্তিকা স্বাস্থ্য প্রতিবেদন",
+    "page2Subtitle": "SPARC AgriSense AI • জাতীয় টেকসই কৃষি মিশন (NMSA) ও ICAR মানদণ্ড",
+    "page3Title": "কৃষক কৃষি পরামর্শ ও মৃত্তিকা স্বাস্থ্য প্রতিবেদন",
+    "page3Subtitle": "SPARC AgriSense AI • জাতীয় টেকসই কৃষি মিশন (NMSA) ও ICAR মানদণ্ড",
+    "page1Footer": "পৃষ্ঠা ১ / ৩ • প্রাথমিক পরীক্ষা ও ফসল পরিকল্পনা • SPARC AgriSense AI",
+    "page2Footer": "পৃষ্ঠা ২ / ৩ • চাষের পদ্ধতি ও পরিচর্যা • SPARC AgriSense AI",
+    "page3Footer": "পৃষ্ঠা ৩ / ৩ • উদ্ভিদ সুরক্ষা ও সরকারি সহায়তা • SPARC AgriSense AI",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "অগ্রণী কৃষক পরামর্শ: টেকসই কৃষি ও মাটি সংরক্ষণ",
+    "tipCropRotation": "শস্য পর্যায়: ডাল শস্যের (মুগ/মাষকলাই/ছোলা) সাথে শস্য পর্যায় বজায় রেখে মাটির উর্বরতা বাড়ান।",
+    "tipGreenManure": "সবুজ সার: খরিফের আগে ধৈঞ্চা বা শন চাষ করে ৪৫ দিনে মাটিতে মিশিয়ে দিন।",
+    "tipSoilHealth": "মাটি পরীক্ষা: প্রতি ২ বছর পর পর মাটি পরীক্ষা করিয়ে সুষম সার প্রয়োগ করুন।",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "কৃষকদের জন্য গুরুত্বপূর্ণ সরকারি কৃষি প্রকল্প ও ভর্তুকি",
+    "schemePmKisan": "পিএম-কিষাণ (PM-KISAN): কৃষকদের বছরে ₹৬,০০০ টাকার আর্থিক সহায়তা সরাসরি ব্যাংক অ্যাকাউন্টে।",
+    "schemePmfby": "প্রধানমন্ত্রী ফসল বীমা যোজনা (PMFBY): প্রাকৃতিক দুর্যোগের হাত থেকে নামমাত্র প্রিমিয়ামে ফসলের সুরক্ষা।",
+    "schemeShc": "মৃত্তিকা স্বাস্থ্য কার্ড: প্রতি ২ বছর পর বিনামূল্যে মাটি পরীক্ষা ও উপযুক্ত সারের মাত্রা নির্ধারণ।",
+    "schemeSmam": "কৃষি যান্ত্রিকীকরণ মিশন (SMAM): ট্রাক্টর, রোটাভেটর ক্রয়ে ক্ষুদ্র কৃষকদের ৪০% থেকে ৫০% সরকারি ভর্তুকি।",
+    "schemeKcc": "কিষাণ ক্রেডিট কার্ড (KCC): সময়মতো পরিশোধে মাত্র ৪% সুদে ₹৩ লাখ পর্যন্ত সহজ কৃষি ঋণ।"
   },
   "kn": {
     "btnText": "📄 PDF ಡೌನ್‌ಲೋಡ್ / Download PDF",
@@ -6125,7 +6325,32 @@ document.addEventListener('DOMContentLoaded', () => {
     "prob6Action": "ಬದುಗಳನ್ನು ಒಡೆದು 24 ಗಂಟೆಗಳಲ್ಲಿ ನೀರನ್ನು ಹೊರಹಾಕಿ. ನೀರು ಇಳಿದ ನಂತರ ಬೇರುಗಳ ಪುನಶ್ಚೇತನಕ್ಕೆ 19:19:19 ಎನ್‌ಪಿಕೆ (10 ಗ್ರಾಂ/ಲೀಟರ್) ಸಿಂಪಡಿಸಿ.",
     "sectionEmergency": "ತುರ್ತು ರೈತ ಸಹಾಯವಾಣಿ ಮತ್ತು ಕೆವಿಕೆ ನೆರವು",
     "kisanCallCenter": "ಕಿಸಾನ್ ಕಾಲ್ ಸೆಂಟರ್ (ಉಚಿತ ಸಹಾಯವಾಣಿ): 1800-180-1551 (ಬೆಳಿಗ್ಗೆ 6:00 ರಿಂದ ರಾತ್ರಿ 10:00 ರವರೆಗೆ ಎಲ್ಲಾ ಪ್ರಾದೇಶಿಕ ಭಾಷೆಗಳಲ್ಲಿ ಲಭ್ಯವಿದೆ)",
-    "kvkEscalation": "ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (KVK) ಸಂಪರ್ಕ: ಗುರುತಿಸಲಾಗದ ರೋಗಗಳಿಗೆ ಎಲೆ ಮಾದರಿಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ ಹತ್ತಿರದ ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ ಅಥವಾ ಕೃಷಿ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+    "kvkEscalation": "ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (KVK) ಸಂಪರ್ಕ: ಗುರುತಿಸಲಾಗದ ರೋಗಗಳಿಗೆ ಎಲೆ ಮಾದರಿಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ ಹತ್ತಿರದ ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ ಅಥವಾ ಕೃಷಿ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+    "page2Title": "ರೈತ ಕೃಷಿ ಸಲಹಾ ಮತ್ತು ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವರದಿ",
+    "page2Subtitle": "SPARC AgriSense AI • ರಾಷ್ಟ್ರೀಯ ಸುಸ್ಥಿರ ಕೃಷಿ ಮಿಷನ್ (NMSA)",
+    "page3Title": "ರೈತ ಕೃಷಿ ಸಲಹಾ ಮತ್ತು ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವರದಿ",
+    "page3Subtitle": "SPARC AgriSense AI • ರಾಷ್ಟ್ರೀಯ ಸುಸ್ಥಿರ ಕೃಷಿ ಮಿಷನ್ (NMSA)",
+    "page1Footer": "ಪುಟ ೧ / ೩ • ಪ್ರಾಥಮಿಕ ಪರೀಕ್ಷೆ ಮತ್ತು ಬೆಳೆ ತಂತ್ರ • SPARC AgriSense AI",
+    "page2Footer": "ಪುಟ ೨ / ೩ • ಕೃಷಿ ಪದ್ಧತಿಗಳು ಮತ್ತು ಕ್ಷೇತ್ರ ಕಾರ್ಯಾಚರಣೆ • SPARC AgriSense AI",
+    "page3Footer": "ಪುಟ ೩ / ೩ • ಸಸ್ಯ ಸಂರಕ್ಷಣೆ ಮತ್ತು ಸರ್ಕಾರಿ ನೆರವು • SPARC AgriSense AI",
+    "step6Title": "Step 6: Physiological Maturity, Harvesting & Hermetic Storage",
+    "step6Desc": "Harvest crop when 80–85% grains turn golden-yellow and moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops below 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionProTips": "ಪ್ರಗತಿಪರ ರೈತ ಸಲಹೆ: ಸುಸ್ಥಿರ ಕೃಷಿ ಮತ್ತು ಮಣ್ಣಿನ ಸಂರಕ್ಷಣೆ",
+    "tipCropRotation": "ಬೆಳೆ ಪರಿವರ್ತನೆ: ದ್ವಿದಳ ಧಾನ್ಯಗಳೊಂದಿಗೆ (ಹೆಸರು/ಉದ್ದು/ಕಡಲೆ) ಬೆಳೆ ಬದಲಾವಣೆ ಮಾಡಿ ನೈಸರ್ಗಿಕ ಸಾರಜನಕ ಹೆಚ್ಚಿಸಿ.",
+    "tipGreenManure": "ಹಸಿರೆಲೆ ಗೊಬ್ಬರ: ಖಾರೀಫ್ ಮುನ್ನ ಸೆಣಬು ಅಥವಾ ಡಯಾಂಚಾ ಬೆಳೆದು 45 ದಿನಕ್ಕೆ ಮಣ್ಣಿಗೆ ಸೇರಿಸಿ.",
+    "tipSoilHealth": "ಮಣ್ಣು ಪರೀಕ್ಷೆ: ಪ್ರತಿ 2 ವರ್ಷಕ್ಕೊಮ್ಮೆ ಮಣ್ಣು ಪರೀಕ್ಷೆ ಮಾಡಿಸಿ ಶಿಫಾರಸು ಮಾಡಿದ ರಸಗೊಬ್ಬರ ಬಳಸಿ.",
+    "prob7Title": "Pod Borer, Armyworm & Foliage Caterpillars",
+    "prob7Cause": "Helicoverpa / Spodoptera larvae voraciously devouring pods & leaves.",
+    "prob7Action": "Spray Emamectin Benzoate 5% SG @ 0.5 g/L or Bacillus thuringiensis (Bt) @ 2 g/L. Erect T-shaped bird perches (15/acre) for natural predation.",
+    "prob8Title": "Micronutrient Deficiency (Zinc Khaira / Iron Chlorosis)",
+    "prob8Cause": "Alkaline or calcified soil locking micronutrient bioavailability.",
+    "prob8Action": "Spray 0.5% Zinc Sulphate (21%) + 0.25% slaked lime or 1% Ferrous Sulphate solution twice at 10-day intervals.",
+    "sectionSchemes": "ರೈತರಿಗಾಗಿ ಪ್ರಮುಖ ಸರ್ಕಾರಿ ಕೃಷಿ ಯೋಜನೆಗಳು ಮತ್ತು ಸಬ್ಸಿಡಿಗಳು",
+    "schemePmKisan": "ಪಿಎಂ-ಕಿಸಾನ್ (PM-KISAN): ರೈತರಿಗೆ ವಾರ್ಷಿಕ ₹6,000 ನೇರ ಆರ್ಥಿಕ ನೆರವು ಮೂರು ಕಂತುಗಳಲ್ಲಿ ಬ್ಯಾಂಕ್ ಖಾತೆಗೆ.",
+    "schemePmfby": "ಪ್ರಧಾನಮಂತ್ರಿ ಫಸಲ್ ಬಿಮಾ ಯೋಜನೆ (PMFBY): ನೈಸರ್ಗಿಕ ವಿಕೋಪಗಳ ವಿರುದ್ಧ ಅತ್ಯಲ್ಪ ಪ್ರೀಮಿಯಂನಲ್ಲಿ ಬೆಳೆ ವಿಮೆ.",
+    "schemeShc": "ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಕಾರ್ಡ್ ಯೋಜನೆ: ಪ್ರತಿ 2 ವರ್ಷಕ್ಕೊಮ್ಮೆ ಉಚಿತ ಮಣ್ಣು ಪರೀಕ್ಷೆ ಮತ್ತು ಪೋಷಕಾಂಶಗಳ ನಿರ್ವಹಣೆ.",
+    "schemeSmam": "ಕೃಷಿ ಯಾಂತ್ರೀಕರಣ ಯೋಜನೆ (SMAM): ಟ್ರ್ಯಾಕ್ಟರ್, ರೋಟಾವೇಟರ್‌ಗಳಿಗೆ ಶೇ. 40 ರಿಂದ 50 ರವರೆಗೆ ಸಬ್ಸಿಡಿ.",
+    "schemeKcc": "ಕಿಸಾನ್ ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ (KCC): ಸಕಾಲಿಕ ಮರುಪಾವತಿಯೊಂದಿಗೆ ಕೇವಲ ಶೇ. 4 ಬಡ್ಡಿದರದಲ್ಲಿ ₹3 ಲಕ್ಷದವರೆಗೆ ಸಾಲ."
   }
 };
 
@@ -6177,11 +6402,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const altTag = i === 1 ? t.altTag1 : t.altTag2;
       altsHtml += `
         <tr>
-          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">${altTag}: ${altMeta.fullName}</td>
-          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #047857; font-weight: 700;">${matchScore}%</td>
-          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.yield}</td>
-          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.water}</td>
-          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.priceSub}</td>
+          <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">${altTag}: ${altMeta.fullName}</td>
+          <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; color: #047857; font-weight: 700;">${matchScore}%</td>
+          <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB;">${altMeta.yield}</td>
+          <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB;">${altMeta.water}</td>
+          <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB;">${altMeta.priceSub}</td>
         </tr>
       `;
     }
@@ -6189,346 +6414,467 @@ document.addEventListener('DOMContentLoaded', () => {
     // Build Fertilizer Guidance Table
     const fertRowsHtml = `
       <tr>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">Urea (46% N)</td>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">2.0 Bags (100 kg)</td>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.ureaTiming}</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">Urea (46% N)</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">2.0 Bags (100 kg)</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.ureaTiming}</td>
       </tr>
       <tr>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">DAP (18-46-0)</td>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">1.2 Bags (60 kg)</td>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.dapTiming}</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">DAP (18-46-0)</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">1.2 Bags (60 kg)</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.dapTiming}</td>
       </tr>
       <tr>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">MOP (60% K₂O)</td>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">0.8 Bags (40 kg)</td>
-        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.mopTiming}</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">MOP (60% K₂O)</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">0.8 Bags (40 kg)</td>
+        <td style="padding: 4px 6px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.mopTiming}</td>
       </tr>
     `;
 
-    // Complete Report Container
+    // Complete 3-Page Report Container
     const reportHtml = `
-      <div id="agrisense-pdf-report" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1F2937; background: #FFFFFF; padding: 18px 22px; max-width: 800px; margin: 0 auto; line-height: 1.35;">
+      <div id="agrisense-pdf-report" style="width: 794px; margin: 0 auto; background: #FFFFFF; font-family: 'Nirmala UI', 'Segoe UI', 'Noto Sans Devanagari', 'Noto Sans', Arial, sans-serif; color: #1F2937; line-height: 1.35;">
         
-        <!-- HEADER -->
-        <div style="border-bottom: 3px solid #065F46; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
+        <!-- ================= PAGE 1 ================= -->
+        <div class="pdf-page" style="width: 794px; min-height: 1115px; box-sizing: border-box; padding: 18px 22px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
-              <span style="font-size: 20px;">🌾</span>
-              <span style="font-size: 16px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
-              <span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR-IISS Benchmark</span>
+            <!-- HEADER -->
+            <div style="border-bottom: 2.5px solid #065F46; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;">
+                  <span style="font-size: 19px;">🌾</span>
+                  <span style="font-size: 16px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
+                  <span style="background: #D1FAE5; color: #065F46; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR-IISS Benchmark</span>
+                </div>
+                <h1 style="font-size: 14px; font-weight: 800; color: #111827; margin: 2px 0 2px 0;">${labels.reportTitle}</h1>
+                <p style="font-size: 9.5px; color: #6B7280; margin: 0;">${labels.reportSubtitle}</p>
+              </div>
+              <div style="text-align: right; font-size: 9px; color: #4B5563; background: #F9FAFB; padding: 4px 8px; border-radius: 5px; border: 1px solid #E5E7EB;">
+                <div><strong>${labels.lblDate}</strong> ${dateFormatted}</div>
+                <div style="margin-top: 1px;"><strong>Advisory Cycle:</strong> Kharif Season</div>
+              </div>
             </div>
-            <h1 style="font-size: 14.5px; font-weight: 800; color: #111827; margin: 2px 0 2px 0;">${labels.reportTitle}</h1>
-            <p style="font-size: 10px; color: #6B7280; margin: 0;">${labels.reportSubtitle}</p>
-          </div>
-          <div style="text-align: right; font-size: 9.5px; color: #4B5563; background: #F9FAFB; padding: 4px 8px; border-radius: 6px; border: 1px solid #E5E7EB;">
-            <div><strong>${labels.lblDate}</strong> ${dateFormatted}</div>
-            <div style="margin-top: 1px;"><strong>Cycle:</strong> Kharif Advisory</div>
-          </div>
-        </div>
 
-        <!-- LOCATION & AGRO-ZONE STRIP -->
-        <div style="background: #F0FDF4; border-left: 4px solid #10B981; padding: 7px 10px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <strong>📍 ${labels.lblLocation}</strong> <span style="font-weight: 700; color: #065F46;">${locationName}</span>
-          </div>
-          <div style="font-size: 10px; color: #047857;">
-            ${agroZoneName}
-          </div>
-        </div>
+            <!-- LOCATION & AGRO-ZONE STRIP -->
+            <div style="background: #F0FDF4; border-left: 3.5px solid #10B981; padding: 6px 10px; border-radius: 0 5px 5px 0; margin-bottom: 10px; font-size: 10.5px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>📍 ${labels.lblLocation}</strong> <span style="font-weight: 700; color: #065F46;">${locationName}</span>
+              </div>
+              <div style="font-size: 9.5px; color: #047857;">
+                ${agroZoneName}
+              </div>
+            </div>
 
-        <!-- TWO COLUMN DIAGNOSTICS & TELEMETRY -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-          
-          <!-- Soil Diagnostics -->
-          <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 10px; background: #FAFAFA;">
-            <h3 style="font-size: 11px; font-weight: 700; color: #065F46; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
-              🌱 ${labels.sectionField}
-            </h3>
-            <table style="width: 100%; font-size: 10.5px; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Nitrogen (N):</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9px; padding: 1px 4px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Phosphorus (P):</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Medium</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Potassium (K):</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Optimum</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Soil Reaction (pH):</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentPh}</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Neutral</span></td>
-              </tr>
-            </table>
+            <!-- TWO COLUMN DIAGNOSTICS & TELEMETRY -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 10px;">
+              <!-- Soil Diagnostics -->
+              <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 9px; background: #FAFAFA;">
+                <h3 style="font-size: 10.5px; font-weight: 700; color: #065F46; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E5E7EB; padding-bottom: 2px;">
+                  🌱 ${labels.sectionField}
+                </h3>
+                <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Nitrogen (N):</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Phosphorus (P):</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Medium</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Potassium (K):</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Optimum</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Soil Reaction (pH):</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${currentPh}</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Neutral</span></td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Climate Telemetry -->
+              <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 9px; background: #FAFAFA;">
+                <h3 style="font-size: 10.5px; font-weight: 700; color: #065F46; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #E5E7EB; padding-bottom: 2px;">
+                  🌤️ ${labels.sectionWeather}
+                </h3>
+                <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Ambient Temperature:</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Normal</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Relative Humidity:</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Favorable</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Expected Monsoon:</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Adequate</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0; color: #4B5563;">Agro-Thermal Window:</td>
+                    <td style="padding: 2px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
+                    <td style="padding: 2px 0 2px 5px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 8.5px; padding: 1px 4px; border-radius: 3px;">Active</span></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            <!-- TOP RECOMMENDED CROP HERO BOX -->
+            <div style="border: 2px solid #059669; border-radius: 7px; padding: 9px 12px; background: #FFFFFF; margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                <div>
+                  <span style="background: #059669; color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 8px; text-transform: uppercase;">
+                    ⭐ ${labels.sectionTopCrop}
+                  </span>
+                  <h2 style="font-size: 15px; font-weight: 800; color: #064E3B; margin: 3px 0 2px 0;">
+                    ${bestMeta.fullName}
+                  </h2>
+                  <div style="font-size: 10px; color: #047857;">
+                    <strong>${labels.lblVarieties}</strong> ${bestMeta.varieties}
+                  </div>
+                </div>
+                
+                <div style="text-align: center; background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 5px; padding: 2px 8px;">
+                  <div style="font-size: 16px; font-weight: 900; color: #047857;">${best.confidence}%</div>
+                  <div style="font-size: 8.5px; font-weight: 700; color: #065F46;">${labels.lblMatch}</div>
+                </div>
+              </div>
+
+              <!-- RATIONALE CALLOUT -->
+              <div style="background: #F0FDF4; border-radius: 4px; padding: 5px 8px; margin-bottom: 7px; font-size: 10px; color: #166534; border-left: 3px solid #059669;">
+                <strong>✓ ${labels.lblWhyFits}</strong> ${rationaleText}
+              </div>
+
+              <!-- 4 STATS ROW -->
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; text-align: center;">
+                <div style="background: #F9FAFB; padding: 4px; border-radius: 4px; border: 1px solid #E5E7EB;">
+                  <div style="font-size: 8.5px; color: #6B7280; font-weight: 600;">${labels.lblYield}</div>
+                  <div style="font-size: 10.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.yield}</div>
+                </div>
+                <div style="background: #F9FAFB; padding: 4px; border-radius: 4px; border: 1px solid #E5E7EB;">
+                  <div style="font-size: 8.5px; color: #6B7280; font-weight: 600;">${labels.lblWater}</div>
+                  <div style="font-size: 10.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.water}</div>
+                </div>
+                <div style="background: #F9FAFB; padding: 4px; border-radius: 4px; border: 1px solid #E5E7EB;">
+                  <div style="font-size: 8.5px; color: #6B7280; font-weight: 600;">${labels.lblPrice}</div>
+                  <div style="font-size: 10.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.price}</div>
+                </div>
+                <div style="background: #F9FAFB; padding: 4px; border-radius: 4px; border: 1px solid #E5E7EB;">
+                  <div style="font-size: 8.5px; color: #6B7280; font-weight: 600;">${labels.lblDuration}</div>
+                  <div style="font-size: 10.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.duration}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ALTERNATIVE CROPS TABLE -->
+            <div style="margin-bottom: 10px;">
+              <h3 style="font-size: 10.5px; font-weight: 700; color: #111827; margin: 0 0 3px 0;">
+                🌾 ${labels.sectionAlts}
+              </h3>
+              <table style="width: 100%; border-collapse: collapse; font-size: 9.5px; text-align: left;">
+                <thead>
+                  <tr style="background: #F3F4F6; color: #374151;">
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #E5E7EB;">${labels.thCrop}</th>
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #E5E7EB;">${labels.thMatch}</th>
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #E5E7EB;">${labels.thYield}</th>
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #E5E7EB;">${labels.thWater}</th>
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #E5E7EB;">${labels.thRisk}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${altsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- FERTILIZER PRESCRIPTION PACKAGE -->
+            <div style="margin-bottom: 10px; border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 9px; background: #FAFAFA;">
+              <h3 style="font-size: 10.5px; font-weight: 700; color: #1E3A8A; margin: 0 0 3px 0;">
+                🧪 ${labels.sectionFert}
+              </h3>
+              <table style="width: 100%; border-collapse: collapse; font-size: 9.5px; text-align: left;">
+                <thead>
+                  <tr style="background: #EEF2FF; color: #1E3A8A;">
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #C7D2FE;">${labels.thFertilizer}</th>
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #C7D2FE;">${labels.thBags}</th>
+                    <th style="padding: 3px 6px; border-bottom: 1.5px solid #C7D2FE;">${labels.thTiming}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${fertRowsHtml}
+                </tbody>
+              </table>
+              <div style="margin-top: 4px; font-size: 9px; color: #4B5563;">
+                <strong>${labels.lblBasal}</strong> ${bestMeta.basalDose}
+              </div>
+            </div>
           </div>
 
-          <!-- Climate Telemetry -->
-          <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 10px; background: #FAFAFA;">
-            <h3 style="font-size: 11px; font-weight: 700; color: #065F46; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
-              🌤️ ${labels.sectionWeather}
-            </h3>
-            <table style="width: 100%; font-size: 10.5px; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Ambient Temperature:</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Normal</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Relative Humidity:</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Favorable</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Expected Monsoon:</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Adequate</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 2.5px 0; color: #4B5563;">Agro-Thermal Window:</td>
-                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
-                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Active</span></td>
-              </tr>
-            </table>
-          </div>
-
-        </div>
-
-        <!-- TOP RECOMMENDED CROP HERO BOX -->
-        <div style="border: 2px solid #059669; border-radius: 8px; padding: 10px 12px; background: #FFFFFF; margin-bottom: 12px;">
-          
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+          <!-- PAGE 1 FOOTER -->
+          <div style="border-top: 1px solid #E5E7EB; padding-top: 5px; font-size: 8.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <span style="background: #059669; color: #FFFFFF; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">
-                ⭐ ${labels.sectionTopCrop}
+              <strong>${labels.page1Footer}</strong>
+            </div>
+            <div style="color: #047857; font-weight: 700;">
+              sparc-agri-sense-omega.vercel.app
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE BREAK 1 -> 2 -->
+        <div class="html2pdf__page-break" style="page-break-before: always; break-before: page; height: 0; margin: 0; padding: 0;"></div>
+
+        <!-- ================= PAGE 2 ================= -->
+        <div class="pdf-page" style="width: 794px; min-height: 1115px; box-sizing: border-box; padding: 18px 22px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <!-- PAGE 2 HEADER -->
+            <div style="border-bottom: 2.5px solid #065F46; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;">
+                  <span style="font-size: 19px;">🌱</span>
+                  <span style="font-size: 15px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
+                  <span style="background: #D1FAE5; color: #065F46; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR Package of Practices</span>
+                </div>
+                <h1 style="font-size: 13.5px; font-weight: 800; color: #111827; margin: 2px 0 2px 0;">${labels.page2Title}</h1>
+                <p style="font-size: 9.5px; color: #6B7280; margin: 0;">${labels.page2Subtitle}</p>
+              </div>
+              <div style="text-align: right; font-size: 9px; color: #065F46; background: #ECFDF5; padding: 4px 8px; border-radius: 5px; border: 1px solid #A7F3D0;">
+                <div><strong>Crop:</strong> ${bestMeta.fullName}</div>
+                <div style="margin-top: 1px;"><strong>Varieties:</strong> ${bestMeta.varieties}</div>
+              </div>
+            </div>
+
+            <!-- SECTION TITLE -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; border-bottom: 1.5px solid #065F46; padding-bottom: 3px;">
+              <h3 style="font-size: 11px; font-weight: 800; color: #065F46; margin: 0; text-transform: uppercase; letter-spacing: 0.3px;">
+                🌱 ${labels.sectionSteps}
+              </h3>
+              <span style="font-size: 8.5px; background: #ECFDF5; color: #065F46; font-weight: 700; padding: 1px 6px; border-radius: 8px; border: 1px solid #A7F3D0;">
+                Step-by-Step Agronomy
               </span>
-              <h2 style="font-size: 16px; font-weight: 800; color: #064E3B; margin: 4px 0 2px 0;">
-                ${bestMeta.fullName}
-              </h2>
-              <div style="font-size: 10.5px; color: #047857;">
-                <strong>${labels.lblVarieties}</strong> ${bestMeta.varieties}
+            </div>
+
+            <!-- 6 CULTIVATION STEP CARDS -->
+            <div style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px;">
+              <!-- Step 1 -->
+              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+                <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                  1️⃣ ${labels.step1Title}
+                </div>
+                <div style="color: #374151;">
+                  ${labels.step1Desc}
+                </div>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+                <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                  2️⃣ ${labels.step2Title}
+                </div>
+                <div style="color: #374151;">
+                  ${labels.step2Desc}
+                </div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+                <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                  3️⃣ ${labels.step3Title}
+                </div>
+                <div style="color: #374151;">
+                  ${labels.step3Desc}
+                </div>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+                <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                  4️⃣ ${labels.step4Title}
+                </div>
+                <div style="color: #374151;">
+                  ${labels.step4Desc}
+                </div>
+              </div>
+
+              <!-- Step 5 -->
+              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+                <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                  5️⃣ ${labels.step5Title}
+                </div>
+                <div style="color: #374151;">
+                  ${labels.step5Desc}
+                </div>
+              </div>
+
+              <!-- Step 6 -->
+              <div class="pdf-avoid-break" style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+                <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                  6️⃣ ${labels.step6Title}
+                </div>
+                <div style="color: #374151;">
+                  ${labels.step6Desc}
+                </div>
               </div>
             </div>
-            
-            <div style="text-align: center; background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 6px; padding: 3px 8px;">
-              <div style="font-size: 17px; font-weight: 900; color: #047857;">${best.confidence}%</div>
-              <div style="font-size: 9px; font-weight: 700; color: #065F46;">${labels.lblMatch}</div>
+
+            <!-- PRO FARMER TIPS BOX -->
+            <div class="pdf-avoid-break" style="background: #F0FDF4; border: 1.5px solid #A7F3D0; border-radius: 6px; padding: 8px 10px; font-size: 9.5px; margin-bottom: 6px;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+                <span>💡</span>
+                <span>${labels.sectionProTips}</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 3px; color: #166534; line-height: 1.35;">
+                <div><strong>• ${labels.tipCropRotation}</strong></div>
+                <div><strong>• ${labels.tipGreenManure}</strong></div>
+                <div><strong>• ${labels.tipSoilHealth}</strong></div>
+              </div>
             </div>
           </div>
 
-          <!-- RATIONALE CALLOUT -->
-          <div style="background: #F0FDF4; border-radius: 5px; padding: 6px 9px; margin-bottom: 8px; font-size: 10.5px; color: #166534; border-left: 3px solid #059669;">
-            <strong>✓ ${labels.lblWhyFits}</strong> ${rationaleText}
-          </div>
-
-          <!-- 4 STATS ROW -->
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
-            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblYield}</div>
-              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.yield}</div>
+          <!-- PAGE 2 FOOTER -->
+          <div style="border-top: 1px solid #E5E7EB; padding-top: 5px; font-size: 8.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>${labels.page2Footer}</strong>
             </div>
-            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblWater}</div>
-              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.water}</div>
-            </div>
-            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblPrice}</div>
-              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.price}</div>
-            </div>
-            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblDuration}</div>
-              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.duration}</div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- ALTERNATIVE CROPS TABLE -->
-        <div style="margin-bottom: 12px;">
-          <h3 style="font-size: 11.5px; font-weight: 700; color: #111827; margin: 0 0 4px 0;">
-            🌾 ${labels.sectionAlts}
-          </h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: left;">
-            <thead>
-              <tr style="background: #F3F4F6; color: #374151;">
-                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thCrop}</th>
-                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thMatch}</th>
-                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thYield}</th>
-                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thWater}</th>
-                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thRisk}</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${altsHtml}
-            </tbody>
-          </table>
-        </div>
-
-        <!-- FERTILIZER PRESCRIPTION PACKAGE -->
-        <div style="margin-bottom: 14px; border: 1px solid #E5E7EB; border-radius: 7px; padding: 8px 10px; background: #FAFAFA;">
-          <h3 style="font-size: 11.5px; font-weight: 700; color: #1E3A8A; margin: 0 0 4px 0;">
-            🧪 ${labels.sectionFert}
-          </h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: left;">
-            <thead>
-              <tr style="background: #EEF2FF; color: #1E3A8A;">
-                <th style="padding: 4px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thFertilizer}</th>
-                <th style="padding: 4px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thBags}</th>
-                <th style="padding: 4px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thTiming}</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${fertRowsHtml}
-            </tbody>
-          </table>
-          <div style="margin-top: 5px; font-size: 9.5px; color: #4B5563;">
-            <strong>${labels.lblBasal}</strong> ${bestMeta.basalDose}
-          </div>
-        </div>
-
-        <!-- STAGE-BY-STAGE CULTIVATION GUIDE (HOW TO DO THINGS) -->
-        <div style="margin-bottom: 14px; page-break-inside: avoid;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; border-bottom: 2px solid #065F46; padding-bottom: 3px;">
-            <h3 style="font-size: 11.5px; font-weight: 800; color: #065F46; margin: 0; text-transform: uppercase; letter-spacing: 0.3px;">
-              🌱 ${labels.sectionSteps}
-            </h3>
-            <span style="font-size: 9px; background: #ECFDF5; color: #065F46; font-weight: 700; padding: 2px 7px; border-radius: 10px; border: 1px solid #A7F3D0;">
-              ICAR Good Agricultural Practices (GAP)
-            </span>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 5px;">
-            <!-- Step 1 -->
-            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
-              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
-                1️⃣ ${labels.step1Title}
-              </div>
-              <div style="color: #374151;">
-                ${labels.step1Desc}
-              </div>
-            </div>
-
-            <!-- Step 2 -->
-            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
-              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
-                2️⃣ ${labels.step2Title}
-              </div>
-              <div style="color: #374151;">
-                ${labels.step2Desc}
-              </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
-              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
-                3️⃣ ${labels.step3Title}
-              </div>
-              <div style="color: #374151;">
-                ${labels.step3Desc}
-              </div>
-            </div>
-
-            <!-- Step 4 -->
-            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
-              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
-                4️⃣ ${labels.step4Title}
-              </div>
-              <div style="color: #374151;">
-                ${labels.step4Desc}
-              </div>
-            </div>
-
-            <!-- Step 5 -->
-            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
-              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
-                5️⃣ ${labels.step5Title}
-              </div>
-              <div style="color: #374151;">
-                ${labels.step5Desc}
-              </div>
+            <div style="color: #047857; font-weight: 700;">
+              sparc-agri-sense-omega.vercel.app
             </div>
           </div>
         </div>
 
-        <!-- FIELD EMERGENCY & PROBLEM TROUBLESHOOTING (WHAT TO DO IF ANY PROBLEM ARISES) -->
-        <div style="margin-bottom: 14px; page-break-inside: avoid;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; border-bottom: 2px solid #DC2626; padding-bottom: 3px;">
-            <h3 style="font-size: 11.5px; font-weight: 800; color: #B91C1C; margin: 0; text-transform: uppercase; letter-spacing: 0.3px;">
-              🚨 ${labels.sectionTroubleshoot}
-            </h3>
-            <span style="font-size: 9px; background: #FEF2F2; color: #B91C1C; font-weight: 700; padding: 2px 7px; border-radius: 10px; border: 1px solid #FECACA;">
-              Immediate Field Action Protocol
-            </span>
+        <!-- PAGE BREAK 2 -> 3 -->
+        <div class="html2pdf__page-break" style="page-break-before: always; break-before: page; height: 0; margin: 0; padding: 0;"></div>
+
+        <!-- ================= PAGE 3 ================= -->
+        <div class="pdf-page" style="width: 794px; min-height: 1115px; box-sizing: border-box; padding: 18px 22px; background: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <!-- PAGE 3 HEADER -->
+            <div style="border-bottom: 2.5px solid #DC2626; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 2px;">
+                  <span style="font-size: 19px;">🚨</span>
+                  <span style="font-size: 15px; font-weight: 800; color: #B91C1C; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
+                  <span style="background: #FEF2F2; color: #B91C1C; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">Diagnostic Clinic & Welfare</span>
+                </div>
+                <h1 style="font-size: 13.5px; font-weight: 800; color: #111827; margin: 2px 0 2px 0;">${labels.page3Title}</h1>
+                <p style="font-size: 9.5px; color: #6B7280; margin: 0;">${labels.page3Subtitle}</p>
+              </div>
+              <div style="text-align: right; font-size: 9px; color: #B91C1C; background: #FEF2F2; padding: 4px 8px; border-radius: 5px; border: 1px solid #FECACA;">
+                <div><strong>Kisan Toll-Free:</strong> 1800-180-1551</div>
+                <div style="margin-top: 1px;"><strong>ICAR Escalation Active</strong></div>
+              </div>
+            </div>
+
+            <!-- SECTION TITLE -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; border-bottom: 1.5px solid #DC2626; padding-bottom: 3px;">
+              <h3 style="font-size: 11px; font-weight: 800; color: #B91C1C; margin: 0; text-transform: uppercase; letter-spacing: 0.3px;">
+                🚨 ${labels.sectionTroubleshoot}
+              </h3>
+              <span style="font-size: 8.5px; background: #FEF2F2; color: #B91C1C; font-weight: 700; padding: 1px 6px; border-radius: 8px; border: 1px solid #FECACA;">
+                Emergency Action Protocol
+              </span>
+            </div>
+
+            <!-- 8 DIAGNOSTIC MATRIX ROWS -->
+            <table class="pdf-avoid-break" style="width: 100%; border-collapse: collapse; font-size: 8.5px; text-align: left; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 5px; overflow: hidden; margin-bottom: 10px;">
+              <thead>
+                <tr style="background: #FEF2F2; color: #991B1B;">
+                  <th style="padding: 4px 6px; border-bottom: 1.5px solid #FCA5A5; width: 25%; font-weight: 800;">${labels.thProblem}</th>
+                  <th style="padding: 4px 6px; border-bottom: 1.5px solid #FCA5A5; width: 27%; font-weight: 800;">${labels.thCause}</th>
+                  <th style="padding: 4px 6px; border-bottom: 1.5px solid #FCA5A5; width: 48%; font-weight: 800;">${labels.thAction}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">⚠️ ${labels.prob1Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob1Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob1Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🐛 ${labels.prob2Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob2Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob2Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🦗 ${labels.prob3Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob3Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob3Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🍄 ${labels.prob4Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob4Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob4Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">☀️ ${labels.prob5Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob5Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob5Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🌧️ ${labels.prob6Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob6Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob6Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🐛 ${labels.prob7Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob7Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob7Action}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🧪 ${labels.prob8Title}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob8Cause}</td>
+                  <td style="padding: 3px 6px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob8Action}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- GOVERNMENT SCHEMES & SUBSIDIES FOR FARMERS -->
+            <div class="pdf-avoid-break" style="background: #EFF6FF; border: 1.5px solid #BFDBFE; border-radius: 6px; padding: 7px 9px; font-size: 9px; margin-bottom: 9px;">
+              <div style="font-weight: 800; color: #1E3A8A; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;">
+                <span>🏛️</span>
+                <span>${labels.sectionSchemes}</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 3px; color: #1E40AF; line-height: 1.35;">
+                <div><strong>• ${labels.schemePmKisan}</strong></div>
+                <div><strong>• ${labels.schemePmfby}</strong></div>
+                <div><strong>• ${labels.schemeShc}</strong></div>
+                <div><strong>• ${labels.schemeSmam}</strong></div>
+                <div><strong>• ${labels.schemeKcc}</strong></div>
+              </div>
+            </div>
+
+            <!-- KISAN EMERGENCY HELPLINE & ESCALATION -->
+            <div class="pdf-avoid-break" style="background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 6px; padding: 6px 9px; font-size: 9px; margin-bottom: 9px;">
+              <div style="font-weight: 800; color: #92400E; margin-bottom: 2px; display: flex; align-items: center; gap: 5px;">
+                <span>📞</span>
+                <span>${labels.sectionEmergency}</span>
+              </div>
+              <div style="color: #78350F; line-height: 1.35;">
+                <div><strong>• ${labels.kisanCallCenter}</strong></div>
+                <div style="margin-top: 1px;"><strong>• ${labels.kvkEscalation}</strong></div>
+              </div>
+            </div>
+
+            <!-- OFFICIAL DISCLAIMER -->
+            <div style="font-size: 8px; color: #6B7280; line-height: 1.3; background: #F9FAFB; padding: 5px 8px; border-radius: 4px; border: 1px solid #E5E7EB;">
+              <strong>Disclaimer:</strong> ${labels.disclaimer}
+            </div>
           </div>
 
-          <table style="width: 100%; border-collapse: collapse; font-size: 9px; text-align: left; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 5px; overflow: hidden;">
-            <thead>
-              <tr style="background: #FEF2F2; color: #991B1B;">
-                <th style="padding: 5px 7px; border-bottom: 2px solid #FCA5A5; width: 25%; font-weight: 800;">${labels.thProblem}</th>
-                <th style="padding: 5px 7px; border-bottom: 2px solid #FCA5A5; width: 27%; font-weight: 800;">${labels.thCause}</th>
-                <th style="padding: 5px 7px; border-bottom: 2px solid #FCA5A5; width: 48%; font-weight: 800;">${labels.thAction}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">⚠️ ${labels.prob1Title}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob1Cause}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob1Action}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🐛 ${labels.prob2Title}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob2Cause}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob2Action}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🦗 ${labels.prob3Title}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob3Cause}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob3Action}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🍄 ${labels.prob4Title}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob4Cause}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob4Action}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">☀️ ${labels.prob5Title}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob5Cause}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob5Action}</strong></td>
-              </tr>
-              <tr>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🌧️ ${labels.prob6Title}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob6Cause}</td>
-                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob6Action}</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- KISAN EMERGENCY HELPLINE & INSTITUTIONAL ESCALATION -->
-        <div style="margin-bottom: 12px; background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 6px; padding: 7px 10px; font-size: 9.5px; page-break-inside: avoid;">
-          <div style="font-weight: 800; color: #92400E; margin-bottom: 2px; display: flex; align-items: center; gap: 5px;">
-            <span>📞</span>
-            <span>${labels.sectionEmergency}</span>
-          </div>
-          <div style="color: #78350F; line-height: 1.35;">
-            <div><strong>• ${labels.kisanCallCenter}</strong></div>
-            <div style="margin-top: 1px;"><strong>• ${labels.kvkEscalation}</strong></div>
-          </div>
-        </div>
-
-        <!-- FOOTER & OFFICIAL DISCLAIMER -->
-        <div style="border-top: 1px solid #E5E7EB; padding-top: 6px; font-size: 8.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
-          <div style="max-width: 80%;">
-            <strong>Disclaimer:</strong> ${labels.disclaimer}
-          </div>
-          <div style="text-align: right; font-weight: 700; color: #047857;">
-            SPARC AI Precision Agronomy<br>
-            sparc-agri-sense-omega.vercel.app
+          <!-- PAGE 3 FOOTER -->
+          <div style="border-top: 1px solid #E5E7EB; padding-top: 5px; font-size: 8.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>${labels.page3Footer}</strong>
+            </div>
+            <div style="color: #047857; font-weight: 700;">
+              sparc-agri-sense-omega.vercel.app
+            </div>
           </div>
         </div>
 
@@ -6536,27 +6882,51 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     const opt = {
-      margin: 6,
+      margin: 0,
       filename: `SPARC_AgriSense_Advisory_${best.crop}_${lang}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+        scrollY: 0,
+        scrollX: 0,
+        windowWidth: 794
+      },
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
+      },
+      pagebreak: {
+        mode: ['css', 'legacy'],
+        before: '.html2pdf__page-break',
+        avoid: '.pdf-avoid-break'
+      }
     };
 
     const container = document.createElement('div');
+    container.id = 'agrisense-pdf-render-root';
+    container.style.position = 'absolute';
+    container.style.left = '0';
+    container.style.top = '0';
+    container.style.width = '794px';
+    container.style.backgroundColor = '#ffffff';
+    container.style.zIndex = '-99999';
+    container.style.opacity = '1';
     container.innerHTML = reportHtml;
     document.body.appendChild(container);
 
     if (window.html2pdf) {
       window.html2pdf().set(opt).from(container.firstElementChild).save().then(() => {
-        document.body.removeChild(container);
+        if (container.parentNode) document.body.removeChild(container);
       }).catch(err => {
         console.warn('html2pdf save error, using print fallback:', err);
-        document.body.removeChild(container);
+        if (container.parentNode) document.body.removeChild(container);
         printViaIframe(reportHtml);
       });
     } else {
-      document.body.removeChild(container);
+      if (container.parentNode) document.body.removeChild(container);
       printViaIframe(reportHtml);
     }
   }
@@ -6580,8 +6950,46 @@ document.addEventListener('DOMContentLoaded', () => {
           <title>SPARC Kisan Advisory Report</title>
           <meta charset="utf-8">
           <style>
-            @page { size: A4 portrait; margin: 8mm; }
-            body { margin: 0; padding: 0; }
+            @page {
+              size: A4 portrait;
+              margin: 0;
+            }
+            * {
+              box-sizing: border-box;
+            }
+            body {
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              font-family: 'Nirmala UI', 'Segoe UI', 'Noto Sans Devanagari', 'Noto Sans', Arial, sans-serif;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .pdf-page {
+              width: 100%;
+              min-height: 297mm;
+              padding: 16mm 14mm;
+              box-sizing: border-box;
+              page-break-after: always;
+              break-after: page;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+            }
+            .pdf-page:last-child {
+              page-break-after: avoid;
+              break-after: avoid;
+            }
+            .html2pdf__page-break {
+              page-break-before: always;
+              break-before: page;
+              height: 0;
+              display: block;
+            }
+            .pdf-avoid-break {
+              page-break-inside: avoid;
+              break-inside: avoid;
+            }
           </style>
         </head>
         <body>
@@ -6595,9 +7003,9 @@ document.addEventListener('DOMContentLoaded', () => {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
       setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 2000);
-    }, 500);
+        if (iframe.parentNode) document.body.removeChild(iframe);
+      }, 3000);
+    }, 600);
   }
 
   // ── Language Switcher Controller ──
