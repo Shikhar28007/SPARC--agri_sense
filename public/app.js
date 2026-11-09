@@ -5497,313 +5497,637 @@ document.addEventListener('DOMContentLoaded', () => {
   // MULTILINGUAL PDF ADVISORY REPORT GENERATOR
   // ─────────────────────────────────────────────────────────────────────────
   const PDF_REPORT_I18N = {
-    en: {
-      btnText: '📄 Download PDF',
-      reportTitle: 'KISAN AGRONOMIC ADVISORY & SOIL HEALTH REPORT',
-      reportSubtitle: 'SPARC AgriSense AI • National Mission on Sustainable Agriculture (NMSA)',
-      sectionField: 'Field Diagnostics & Soil Health',
-      sectionWeather: 'Agro-Meteorological Telemetry',
-      sectionTopCrop: 'Top Recommended Crop (#1 Best Choice)',
-      sectionAlts: 'Alternative Crop Options',
-      sectionFert: 'Elemental Fertilizer Package (1 Acre)',
-      sectionKvk: 'Krishi Vigyan Kendra (KVK) Advisory',
-      lblDate: 'Generated On:',
-      lblLocation: 'Field Location:',
-      lblAgroZone: 'Agro-Climatic Zone:',
-      lblMatch: 'Suitability Match',
-      lblVarieties: 'Recommended Varieties:',
-      lblYield: 'Expected Yield',
-      lblWater: 'Water Need',
-      lblDuration: 'Duration',
-      lblPrice: 'Mandi Outlook',
-      lblBasal: 'Basal Dose at Sowing:',
-      lblWhyFits: 'Agronomic Rationale:',
-      thCrop: 'Crop Option',
-      thMatch: 'Match %',
-      thYield: 'Est. Yield',
-      thWater: 'Water Need',
-      thRisk: 'Market Risk',
-      thFertilizer: 'Fertilizer Type',
-      thBags: 'Bags / Acre (50 kg)',
-      thTiming: 'Application Stage',
-      ureaTiming: 'Split: 50% Basal + 25% Tillering + 25% Panicle Initiation',
-      dapTiming: '100% Basal application at sowing or transplanting',
-      mopTiming: '100% Basal or split 50% Sowing + 50% Flowering',
-      disclaimer: 'Validated under ICAR-IISS and State Agricultural University (SAU) packages of practices. Recommendations are calibrated to current field nutrient levels and precipitation telemetry.'
-    },
-    hi: {
-      btnText: '📄 पीडीएफ डाउनलोड / Download PDF',
-      reportTitle: 'किसान कृषि परामर्श एवं मृदा स्वास्थ्य रिपोर्ट',
-      reportSubtitle: 'SPARC AgriSense AI • राष्ट्रीय सतत कृषि मिशन (NMSA) एवं ICAR मानक',
-      sectionField: 'खेत निदान एवं मृदा स्वास्थ्य परीक्षण',
-      sectionWeather: 'मौसम एवं जलवायु टेलीमेट्री',
-      sectionTopCrop: 'शीर्ष अनुशंसित फसल (सर्वश्रेष्ठ विकल्प #1)',
-      sectionAlts: 'वैकल्पिक फसल विकल्प',
-      sectionFert: 'उर्वरक प्रबंधन पैकेज (प्रति एकड़ संस्तुति)',
-      sectionKvk: 'कृषि विज्ञान केंद्र (KVK) विशेष परामर्श',
-      lblDate: 'रिपोर्ट दिनांक:',
-      lblLocation: 'खेत का स्थान:',
-      lblAgroZone: 'कृषि-जलवायु क्षेत्र:',
-      lblMatch: 'अनुकूलता मैच',
-      lblVarieties: 'अनुशंसित उन्नत किस्में:',
-      lblYield: 'संभावित उपज',
-      lblWater: 'जल आवश्यकता',
-      lblDuration: 'फसल अवधि',
-      lblPrice: 'मंडी भाव अनुमान',
-      lblBasal: 'बुवाई के समय आधारीय खुराक:',
-      lblWhyFits: 'वैज्ञानिक औचित्य:',
-      thCrop: 'फसल का नाम',
-      thMatch: 'मैच %',
-      thYield: 'अनुमानित उपज',
-      thWater: 'जल की जरूरत',
-      thRisk: 'बाजार जोखिम',
-      thFertilizer: 'उर्वरक का प्रकार',
-      thBags: 'मात्रा (50 किग्रा बैग/एकड़)',
-      thTiming: 'प्रयोग का समय',
-      ureaTiming: 'विभाजित: 50% बुवाई + 25% कल्ले फूटते समय + 25% बाली बनते समय',
-      dapTiming: '100% बुवाई अथवा रोपाई के समय बेसल डोज के रूप में',
-      mopTiming: '100% बुवाई के समय अथवा 50% बुवाई + 50% फूल आते समय',
-      disclaimer: 'यह रिपोर्ट ICAR-IISS तथा राज्य कृषि विश्वविद्यालय (SAU) के वैज्ञानिक मानकों पर आधारित है। संस्तुतियां वर्तमान मृदा पोषक तत्वों एवं मानसूनी वर्षा मॉडल के अनुरूप तैयार की गई हैं।'
-    },
-    mr: {
-      btnText: '📄 पीडीएफ डाउनलोड / Download PDF',
-      reportTitle: 'शेतकरी कृषी सल्ला आणि मृदा आरोग्य अहवाल',
-      reportSubtitle: 'SPARC AgriSense AI • राष्ट्रीय शाश्वत शेती अभियान (NMSA) व ICAR मानके',
-      sectionField: 'शेत चाचणी आणि मातीचे आरोग्य',
-      sectionWeather: 'हवामान आणि पर्जन्यमान टेलीमेट्री',
-      sectionTopCrop: 'अव्वल शिफारस केलेले पीक (उत्कृष्ट पर्याय #1)',
-      sectionAlts: 'पर्यायी पिके',
-      sectionFert: 'खत व्यवस्थापन संच (प्रति एकर शिफारस)',
-      sectionKvk: 'कृषी विज्ञान केंद्र (KVK) तज्ज्ञ सल्ला',
-      lblDate: 'अहवाल दिनांक:',
-      lblLocation: 'शेताचे ठिकाण:',
-      lblAgroZone: 'कृषी-हवामान क्षेत्र:',
-      lblMatch: 'योग्यतेचे प्रमाण',
-      lblVarieties: 'शिफारस केलेली वाणे:',
-      lblYield: 'अपेक्षित उत्पादन',
-      lblWater: 'पाण्याची गरज',
-      lblDuration: 'कालावधी',
-      lblPrice: 'बाजारभाव अंदाज',
-      lblBasal: 'पेरणीच्या वेळचा बेसल डोस:',
-      lblWhyFits: 'कृषी वैज्ञानिक कारण:',
-      thCrop: 'पिकाचे नाव',
-      thMatch: 'जुळणी %',
-      thYield: 'अपेक्षित उत्पादन',
-      thWater: 'पाण्याची गरज',
-      thRisk: 'बाजार जोखीम',
-      thFertilizer: 'खताचा प्रकार',
-      thBags: 'प्रमाण (५० किलो बॅग/एकर)',
-      thTiming: 'वापराची वेळ',
-      ureaTiming: 'विभागून: ५०% पेरणी + २५% फुटवे फुटताना + २५% फुलोऱ्यात',
-      dapTiming: '१००% पेरणीच्या वेळी बेसल डोस म्हणून द्यावे',
-      mopTiming: '१००% पेरणीच्या वेळी किंवा ५०% पेरणी + ५०% फुलोरा',
-      disclaimer: 'हा अहवाल ICAR-IISS व राज्य कृषी विद्यापीठाच्या पॅकेज ऑफ प्रॅक्टिसेसवर आधारित आहे. उपलब्ध माती घटक व पर्जन्यमानानुसार शिफारसी तयार केल्या आहेत.'
-    },
-    pa: {
-      btnText: '📄 ਪੀਡੀਐਫ ਡਾਊਨਲੋਡ / Download PDF',
-      reportTitle: 'ਕਿਸਾਨ ਖੇਤੀਬਾੜੀ ਸਲਾਹ ਅਤੇ ਮਿੱਟੀ ਸਿਹਤ ਰਿਪੋਰਟ',
-      reportSubtitle: 'SPARC AgriSense AI • ਕੌਮੀ ਟਿਕਾਊ ਖੇਤੀਬਾੜੀ ਮਿਸ਼ਨ (NMSA)',
-      sectionField: 'ਖੇਤ ਨਿਦਾਨ ਅਤੇ ਮਿੱਟੀ ਦੀ ਸਿਹਤ',
-      sectionWeather: 'ਮੌਸਮ ਅਤੇ ਵਰਖਾ ਟੈਲੀਮੈਟਰੀ',
-      sectionTopCrop: 'ਸਿਖਰਲੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਫ਼ਸਲ (#1 ਵਧੀਆ ਵਿਕਲਪ)',
-      sectionAlts: 'ਬਦਲਵੇਂ ਫ਼ਸਲੀ ਵਿਕਲਪ',
-      sectionFert: 'ਖਾਦ ਪ੍ਰਬੰਧਨ ਪੈਕੇਜ (ਪ੍ਰਤੀ ਏਕੜ)',
-      sectionKvk: 'ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ (KVK) ਸਲਾਹ',
-      lblDate: 'ਰਿਪੋਰਟ ਮਿਤੀ:',
-      lblLocation: 'ਖੇਤ ਦਾ ਸਥਾਨ:',
-      lblAgroZone: 'ਖੇਤੀ-ਜਲਵਾਯੂ ਖੇਤਰ:',
-      lblMatch: 'ਅਨੁਕੂਲਤਾ ਮੈਚ',
-      lblVarieties: 'ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀਆਂ ਕਿਸਮਾਂ:',
-      lblYield: 'ਸੰਭਾਵਿਤ ਝਾੜ',
-      lblWater: 'ਪਾਣੀ ਦੀ ਲੋੜ',
-      lblDuration: 'ਸਮਾਂ',
-      lblPrice: 'ਮੰਡੀ ਭਾਅ ਅੰਦਾਜ਼ਾ',
-      lblBasal: 'ਬਿਜਾਈ ਵੇਲੇ ਬੇਸਲ ਖ਼ੁਰਾਕ:',
-      lblWhyFits: 'ਵਿਗਿਆਨਕ ਆਧਾਰ:',
-      thCrop: 'ਫ਼ਸਲ ਦਾ ਨਾਮ',
-      thMatch: 'ਮੈਚ %',
-      thYield: 'ਅੰਦਾਜ਼ਨ ਝਾੜ',
-      thWater: 'ਪਾਣੀ ਦੀ ਲੋੜ',
-      thRisk: 'ਮੰਡੀ ਜੋਖਮ',
-      thFertilizer: 'ਖਾਦ ਦੀ ਕਿਸਮ',
-      thBags: 'ਮਾਤਰਾ (50 ਕਿਲੋ ਥੈਲੇ/ਏਕੜ)',
-      thTiming: 'ਵਰਤੋਂ ਦਾ ਸਮਾਂ',
-      ureaTiming: 'ਵੰਡ: 50% ਬਿਜਾਈ + 25% ਫੁੱਟ ਵੇਲੇ + 25% ਨਿਸਰਣ ਵੇਲੇ',
-      dapTiming: '100% ਬਿਜਾਈ ਸਮੇਂ ਬੇਸਲ ਡੋਜ਼ ਵਜੋਂ ਪਾਓ',
-      mopTiming: '100% ਬਿਜਾਈ ਸਮੇਂ ਜਾਂ 50% ਬਿਜਾਈ + 50% ਫੁੱਲ ਪੈਣ ਵੇਲੇ',
-      disclaimer: 'ਇਹ ਰਿਪੋਰਟ ICAR-IISS ਅਤੇ ਰਾਜ ਖੇਤੀਬਾੜੀ ਯੂਨੀਵਰਸਿਟੀਆਂ ਦੇ ਵਿਗਿਆਨਕ ਮਾਪਦੰਡਾਂ ਤੇ ਆਧਾਰਿਤ ਹੈ।'
-    },
-    gu: {
-      btnText: '📄 પીડીએફ ડાઉનલોડ / Download PDF',
-      reportTitle: 'ખેડૂત કૃષિ સલાહ અને જમીન આરોગ્ય અહેવાલ',
-      reportSubtitle: 'SPARC AgriSense AI • રાષ્ટ્રીય ટકાઉ કૃષિ મિશન (NMSA) અને ICAR ધોરણો',
-      sectionField: 'જમીન ચકાસણી અને પોષક તત્વો',
-      sectionWeather: 'હવામાન અને વરસાદ ટેલિમેટ્રી',
-      sectionTopCrop: 'શ્રેષ્ઠ ભલામણ કરેલ પાક (#1 શ્રેષ્ઠ વિકલ્પ)',
-      sectionAlts: 'વૈકલ્પિક પાક વિકલ્પો',
-      sectionFert: 'ખાતર વ્યવસ્થાપન પેકેજ (પ્રતિ એકર ભલામણ)',
-      sectionKvk: 'કૃષિ વિજ્ઞાન કેન્દ્ર (KVK) માર્ગદર્શન',
-      lblDate: 'રિપોર્ટ તારીખ:',
-      lblLocation: 'ખેતરનું સ્થળ:',
-      lblAgroZone: 'કૃષિ-આબોહવા ઝોન:',
-      lblMatch: 'સુસંગતતા મેચ',
-      lblVarieties: 'ભલામણ કરેલ જાતો:',
-      lblYield: 'અપેક્ષિત ઉત્પાદન',
-      lblWater: 'પાણીની જરૂરિયાત',
-      lblDuration: 'પાક સમયગાળો',
-      lblPrice: 'બજાર ભાવ અંદાજ',
-      lblBasal: 'વાવણી સમયે પાયાનું ખાતર:',
-      lblWhyFits: 'વૈજ્ઞાનિક કારણ:',
-      thCrop: 'પાકનું નામ',
-      thMatch: 'મેચ %',
-      thYield: 'અંદાજિત ઉત્પાદન',
-      thWater: 'પાણીની જરૂરિયાત',
-      thRisk: 'બજાર જોખમ',
-      thFertilizer: 'ખાતરનો પ્રકાર',
-      thBags: 'જથ્થો (૫૦ કિગ્રા બેગ/એકર)',
-      thTiming: 'વાપરવાનો સમય',
-      ureaTiming: 'વિભાજિત: ૫૦% વાવણી + ૨૫% ફુટવે સમયે + ૨૫% કંકી સમયે',
-      dapTiming: '૧૦૦% વાવણી સમયે પાયાના ખાતર તરીકે',
-      mopTiming: '૧૦૦% વાવણી વખતે અથવા ૫૦% વાવણી + ૫૦% ફૂલ સમયે',
-      disclaimer: 'આ અહેવાલ ICAR-IISS અને રાજ્ય કૃષિ યુનિવર્સિટીના વૈજ્ઞાનિક માપદંડો પર આધારિત છે.'
-    },
-    te: {
-      btnText: '📄 PDF డౌన్‌లోడ్ / Download PDF',
-      reportTitle: 'రైతు వ్యవసాయ సలహా మరియు నేల ఆరోగ్య నివేదిక',
-      reportSubtitle: 'SPARC AgriSense AI • జాతీయ స్థిరమైన వ్యవసాయ మిషన్ (NMSA)',
-      sectionField: 'క్షేత్ర విశ్లేషణ మరియు నేల ఆరోగ్యం',
-      sectionWeather: 'వాతావరణం మరియు వర్షపాతం టెలిమెట్రీ',
-      sectionTopCrop: 'అత్యుత్తమ సిఫార్సు చేసిన పంట (#1 ఉత్తమ ఎంపిక)',
-      sectionAlts: 'ప్రత్యామ్నాయ పంట ఎంపికలు',
-      sectionFert: 'ఎరువుల యాజమాన్య ప్యాకేజీ (ఎకరాకు)',
-      sectionKvk: 'కృషి విజ్ఞాన కేంద్రం (KVK) సలహా',
-      lblDate: 'నివేదిక తేదీ:',
-      lblLocation: 'పొలం ప్రాంతం:',
-      lblAgroZone: 'వ్యవసాయ-శీతోష్ణస్థితి మండలం:',
-      lblMatch: 'సరిపోలిక శాతం',
-      lblVarieties: 'సిఫార్సు చేయబడిన రకాలు:',
-      lblYield: 'ఆశించిన దిగుబడి',
-      lblWater: 'నీటి అవసరం',
-      lblDuration: 'పంట కాలం',
-      lblPrice: 'మార్కెట్ ధర అంచనా',
-      lblBasal: 'విత్తే సమయంలో ప్రాథమిక మోతాదు:',
-      lblWhyFits: 'శాస్త్రీయ సమర్థన:',
-      thCrop: 'పంట పేరు',
-      thMatch: 'మ్యాచ్ %',
-      thYield: 'అంచనా దిగుబడి',
-      thWater: 'నీటి అవసరం',
-      thRisk: 'మార్కెట్ రిస్క్',
-      thFertilizer: 'ఎరువుల రకం',
-      thBags: 'మొత్తం (50 కేజీల సంచులు/ఎకరా)',
-      thTiming: 'వేసే సమయం',
-      ureaTiming: 'విడతలుగా: 50% విత్తేటప్పుడు + 25% పిలకల దశ + 25% ఈనిక దశ',
-      dapTiming: '100% విత్తే సమయంలోనే ప్రాథమిక మోతాదుగా వేయాలి',
-      mopTiming: '100% విత్తే సమయంలో లేదా 50% విత్తేటప్పుడు + 50% పూత దశలో',
-      disclaimer: 'ఈ నివేదిక ICAR-IISS మరియు రాష్ట్ర వ్యవసాయ విశ్వవిద్యాలయ మార్గదర్శకాల ఆధారంగా రూపొందించబడింది.'
-    },
-    ta: {
-      btnText: '📄 PDF பதிவிறக்கம் / Download PDF',
-      reportTitle: 'விவசாயி வேளாண்மை ஆலோசனை மற்றும் மண் நல அறிக்கை',
-      reportSubtitle: 'SPARC AgriSense AI • தேசிய நிலையான வேளாண்மை இயக்கம் (NMSA)',
-      sectionField: 'வயல் பரிசோதனை மற்றும் மண் வளம்',
-      sectionWeather: 'வானிலை மற்றும் மழைப்பொழிவு தரவு',
-      sectionTopCrop: 'முதன்மைப் பரிந்துரைக்கப்படும் பயிர் (#1 சிறந்த தேர்வு)',
-      sectionAlts: 'மாற்றுப் பயிர் தேர்வுகள்',
-      sectionFert: 'உர மேலாண்மை தொகுப்பு (ஏக்கருக்கு)',
-      sectionKvk: 'வேளாண் அறிவியல் மையம் (KVK) ஆலோசனை',
-      lblDate: 'அறிக்கை நாள்:',
-      lblLocation: 'வயலின் அமைவிடம்:',
-      lblAgroZone: 'வேளாண்-காலநிலை மண்டலம்:',
-      lblMatch: 'பொருத்தம் சதவீதம்',
-      lblVarieties: 'பரிந்துரைக்கப்பட்ட ரகங்கள்:',
-      lblYield: 'எதிர்பார்க்கப்படும் மகசூல்',
-      lblWater: 'நீர் தேவை',
-      lblDuration: 'பயிர் காலம்',
-      lblPrice: 'சந்தை விலை மதிப்பீடு',
-      lblBasal: 'விதைக்கும்போது அடியுர அளவு:',
-      lblWhyFits: 'அறிவியல் காரணம்:',
-      thCrop: 'பயிர் பெயர்',
-      thMatch: 'பொருத்தம் %',
-      thYield: 'எதிர்பார்ப்பு மகசூல்',
-      thWater: 'நீர் தேவை',
-      thRisk: 'சந்தை ஆபத்து',
-      thFertilizer: 'உர வகை',
-      thBags: 'அளவு (50 கிலோ பை/ஏக்கர்)',
-      thTiming: 'இடும் பருவம்',
-      ureaTiming: 'பிரித்து இடவும்: 50% அடியுரம் + 25% தூர் கட்டும்போது + 25% கதிர் வரும்போது',
-      dapTiming: '100% விதைக்கும் போதே அடியுரமாக இடவும்',
-      mopTiming: '100% அடியுரமாக அல்லது 50% அடியுரம் + 50% பூக்கும் பருவம்',
-      disclaimer: 'இந்த அறிக்கை ICAR-IISS மற்றும் தமிழ்நாடு வேளாண் பல்கலைக்கழக வழிகாட்டுதலின்படி தயாரிக்கப்பட்டது.'
-    },
-    bn: {
-      btnText: '📄 পিডিএফ ডাউনলোড / Download PDF',
-      reportTitle: 'কৃষক কৃষি পরামর্শ ও মৃত্তিকা স্বাস্থ্য প্রতিবেদন',
-      reportSubtitle: 'SPARC AgriSense AI • জাতীয় টেকসই কৃষি মিশন (NMSA) ও ICAR মানদণ্ড',
-      sectionField: 'মাঠ পরিদর্শন ও মৃত্তিকা স্বাস্থ্য পরীক্ষা',
-      sectionWeather: 'আবহাওয়া ও বৃষ্টিপাত টেলিমেট্রি',
-      sectionTopCrop: 'শীর্ষ সুপারিশকৃত ফসল (সেরা বিকল্প #1)',
-      sectionAlts: 'বিকল্প ফসল নির্বাচন',
-      sectionFert: 'সার ব্যবস্থাপনা প্যাকেজ (প্রতি একর সুপারিশ)',
-      sectionKvk: 'কৃষি বিজ্ঞান কেন্দ্র (KVK) বিশেষজ্ঞ পরামর্শ',
-      lblDate: 'প্রতিবেদনের তারিখ:',
-      lblLocation: 'জমির অবস্থান:',
-      lblAgroZone: 'কৃষি-আবহাওয়া অঞ্চল:',
-      lblMatch: 'উপযোগিতা ম্যাচ',
-      lblVarieties: 'সুপারিশকৃত জাতসমূহ:',
-      lblYield: 'প্রত্যাশিত ফলন',
-      lblWater: 'জলের প্রয়োজনীয়তা',
-      lblDuration: 'ফসলের সময়কাল',
-      lblPrice: 'বাজার দর পূর্বাভাস',
-      lblBasal: 'বপনের সময় প্রাথমিক সার:',
-      lblWhyFits: 'বিজ্ঞানসম্মত কারণ:',
-      thCrop: 'ফসলের নাম',
-      thMatch: 'ম্যাচ %',
-      thYield: 'আনুমানিক ফলন',
-      thWater: 'জলের চাহিদা',
-      thRisk: 'বাজার ঝুঁকি',
-      thFertilizer: 'সারের প্রকার',
-      thBags: 'পরিমাণ (৫০ কেজি বস্তা/একর)',
-      thTiming: 'প্রয়োগের সময়',
-      ureaTiming: 'ভাগ করে প্রয়োগ: ৫০% প্রাথমিক + ২৫% কুশি বের হওয়ার সময় + ২৫% শিষ আসার সময়',
-      dapTiming: '১০০% বপন অথবা রোপণের সময় বেসাল ডোজ হিসাবে',
-      mopTiming: '১০০% বপনের সময় অথবা ৫০% প্রাথমিক + ৫০% ফুল আসার সময়',
-      disclaimer: 'এই প্রতিবেদনটি ICAR-IISS এবং রাজ্য কৃষি বিশ্ববিদ্যালয়ের বৈজ্ঞানিক নির্দেশিকা অনুসারে প্রস্তুত করা হয়েছে।'
-    },
-    kn: {
-      btnText: '📄 PDF ಡೌನ್‌ಲೋಡ್ / Download PDF',
-      reportTitle: 'ರೈತ ಕೃಷಿ ಸಲಹಾ ಮತ್ತು ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವರದಿ',
-      reportSubtitle: 'SPARC AgriSense AI • ರಾಷ್ಟ್ರೀಯ ಸುಸ್ಥಿರ ಕೃಷಿ ಮಿಷನ್ (NMSA)',
-      sectionField: 'ಕ್ಷೇತ್ರ ಪರೀಕ್ಷೆ ಮತ್ತು ಮಣ್ಣಿನ ಫಲವತ್ತತೆ',
-      sectionWeather: 'ಹವಾಮಾನ ಮತ್ತು ಮಳೆ ಮಾಹಿತಿ',
-      sectionTopCrop: 'ಅತ್ಯುತ್ತಮ ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ (#1 ಅತ್ಯುತ್ತಮ ಆಯ್ಕೆ)',
-      sectionAlts: 'ಪರ್ಯಾಯ ಬೆಳೆಗಳ ಆಯ್ಕೆ',
-      sectionFert: 'ಗೊಬ್ಬರ ನಿರ್ವಹಣಾ ಪ್ಯಾಕೇಜ್ (ಪ್ರತಿ ಎಕರೆಗೆ)',
-      sectionKvk: 'ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (KVK) ತಜ್ಞರ ಸಲಹೆ',
-      lblDate: 'ವರದಿ ದಿನಾಂಕ:',
-      lblLocation: 'ಜಮೀನಿನ ಸ್ಥಳ:',
-      lblAgroZone: 'ಕೃಷಿ-ಹವಾಮಾನ ವಲಯ:',
-      lblMatch: 'ಹೊಂದಾಣಿಕೆ ಪ್ರಮಾಣ',
-      lblVarieties: 'ಶಿಫಾರಸು ಮಾಡಿದ ತಳಿಗಳು:',
-      lblYield: 'ನಿರೀಕ್ಷಿತ ಇಳುವರಿ',
-      lblWater: 'ನೀರಿನ ಅವಶ್ಯಕತೆ',
-      lblDuration: 'ಬೆಳೆ ಅವಧಿ',
-      lblPrice: 'ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಅಂದಾಜು',
-      lblBasal: 'ಬಿತ್ತನೆ ಸಮಯದ ಮೂಲ ಗೊಬ್ಬರ:',
-      lblWhyFits: 'ವೈಜ್ಞಾನಿಕ ಸಮರ್ಥನೆ:',
-      thCrop: 'ಬೆಳೆಯ ಹೆಸರು',
-      thMatch: 'ಹೊಂದಾಣಿಕೆ %',
-      thYield: 'ಅಂದಾಜು ಇಳುವರಿ',
-      thWater: 'ನೀರಿನ ಅಗತ್ಯ',
-      thRisk: 'ಮಾರುಕಟ್ಟೆ ಅಪಾಯ',
-      thFertilizer: 'ರಸಗೊಬ್ಬರದ ವಿಧ',
-      thBags: 'ಪ್ರಮಾಣ (50 ಕೆಜಿ ಚೀಲ/ಎಕರೆ)',
-      thTiming: 'ಹಾಕುವ ಸಮಯ',
-      ureaTiming: 'ವಿಭಾಗಿಸಿ: 50% ಬಿತ್ತನೆಗೆ + 25% ಕವಲೊಡೆಯುವಾಗ + 25% ತೆನೆ ಬರುವಾಗ',
-      dapTiming: '100% ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿಯೇ ಮೂಲ ಗೊಬ್ಬರವಾಗಿ ನೀಡಬೇಕು',
-      mopTiming: '100% ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿ ಅಥವಾ 50% ಬಿತ್ತನೆಗೆ + 50% ಹೂವಾಡುವಾಗ',
-      disclaimer: 'ಈ ವರದಿಯು ICAR-IISS ಮತ್ತು ಕೃಷಿ ವಿಶ್ವವಿದ್ಯಾಲಯದ ವೈಜ್ಞಾನಿಕ ಮಾರ್ಗಸೂಚಿಗಳ ಅನ್ವಯ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ.'
-    }
-  };
+  "en": {
+    "btnText": "📄 Download PDF",
+    "reportTitle": "KISAN AGRONOMIC ADVISORY & SOIL HEALTH REPORT",
+    "reportSubtitle": "SPARC AgriSense AI • National Mission on Sustainable Agriculture (NMSA)",
+    "sectionField": "Field Diagnostics & Soil Health",
+    "sectionWeather": "Agro-Meteorological Telemetry",
+    "sectionTopCrop": "Top Recommended Crop (#1 Best Choice)",
+    "sectionAlts": "Alternative Crop Options",
+    "sectionFert": "Elemental Fertilizer Package (1 Acre)",
+    "sectionKvk": "Krishi Vigyan Kendra (KVK) Advisory",
+    "lblDate": "Generated On:",
+    "lblLocation": "Field Location:",
+    "lblAgroZone": "Agro-Climatic Zone:",
+    "lblMatch": "Suitability Match",
+    "lblVarieties": "Recommended Varieties:",
+    "lblYield": "Expected Yield",
+    "lblWater": "Water Need",
+    "lblDuration": "Duration",
+    "lblPrice": "Mandi Outlook",
+    "lblBasal": "Basal Dose at Sowing:",
+    "lblWhyFits": "Agronomic Rationale:",
+    "thCrop": "Crop Option",
+    "thMatch": "Match %",
+    "thYield": "Est. Yield",
+    "thWater": "Water Need",
+    "thRisk": "Market Risk",
+    "thFertilizer": "Fertilizer Type",
+    "thBags": "Bags / Acre (50 kg)",
+    "thTiming": "Application Stage",
+    "ureaTiming": "Split: 50% Basal + 25% Tillering + 25% Panicle Initiation",
+    "dapTiming": "100% Basal application at sowing or transplanting",
+    "mopTiming": "100% Basal or split 50% Sowing + 50% Flowering",
+    "disclaimer": "Validated under ICAR-IISS and State Agricultural University (SAU) packages of practices. Recommendations are calibrated to current field nutrient levels and precipitation telemetry.",
+    "sectionSteps": "Stage-by-Stage Cultivation Guide (How To Do Things)",
+    "step1Title": "Step 1: Land Preparation & Organic Enrichment",
+    "step1Desc": "2–3 deep ploughings with cultivator/rotavator; level using laser leveller for uniform irrigation. Incorporate 4–5 tonnes well-decomposed FYM or vermicompost per acre 2–3 weeks before sowing. Seed treatment: Treat seeds with Trichoderma viride @ 4 g/kg or Pseudomonas fluorescens @ 10 g/kg + Azotobacter/Rhizobium culture to prevent soil-borne seedling rot and damping-off.",
+    "step2Title": "Step 2: Sowing / Transplanting & Spatial Geometry",
+    "step2Desc": "Maintain certified seed rate (15–20 kg/acre for direct drilling, 8–10 kg for nursery transplanting). Optimal spacing: 20 cm row-to-row x 15 cm plant-to-plant at 2–3 cm depth. Apply basal DAP (1.2 bags/acre) + MOP (0.8 bags/acre) + 10 kg Zinc Sulphate (21%) during final ploughing; avoid placing concentrated urea directly in the seed furrow.",
+    "step3Title": "Step 3: Precision Water & Irrigation Management",
+    "step3Desc": "Maintain shallow standing moisture (2–3 cm) during vegetative phase. Ensure non-stressed irrigation at 4 critical stages: Crown Root Initiation / Tillering, Panicle Initiation, Flowering, and Grain Filling. Withhold and drain field water 10–12 days prior to harvest for uniform grain drying.",
+    "step4Title": "Step 4: Weed Control, Top-Dressing & Foliar Care",
+    "step4Desc": "Apply pre-emergence herbicide (Pendimethalin 30% EC @ 1.0 L/acre within 48h of sowing) or run mechanical weeder at 20 & 40 DAS. Split Urea application: First top-dress (25%) at active tillering (21–25 DAS) and second top-dress (25%) at panicle initiation with light irrigation. Foliar spray 0.5% ZnSO4 + 0.25% lime or Nano Urea (4 ml/L) for leaf greening.",
+    "step5Title": "Step 5: Timely Harvest, Threshing & Safe Storage",
+    "step5Desc": "Harvest crop when 80–85% grains turn golden-yellow and grain moisture reduces to 18–20%. Sun-dry clean threshed grains on tarpaulin for 3–4 days until moisture drops to 12–14%. Store in airtight hermetic bags or galvanized bins treated with Neem oil / Celphos against stored grain weevils.",
+    "sectionTroubleshoot": "Field Emergency & Problem Troubleshooting (What To Do If Any Problem Arises)",
+    "thProblem": "Observed Symptom / Emergency",
+    "thCause": "Agronomic Root Cause",
+    "thAction": "Immediate Field Action & Chemical/Bio Remedy",
+    "prob1Title": "Leaf Yellowing & Stunted Growth",
+    "prob1Cause": "Nitrogen deficiency, waterlogging, or iron chlorosis.",
+    "prob1Action": "Foliar spray 2% Urea solution or Nano Urea (4 ml/L water). Immediately cut drainage furrows to discharge standing water.",
+    "prob2Title": "Sucking Pests (Aphids, Whiteflies, Thrips)",
+    "prob2Cause": "Prolonged humid/cloudy weather and dense canopy.",
+    "prob2Action": "Install 6–8 yellow sticky cards/acre. Spray 5% Neem Seed Kernel Extract (NSKE) or Imidacloprid 17.8% SL @ 0.5 ml/L water (40 ml/acre).",
+    "prob3Title": "Stem Borers, Leaf Folders & Caterpillars",
+    "prob3Cause": "Lepidopteran larvae boring into shoots causing dead-hearts.",
+    "prob3Action": "Erect 4 pheromone traps/acre. Spray Chlorantraniliprole 18.5% SC (Coragen) @ 0.3 ml/L or apply Cartap Hydrochloride 4G @ 7.5 kg/acre.",
+    "prob4Title": "Fungal Blight, Leaf Blast & Root Rot",
+    "prob4Cause": "Pathogenic fungi (Rhizoctonia / Pyricularia) in humid conditions.",
+    "prob4Action": "Spray Hexaconazole 5% EC @ 2 ml/L or Validamycin 3% L @ 2.5 ml/L. Drench root zones with Copper Oxychloride 50% WP @ 3 g/L.",
+    "prob5Title": "Drought Spell & Thermal Heat Stress",
+    "prob5Cause": "Extended dry spell and soil moisture deficit during flowering.",
+    "prob5Action": "Foliar spray 1% Potassium Nitrate (13-0-45) to regulate stomatal water loss. Give light evening irrigation and apply crop residue mulch.",
+    "prob6Title": "Unseasonal Heavy Rain & Waterlogging",
+    "prob6Cause": "Poor drainage stagnation leading to root asphyxiation.",
+    "prob6Action": "Cut field bunds to discharge excess water within 24 hours. Post drainage, spray 19:19:19 NPK (10 g/L) + micronutrient mix to revive roots.",
+    "sectionEmergency": "Emergency Kisan Helpline & ICAR Escalation",
+    "kisanCallCenter": "Kisan Call Center (Toll-Free Helpline): 1800-180-1551 (Available 6:00 AM – 10:00 PM, 365 Days in all Indian regional languages)",
+    "kvkEscalation": "District KVK Escalation: For unidentified disease or pest outbreaks, collect leaf samples in a sealed pouch and consult your nearest Krishi Vigyan Kendra (KVK) Agronomist or Block Agriculture Officer (BAO) immediately."
+  },
+  "hi": {
+    "btnText": "📄 पीडीएफ डाउनलोड / Download PDF",
+    "reportTitle": "किसान कृषि परामर्श एवं मृदा स्वास्थ्य रिपोर्ट",
+    "reportSubtitle": "SPARC AgriSense AI • राष्ट्रीय सतत कृषि मिशन (NMSA) एवं ICAR मानक",
+    "sectionField": "खेत निदान एवं मृदा स्वास्थ्य परीक्षण",
+    "sectionWeather": "मौसम एवं जलवायु टेलीमेट्री",
+    "sectionTopCrop": "शीर्ष अनुशंसित फसल (सर्वश्रेष्ठ विकल्प #1)",
+    "sectionAlts": "वैकल्पिक फसल विकल्प",
+    "sectionFert": "उर्वरक प्रबंधन पैकेज (प्रति एकड़ संस्तुति)",
+    "sectionKvk": "कृषि विज्ञान केंद्र (KVK) विशेष परामर्श",
+    "lblDate": "रिपोर्ट दिनांक:",
+    "lblLocation": "खेत का स्थान:",
+    "lblAgroZone": "कृषि-जलवायु क्षेत्र:",
+    "lblMatch": "अनुकूलता मैच",
+    "lblVarieties": "अनुशंसित उन्नत किस्में:",
+    "lblYield": "संभावित उपज",
+    "lblWater": "जल आवश्यकता",
+    "lblDuration": "फसल अवधि",
+    "lblPrice": "मंडी भाव अनुमान",
+    "lblBasal": "बुवाई के समय आधारीय खुराक:",
+    "lblWhyFits": "वैज्ञानिक औचित्य:",
+    "thCrop": "फसल का नाम",
+    "thMatch": "मैच %",
+    "thYield": "अनुमानित उपज",
+    "thWater": "जल की जरूरत",
+    "thRisk": "बाजार जोखिम",
+    "thFertilizer": "उर्वरक का प्रकार",
+    "thBags": "मात्रा (50 किग्रा बैग/एकड़)",
+    "thTiming": "प्रयोग का समय",
+    "ureaTiming": "विभाजित: 50% बुवाई + 25% कल्ले फूटते समय + 25% बाली बनते समय",
+    "dapTiming": "100% बुवाई अथवा रोपाई के समय बेसल डोज के रूप में",
+    "mopTiming": "100% बुवाई के समय अथवा 50% बुवाई + 50% फूल आते समय",
+    "disclaimer": "यह रिपोर्ट ICAR-IISS तथा राज्य कृषि विश्वविद्यालय (SAU) के वैज्ञानिक मानकों पर आधारित है। संस्तुतियां वर्तमान मृदा पोषक तत्वों एवं मानसूनी वर्षा मॉडल के अनुरूप तैयार की गई हैं।",
+    "sectionSteps": "चरणबद्ध खेती मार्गदर्शिका (खेती कैसे करें)",
+    "step1Title": "चरण 1: खेत की तैयारी एवं जैविक खाद",
+    "step1Desc": "कल्टीवेटर व रोटावेटर से 2-3 गहरी जुताई करें; लेजर लैंड लेवलर से समतलीकरण करें। बुवाई से 2-3 सप्ताह पहले 4-5 टन अच्छी तरह सड़ी गोबर की खाद या केंचुआ खाद प्रति एकड़ मिलाएं। बीज उपचार: बीजों को ट्राइकोडर्मा विरिडी (4 ग्राम/किग्रा) या स्यूडोमोनास फ्लोरेसेंस (10 ग्राम/किग्रा) + एजोटोबैक्टर/राइजोबियम कल्चर से उपचारित करें ताकि जड़ सड़न व उकठा से बचाव हो सके।",
+    "step2Title": "चरण 2: बुवाई / रोपाई एवं पौध अंतरण",
+    "step2Desc": "प्रमाणित बीज दर (सीधी बुवाई 15-20 किग्रा/एकड़, नर्सरी रोपाई 8-10 किग्रा) का उपयोग करें। कतार से कतार 20 सेमी व पौधे से पौधा 15 सेमी की दूरी पर 2-3 सेमी गहराई में बोएं। अंतिम जुताई पर डीएपी (1.2 बोरी), एमओपी (0.8 बोरी) एवं 10 किग्रा जिंक सल्फेट (21%) डालें; यूरिया को सीधे बीज के साथ न डालें।",
+    "step3Title": "चरण 3: जल प्रबंधन एवं क्रांतिक सिंचाई",
+    "step3Desc": "वानस्पतिक अवस्था में 2-3 सेमी उथला पानी रखें। 4 क्रांतिक अवस्थाओं पर सिंचाई सुनिश्चित करें: कल्ले फूटते समय (टिल्लरिंग), बाली बनते समय, फूल आते समय एवं दाना भरते समय। कटाई से 10-12 दिन पहले खेत का पानी पूरी तरह निकाल दें ताकि दाने समान रूप से पक सकें।",
+    "step4Title": "चरण 4: खरपतवार नियंत्रण एवं शीर्ष उर्वरक",
+    "step4Desc": "बुवाई के 48 घंटे के भीतर पेंडीमेथालिन 30% ईसी @ 1.0 लीटर/एकड़ का छिड़काव करें या 20 व 40 दिन पर निराई-गुड़ाई करें। यूरिया का दो बार टॉप-ड्रेसिंग: पहला कल्ले फूटते समय (25%) और दूसरा बाली बनते समय (25%) हल्की सिंचाई के साथ। पत्तियों के हरेपन हेतु 0.5% जिंक सल्फेट + 0.25% चूना या नैनो यूरिया (4 मिली/लीटर) का छिड़काव करें।",
+    "step5Title": "चरण 5: कटाई, गहाई एवं सुरक्षित भंडारण",
+    "step5Desc": "जब बालियों के 80-85% दाने सुनहरे पीले हो जाएं और दानों में नमी 18-20% रह जाए, तब कटाई करें। गहाई के बाद दानों को तिरपाल पर 3-4 दिन सुखाकर नमी 12-14% पर लाएं। कीटों से सुरक्षा हेतु नीम तेल या सेल्फास से उपचारित हवादार व वायुरोधी कोठियों/थैलों में भंडारण करें।",
+    "sectionTroubleshoot": "खेत आपातकाल एवं समस्या निवारण (समस्या आने पर क्या करें)",
+    "thProblem": "लक्षण / समस्या",
+    "thCause": "संभावित कृषि कारण",
+    "thAction": "तत्काल खेत उपाय व उपचार",
+    "prob1Title": "पत्तियों का पीला पड़ना व वृद्धि रुकना",
+    "prob1Cause": "नाइट्रोजन की कमी, खेत में जलभराव या लोहे की कमी।",
+    "prob1Action": "2% यूरिया घोल या नैनो यूरिया (4 मिली/लीटर) का पर्णीय छिड़काव करें। खेत से रुका हुआ पानी तुरंत नाली बनाकर निकालें।",
+    "prob2Title": "रस चूसक कीट (माहू, सफेद मक्खी, थ्रिप्स)",
+    "prob2Cause": "लगातार बादलयुक्त उमस भरा मौसम व घना फैलाव।",
+    "prob2Action": "प्रति एकड़ 6-8 पीले चिपचिपे ट्रैप लगाएं। 5% नीम अर्क (एनएसकेई) या इमिडाक्लोप्रिड 17.8% एसएल @ 0.5 मिली/लीटर पानी में घोलकर छिड़कें।",
+    "prob3Title": "तना छेदक, पत्ता लपेटक व इल्लियां",
+    "prob3Cause": "सूंड़ी कीट जो तने को काटकर सुखा देते हैं (डेड हार्ट)।",
+    "prob3Action": "प्रति एकड़ 4 फेरोमोन ट्रैप लगाएं। कोराजन (क्लोरेंट्रानिलीप्रोल 18.5% एससी) @ 0.3 मिली/लीटर या कार्टाप हाइड्रोक्लोराइड 4जी @ 7.5 किग्रा/एकड़ डालें।",
+    "prob4Title": "झुलसा, पत्ती धब्बा व जड़ सड़न (फफूंद)",
+    "prob4Cause": "हवा व मिट्टी में पनपने वाले फफूंद रोगजनक (राइजोक्टोनिया/पाइरीकुलरिया)।",
+    "prob4Action": "हेक्साकोनाजोल 5% ईसी @ 2 मिली/लीटर या वैलिडामाइसिन 3% एल @ 2.5 मिली/लीटर का छिड़काव करें। जड़ों के पास कॉपर ऑक्सीक्लोराइड 50% डब्लूपी @ 3 ग्राम/लीटर से सींचें।",
+    "prob5Title": "अचानक सूखा व अत्यधिक गर्मी का तनाव",
+    "prob5Cause": "बारिश में लंबा विराम व फूल आने के समय नमी की गंभीर कमी।",
+    "prob5Action": "वाष्पोत्सर्जन रोकने हेतु 1% पोटेशियम नाइट्रेट (13-0-45) का छिड़काव करें। शाम के समय हल्की सिंचाई करें व कतारों के बीच पुआल की मल्चिंग करें।",
+    "prob6Title": "असमय भारी बारिश व खेत में जलभराव",
+    "prob6Cause": "खराब जल निकासी जिससे जड़ों में ऑक्सीजन की कमी हो जाती है।",
+    "prob6Action": "खेत की मेड़ काटकर 24 घंटे के भीतर पानी बाहर निकालें। पानी निकलने के बाद जड़ों को सक्रिय करने हेतु 19:19:19 एनपीके (10 ग्राम/लीटर) का छिड़काव करें।",
+    "sectionEmergency": "आपातकालीन किसान हेल्पलाइन व संस्थागत सहायता",
+    "kisanCallCenter": "किसान कॉल सेंटर (टोल-फ्री हेल्पलाइन): 1800-180-1551 (सुबह 6:00 से रात 10:00 बजे, वर्ष भर सभी भारतीय भाषाओं में उपलब्ध)",
+    "kvkEscalation": "कृषि विज्ञान केंद्र (KVK) परामर्श: किसी भी अज्ञात कीट या बीमारी के प्रकोप पर प्रभावित पत्ती के नमूने प्लास्टिक की थैली में लेकर निकटतम कृषि विज्ञान केंद्र या प्रखंड कृषि पदाधिकारी (BAO) से तुरंत संपर्क करें।"
+  },
+  "mr": {
+    "btnText": "📄 पीडीएफ डाउनलोड / Download PDF",
+    "reportTitle": "शेतकरी कृषी सल्ला आणि मृदा आरोग्य अहवाल",
+    "reportSubtitle": "SPARC AgriSense AI • राष्ट्रीय शाश्वत शेती अभियान (NMSA) व ICAR मानके",
+    "sectionField": "शेत चाचणी आणि मातीचे आरोग्य",
+    "sectionWeather": "हवामान आणि पर्जन्यमान टेलीमेट्री",
+    "sectionTopCrop": "अव्वल शिफारस केलेले पीक (उत्कृष्ट पर्याय #1)",
+    "sectionAlts": "पर्यायी पिके",
+    "sectionFert": "खत व्यवस्थापन संच (प्रति एकर शिफारस)",
+    "sectionKvk": "कृषी विज्ञान केंद्र (KVK) तज्ज्ञ सल्ला",
+    "lblDate": "अहवाल दिनांक:",
+    "lblLocation": "शेताचे ठिकाण:",
+    "lblAgroZone": "कृषी-हवामान क्षेत्र:",
+    "lblMatch": "योग्यतेचे प्रमाण",
+    "lblVarieties": "शिफारस केलेली वाणे:",
+    "lblYield": "अपेक्षित उत्पादन",
+    "lblWater": "पाण्याची गरज",
+    "lblDuration": "कालावधी",
+    "lblPrice": "बाजारभाव अंदाज",
+    "lblBasal": "पेरणीच्या वेळचा बेसल डोस:",
+    "lblWhyFits": "कृषी वैज्ञानिक कारण:",
+    "thCrop": "पिकाचे नाव",
+    "thMatch": "जुळणी %",
+    "thYield": "अपेक्षित उत्पादन",
+    "thWater": "पाण्याची गरज",
+    "thRisk": "बाजार जोखीम",
+    "thFertilizer": "खताचा प्रकार",
+    "thBags": "प्रमाण (५० किलो बॅग/एकर)",
+    "thTiming": "वापराची वेळ",
+    "ureaTiming": "विभागून: ५०% पेरणी + २५% फुटवे फुटताना + २५% फुलोऱ्यात",
+    "dapTiming": "१००% पेरणीच्या वेळी बेसल डोस म्हणून द्यावे",
+    "mopTiming": "१००% पेरणीच्या वेळी किंवा ५०% पेरणी + ५०% फुलोरा",
+    "disclaimer": "हा अहवाल ICAR-IISS व राज्य कृषी विद्यापीठाच्या पॅकेज ऑफ प्रॅक्टिसेसवर आधारित आहे. उपलब्ध माती घटक व पर्जन्यमानानुसार शिफारसी तयार केल्या आहेत.",
+    "sectionSteps": "टप्प्याटप्प्याने लागवड मार्गदर्शिका (शेती कशी करावी)",
+    "step1Title": "टप्पा १: जमिनीची तयारी आणि सेंद्रिय खत",
+    "step1Desc": "कुळव आणि रोटाव्हेटरने २-३ खोल नांगरट करा; लेझर लँड लेव्हलरने जमीन सपाट करा. पेरणीच्या २-३ आठवडे आधी एकरी ४-५ टन चांगले कुजलेले शेणखत किंवा गांडूळ खत मिसळा. बीजप्रक्रिया: ट्रायकोडर्मा व्हिरिडी (४ ग्रॅम/किलो) किंवा स्यूडोमोनस फ्लोरेसेन्स (१० ग्रॅम/किलो) + अझोटोबॅक्टर/रायझोबियम कल्चरने प्रक्रिया करा.",
+    "step2Title": "टप्पा २: पेरणी / पुनर्लागवड आणि अंतराचे व्यवस्थापन",
+    "step2Desc": "प्रमाणित बियाणे वापरा. ओळीतील अंतर २० सेमी व रोपांमधील अंतर १५ सेमी ठेवून २-३ सेमी खोलीवर पेरणी करा. शेवटच्या पाळीत डीएपी (१.२ पोती), एमओपी (०.८ पोती) आणि १० किलो झिंक सल्फेट (२१%) टाका; युरिया थेट बियाण्याजवळ टाकू नका.",
+    "step3Title": "टप्पा ३: काटेकोर पाणी व सिंचन व्यवस्थापन",
+    "step3Desc": "वाढीच्या काळात २-३ सेमी उथळ पाणी किंवा वाफसा ठेवा. ४ महत्त्वाच्या टप्प्यांवर पाणी द्या: फुटवे फुटताना, लोंबी भरताना, फुलधारणा आणि दाणे भरताना. काढणीच्या १०-१२ दिवस आधी शेतातील पाणी पूर्णपणे काढून टाका.",
+    "step4Title": "टप्पा ४: तण नियंत्रण आणि खतांचा हप्ता",
+    "step4Desc": "पेरणीनंतर ४८ तासांत पेंडीमेथालिन ३०% ईसी @ १.० लिटर/एकरी फवारा किंवा २० व ४० दिवसांनी खुरपणी करा. युरियाचे दोन हप्ते द्या: २५% फुटवे फुटताना आणि २५% लोंबी निघताना. हिरवेपणासाठी ०.५% झिंक सल्फेट किंवा नॅनो युरिया (४ मिली/लिटर) फवारा.",
+    "step5Title": "टप्पा ५: वेळेवर काढणी, मळणी आणि सुरक्षित साठवण",
+    "step5Desc": "८०-८५% दाणे पिवळे पडल्यावर आणि आर्द्रता १८-२०% असताना काढणी करा. मळणीनंतर दाणे उन्हात ३-४ दिवस वाळवून आर्द्रता १२-१४% वर आणा. कडधान्य भुंग्यांपासून संरक्षणासाठी निंबोळी तेल किंवा सेल्फॉसच्या गोळ्या वापरून हवाबंद कोठारात साठवा.",
+    "sectionTroubleshoot": "शेत आणीबाणी आणि समस्या निवारण (समस्या उद्भवल्यास काय करावे)",
+    "thProblem": "दिसणारी लक्षणे / अडचण",
+    "thCause": "संभाव्य कृषी कारण",
+    "thAction": "तात्काळ शेतातील उपाय व औषधोपचार",
+    "prob1Title": "पाने पिवळी पडणे आणि वाढ खुंटणे",
+    "prob1Cause": "नायट्रोजनची कमतरता, पाणी साचणे किंवा लोहाची कमतरता.",
+    "prob1Action": "२% युरिया द्रावण किंवा नॅनो युरिया (४ मिली/लिटर) फवारा. शेतात साचलेले पाणी तातडीने चर काढून बाहेर काढा.",
+    "prob2Title": "रसशोषक किडींचा प्रादुर्भाव (मावा, तुडतुडे, पांढरी माशी)",
+    "prob2Cause": "ढगाळ दमट हवामान आणि दाट लागवड.",
+    "prob2Action": "एकरी ६-८ पिवळे चिकट सापळे लावा. ५% निंबोळी अर्क किंवा इमिडाक्लोप्रिड १७.८% एसएल @ ०.५ मिली/लिटर पाण्यात मिसळून फवारा.",
+    "prob3Title": "खोडकिडा, पाने गुंडाळणारी अळी",
+    "prob3Cause": "अळ्या खोड पोखरतात ज्यामुळे सुकलेले शेंडे (डेड हार्ट) दिसतात.",
+    "prob3Action": "एकरी ४ कामगंध सापळे लावा. कोराजन (क्लोरँट्रानिलीप्रोल १८.५% एससी) @ ०.३ मिली/लिटर किंवा कार्टाप हायड्रोक्लोराईड ४जी @ ७.५ किलो/एकरी वापरा.",
+    "prob4Title": "करपा, तांबेरा आणि मुळकुज (बुरशीजन्य रोग)",
+    "prob4Cause": "दमट हवेतील बुरशीचा प्रादुर्भाव (रायझोक्टोनिया/पायरीक्युलारिया).",
+    "prob4Action": "हेक्साकोनॅझोल ५% ईसी @ २ मिली/लिटर किंवा व्हॅलिडामायसिन ३% एल @ २.५ मिली/लिटर फवारा. मुळांशी कॉपर ऑक्सिक्लोराईड ५०% डब्लूपी @ ३ ग्रॅम/लिटरचे ड्रेन्चिंग करा.",
+    "prob5Title": "अचानक पडलेला दुष्काळ आणि उन्हाचा ताण",
+    "prob5Cause": "पावसाचा प्रदीर्घ खंड आणि फुलधारणेच्या वेळी जमिनीतील पाण्याची कमतरता.",
+    "prob5Action": "बाष्पीभवन रोखण्यासाठी १% पोटॅशियम नायट्रेट (१३-०-४५) फवारा. संध्याकाळी हलके पाणी द्या व ओळींमध्ये गवताचे आच्छादन करा.",
+    "prob6Title": "अवेळी अतिवृष्टी आणि शेतात पाणी साचणे",
+    "prob6Cause": "पाण्याचा निचरा न झाल्याने मुळांचा श्वास कोंडणे.",
+    "prob6Action": "शेताचे बांध कापून २४ तासांच्या आत पाणी काढून टाका. पाणी ओसरल्यावर मुळांच्या वाढीसाठी १९:१९:१९ एनपीके (१० ग्रॅम/लिटर) फवारा.",
+    "sectionEmergency": "तातडीची शेतकरी हेल्पलाइन आणि केव्हीके मदत",
+    "kisanCallCenter": "किसान कॉल सेंटर (टोल-फ्री हेल्पलाइन): 1800-180-1551 (सकाळी ६:०० ते रात्री १०:००, सर्व प्रादेशिक भाषांत उपलब्ध)",
+    "kvkEscalation": "कृषी विज्ञान केंद्र (KVK) सल्ला: कोणत्याही अज्ञात रोगासाठी पानांचे नमुने प्लास्टिक पिशवीत घेऊन जवळच्या कृषी विज्ञान केंद्र किंवा तालुका कृषी अधिकाऱ्यांशी संपर्क साधा."
+  },
+  "pa": {
+    "btnText": "📄 ਪੀਡੀਐਫ ਡਾਊਨਲੋਡ / Download PDF",
+    "reportTitle": "ਕਿਸਾਨ ਖੇਤੀਬਾੜੀ ਸਲਾਹ ਅਤੇ ਮਿੱਟੀ ਸਿਹਤ ਰਿਪੋਰਟ",
+    "reportSubtitle": "SPARC AgriSense AI • ਕੌਮੀ ਟਿਕਾਊ ਖੇਤੀਬਾੜੀ ਮਿਸ਼ਨ (NMSA)",
+    "sectionField": "ਖੇਤ ਨਿਦਾਨ ਅਤੇ ਮਿੱਟੀ ਦੀ ਸਿਹਤ",
+    "sectionWeather": "ਮੌਸਮ ਅਤੇ ਵਰਖਾ ਟੈਲੀਮੈਟਰੀ",
+    "sectionTopCrop": "ਸਿਖਰਲੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਫ਼ਸਲ (#1 ਵਧੀਆ ਵਿਕਲਪ)",
+    "sectionAlts": "ਬਦਲਵੇਂ ਫ਼ਸਲੀ ਵਿਕਲਪ",
+    "sectionFert": "ਖਾਦ ਪ੍ਰਬੰਧਨ ਪੈਕੇਜ (ਪ੍ਰਤੀ ਏਕੜ)",
+    "sectionKvk": "ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ (KVK) ਸਲਾਹ",
+    "lblDate": "ਰਿਪੋਰਟ ਮਿਤੀ:",
+    "lblLocation": "ਖੇਤ ਦਾ ਸਥਾਨ:",
+    "lblAgroZone": "ਖੇਤੀ-ਜਲਵਾਯੂ ਖੇਤਰ:",
+    "lblMatch": "ਅਨੁਕੂਲਤਾ ਮੈਚ",
+    "lblVarieties": "ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀਆਂ ਕਿਸਮਾਂ:",
+    "lblYield": "ਸੰਭਾਵਿਤ ਝਾੜ",
+    "lblWater": "ਪਾਣੀ ਦੀ ਲੋੜ",
+    "lblDuration": "ਸਮਾਂ",
+    "lblPrice": "ਮੰਡੀ ਭਾਅ ਅੰਦਾਜ਼ਾ",
+    "lblBasal": "ਬਿਜਾਈ ਵੇਲੇ ਬੇਸਲ ਖ਼ੁਰਾਕ:",
+    "lblWhyFits": "ਵਿਗਿਆਨਕ ਆਧਾਰ:",
+    "thCrop": "ਫ਼ਸਲ ਦਾ ਨਾਮ",
+    "thMatch": "ਮੈਚ %",
+    "thYield": "ਅੰਦਾਜ਼ਨ ਝਾੜ",
+    "thWater": "ਪਾਣੀ ਦੀ ਲੋੜ",
+    "thRisk": "ਮੰਡੀ ਜੋਖਮ",
+    "thFertilizer": "ਖਾਦ ਦੀ ਕਿਸਮ",
+    "thBags": "ਮਾਤਰਾ (50 ਕਿਲੋ ਥੈਲੇ/ਏਕੜ)",
+    "thTiming": "ਵਰਤੋਂ ਦਾ ਸਮਾਂ",
+    "ureaTiming": "ਵੰਡ: 50% ਬਿਜਾਈ + 25% ਫੁੱਟ ਵੇਲੇ + 25% ਨਿਸਰਣ ਵੇਲੇ",
+    "dapTiming": "100% ਬਿਜਾਈ ਸਮੇਂ ਬੇਸਲ ਡੋਜ਼ ਵਜੋਂ ਪਾਓ",
+    "mopTiming": "100% ਬਿਜਾਈ ਸਮੇਂ ਜਾਂ 50% ਬਿਜਾਈ + 50% ਫੁੱਲ ਪੈਣ ਵੇਲੇ",
+    "disclaimer": "ਇਹ ਰਿਪੋਰਟ ICAR-IISS ਅਤੇ ਰਾਜ ਖੇਤੀਬਾੜੀ ਯੂਨੀਵਰਸਿਟੀਆਂ ਦੇ ਵਿਗਿਆਨਕ ਮਾਪਦੰਡਾਂ ਤੇ ਆਧਾਰਿਤ ਹੈ।",
+    "sectionSteps": "ਕਦਮ-ਦਰ-ਕਦਮ ਕਾਸ਼ਤ ਗਾਈਡ (ਖੇਤੀ ਕਿਵੇਂ ਕਰੀਏ)",
+    "step1Title": "ਕਦਮ 1: ਖੇਤ ਦੀ ਤਿਆਰੀ ਅਤੇ ਜੈਵਿਕ ਖਾਦ",
+    "step1Desc": "ਕਲਟੀਵੇਟਰ ਅਤੇ ਰੋਟਾਵੇਟਰ ਨਾਲ 2-3 ਡੂੰਘੇ ਵਾਹ ਲਗਾਓ; ਲੇਜ਼ਰ ਲੈਵਲਰ ਨਾਲ ਜ਼ਮੀਨ ਪੱਧਰੀ ਕਰੋ। ਬਿਜਾਈ ਤੋਂ 2-3 ਹਫ਼ਤੇ ਪਹਿਲਾਂ 4-5 ਟਨ ਰੂੜੀ ਜਾਂ ਗੰਡੋਆ ਖਾਦ ਪ੍ਰਤੀ ਏਕੜ ਮਿਲਾਓ। ਬੀਜ ਸੋਧ: ਟ੍ਰਾਈਕੋਡਰਮਾ ਵਿਰੀਡੀ (4 ਗ੍ਰਾਮ/ਕਿਲੋ) ਜਾਂ ਸੂਡੋਮੋਨਾਸ (10 ਗ੍ਰਾਮ/ਕਿਲੋ) + ਅਜ਼ੋਟੋਬੈਕਟਰ ਕਲਚਰ ਨਾਲ ਸੋਧੋ।",
+    "step2Title": "ਕਦਮ 2: ਬਿਜਾਈ / ਲਵਾਈ ਅਤੇ ਵਿੱਥ",
+    "step2Desc": "ਪ੍ਰਮਾਣਿਤ ਬੀਜ ਵਰਤੋ। ਲਾਈਨ ਤੋਂ ਲਾਈਨ 20 ਸੈਂਟੀਮੀਟਰ ਅਤੇ ਬੂਟੇ ਤੋਂ ਬੂਟਾ 15 ਸੈਂਟੀਮੀਟਰ ਦੀ ਵਿੱਥ ਤੇ 2-3 ਸੈਂਟੀਮੀਟਰ ਡੂੰਘਾ ਬੀਜੋ। ਆਖਰੀ ਵਾਹ ਵੇਲੇ ਡੀਏਪੀ (1.2 ਬੋਰੀ), ਐਮਓਪੀ (0.8 ਬੋਰੀ) ਅਤੇ 10 ਕਿਲੋ ਜ਼ਿੰਕ ਸਲਫੇਟ (21%) ਪਾਓ।",
+    "step3Title": "ਕਦਮ 3: ਪਾਣੀ ਦਾ ਪ੍ਰਬੰਧਨ ਅਤੇ ਨਾਜ਼ੁਕ ਸਿੰਚਾਈ",
+    "step3Desc": "ਸ਼ੁਰੂਆਤੀ ਵਾਧੇ ਸਮੇਂ 2-3 ਸੈਂਟੀਮੀਟਰ ਖੜ੍ਹਾ ਪਾਣੀ ਰੱਖੋ। 4 ਨਾਜ਼ੁਕ ਪੜਾਵਾਂ ਤੇ ਪਾਣੀ ਦਿਓ: ਫੁਟਾਰੇ ਵੇਲੇ, ਨਿਸਰਣ ਵੇਲੇ, ਫੁੱਲ ਪੈਣ ਵੇਲੇ ਅਤੇ ਦਾਣਾ ਪੈਣ ਵੇਲੇ। ਵਾਢੀ ਤੋਂ 10-12 ਦਿਨ ਪਹਿਲਾਂ ਪਾਣੀ ਪੂਰੀ ਤਰ੍ਹਾਂ ਕੱਢ ਦਿਓ।",
+    "step4Title": "ਕਦਮ 4: ਨਦੀਨ ਰੋਕਥਾਮ ਅਤੇ ਯੂਰੀਆ ਦਾ ਛਿੜਕਾਅ",
+    "step4Desc": "ਬਿਜਾਈ ਦੇ 48 ਘੰਟਿਆਂ ਅੰਦਰ ਪੈਂਡੀਮੈਥਾਲਿਨ 30% ਈਸੀ @ 1.0 ਲੀਟਰ/ਏਕੜ ਛਿੜਕੋ। ਯੂਰੀਆ ਦੀ ਵੰਡ: 25% ਫੁਟਾਰੇ ਵੇਲੇ ਅਤੇ 25% ਨਿਸਰਣ ਵੇਲੇ ਹਲਕੇ ਪਾਣੀ ਨਾਲ ਪਾਓ। ਹਰੇਪਣ ਲਈ 0.5% ਜ਼ਿੰਕ ਸਲਫੇਟ ਜਾਂ ਨੈਨੋ ਯੂਰੀਆ (4 ਮਿ.ਲੀ./ਲੀਟਰ) ਛਿੜਕੋ।",
+    "step5Title": "ਕਦਮ 5: ਵਾਢੀ, ਗਹਾਈ ਅਤੇ ਸੁਰੱਖਿਅਤ ਭੰਡਾਰਨ",
+    "step5Desc": "ਜਦੋਂ 80-85% ਸਿੱਟੇ ਸੁਨਹਿਰੀ ਪੀਲੇ ਹੋ ਜਾਣ ਅਤੇ ਨਮੀ 18-20% ਹੋਵੇ ਤਾਂ ਵਾਢੀ ਕਰੋ। ਧੁੱਪ ਵਿੱਚ 3-4 ਦਿਨ ਸੁਕਾ ਕੇ ਨਮੀ 12-14% ਤੇ ਲਿਆਓ। ਨਿੰਮ ਤੇਲ ਜਾਂ ਸੈਲਫਾਸ ਦੀਆਂ ਗੋਲੀਆਂ ਵਰਤ ਕੇ ਹਵਾ-ਬੰਦ ਢੋਲਾਂ ਵਿੱਚ ਭੰਡਾਰ ਕਰੋ।",
+    "sectionTroubleshoot": "ਖੇਤ ਸੰਕਟ ਅਤੇ ਸਮੱਸਿਆ ਹੱਲ (ਸਮੱਸਿਆ ਆਉਣ ਤੇ ਕੀ ਕਰੀਏ)",
+    "thProblem": "ਲੱਛਣ / ਮੁਸ਼ਕਲ",
+    "thCause": "ਸੰਭਾਵਿਤ ਕਾਰਨ",
+    "thAction": "ਤੁਰੰਤ ਖੇਤ ਇਲਾਜ ਤੇ ਉਪਾਅ",
+    "prob1Title": "ਪੱਤੇ ਪੀਲੇ ਪੈਣਾ ਅਤੇ ਵਾਧਾ ਰੁਕਣਾ",
+    "prob1Cause": "ਨਾਈਟ੍ਰੋਜਨ ਦੀ ਘਾਟ, ਪਾਣੀ ਦਾ ਖੜ੍ਹਨਾ ਜਾਂ ਲੋਹੇ ਦੀ ਘਾਟ।",
+    "prob1Action": "2% ਯੂਰੀਆ ਘੋਲ ਜਾਂ ਨੈਨੋ ਯੂਰੀਆ (4 ਮਿ.ਲੀ./ਲੀਟਰ) ਛਿੜਕੋ। ਖੇਤ ਵਿੱਚੋਂ ਖੜ੍ਹਾ ਪਾਣੀ ਤੁਰੰਤ ਖਾਲੀਆਂ ਪਾ ਕੇ ਬਾਹਰ ਕੱਢੋ।",
+    "prob2Title": "ਰਸ ਚੂਸਣ ਵਾਲੇ ਕੀੜੇ (ਤੇਲਾ, ਚਿੱਟੀ ਮੱਖੀ, ਥ੍ਰਿਪਸ)",
+    "prob2Cause": "ਸਿੱਲ੍ਹਾ ਮੌਸਮ ਅਤੇ ਸੰਘਣੀ ਫਸਲ।",
+    "prob2Action": "ਏਕੜ ਪਿੱਛੇ 6-8 ਪੀਲੇ ਕਾਰਡ ਲਗਾਓ। 5% ਨਿੰਮ ਅਰਕ ਜਾਂ ਇਮੀਡਾਕਲੋਪ੍ਰਿਡ 17.8% ਐਸਐਲ @ 0.5 ਮਿ.ਲੀ./ਲੀਟਰ ਪਾਣੀ ਵਿੱਚ ਛਿੜਕੋ।",
+    "prob3Title": "ਤਣਾ ਛੇਦਕ, ਪੱਤਾ ਲਪੇਟ ਸੁੰਡੀ",
+    "prob3Cause": "ਸੁੰਡੀਆਂ ਤਣੇ ਵਿੱਚ ਵੜ ਕੇ ਗੋਭ ਸੁਕਾ ਦਿੰਦੀਆਂ ਹਨ।",
+    "prob3Action": "ਏਕੜ ਪਿੱਛੇ 4 ਫੇਰੋਮੋਨ ਟਰੈਪ ਲਗਾਓ। ਕੋਰਾਜਨ @ 0.3 ਮਿ.ਲੀ./ਲੀਟਰ ਜਾਂ ਕਾਰਟਾਪ ਹਾਈਡ੍ਰੋਕਲੋਰਾਈਡ 4ਜੀ @ 7.5 ਕਿਲੋ/ਏਕੜ ਪਾਓ।",
+    "prob4Title": "ਝੁਲਸ ਰੋਗ, ਪੱਤਾ ਧੱਬਾ ਅਤੇ ਜੜ੍ਹ ਗਲਣਾ",
+    "prob4Cause": "ਉੱਲੀ ਦਾ ਹਮਲਾ (ਰਾਈਜ਼ੋਕਟੋਨੀਆ/ਪਾਈਰੀਕੁਲੇਰੀਆ)।",
+    "prob4Action": "ਹੈਕਸਾਕੋਨਾਜ਼ੋਲ 5% ਈਸੀ @ 2 ਮਿ.ਲੀ./ਲੀਟਰ ਜਾਂ ਵੈਲੀਡਾਮਾਈਸਿਨ 3% ਐਲ @ 2.5 ਮਿ.ਲੀ./ਲੀਟਰ ਛਿੜਕੋ। ਜੜ੍ਹਾਂ ਕੋਲ ਕਾਪਰ ਆਕਸੀਕਲੋਰਾਈਡ 50% ਡਬਲਯੂਪੀ @ 3 ਗ੍ਰਾਮ/ਲੀਟਰ ਪਾਓ।",
+    "prob5Title": "ਅਚਾਨਕ ਸੋਕਾ ਅਤੇ ਗਰਮੀ ਦਾ ਤਣਾਅ",
+    "prob5Cause": "ਲੰਮਾ ਸਮਾਂ ਮੀਂਹ ਨਾ ਪੈਣਾ ਅਤੇ ਫੁੱਲ ਪੈਣ ਵੇਲੇ ਸੋਕਾ।",
+    "prob5Action": "1% ਪੋਟਾਸ਼ੀਅਮ ਨਾਈਟ੍ਰੇਟ (13-0-45) ਦਾ ਛਿੜਕਾਅ ਕਰੋ। ਸ਼ਾਮ ਵੇਲੇ ਹਲਕਾ ਪਾਣੀ ਦਿਓ ਅਤੇ ਪਰਾਲੀ ਦੀ ਮਲਚਿੰਗ ਕਰੋ।",
+    "prob6Title": "ਬੇਮੌਸਮੀ ਭਾਰੀ ਬਾਰਿਸ਼ ਅਤੇ ਜਲ-ਥਲ",
+    "prob6Cause": "ਖੇਤ ਵਿੱਚ ਪਾਣੀ ਖੜ੍ਹਨ ਨਾਲ ਜੜ੍ਹਾਂ ਦਾ ਦਮ ਘੁੱਟਣਾ।",
+    "prob6Action": "ਖੇਤ ਦੇ ਵੱਟ ਤੋੜ ਕੇ 24 ਘੰਟਿਆਂ ਵਿੱਚ ਪਾਣੀ ਕੱਢੋ। ਪਾਣੀ ਉਤਰਨ ਪਿੱਛੋਂ 19:19:19 ਐਨਪੀਕੇ (10 ਗ੍ਰਾਮ/ਲੀਟਰ) ਛਿੜਕੋ।",
+    "sectionEmergency": "ਐਮਰਜੈਂਸੀ ਕਿਸਾਨ ਹੈਲਪਲਾਈਨ ਅਤੇ ਕੇਵੀਕੇ ਸਹਾਇਤਾ",
+    "kisanCallCenter": "ਕਿਸਾਨ ਕਾਲ ਸੈਂਟਰ (ਟੋਲ-ਫ੍ਰੀ ਹੈਲਪਲਾਈਨ): 1800-180-1551 (ਸਵੇਰੇ 6:00 ਤੋਂ ਰਾਤ 10:00 ਵਜੇ ਤੱਕ, ਸਾਰੀਆਂ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਉਪਲਬਧ)",
+    "kvkEscalation": "ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ (KVK) ਸਲਾਹ: ਕਿਸੇ ਵੀ ਅਣਪਛਾਤੀ ਬਿਮਾਰੀ ਜਾਂ ਕੀੜੇ ਲਈ ਪੱਤਿਆਂ ਦਾ ਨਮੂਨਾ ਲੈ ਕੇ ਨੇੜਲੇ ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰ ਜਾਂ ਖੇਤੀਬਾੜੀ ਅਫ਼ਸਰ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।"
+  },
+  "gu": {
+    "btnText": "📄 પીડીએફ ડાઉનલોડ / Download PDF",
+    "reportTitle": "ખેડૂત કૃષિ સલાહ અને જમીન આરોગ્ય અહેવાલ",
+    "reportSubtitle": "SPARC AgriSense AI • રાષ્ટ્રીય ટકાઉ કૃષિ મિશન (NMSA) અને ICAR ધોરણો",
+    "sectionField": "જમીન ચકાસણી અને પોષક તત્વો",
+    "sectionWeather": "હવામાન અને વરસાદ ટેલિમેટ્રી",
+    "sectionTopCrop": "શ્રેષ્ઠ ભલામણ કરેલ પાક (#1 શ્રેષ્ઠ વિકલ્પ)",
+    "sectionAlts": "વૈકલ્પિક પાક વિકલ્પો",
+    "sectionFert": "ખાતર વ્યવસ્થાપન પેકેજ (પ્રતિ એકર ભલામણ)",
+    "sectionKvk": "કૃષિ વિજ્ઞાન કેન્દ્ર (KVK) માર્ગદર્શન",
+    "lblDate": "રિપોર્ટ તારીખ:",
+    "lblLocation": "ખેતરનું સ્થળ:",
+    "lblAgroZone": "કૃષિ-આબોહવા ઝોન:",
+    "lblMatch": "સુસંગતતા મેચ",
+    "lblVarieties": "ભલામણ કરેલ જાતો:",
+    "lblYield": "અપેક્ષિત ઉત્પાદન",
+    "lblWater": "પાણીની જરૂરિયાત",
+    "lblDuration": "પાક સમયગાળો",
+    "lblPrice": "બજાર ભાવ અંદાજ",
+    "lblBasal": "વાવણી સમયે પાયાનું ખાતર:",
+    "lblWhyFits": "વૈજ્ઞાનિક કારણ:",
+    "thCrop": "પાકનું નામ",
+    "thMatch": "મેચ %",
+    "thYield": "અંદાજિત ઉત્પાદન",
+    "thWater": "પાણીની જરૂરિયાત",
+    "thRisk": "બજાર જોખમ",
+    "thFertilizer": "ખાતરનો પ્રકાર",
+    "thBags": "જથ્થો (૫૦ કિગ્રા બેગ/એકર)",
+    "thTiming": "વાપરવાનો સમય",
+    "ureaTiming": "વિભાજિત: ૫૦% વાવણી + ૨૫% ફુટવે સમયે + ૨૫% કંકી સમયે",
+    "dapTiming": "૧૦૦% વાવણી સમયે પાયાના ખાતર તરીકે",
+    "mopTiming": "૧૦૦% વાવણી વખતે અથવા ૫૦% વાવણી + ૫૦% ફૂલ સમયે",
+    "disclaimer": "આ અહેવાલ ICAR-IISS અને રાજ્ય કૃષિ યુનિવર્સિટીના વૈજ્ઞાનિક માપદંડો પર આધારિત છે.",
+    "sectionSteps": "તબક્કાવાર ખેતી માર્ગદર્શિકા (ખેતી કેવી રીતે કરવી)",
+    "step1Title": "પગલું 1: જમીનની તૈયારી અને દેશી ખાતર",
+    "step1Desc": "હળ અને રોટાવેટરથી 2-3 ઊંડી ખેડ કરો; લેસર લેવલરથી જમીન સમતલ કરો. વાવણીના 2-3 અઠવાડિયા પહેલાં એકરે 4-5 ટન સારું કોહવાયેલું છાણિયું કે અળસિયાનું ખાતર ઉમેરો. બીજ માવજત: ટ્રાઇકોડર્મા વિરીડી (4 ગ્રામ/કિગ્રા) અથવા સ્યુડોમોનાસ (10 ગ્રામ/કિગ્રા) + એઝોટોબેક્ટર કલ્ચરથી પટ આપો.",
+    "step2Title": "પગલું 2: વાવણી / ફેરરોપણી અને અંતર",
+    "step2Desc": "પ્રમાણિત બિયારણ વાપરો. હાર વચ્ચે 20 સેમી અને છોડ વચ્ચે 15 સેમી અંતર રાખી 2-3 સેમી ઊંડાઈએ વાવો. છેલ્લા ઓપમાં ડીએપી (1.2 થેલી), એમઓપી (0.8 થેલી) અને 10 કિગ્રા ઝિંક સલ્ફેટ (21%) આપો.",
+    "step3Title": "પગલું 3: પાણી વ્યવસ્થાપન અને કટોકટીની પિયત",
+    "step3Desc": "વૃદ્ધિ સમયે 2-3 સેમી છીછરું પાણી રાખો. 4 કટોકટીના તબક્કે પાણી આપો: ફૂટ સમયે, કંસ નીકળતી વખતે, ફૂલ અવસ્થા અને દાણા ભરાતી વખતે. કાપણીના 10-12 દિવસ પહેલાં પાણી ખેંચી લો.",
+    "step4Title": "પગલું 4: નીંદણ નિયંત્રણ અને પૂર્તિ ખાતર",
+    "step4Desc": "વાવણીના 48 કલાકમાં પેન્ડીમેથાલીન 30% ઈસી @ 1.0 લિટર/એકરે છાંટો અથવા 20 અને 40 દિવસે નિંદામણ કરો. યુરિયાના બે હપ્તા આપો: 25% ફૂટ સમયે અને 25% કંસ વખતે. લીલાશ માટે 0.5% ઝિંક સલ્ફેટ અથવા નેનો યુરિયા (4 મિલી/લિટર) છાંટો.",
+    "step5Title": "પગલું 5: સમયસર કાપણી, થ્રેશિંગ અને સંગ્રહ",
+    "step5Desc": "80-85% દાણા સોનેરી પીળા થાય અને ભેજ 18-20% હોય ત્યારે કાપણી કરો. તડકામાં 3-4 દિવસ સૂકવી ભેજ 12-14% પર લાવો. લીમડાનું તેલ કે સેલ્ફોસ વાપરી હવાચુસ્ત કોઠીઓમાં સંગ્રહ કરો.",
+    "sectionTroubleshoot": "ખેત કટોકટી અને સમસ્યા નિવારણ (સમસ્યા થાય ત્યારે શું કરવું)",
+    "thProblem": "લક્ષણ / કટોકટી",
+    "thCause": "સંભવિત કૃષિ કારણ",
+    "thAction": "તાત્કાલિક ઉપાય અને દવા",
+    "prob1Title": "પાન પીળા પડવા અને વૃદ્ધિ અટકવી",
+    "prob1Cause": "નાઇટ્રોજનની ખામી, પાણી ભરાવો કે લોહતત્વની ઉણપ.",
+    "prob1Action": "2% યુરિયા દ્રાવણ અથવા નેનો યુરિયા (4 મિલી/લિટર) છાંટો. ખેતરમાંથી વધારાનું પાણી નિકાલ કરી દૂર કરો.",
+    "prob2Title": "ચૂસિયા પ્રકારની જીવાત (મોલો-મસી, તડતડિયા, સફેદ માખી)",
+    "prob2Cause": "વાદળછાયું ભેજવાળું વાતાવરણ અને ગાઢ વાવેતર.",
+    "prob2Action": "એકરે 6-8 પીળા સ્ટીકી ટ્રેપ લગાવો. 5% લીંબોળીનું અર્ક અથવા ઇમિડાક્લોપ્રિડ 17.8% એસએલ @ 0.5 મિલી/લિટર પાણીમાં છાંટો.",
+    "prob3Title": "ગાભમારાની ઈયળ, પાન વાળનારી ઈયળ",
+    "prob3Cause": "ઈયળો થડમાં કાણું પાડી સૂકવી નાખે છે (ડેડ હાર્ટ).",
+    "prob3Action": "એકરે 4 ફેરોમોન ટ્રેપ લગાવો. કોરાજેન @ 0.3 મિલી/લિટર અથવા કાર્ટાપ હાઇડ્રોક્લોરાઇડ 4જી @ 7.5 કિગ્રા/એકરે આપો.",
+    "prob4Title": "ચરમી, પાનનો ટપકાં રોગ અને મૂળનો કોહવારો",
+    "prob4Cause": "ફૂગજન્ય રોગ (રાઇઝોક્ટોનિયા/પાયરીક્યુલેરિયા).",
+    "prob4Action": "હેક્ઝાકોનાઝોલ 5% ઈસી @ 2 મિલી/લિટર અથવા વેલિડામ્યાસિન 3% એલ @ 2.5 મિલી/લિટર છાંટો. મૂળ પાસે કોપર ઓક્સીક્લોરાઇડ 50% ડબલ્યુપી @ 3 ગ્રામ/લિટર રેડો.",
+    "prob5Title": "અચાનક દુષ્કાળ અને ગરમીનો તાણ",
+    "prob5Cause": "વરસાદ ખેંચાવો અને ફૂલ અવસ્થાએ ભેજની તંગી.",
+    "prob5Action": "બાષ્પીભવન અટકાવવા 1% પોટેશિયમ નાઇટ્રેટ (13-0-45) છાંટો. સાંજના સમયે હળવું પિયત આપો અને મલ્ચિંગ કરો.",
+    "prob6Title": "કમોસમી ભારે વરસાદ અને પાણી ભરાવો",
+    "prob6Cause": "પાણીનો ભરાવો થવાથી મૂળનો શ્વાસ રૂંધાવો.",
+    "prob6Action": "પાળા કાપીને 24 કલાકમાં પાણી બહાર કાઢો. પાણી ઓસર્યા પછી મૂળના વિકાસ માટે 19:19:19 એનપીકે (10 ગ્રામ/લિટર) છાંટો.",
+    "sectionEmergency": "કટોકટી ખેડૂત હેલ્પલાઇન અને કેવીકે સહાય",
+    "kisanCallCenter": "કિસાન કૉલ સેન્ટર (ટોલ-ફ્રી હેલ્પલાઇન): 1800-180-1551 (સવારે 6:00 થી રાત્રે 10:00, બધી પ્રાદેશિક ભાષાઓમાં ઉપલબ્ધ)",
+    "kvkEscalation": "કૃષિ વિજ્ઞાન કેન્દ્ર (KVK) સંપર્ક: અજાણી જીવાત કે રોગ માટે પાનના નમૂના લઈ નજીકના કેવીકે અથવા તાલુકા ખેતીવાડી અધિકારીનો તાત્કાલિક સંપર્ક કરો."
+  },
+  "te": {
+    "btnText": "📄 PDF డౌన్‌లోడ్ / Download PDF",
+    "reportTitle": "రైతు వ్యవసాయ సలహా మరియు నేల ఆరోగ్య నివేదిక",
+    "reportSubtitle": "SPARC AgriSense AI • జాతీయ స్థిరమైన వ్యవసాయ మిషన్ (NMSA)",
+    "sectionField": "క్షేత్ర విశ్లేషణ మరియు నేల ఆరోగ్యం",
+    "sectionWeather": "వాతావరణం మరియు వర్షపాతం టెలిమెట్రీ",
+    "sectionTopCrop": "అత్యుత్తమ సిఫార్సు చేసిన పంట (#1 ఉత్తమ ఎంపిక)",
+    "sectionAlts": "ప్రత్యామ్నాయ పంట ఎంపికలు",
+    "sectionFert": "ఎరువుల యాజమాన్య ప్యాకేజీ (ఎకరాకు)",
+    "sectionKvk": "కృషి విజ్ఞాన కేంద్రం (KVK) సలహా",
+    "lblDate": "నివేదిక తేదీ:",
+    "lblLocation": "పొలం ప్రాంతం:",
+    "lblAgroZone": "వ్యవసాయ-శీతోష్ణస్థితి మండలం:",
+    "lblMatch": "సరిపోలిక శాతం",
+    "lblVarieties": "సిఫార్సు చేయబడిన రకాలు:",
+    "lblYield": "ఆశించిన దిగుబడి",
+    "lblWater": "నీటి అవసరం",
+    "lblDuration": "పంట కాలం",
+    "lblPrice": "మార్కెట్ ధర అంచనా",
+    "lblBasal": "విత్తే సమయంలో ప్రాథమిక మోతాదు:",
+    "lblWhyFits": "శాస్త్రీయ సమర్థన:",
+    "thCrop": "పంట పేరు",
+    "thMatch": "మ్యాచ్ %",
+    "thYield": "అంచనా దిగుబడి",
+    "thWater": "నీటి అవసరం",
+    "thRisk": "మార్కెట్ రిస్క్",
+    "thFertilizer": "ఎరువుల రకం",
+    "thBags": "మొత్తం (50 కేజీల సంచులు/ఎకరా)",
+    "thTiming": "వేసే సమయం",
+    "ureaTiming": "విడతలుగా: 50% విత్తేటప్పుడు + 25% పిలకల దశ + 25% ఈనిక దశ",
+    "dapTiming": "100% విత్తే సమయంలోనే ప్రాథమిక మోతాదుగా వేయాలి",
+    "mopTiming": "100% విత్తే సమయంలో లేదా 50% విత్తేటప్పుడు + 50% పూత దశలో",
+    "disclaimer": "ఈ నివేదిక ICAR-IISS మరియు రాష్ట్ర వ్యవసాయ విశ్వవిద్యాలయ మార్గదర్శకాల ఆధారంగా రూపొందించబడింది.",
+    "sectionSteps": "దశలవారీ సాగు మార్గదర్శిని (పనులు ఎలా చేయాలి)",
+    "step1Title": "దశ 1: నేల తయారీ మరియు సేంద్రీయ ఎరువు",
+    "step1Desc": "కల్టివేటర్, రోటవేటర్‌తో 2-3 సార్లు లోతు దుక్కులు చేసి లేజర్ లెవెలర్‌తో చదును చేయండి. ఎకరాకు 4-5 టన్నుల పశువుల ఎరువు లేదా వర్మీ కంపోస్ట్ కలపండి. విత్తన శుద్ధి: ట్రైకోడెర్మా విరిడి (4 గ్రా/కిలో) లేదా సూడోమోనాస్ (10 గ్రా/కిలో) + అజోటోబాక్టర్ కల్చర్‌తో విత్తన శుద్ధి చేయండి.",
+    "step2Title": "దశ 2: విత్తడం / నాట్లు మరియు దూరం",
+    "step2Desc": "ధ్రువీకరించిన విత్తనం వాడండి. సాలుకు సాలుకు 20 సెం.మీ, మొక్కకు మొక్కకు 15 సెం.మీ దూరం ఉండేలా 2-3 సెం.మీ లోతులో నాటండి. ఆఖరి దుక్కిలో డీఏపీ (1.2 బస్తాలు), ఎంఓపీ (0.8 బస్తాలు) మరియు 10 కిలోల జింక్ సల్ఫేట్ (21%) వేయండి.",
+    "step3Title": "దశ 3: నీటి యాజమాన్యం మరియు కీలక తడులు",
+    "step3Desc": "పైరు దశలో 2-3 సెం.మీ నీరుంచండి. 4 కీలక దశల్లో తప్పనిసరిగా నీరివ్వండి: పిలకల దశ, చిరుపొట్ట దశ, పూత దశ మరియు గింజ పాలుపోసుకునే దశ. కోతకు 10-12 రోజుల ముందు నీటిని పూర్తిగా తీసివేయండి.",
+    "step4Title": "దశ 4: కలుపు నివారణ మరియు పైపాటు ఎరువులు",
+    "step4Desc": "విత్తిన 48 గంటల్లో పెండిమిథాలిన్ 30% ఈసీ @ 1.0 లీ/ఎకరా పిచికారీ చేయండి. యూరియాను రెండు దఫాలుగా వేయండి: 25% పిలకల దశలో, 25% చిరుపొట్ట దశలో. పచ్చదనానికి 0.5% జింక్ సల్ఫేట్ లేదా నానో యూరియా (4 మి.లీ/లీటరు) పిచికారీ చేయండి.",
+    "step5Title": "దశ 5: సకాలంలో కోత, నూర్పిడి మరియు నిల్వ",
+    "step5Desc": "80-85% గింజలు బంగారు రంగులోకి మారి తేమ 18-20% ఉన్నప్పుడు కోయండి. నూర్పిడి తర్వాత 3-4 రోజులు ఎండబెట్టి తేమను 12-14% కి తగ్గించండి. వేపనూనె లేదా సెల్ఫాస్ వాడి గాలి చొరబడని సంచుల్లో భద్రపరచండి.",
+    "sectionTroubleshoot": "క్షేత్ర సమస్యలు మరియు నివారణ మార్గాలు (సమస్య వస్తే ఏం చేయాలి)",
+    "thProblem": "లక్షణం / అత్యవసర పరిస్థితి",
+    "thCause": "వ్యవసాయ కారణం",
+    "thAction": "తక్షణ క్షేత్ర చర్య మరియు మందులు",
+    "prob1Title": "ఆకులు పసుపుబారడం మరియు ఎదుగుదల లోపించడం",
+    "prob1Cause": "నత్రజని లోపం, నీరు నిలవడం లేదా ఇనుప లోపం.",
+    "prob1Action": "2% యూరియా లేదా నానో యూరియా (4 మి.లీ/లీటరు) పిచికారీ చేయండి. చేనులో నిలిచిన నీటిని కాలువల ద్వారా బయటకు పంపండి.",
+    "prob2Title": "రసం పీల్చే పురుగులు (పేనుబంక, తెల్లదోమ, తామర పురుగులు)",
+    "prob2Cause": "మబ్బులు పట్టిన తేమ వాతావరణం మరియు దట్టమైన పైరు.",
+    "prob2Action": "ఎకరాకు 6-8 పసుపు జిగురు బోర్డులు పెట్టండి. 5% వేప గింజల కషాయం లేదా ఇమిడాక్లోప్రిడ్ 17.8% ఎస్ఎల్ @ 0.5 మి.లీ/లీటరు పిచికారీ చేయండి.",
+    "prob3Title": "కాండం తొలిచే పురుగు, ఆకు చుట్టు పురుగు",
+    "prob3Cause": "లార్వాలు కాండం తొలిచి మొవ్వు ఎండిపోయేలా చేస్తాయి.",
+    "prob3Action": "ఎకరాకు 4 లింగాకర్షక బుట్టలు పెట్టండి. కొరాజెన్ @ 0.3 మి.లీ/లీటరు లేదా కార్టాప్ హైడ్రోక్లోరైడ్ 4జి @ 7.5 కిలోలు/ఎకరా వాడండి.",
+    "prob4Title": "ఎండ్రగండ్ల తెగులు, ఆకుమచ్చ మరియు వేరుకుళ్లు",
+    "prob4Cause": "శిలీంధ్రాల వ్యాప్తి (రైజోక్టోనియా/పైరిక్యులేరియా).",
+    "prob4Action": "హెక్సాకొనజోల్ 5% ఈసీ @ 2 మి.లీ/లీటరు లేదా వాలిడామైసిన్ 3% ఎల్ @ 2.5 మి.లీ/లీటరు పిచికారీ చేయండి. కాపర్ ఆక్సీక్లోరైడ్ @ 3 గ్రా/లీటరు మొదళ్ల వద్ద తడపండి.",
+    "prob5Title": "ఆకస్మిక కరువు మరియు అధిక ఉష్ణోగ్రత ఒత్తిడి",
+    "prob5Cause": "వర్షాలు లేకపోవడం మరియు పూత దశలో తేమ కొరత.",
+    "prob5Action": "ఆవిరి కాకుండా 1% పొటాషియం నైట్రేట్ (13-0-45) పిచికారీ చేయండి. సాయంత్రం వేళ తేలికపాటి తడివ్వండి మరియు ఎండుగడ్డి కప్పండి.",
+    "prob6Title": "అకాల భారీ వర్షాలు మరియు ముంపు",
+    "prob6Cause": "నీరు నిలవడం వల్ల వేర్లకు గాలి అందకపోవడం.",
+    "prob6Action": "గట్లు తెంపి 24 గంటల్లో నీటిని బయటకు పంపండి. నీరు తగ్గాక వేర్ల పునరుద్ధరణకు 19:19:19 ఎన్పీకే (10 గ్రా/లీటరు) పిచికారీ చేయండి.",
+    "sectionEmergency": "రైతు అత్యవసర హెల్ప్‌లైన్ మరియు కేవీకే సహాయం",
+    "kisanCallCenter": "కిసాన్ కాల్ సెంటర్ (టోల్-ఫ్రీ హెల్ప్‌లైన్): 1800-180-1551 (ఉదయం 6:00 నుండి రాత్రి 10:00 వరకు అన్ని ప్రాంతీయ భాషల్లో)",
+    "kvkEscalation": "కృషి విజ్ఞాన కేంద్రం (KVK) సంప్రదింపులు: గుర్తించని చీడపీడల కోసం ఆకు నమూనాలను సేకరించి సమీప కేవీకే శాస్త్రవేత్తలు లేదా వ్యవసాయ విస్తరణ అధికారిని సంప్రదించండి."
+  },
+  "ta": {
+    "btnText": "📄 PDF பதிவிறக்கம் / Download PDF",
+    "reportTitle": "விவசாயி வேளாண்மை ஆலோசனை மற்றும் மண் நல அறிக்கை",
+    "reportSubtitle": "SPARC AgriSense AI • தேசிய நிலையான வேளாண்மை இயக்கம் (NMSA)",
+    "sectionField": "வயல் பரிசோதனை மற்றும் மண் வளம்",
+    "sectionWeather": "வானிலை மற்றும் மழைப்பொழிவு தரவு",
+    "sectionTopCrop": "முதன்மைப் பரிந்துரைக்கப்படும் பயிர் (#1 சிறந்த தேர்வு)",
+    "sectionAlts": "மாற்றுப் பயிர் தேர்வுகள்",
+    "sectionFert": "உர மேலாண்மை தொகுப்பு (ஏக்கருக்கு)",
+    "sectionKvk": "வேளாண் அறிவியல் மையம் (KVK) ஆலோசனை",
+    "lblDate": "அறிக்கை நாள்:",
+    "lblLocation": "வயலின் அமைவிடம்:",
+    "lblAgroZone": "வேளாண்-காலநிலை மண்டலம்:",
+    "lblMatch": "பொருத்தம் சதவீதம்",
+    "lblVarieties": "பரிந்துரைக்கப்பட்ட ரகங்கள்:",
+    "lblYield": "எதிர்பார்க்கப்படும் மகசூல்",
+    "lblWater": "நீர் தேவை",
+    "lblDuration": "பயிர் காலம்",
+    "lblPrice": "சந்தை விலை மதிப்பீடு",
+    "lblBasal": "விதைக்கும்போது அடியுர அளவு:",
+    "lblWhyFits": "அறிவியல் காரணம்:",
+    "thCrop": "பயிர் பெயர்",
+    "thMatch": "பொருத்தம் %",
+    "thYield": "எதிர்பார்ப்பு மகசூல்",
+    "thWater": "நீர் தேவை",
+    "thRisk": "சந்தை ஆபத்து",
+    "thFertilizer": "உர வகை",
+    "thBags": "அளவு (50 கிலோ பை/ஏக்கர்)",
+    "thTiming": "இடும் பருவம்",
+    "ureaTiming": "பிரித்து இடவும்: 50% அடியுரம் + 25% தூர் கட்டும்போது + 25% கதிர் வரும்போது",
+    "dapTiming": "100% விதைக்கும் போதே அடியுரமாக இடவும்",
+    "mopTiming": "100% அடியுரமாக அல்லது 50% அடியுரம் + 50% பூக்கும் பருவம்",
+    "disclaimer": "இந்த அறிக்கை ICAR-IISS மற்றும் தமிழ்நாடு வேளாண் பல்கலைக்கழக வழிகாட்டுதலின்படி தயாரிக்கப்பட்டது.",
+    "sectionSteps": "படிப்படியான சாகுபடி வழிகாட்டி (எவ்வாறு செய்வது)",
+    "step1Title": "படி 1: நிலம் தயாரிப்பு மற்றும் இயற்கை உரம்",
+    "step1Desc": "2-3 முறை ஆழ உழவு செய்து லேசர் நில சமன் மூலம் சமன்படுத்துங்கள். ஏக்கருக்கு 4-5 டன் மக்கிய தொழு உரம் அல்லது மண்புழு உரம் இடுங்கள். விதை நேர்த்தி: டிரைக்கோடெர்மா விரிடி (4 கிராம்/கிலோ) அல்லது சூடோமோனாஸ் (10 கிராம்/கிலோ) + அசோஸ்பைரில்லம் கொண்டு விதை நேர்த்தி செய்யுங்கள்.",
+    "step2Title": "படி 2: விதைப்பு / நடவு மற்றும் இடைவெளி",
+    "step2Desc": "சான்றளிக்கப்பட்ட விதைகளைப் பயன்படுத்துங்கள். வரிசைக்கு வரிசை 20 செ.மீ, செடிக்கு செடி 15 செ.மீ இடைவெளியில் 2-3 செ.மீ ஆழத்தில் நடவு செய்யுங்கள். கடைசி உழவில் டிஏபி (1.2 மூட்டை), எம்போபி (0.8 மூட்டை) மற்றும் 10 கிலோ துத்தநாக சல்பேட் (21%) இடவும்.",
+    "step3Title": "படி 3: துல்லிய நீர் மேலாண்மை மற்றும் பாசனம்",
+    "step3Desc": "பயிர் வளர்ச்சி காலத்தில் 2-3 செ.மீ ஆழத்தில் நீர் வையுங்கள். 4 முக்கிய நிலைகளில் நீர் பாய்ச்சுங்கள்: தூர் கட்டும் பருவம், கதிர் உருவாகும் பருவம், பூக்கும் பருவம் மற்றும் பால் பிடிக்கும் பருவம். அறுவடைக்கு 10-12 நாட்களுக்கு முன் நீரை முழுமையாக வடிக்கவும்.",
+    "step4Title": "படி 4: களை மேலாண்மை மற்றும் மேலுரம்",
+    "step4Desc": "விதைத்த 48 மணி நேரத்திற்குள் பெண்டிமெத்தாலின் 30% இசி @ 1.0 லிட்டர்/ஏக்கர் தெளிக்கவும். யூரியாவை இருமுறை மேலுரமாக இடுங்கள்: 25% தூர் கட்டும் போது, 25% கதிர் வரும் போது. பசுமைக்கு 0.5% துத்தநாக சல்பேட் அல்லது நானோ யூரியா (4 மி.லி/லிட்டர்) தெளிக்கவும்.",
+    "step5Title": "படி 5: அறுவடை, களையெடுத்தல் மற்றும் சேமிப்பு",
+    "step5Desc": "80-85% மணிகள் பொன்னிறமாக மாறி ஈரம் 18-20% இருக்கும் போது அறுவடை செய்யுங்கள். தானியத்தை 3-4 நாட்கள் வெயிலில் காயவைத்து ஈரப்பதத்தை 12-14% ஆகக் குறைத்து வேப்பெண்ணெய் தடவி காற்றுப்புகா பைகளில் சேமிக்கவும்.",
+    "sectionTroubleshoot": "வயல் அவசரநிலை மற்றும் தீர்வு வழிகாட்டி (பிரச்சனை வந்தால் என்ன செய்வது)",
+    "thProblem": "அறிகுறி / அவசரநிலை",
+    "thCause": "காரணம்",
+    "thAction": "உடனடி வயல் நடவடிக்கை மற்றும் மருந்து",
+    "prob1Title": "இலைகள் மஞ்சள் நிறமாதல் மற்றும் வளர்ச்சி குன்றுதல்",
+    "prob1Cause": "தழைச்சத்து குறைபாடு, நீர் தேங்குதல் அல்லது இரும்புச்சத்து குறைபாடு.",
+    "prob1Action": "2% யூரியா கரைசல் அல்லது நானோ யூரியா (4 மி.லி/லிட்டர்) தெளிக்கவும். தேங்கிய நீரை உடனடியாக வடிகால் அமைத்து வெளியேற்றவும்.",
+    "prob2Title": "சாறு உறிஞ்சும் பூச்சிகள் (அசுவினி, வெள்ளை ஈ, இலைப்பேன்)",
+    "prob2Cause": "மேகமூட்டமான ஈரப்பத வானிலை மற்றும் நெருக்கமான நடவு.",
+    "prob2Action": "ஏக்கருக்கு 6-8 மஞ்சள் ஒட்டும் பொறிகளை வையுங்கள். 5% வேப்பங்கொட்டை கரைசல் அல்லது இமிடாகுளோபிரிட் 17.8% எஸ்எல் @ 0.5 மி.லி/லிட்டர் தெளிக்கவும்.",
+    "prob3Title": "தண்டு துளைப்பான் மற்றும் இலை சுருட்டு புழு",
+    "prob3Cause": "புழுக்கள் தண்டைக் குடைந்து நடுக்குருத்து காயச் செய்யும்.",
+    "prob3Action": "ஏக்கருக்கு 4 இனக்கவர்ச்சி பொறிகளை அமைக்கவும். கோராஜன் @ 0.3 மி.லி/லிட்டர் அல்லது கார்டாப் ஹைட்ரோகுளோரைடு 4ஜி @ 7.5 கிலோ/ஏக்கர் இடவும்.",
+    "prob4Title": "இலைக்கருகல், குலை நோய் மற்றும் வேரழுகல்",
+    "prob4Cause": "பூஞ்சை தொற்று (ரைசோக்டோனியா/பைரிகுலேரியா).",
+    "prob4Action": "ஹெக்ஸாகோனசோல் 5% இசி @ 2 மி.லி/லிட்டர் அல்லது வேலிடமைசின் 3% எல் @ 2.5 மி.லி/லிட்டர் தெளிக்கவும். காப்பர் ஆக்ஸிகுளோரைடு @ 3 கிராம்/லிட்டர் வேர்ப்பகுதியில் ஊற்றவும்.",
+    "prob5Title": "திடீர் வறட்சி மற்றும் வெப்ப அழுத்தம்",
+    "prob5Cause": "மழை இடைவெளி மற்றும் பூக்கும் பருவத்தில் ஈரப்பதக் குறைவு.",
+    "prob5Action": "நீரிழப்பைத் தடுக்க 1% பொட்டாசியம் நைட்ரேட் (13-0-45) தெளிக்கவும். மாலையில் லேசான பாசனம் செய்து வைக்கோல் மூடாக்கு இடவும்.",
+    "prob6Title": "திடீர் கனமழை மற்றும் வெள்ளம் தேங்குதல்",
+    "prob6Cause": "நீர் வடியாமல் வேர்களுக்கு மூச்சுத் திணறல் ஏற்படுதல்.",
+    "prob6Action": "வரப்புகளை வெட்டி 24 மணி நேரத்திற்குள் நீரை வடிக்கவும். நீர் வடிந்ததும் வேர் வளர்ச்சிக்கு 19:19:19 என்பிகே (10 கிராம்/லிட்டர்) தெளிக்கவும்.",
+    "sectionEmergency": "அவசர விவசாய உதவி எண் மற்றும் கேவிகே தொடர்பு",
+    "kisanCallCenter": "கிசான் கால் சென்டர் (இலவச உதவி எண்): 1800-180-1551 (காலை 6:00 முதல் இரவு 10:00 வரை அனைத்து பிராந்திய மொழிகளிலும்)",
+    "kvkEscalation": "வேளாண் அறிவியல் மையம் (KVK) ஆலோசனை: விவரிக்க முடியாத நோய்களுக்கு இலை மாதிரிகளை சேகரித்து அருகிலுள்ள கேவிகே அல்லது வட்டார வேளாண்மை அலுவலரை அணுகவும்."
+  },
+  "bn": {
+    "btnText": "📄 পিডিএফ ডাউনলোড / Download PDF",
+    "reportTitle": "কৃষক কৃষি পরামর্শ ও মৃত্তিকা স্বাস্থ্য প্রতিবেদন",
+    "reportSubtitle": "SPARC AgriSense AI • জাতীয় টেকসই কৃষি মিশন (NMSA) ও ICAR মানদণ্ড",
+    "sectionField": "মাঠ পরিদর্শন ও মৃত্তিকা স্বাস্থ্য পরীক্ষা",
+    "sectionWeather": "আবহাওয়া ও বৃষ্টিপাত টেলিমেট্রি",
+    "sectionTopCrop": "শীর্ষ সুপারিশকৃত ফসল (সেরা বিকল্প #1)",
+    "sectionAlts": "বিকল্প ফসল নির্বাচন",
+    "sectionFert": "সার ব্যবস্থাপনা প্যাকেজ (প্রতি একর সুপারিশ)",
+    "sectionKvk": "কৃষি বিজ্ঞান কেন্দ্র (KVK) বিশেষজ্ঞ পরামর্শ",
+    "lblDate": "প্রতিবেদনের তারিখ:",
+    "lblLocation": "জমির অবস্থান:",
+    "lblAgroZone": "কৃষি-আবহাওয়া অঞ্চল:",
+    "lblMatch": "উপযোগিতা ম্যাচ",
+    "lblVarieties": "সুপারিশকৃত জাতসমূহ:",
+    "lblYield": "প্রত্যাশিত ফলন",
+    "lblWater": "জলের প্রয়োজনীয়তা",
+    "lblDuration": "ফসলের সময়কাল",
+    "lblPrice": "বাজার দর পূর্বাভাস",
+    "lblBasal": "বপনের সময় প্রাথমিক সার:",
+    "lblWhyFits": "বিজ্ঞানসম্মত কারণ:",
+    "thCrop": "ফসলের নাম",
+    "thMatch": "ম্যাচ %",
+    "thYield": "আনুমানিক ফলন",
+    "thWater": "জলের চাহিদা",
+    "thRisk": "বাজার ঝুঁকি",
+    "thFertilizer": "সারের প্রকার",
+    "thBags": "পরিমাণ (৫০ কেজি বস্তা/একর)",
+    "thTiming": "প্রয়োগের সময়",
+    "ureaTiming": "ভাগ করে প্রয়োগ: ৫০% প্রাথমিক + ২৫% কুশি বের হওয়ার সময় + ২৫% শিষ আসার সময়",
+    "dapTiming": "১০০% বপন অথবা রোপণের সময় বেসাল ডোজ হিসাবে",
+    "mopTiming": "১০০% বপনের সময় অথবা ৫০% প্রাথমিক + ৫০% ফুল আসার সময়",
+    "disclaimer": "এই প্রতিবেদনটি ICAR-IISS এবং রাজ্য কৃষি বিশ্ববিদ্যালয়ের বৈজ্ঞানিক নির্দেশিকা অনুসারে প্রস্তুত করা হয়েছে।",
+    "sectionSteps": "পর্যায়ক্রমিক চাষ নির্দেশিকা (কীভাবে কাজ করবেন)",
+    "step1Title": "ধাপ ১: জমি তৈরি এবং জৈব সার প্রয়োগ",
+    "step1Desc": "কাল্টিভেটর ও রোটাভেটর দিয়ে ২-৩ বার গভীর চাষ দিন এবং লেজার লেভেলার দিয়ে জমি সমান করুন। বোনার ২-৩ সপ্তাহ আগে একরে ৪-৫ টন পচা গোবর বা কেঁচো সার মেশান। বীজ শোধন: ট্রাইকোডার্মা ভিরিডি (৪ গ্রাম/কেজি) বা সিউডোমোনাস (১০ গ্রাম/কেজি) + অ্যাজোটোব্যাক্টর কালচার দিয়ে বীজ শোধন করুন।",
+    "step2Title": "ধাপ ২: বীজ বপন / চারা রোপণ ও দূরত্ব",
+    "step2Desc": "উন্নত মানের বীজ ব্যবহার করুন। সারি থেকে সারি ২০ সেমি এবং গাছ থেকে গাছ ১৫ সেমি দূরত্ব রেখে ২-৩ সেমি গভীরে রোপণ করুন। শেষ চাষে ডিএপি (১.২ বস্তা), এমওপি (০.৮ বস্তা) এবং ১০ কেজি জিঙ্ক সালফেট (২১%) প্রয়োগ করুন।",
+    "step3Title": "ধাপ ৩: সঠিক জল ব্যবস্থাপনা ও সেচ",
+    "step3Desc": "গাছ বৃদ্ধির সময় ২-৩ সেমি জল ধরে রাখুন। ৪টি গুরুত্বপূর্ণ পর্যায়ে সেচ নিশ্চিত করুন: কুশি আসার সময়, শিষ বের হওয়ার সময়, ফুল ফোটার সময় এবং দানা পুষ্ট হওয়ার সময়। কাটার ১০-১২ দিন আগে জল নিষ্কাশন করুন।",
+    "step4Title": "ধাপ ৪: আগাছা নিয়ন্ত্রণ ও উপরি সার প্রয়োগ",
+    "step4Desc": "বপনের ৪৮ ঘণ্টার মধ্যে পেন্ডিমিথালিন ৩০% ইসি @ ১.০ লিটার/একর স্প্রে করুন। ইউরিয়া দুই কিস্তিতে দিন: ২৫% কুশি আসার সময় এবং ২৫% শিষ বের হওয়ার সময় হালকা সেচের সাথে। সবুজ ভাব আনতে ০.৫% জিঙ্ক সালফেট বা ন্যানো ইউরিয়া (৪ মিলি/লিটার) স্প্রে করুন।",
+    "step5Title": "ধাপ ৫: সঠিক সময়ে ফসল কাটা, মাড়াই ও সংরক্ষণ",
+    "step5Desc": "৮০-৮৫% শিষ সোনালী হলুদ হলে এবং দানায় আর্দ্রতা ১৮-২০% থাকলে কাটুন। রোদে ৩-৪ দিন শুকিয়ে আর্দ্রতা ১২-১৪% এ নামিয়ে আনুন। নিম তেল বা সেলফস বড়ি ব্যবহার করে বায়ুরোধী পাত্রে সংরক্ষণ করুন।",
+    "sectionTroubleshoot": "জরুরি সমস্যা সমাধান নির্দেশিকা (সমস্যা হলে কী করবেন)",
+    "thProblem": "লক্ষণ / জরুরি অবস্থা",
+    "thCause": "সম্ভাব্য কারণ",
+    "thAction": "তাৎক্ষণিক প্রতিকার ও ওষুধ",
+    "prob1Title": "পাতা হলুদ হওয়া ও গাছের বৃদ্ধি থমকে যাওয়া",
+    "prob1Cause": "নাইট্রোজেনের ঘাটতি, জমিতে জল জমা বা লোহার অভাব।",
+    "prob1Action": "২% ইউরিয়া দ্রবণ বা ন্যানো ইউরিয়া (৪ মিলি/লিটার) স্প্রে করুন। নর্দমা কেটে জমে থাকা জল দ্রুত বের করে দিন।",
+    "prob2Title": "রস চোষা পোকা (জাব পোকা, সাদা মাছি, থ্রিপস)",
+    "prob2Cause": "মেঘলা স্যাঁতসেঁতে আবহাওয়া এবং ঘন চারা।",
+    "prob2Action": "একরে ৬-৮টি হলুদ আঠালো ফাঁদ পাতুন। ৫% নিম বীজের নির্যাস বা ইমিডাক্লোপ্রিড ১৭.৮% এসএল @ ০.৫ মিলি/লিটার জলে গুলে স্প্রে করুন।",
+    "prob3Title": "মাজরা পোকা ও পাতা মোড়ানো পোকা",
+    "prob3Cause": "শুককীট কাণ্ডে ঢুকে সুড়ঙ্গ তৈরি করে মরা ডিগ তৈরি করে।",
+    "prob3Action": "একরে ৪টি ফেরোমোন ফাঁদ বসান। কোরাজেন @ ০.৩ মিলি/লিটার বা কার্টাপ হাইড্রোক্লোরাইড ৪জি @ ৭.৫ কেজি/একর জমিতে দিন।",
+    "prob4Title": "ব্লাইট, পাতায় দাগ ও গোড়া পচা রোগ",
+    "prob4Cause": "ছত্রাকজনিত সংক্রমণ (রাইজোকটোনিয়া/পাইরিকুলারিয়া)।",
+    "prob4Action": "হেক্সাকোনাজোল ৫% ইসি @ ২ মিলি/লিটার বা ভ্যালিডামাইসিন ৩% এল @ ২.৫ মিলি/লিটার স্প্রে করুন। গোড়ায় কপার অক্সিক্লোরাইড ৫০% ডব্লিউপি @ ৩ গ্রাম/লিটার গুলে দিন।",
+    "prob5Title": "হঠাৎ খরা ও অতিরিক্ত তাপের চাপ",
+    "prob5Cause": "বৃষ্টির দীর্ঘ বিরতি ও ফুল আসার সময় রসের ঘাটতি।",
+    "prob5Action": "বাষ্পীভবন কমাতে ১% পটাসিয়াম নাইট্রেট (১৩-০-৪৫) স্প্রে করুন। বিকেলে হালকা সেচ দিন এবং খড়ের মালচিং করুন।",
+    "prob6Title": "অসময়ের ভারী বৃষ্টি ও জলমগ্নতা",
+    "prob6Cause": "জল জমে শিকড়ের শ্বাসরোধ হওয়া।",
+    "prob6Action": "আইল কেটে ২৪ ঘণ্টার মধ্যে জল বের করে দিন। জল নেমে গেলে শিকড় সতেজ করতে ১৯:১৯:১৯ এনপিকে (১০ গ্রাম/লিটার) স্প্রে করুন।",
+    "sectionEmergency": "জরুরি কৃষক হেল্পলাইন ও কেভিকে সহায়তা",
+    "kisanCallCenter": "কিষাণ কল সেন্টার (টোল-ফ্রি হেল্পলাইন): 1800-180-1551 (সকাল ৬:০০ থেকে রাত ১০:০০ পর্যন্ত সব আঞ্চলিক ভাষায় উপলব্ধ)",
+    "kvkEscalation": "কৃষি বিজ্ঞান কেন্দ্র (KVK) পরামর্শ: কোনো অজানা রোগ বা পোকার আক্রমণের ক্ষেত্রে ক্ষতিগ্রস্ত পাতা প্লাস্টিক ব্যাগে নিয়ে নিকটস্থ কেভিকে বা ব্লক কৃষি আধিকারিকের সাথে যোগাযোগ করুন।"
+  },
+  "kn": {
+    "btnText": "📄 PDF ಡೌನ್‌ಲೋಡ್ / Download PDF",
+    "reportTitle": "ರೈತ ಕೃಷಿ ಸಲಹಾ ಮತ್ತು ಮಣ್ಣಿನ ಆರೋಗ್ಯ ವರದಿ",
+    "reportSubtitle": "SPARC AgriSense AI • ರಾಷ್ಟ್ರೀಯ ಸುಸ್ಥಿರ ಕೃಷಿ ಮಿಷನ್ (NMSA)",
+    "sectionField": "ಕ್ಷೇತ್ರ ಪರೀಕ್ಷೆ ಮತ್ತು ಮಣ್ಣಿನ ಫಲವತ್ತತೆ",
+    "sectionWeather": "ಹವಾಮಾನ ಮತ್ತು ಮಳೆ ಮಾಹಿತಿ",
+    "sectionTopCrop": "ಅತ್ಯುತ್ತಮ ಶಿಫಾರಸು ಮಾಡಿದ ಬೆಳೆ (#1 ಅತ್ಯುತ್ತಮ ಆಯ್ಕೆ)",
+    "sectionAlts": "ಪರ್ಯಾಯ ಬೆಳೆಗಳ ಆಯ್ಕೆ",
+    "sectionFert": "ಗೊಬ್ಬರ ನಿರ್ವಹಣಾ ಪ್ಯಾಕೇಜ್ (ಪ್ರತಿ ಎಕರೆಗೆ)",
+    "sectionKvk": "ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (KVK) ತಜ್ಞರ ಸಲಹೆ",
+    "lblDate": "ವರದಿ ದಿನಾಂಕ:",
+    "lblLocation": "ಜಮೀನಿನ ಸ್ಥಳ:",
+    "lblAgroZone": "ಕೃಷಿ-ಹವಾಮಾನ ವಲಯ:",
+    "lblMatch": "ಹೊಂದಾಣಿಕೆ ಪ್ರಮಾಣ",
+    "lblVarieties": "ಶಿಫಾರಸು ಮಾಡಿದ ತಳಿಗಳು:",
+    "lblYield": "ನಿರೀಕ್ಷಿತ ಇಳುವರಿ",
+    "lblWater": "ನೀರಿನ ಅವಶ್ಯಕತೆ",
+    "lblDuration": "ಬೆಳೆ ಅವಧಿ",
+    "lblPrice": "ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಅಂದಾಜು",
+    "lblBasal": "ಬಿತ್ತನೆ ಸಮಯದ ಮೂಲ ಗೊಬ್ಬರ:",
+    "lblWhyFits": "ವೈಜ್ಞಾನಿಕ ಸಮರ್ಥನೆ:",
+    "thCrop": "ಬೆಳೆಯ ಹೆಸರು",
+    "thMatch": "ಹೊಂದಾಣಿಕೆ %",
+    "thYield": "ಅಂದಾಜು ಇಳುವರಿ",
+    "thWater": "ನೀರಿನ ಅಗತ್ಯ",
+    "thRisk": "ಮಾರುಕಟ್ಟೆ ಅಪಾಯ",
+    "thFertilizer": "ರಸಗೊಬ್ಬರದ ವಿಧ",
+    "thBags": "ಪ್ರಮಾಣ (50 ಕೆಜಿ ಚೀಲ/ಎಕರೆ)",
+    "thTiming": "ಹಾಕುವ ಸಮಯ",
+    "ureaTiming": "ವಿಭಾಗಿಸಿ: 50% ಬಿತ್ತನೆಗೆ + 25% ಕವಲೊಡೆಯುವಾಗ + 25% ತೆನೆ ಬರುವಾಗ",
+    "dapTiming": "100% ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿಯೇ ಮೂಲ ಗೊಬ್ಬರವಾಗಿ ನೀಡಬೇಕು",
+    "mopTiming": "100% ಬಿತ್ತನೆ ಸಮಯದಲ್ಲಿ ಅಥವಾ 50% ಬಿತ್ತನೆಗೆ + 50% ಹೂವಾಡುವಾಗ",
+    "disclaimer": "ಈ ವರದಿಯು ICAR-IISS ಮತ್ತು ಕೃಷಿ ವಿಶ್ವವಿದ್ಯಾಲಯದ ವೈಜ್ಞಾನಿಕ ಮಾರ್ಗಸೂಚಿಗಳ ಅನ್ವಯ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ.",
+    "sectionSteps": "ಹಂತ-ಹಂತದ ಕೃಷಿ ಮಾರ್ಗದರ್ಶಿ (ಕೆಲಸಗಳನ್ನು ಹೇಗೆ ಮಾಡುವುದು)",
+    "step1Title": "ಹಂತ 1: ಜಮೀನು ಸಿದ್ಧತೆ ಮತ್ತು ಸಾವಯವ ಗೊಬ್ಬರ",
+    "step1Desc": "ಕಲ್ಟಿವೇಟರ್ ಮತ್ತು ರೋಟಾವೇಟರ್‌ನಿಂದ 2-3 ಬಾರಿ ಆಳವಾದ ಉಳುಮೆ ಮಾಡಿ ಲೇಸರ್ ಲೆವೆಲರ್‌ನಿಂದ ಸಮತಟ್ಟು ಮಾಡಿ. ಬಿತ್ತನೆಗೆ 2-3 ವಾರ ಮೊದಲು ಎಕರೆಗೆ 4-5 ಟನ್ ಚೆನ್ನಾಗಿ ಕಳಿತ ಕೊಟ್ಟಿಗೆ ಗೊಬ್ಬರ ಅಥವಾ ಎರೆಹುಳು ಗೊಬ್ಬರ ಸೇರಿಸಿ. ಬೀಜೋಪಚಾರ: ಟ್ರೈಕೋಡರ್ಮಾ ವಿರಿಡಿ (4 ಗ್ರಾಂ/ಕೆಜಿ) ಅಥವಾ ಸೂಡೋಮೊನಾಸ್ (10 ಗ್ರಾಂ/ಕೆಜಿ) + ಅಜೋಟೋಬ್ಯಾಕ್ಟರ್ ಜೈವಿಕ ಗೊಬ್ಬರದಿಂದ ಉಪಚರಿಸಿ.",
+    "step2Title": "ಹಂತ 2: ಬಿತ್ತನೆ / ನಾಟಿ ಮತ್ತು ಅಂತರ ನಿರ್ವಹಣೆ",
+    "step2Desc": "ಪ್ರಮಾಣೀಕೃತ ಬೀಜ ಬಳಸಿ. ಸಾಲಿನಿಂದ ಸಾಲಿಗೆ 20 ಸೆಂ.ಮೀ ಮತ್ತು ಸಸಿಯಿಂದ ಸಸಿಗೆ 15 ಸೆಂ.ಮೀ ಅಂತರದಲ್ಲಿ 2-3 ಸೆಂ.ಮೀ ಆಳದಲ್ಲಿ ಬಿತ್ತನೆ ಮಾಡಿ. ಕೊನೆಯ ಉಳುಮೆಯಲ್ಲಿ ಡಿಎಪಿ (1.2 ಚೀಲ), ಎಂಒಪಿ (0.8 ಚೀಲ) ಮತ್ತು 10 ಕೆಜಿ ಜಿಂಕ್ ಸಲ್ಫೇಟ್ (21%) ಹಾಕಿ.",
+    "step3Title": "ಹಂತ 3: ನೀರು ನಿರ್ವಹಣೆ ಮತ್ತು ನಿರ್ಣಾಯಕ ನೀರಾವರಿ",
+    "step3Desc": "ಬೆಳವಣಿಗೆ ಹಂತದಲ್ಲಿ 2-3 ಸೆಂ.ಮೀ ನೀರು ನಿಲ್ಲಿಸಿ. 4 ನಿರ್ಣಾಯಕ ಹಂತಗಳಲ್ಲಿ ತಪ್ಪದೇ ನೀರು ಕೊಡಿ: ಕವಲೊಡೆಯುವಾಗ, ತೆನೆ ಮೂಡುವಾಗ, ಹೂವಾಡುವಾಗ ಮತ್ತು ಕಾಳು ತುಂಬುವಾಗ. ಕಟಾವಿಗೆ 10-12 ದಿನಗಳ ಮೊದಲು ನೀರನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಬಸಿದು ತೆಗೆಯಿರಿ.",
+    "step4Title": "ಹಂತ 4: ಕಳೆ ನಿಯಂತ್ರಣ ಮತ್ತು ಮೇಲುಗೊಬ್ಬರ",
+    "step4Desc": "ಬಿತ್ತಿದ 48 ಗಂಟೆಗಳಲ್ಲಿ ಪೆಂಡಿಮಿಥಾಲಿನ್ 30% ಇಸಿ @ 1.0 ಲೀಟರ್/ಎಕರೆಗೆ ಸಿಂಪಡಿಸಿ. ಯೂರಿಯಾವನ್ನು ಎರಡು ಕಂತುಗಳಲ್ಲಿ ನೀಡಿ: 25% ಕವಲೊಡೆಯುವಾಗ ಮತ್ತು 25% ತೆನೆ ಬರುವಾಗ. ಹಸಿರಿಗೆ 0.5% ಜಿಂಕ್ ಸಲ್ಫೇಟ್ ಅಥವಾ ನ್ಯಾನೋ ಯೂರಿಯಾ (4 ಮಿ.ಲೀ/ಲೀಟರ್) ಸಿಂಪಡಿಸಿ.",
+    "step5Title": "ಹಂತ 5: ಸಕಾಲಿಕ ಕಟಾವು, ಒಕ್ಕಣೆ ಮತ್ತು ಸುರಕ್ಷಿತ ಸಂಗ್ರಹಣೆ",
+    "step5Desc": "80-85% ಕಾಳುಗಳು ಹೊಂಬಣ್ಣಕ್ಕೆ ತಿರುಗಿ ತೇವಾಂಶ 18-20% ಇದ್ದಾಗ ಕಟಾವು ಮಾಡಿ. ಬಿಸಿಲಿನಲ್ಲಿ 3-4 ದಿನ ಒಣಗಿಸಿ ತೇವಾಂಶವನ್ನು 12-14% ಕ್ಕೆ ಇಳಿಸಿ. ಬೇವಿನ ಎಣ್ಣೆ ಅಥವಾ ಸೆಲ್ಫಾಸ್ ಮಾತ್ರೆಗಳನ್ನು ಬಳಸಿ ಗಾಳಿಯಾಡದ ಚೀಲಗಳಲ್ಲಿ ಸಂಗ್ರಹಿಸಿ.",
+    "sectionTroubleshoot": "ಕ್ಷೇತ್ರ ತುರ್ತುಸ್ಥಿತಿ ಮತ್ತು ಸಮಸ್ಯೆ ನಿವಾರಣೆ (ಸಮಸ್ಯೆ ಎದುರಾದರೆ ಏನು ಮಾಡಬೇಕು)",
+    "thProblem": "ಲಕ್ಷಣ / ತುರ್ತುಸ್ಥಿತಿ",
+    "thCause": "ಸಂಭಾವ್ಯ ಕೃಷಿ ಕಾರಣ",
+    "thAction": "ತಕ್ಷಣದ ಕ್ರಮ ಮತ್ತು ಔಷಧಿೋಪಚಾರ",
+    "prob1Title": "ಎಲೆಗಳು ಹಳದಿಯಾಗುವುದು ಮತ್ತು ಬೆಳವಣಿಗೆ ಕುಂಠಿತವಾಗುವುದು",
+    "prob1Cause": "ಸಾರಜನಕ ಕೊರತೆ, ನೀರು ನಿಲ್ಲುವುದು ಅಥವಾ ಕಬ್ಬಿಣದ ಕೊರತೆ.",
+    "prob1Action": "2% ಯೂರಿಯಾ ದ್ರಾವಣ ಅಥವಾ ನ್ಯಾನೋ ಯೂರಿಯಾ (4 ಮಿ.ಲೀ/ಲೀಟರ್) ಸಿಂಪಡಿಸಿ. ಜಮೀನಿನಲ್ಲಿ ನಿಂತ ನೀರನ್ನು ತಕ್ಷಣ ಬಸಿದು ಹೊರಹಾಕಿ.",
+    "prob2Title": "ರಸಹೀರುವ ಕೀಟಗಳು (ಹೇನು, ಬಿಳಿ ನೊಣ, ಥ್ರಿಪ್ಸ್)",
+    "prob2Cause": "ಮೋಡ ಕವಿದ ತೇವಾಂಶದ ವಾತಾವರಣ ಮತ್ತು ದಟ್ಟ ಬೆಳೆ.",
+    "prob2Action": "ಎಕರೆಗೆ 6-8 ಹಳದಿ ಜಿಗುಟು ಬಲೆಗಳನ್ನು ಅಳವಡಿಸಿ. 5% ಬೇವಿನ ಬೀಜದ ಕಷಾಯ ಅಥವಾ ಇಮಿಡಾಕ್ಲೋಪ್ರಿಡ್ 17.8% ಎಸ್ಎಲ್ @ 0.5 ಮಿ.ಲೀ/ಲೀಟರ್ ಸಿಂಪಡಿಸಿ.",
+    "prob3Title": "ಕಾಂಡ ಕೊರೆಯುವ ಹುಳು, ಎಲೆ ಸುರುಳಿ ಹುಳು",
+    "prob3Cause": "ಹುಳುಗಳು ಕಾಂಡ ಕೊರೆದು ಸುಳಿ ಒಣಗಲು (ಡೆಡ್ ಹಾರ್ಟ್) ಕಾರಣವಾಗುತ್ತವೆ.",
+    "prob3Action": "ಎಕರೆಗೆ 4 ಮೋಹಕ ಬಲೆಗಳನ್ನು ಇರಿಸಿ. ಕೊರಾಜೆನ್ @ 0.3 ಮಿ.ಲೀ/ಲೀಟರ್ ಅಥವಾ ಕಾರ್ಟಾಪ್ ಹೈಡ್ರೋಕ್ಲೋರೈಡ್ 4ಜಿ @ 7.5 ಕೆಜಿ/ಎಕರೆಗೆ ಹಾಕಿ.",
+    "prob4Title": "ದುಂಡಾಣು ರೋಗ, ಎಲೆ ಚುಕ್ಕೆ ಮತ್ತು ಬುಡ ಕೊಳೆತ",
+    "prob4Cause": "ಶಿಲೀಂಧ್ರ ಸೋಂಕು (ರೈಜೋಕ್ಟೋನಿಯಾ/ಪೈರಿಕ್ಯುಲೇರಿಯಾ).",
+    "prob4Action": "ಹೆಕ್ಸಾಕೊನಾಜೋಲ್ 5% ಇಸಿ @ 2 ಮಿ.ಲೀ/ಲೀಟರ್ ಅಥವಾ ವ್ಯಾಲಿಡಾಮೈಸಿನ್ 3% ಎಲ್ @ 2.5 ಮಿ.ಲೀ/ಲೀಟರ್ ಸಿಂಪಡಿಸಿ. ತಳಭಾಗಕ್ಕೆ ಕಾಪರ್ ಆಕ್ಸಿಕ್ಲೋರೈಡ್ @ 3 ಗ್ರಾಂ/ಲೀಟರ್ ಸುರಿಯಿರಿ.",
+    "prob5Title": "ಧಿಡೀರ್ ಬರಗಾಲ ಮತ್ತು ಹೆಚ್ಚಿನ ಉಷ್ಣತೆಯ ಒತ್ತಡ",
+    "prob5Cause": "ಮಳೆಯ ಕೊರತೆ ಮತ್ತು ಹೂವಾಡುವ ಹಂತದಲ್ಲಿ ತೇವಾಂಶದ ಕೊರತೆ.",
+    "prob5Action": "ಬಾಷ್ಪೀಭವನ ತಪ್ಪಿಸಲು 1% ಪೊಟ್ಯಾಸಿಯಮ್ ನೈಟ್ರೇಟ್ (13-0-45) ಸಿಂಪಡಿಸಿ. ಸಂಜೆ ವೇಳೆ ಲಘು ನೀರು ಕೊಡಿ ಮತ್ತು ಹುಲ್ಲಿನ ಹೊದಿಕೆ ಹಾಕಿ.",
+    "prob6Title": "ಅಕಾಲಿಕ ಭಾರಿ ಮಳೆ ಮತ್ತು ಜಲಾವೃತ",
+    "prob6Cause": "ನೀರು ನಿಂತು ಬೇರುಗಳಿಗೆ ಗಾಳಿ ಸಿಗದಿರುವುದು.",
+    "prob6Action": "ಬದುಗಳನ್ನು ಒಡೆದು 24 ಗಂಟೆಗಳಲ್ಲಿ ನೀರನ್ನು ಹೊರಹಾಕಿ. ನೀರು ಇಳಿದ ನಂತರ ಬೇರುಗಳ ಪುನಶ್ಚೇತನಕ್ಕೆ 19:19:19 ಎನ್‌ಪಿಕೆ (10 ಗ್ರಾಂ/ಲೀಟರ್) ಸಿಂಪಡಿಸಿ.",
+    "sectionEmergency": "ತುರ್ತು ರೈತ ಸಹಾಯವಾಣಿ ಮತ್ತು ಕೆವಿಕೆ ನೆರವು",
+    "kisanCallCenter": "ಕಿಸಾನ್ ಕಾಲ್ ಸೆಂಟರ್ (ಉಚಿತ ಸಹಾಯವಾಣಿ): 1800-180-1551 (ಬೆಳಿಗ್ಗೆ 6:00 ರಿಂದ ರಾತ್ರಿ 10:00 ರವರೆಗೆ ಎಲ್ಲಾ ಪ್ರಾದೇಶಿಕ ಭಾಷೆಗಳಲ್ಲಿ ಲಭ್ಯವಿದೆ)",
+    "kvkEscalation": "ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (KVK) ಸಂಪರ್ಕ: ಗುರುತಿಸಲಾಗದ ರೋಗಗಳಿಗೆ ಎಲೆ ಮಾದರಿಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ ಹತ್ತಿರದ ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ ಅಥವಾ ಕೃಷಿ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+  }
+};
 
   function downloadCropAdvisoryPDF() {
     const lang = state.language || 'hi';
@@ -5853,11 +6177,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const altTag = i === 1 ? t.altTag1 : t.altTag2;
       altsHtml += `
         <tr>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">${altTag}: ${altMeta.fullName}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #047857; font-weight: 700;">${matchScore}%</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.yield}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.water}</td>
-          <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.priceSub}</td>
+          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">${altTag}: ${altMeta.fullName}</td>
+          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #047857; font-weight: 700;">${matchScore}%</td>
+          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.yield}</td>
+          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.water}</td>
+          <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB;">${altMeta.priceSub}</td>
         </tr>
       `;
     }
@@ -5865,110 +6189,110 @@ document.addEventListener('DOMContentLoaded', () => {
     // Build Fertilizer Guidance Table
     const fertRowsHtml = `
       <tr>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">Urea (46% N)</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">2.0 Bags (100 kg)</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.ureaTiming}</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">Urea (46% N)</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">2.0 Bags (100 kg)</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.ureaTiming}</td>
       </tr>
       <tr>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">DAP (18-46-0)</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">1.2 Bags (60 kg)</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.dapTiming}</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">DAP (18-46-0)</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">1.2 Bags (60 kg)</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.dapTiming}</td>
       </tr>
       <tr>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">MOP (60% K₂O)</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">0.8 Bags (40 kg)</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.mopTiming}</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 600; color: #1E3A8A;">MOP (60% K₂O)</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; font-weight: 700;">0.8 Bags (40 kg)</td>
+        <td style="padding: 5px 8px; border-bottom: 1px solid #E5E7EB; color: #4B5563;">${labels.mopTiming}</td>
       </tr>
     `;
 
     // Complete Report Container
     const reportHtml = `
-      <div id="agrisense-pdf-report" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1F2937; background: #FFFFFF; padding: 20px 24px; max-width: 800px; margin: 0 auto; line-height: 1.4;">
+      <div id="agrisense-pdf-report" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1F2937; background: #FFFFFF; padding: 18px 22px; max-width: 800px; margin: 0 auto; line-height: 1.35;">
         
         <!-- HEADER -->
-        <div style="border-bottom: 3px solid #065F46; padding-bottom: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="border-bottom: 3px solid #065F46; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
           <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
               <span style="font-size: 20px;">🌾</span>
-              <span style="font-size: 17px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
-              <span style="background: #D1FAE5; color: #065F46; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR-IISS Benchmark</span>
+              <span style="font-size: 16px; font-weight: 800; color: #065F46; letter-spacing: -0.5px;">SPARC AGRI-SENSE AI</span>
+              <span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">ICAR-IISS Benchmark</span>
             </div>
-            <h1 style="font-size: 15px; font-weight: 800; color: #111827; margin: 3px 0 2px 0;">${labels.reportTitle}</h1>
-            <p style="font-size: 10.5px; color: #6B7280; margin: 0;">${labels.reportSubtitle}</p>
+            <h1 style="font-size: 14.5px; font-weight: 800; color: #111827; margin: 2px 0 2px 0;">${labels.reportTitle}</h1>
+            <p style="font-size: 10px; color: #6B7280; margin: 0;">${labels.reportSubtitle}</p>
           </div>
-          <div style="text-align: right; font-size: 10px; color: #4B5563; background: #F9FAFB; padding: 5px 10px; border-radius: 6px; border: 1px solid #E5E7EB;">
+          <div style="text-align: right; font-size: 9.5px; color: #4B5563; background: #F9FAFB; padding: 4px 8px; border-radius: 6px; border: 1px solid #E5E7EB;">
             <div><strong>${labels.lblDate}</strong> ${dateFormatted}</div>
-            <div style="margin-top: 2px;"><strong>Cycle:</strong> Kharif 2025 Advisory</div>
+            <div style="margin-top: 1px;"><strong>Cycle:</strong> Kharif Advisory</div>
           </div>
         </div>
 
         <!-- LOCATION & AGRO-ZONE STRIP -->
-        <div style="background: #F0FDF4; border-left: 4px solid #10B981; padding: 8px 12px; border-radius: 0 6px 6px 0; margin-bottom: 14px; font-size: 11.5px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: #F0FDF4; border-left: 4px solid #10B981; padding: 7px 10px; border-radius: 0 6px 6px 0; margin-bottom: 12px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <strong>📍 ${labels.lblLocation}</strong> <span style="font-weight: 700; color: #065F46;">${locationName}</span>
           </div>
-          <div style="font-size: 10.5px; color: #047857;">
+          <div style="font-size: 10px; color: #047857;">
             ${agroZoneName}
           </div>
         </div>
 
         <!-- TWO COLUMN DIAGNOSTICS & TELEMETRY -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
           
           <!-- Soil Diagnostics -->
-          <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; background: #FAFAFA;">
-            <h3 style="font-size: 11.5px; font-weight: 700; color: #065F46; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
+          <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 10px; background: #FAFAFA;">
+            <h3 style="font-size: 11px; font-weight: 700; color: #065F46; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
               🌱 ${labels.sectionField}
             </h3>
-            <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+            <table style="width: 100%; font-size: 10.5px; border-collapse: collapse;">
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Nitrogen (N):</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Nitrogen (N):</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentN} kg/ha</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9px; padding: 1px 4px; border-radius: 3px;">${currentN >= 90 ? 'Adequate' : 'Moderate'}</span></td>
               </tr>
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Phosphorus (P):</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Medium</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Phosphorus (P):</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentP} kg/ha</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #FEF3C7; color: #92400E; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Medium</span></td>
               </tr>
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Potassium (K):</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Optimum</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Potassium (K):</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentK} kg/ha</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Optimum</span></td>
               </tr>
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Soil Reaction (pH):</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${currentPh}</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Neutral</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Soil Reaction (pH):</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${currentPh}</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Neutral</span></td>
               </tr>
             </table>
           </div>
 
           <!-- Climate Telemetry -->
-          <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; background: #FAFAFA;">
-            <h3 style="font-size: 11.5px; font-weight: 700; color: #065F46; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
+          <div style="border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 10px; background: #FAFAFA;">
+            <h3 style="font-size: 11px; font-weight: 700; color: #065F46; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E5E7EB; padding-bottom: 3px;">
               🌤️ ${labels.sectionWeather}
             </h3>
-            <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+            <table style="width: 100%; font-size: 10.5px; border-collapse: collapse;">
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Ambient Temperature:</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Normal</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Ambient Temperature:</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${temp.toFixed(1)}°C</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #FEE2E2; color: #991B1B; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Normal</span></td>
               </tr>
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Relative Humidity:</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Favorable</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Relative Humidity:</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${Math.round(hum)}%</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #E0E7FF; color: #3730A3; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Favorable</span></td>
               </tr>
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Expected Monsoon:</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Adequate</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Expected Monsoon:</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">${Math.round(rain)} mm</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Adequate</span></td>
               </tr>
               <tr>
-                <td style="padding: 3px 0; color: #4B5563;">Agro-Thermal Window:</td>
-                <td style="padding: 3px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
-                <td style="padding: 3px 0 3px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9.5px; padding: 1px 5px; border-radius: 3px;">Kharif Active</span></td>
+                <td style="padding: 2.5px 0; color: #4B5563;">Agro-Thermal Window:</td>
+                <td style="padding: 2.5px 0; font-weight: 700; text-align: right;">Prime Sowing</td>
+                <td style="padding: 2.5px 0 2.5px 6px; text-align: right;"><span style="background: #D1FAE5; color: #065F46; font-size: 9px; padding: 1px 4px; border-radius: 3px;">Active</span></td>
               </tr>
             </table>
           </div>
@@ -5976,67 +6300,67 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <!-- TOP RECOMMENDED CROP HERO BOX -->
-        <div style="border: 2px solid #059669; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; margin-bottom: 14px;">
+        <div style="border: 2px solid #059669; border-radius: 8px; padding: 10px 12px; background: #FFFFFF; margin-bottom: 12px;">
           
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
             <div>
-              <span style="background: #059669; color: #FFFFFF; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">
+              <span style="background: #059669; color: #FFFFFF; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 10px; text-transform: uppercase;">
                 ⭐ ${labels.sectionTopCrop}
               </span>
-              <h2 style="font-size: 17px; font-weight: 800; color: #064E3B; margin: 6px 0 2px 0;">
+              <h2 style="font-size: 16px; font-weight: 800; color: #064E3B; margin: 4px 0 2px 0;">
                 ${bestMeta.fullName}
               </h2>
-              <div style="font-size: 11px; color: #047857;">
+              <div style="font-size: 10.5px; color: #047857;">
                 <strong>${labels.lblVarieties}</strong> ${bestMeta.varieties}
               </div>
             </div>
             
-            <div style="text-align: center; background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 6px; padding: 4px 10px;">
-              <div style="font-size: 18px; font-weight: 900; color: #047857;">${best.confidence}%</div>
-              <div style="font-size: 9.5px; font-weight: 700; color: #065F46;">${labels.lblMatch}</div>
+            <div style="text-align: center; background: #ECFDF5; border: 1.5px solid #10B981; border-radius: 6px; padding: 3px 8px;">
+              <div style="font-size: 17px; font-weight: 900; color: #047857;">${best.confidence}%</div>
+              <div style="font-size: 9px; font-weight: 700; color: #065F46;">${labels.lblMatch}</div>
             </div>
           </div>
 
           <!-- RATIONALE CALLOUT -->
-          <div style="background: #F0FDF4; border-radius: 5px; padding: 7px 10px; margin-bottom: 10px; font-size: 11px; color: #166534; border-left: 3px solid #059669;">
+          <div style="background: #F0FDF4; border-radius: 5px; padding: 6px 9px; margin-bottom: 8px; font-size: 10.5px; color: #166534; border-left: 3px solid #059669;">
             <strong>✓ ${labels.lblWhyFits}</strong> ${rationaleText}
           </div>
 
           <!-- 4 STATS ROW -->
           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
-            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblYield}</div>
-              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.yield}</div>
+            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblYield}</div>
+              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.yield}</div>
             </div>
-            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblWater}</div>
-              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.water}</div>
+            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblWater}</div>
+              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.water}</div>
             </div>
-            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblPrice}</div>
-              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.price}</div>
+            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblPrice}</div>
+              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.price}</div>
             </div>
-            <div style="background: #F9FAFB; padding: 6px; border-radius: 5px; border: 1px solid #E5E7EB;">
-              <div style="font-size: 9.5px; color: #6B7280; font-weight: 600;">${labels.lblDuration}</div>
-              <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.duration}</div>
+            <div style="background: #F9FAFB; padding: 5px; border-radius: 5px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 9px; color: #6B7280; font-weight: 600;">${labels.lblDuration}</div>
+              <div style="font-size: 11px; font-weight: 800; color: #111827; margin-top: 1px;">${bestMeta.duration}</div>
             </div>
           </div>
 
         </div>
 
         <!-- ALTERNATIVE CROPS TABLE -->
-        <div style="margin-bottom: 14px;">
-          <h3 style="font-size: 12px; font-weight: 700; color: #111827; margin: 0 0 5px 0;">
+        <div style="margin-bottom: 12px;">
+          <h3 style="font-size: 11.5px; font-weight: 700; color: #111827; margin: 0 0 4px 0;">
             🌾 ${labels.sectionAlts}
           </h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; text-align: left;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: left;">
             <thead>
               <tr style="background: #F3F4F6; color: #374151;">
-                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thCrop}</th>
-                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thMatch}</th>
-                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thYield}</th>
-                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thWater}</th>
-                <th style="padding: 5px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thRisk}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thCrop}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thMatch}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thYield}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thWater}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #E5E7EB;">${labels.thRisk}</th>
               </tr>
             </thead>
             <tbody>
@@ -6046,30 +6370,160 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <!-- FERTILIZER PRESCRIPTION PACKAGE -->
-        <div style="margin-bottom: 14px; border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; background: #FAFAFA;">
-          <h3 style="font-size: 12px; font-weight: 700; color: #1E3A8A; margin: 0 0 5px 0;">
+        <div style="margin-bottom: 14px; border: 1px solid #E5E7EB; border-radius: 7px; padding: 8px 10px; background: #FAFAFA;">
+          <h3 style="font-size: 11.5px; font-weight: 700; color: #1E3A8A; margin: 0 0 4px 0;">
             🧪 ${labels.sectionFert}
           </h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; text-align: left;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: left;">
             <thead>
               <tr style="background: #EEF2FF; color: #1E3A8A;">
-                <th style="padding: 5px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thFertilizer}</th>
-                <th style="padding: 5px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thBags}</th>
-                <th style="padding: 5px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thTiming}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thFertilizer}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thBags}</th>
+                <th style="padding: 4px 8px; border-bottom: 2px solid #C7D2FE;">${labels.thTiming}</th>
               </tr>
             </thead>
             <tbody>
               ${fertRowsHtml}
             </tbody>
           </table>
-          <div style="margin-top: 6px; font-size: 10px; color: #4B5563;">
+          <div style="margin-top: 5px; font-size: 9.5px; color: #4B5563;">
             <strong>${labels.lblBasal}</strong> ${bestMeta.basalDose}
           </div>
         </div>
 
+        <!-- STAGE-BY-STAGE CULTIVATION GUIDE (HOW TO DO THINGS) -->
+        <div style="margin-bottom: 14px; page-break-inside: avoid;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; border-bottom: 2px solid #065F46; padding-bottom: 3px;">
+            <h3 style="font-size: 11.5px; font-weight: 800; color: #065F46; margin: 0; text-transform: uppercase; letter-spacing: 0.3px;">
+              🌱 ${labels.sectionSteps}
+            </h3>
+            <span style="font-size: 9px; background: #ECFDF5; color: #065F46; font-weight: 700; padding: 2px 7px; border-radius: 10px; border: 1px solid #A7F3D0;">
+              ICAR Good Agricultural Practices (GAP)
+            </span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <!-- Step 1 -->
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                1️⃣ ${labels.step1Title}
+              </div>
+              <div style="color: #374151;">
+                ${labels.step1Desc}
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                2️⃣ ${labels.step2Title}
+              </div>
+              <div style="color: #374151;">
+                ${labels.step2Desc}
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                3️⃣ ${labels.step3Title}
+              </div>
+              <div style="color: #374151;">
+                ${labels.step3Desc}
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                4️⃣ ${labels.step4Title}
+              </div>
+              <div style="color: #374151;">
+                ${labels.step4Desc}
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-left: 3.5px solid #10B981; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; line-height: 1.35;">
+              <div style="font-weight: 800; color: #065F46; margin-bottom: 2px;">
+                5️⃣ ${labels.step5Title}
+              </div>
+              <div style="color: #374151;">
+                ${labels.step5Desc}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIELD EMERGENCY & PROBLEM TROUBLESHOOTING (WHAT TO DO IF ANY PROBLEM ARISES) -->
+        <div style="margin-bottom: 14px; page-break-inside: avoid;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; border-bottom: 2px solid #DC2626; padding-bottom: 3px;">
+            <h3 style="font-size: 11.5px; font-weight: 800; color: #B91C1C; margin: 0; text-transform: uppercase; letter-spacing: 0.3px;">
+              🚨 ${labels.sectionTroubleshoot}
+            </h3>
+            <span style="font-size: 9px; background: #FEF2F2; color: #B91C1C; font-weight: 700; padding: 2px 7px; border-radius: 10px; border: 1px solid #FECACA;">
+              Immediate Field Action Protocol
+            </span>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 9px; text-align: left; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 5px; overflow: hidden;">
+            <thead>
+              <tr style="background: #FEF2F2; color: #991B1B;">
+                <th style="padding: 5px 7px; border-bottom: 2px solid #FCA5A5; width: 25%; font-weight: 800;">${labels.thProblem}</th>
+                <th style="padding: 5px 7px; border-bottom: 2px solid #FCA5A5; width: 27%; font-weight: 800;">${labels.thCause}</th>
+                <th style="padding: 5px 7px; border-bottom: 2px solid #FCA5A5; width: 48%; font-weight: 800;">${labels.thAction}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">⚠️ ${labels.prob1Title}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob1Cause}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob1Action}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🐛 ${labels.prob2Title}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob2Cause}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob2Action}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🦗 ${labels.prob3Title}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob3Cause}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob3Action}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🍄 ${labels.prob4Title}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob4Cause}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob4Action}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">☀️ ${labels.prob5Title}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob5Cause}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob5Action}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; font-weight: 700; color: #991B1B;">🌧️ ${labels.prob6Title}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #4B5563;">${labels.prob6Cause}</td>
+                <td style="padding: 4px 7px; border-bottom: 1px solid #F3F4F6; color: #111827; background: #F9FAFB;"><strong>${labels.prob6Action}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- KISAN EMERGENCY HELPLINE & INSTITUTIONAL ESCALATION -->
+        <div style="margin-bottom: 12px; background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 6px; padding: 7px 10px; font-size: 9.5px; page-break-inside: avoid;">
+          <div style="font-weight: 800; color: #92400E; margin-bottom: 2px; display: flex; align-items: center; gap: 5px;">
+            <span>📞</span>
+            <span>${labels.sectionEmergency}</span>
+          </div>
+          <div style="color: #78350F; line-height: 1.35;">
+            <div><strong>• ${labels.kisanCallCenter}</strong></div>
+            <div style="margin-top: 1px;"><strong>• ${labels.kvkEscalation}</strong></div>
+          </div>
+        </div>
+
         <!-- FOOTER & OFFICIAL DISCLAIMER -->
-        <div style="border-top: 1px solid #E5E7EB; padding-top: 8px; font-size: 9px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
-          <div style="max-width: 82%;">
+        <div style="border-top: 1px solid #E5E7EB; padding-top: 6px; font-size: 8.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
+          <div style="max-width: 80%;">
             <strong>Disclaimer:</strong> ${labels.disclaimer}
           </div>
           <div style="text-align: right; font-weight: 700; color: #047857;">
