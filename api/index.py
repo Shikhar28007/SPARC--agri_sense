@@ -16,7 +16,7 @@ if ROOT_DIR not in sys.path:
 
 from fastapi import FastAPI, APIRouter, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 import backend
 from backend import (
@@ -360,6 +360,22 @@ def state_soil_profile(state: str = Query(..., description="Indian State name"))
 def get_weather(query: str = Query("New Delhi", description="City name or query")):
     telemetry = engine_instance.fetch_live_weather(query)
     return {"success": True, "telemetry": telemetry}
+
+@router.get("/tts")
+def get_tts(text: str = Query(..., description="Text to synthesize"), lang: str = Query("hi", description="ISO language code")):
+    try:
+        import urllib.request
+        import urllib.parse
+        clean = text.strip()[:200]
+        q = urllib.parse.quote(clean)
+        l = (lang or "hi").strip().lower()
+        url = f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={l}&q={q}"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            audio_bytes = resp.read()
+            return Response(content=audio_bytes, media_type="audio/mpeg", headers={"Cache-Control": "public, max-age=86400"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"TTS error: {str(e)}")
 
 @router.get("/past-season-records")
 def list_past_season_records(crop: Optional[str] = Query(None, description="Optional crop filter")):

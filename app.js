@@ -364,6 +364,165 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────────────────
   // 3. DISTRICT PRESETS & DEFAULTS
   // ─────────────────────────────────────────────────────────────────────────
+  const KNOWN_DISTRICTS = {
+    pune: {
+      city: 'Pune',
+      state: 'Maharashtra',
+      specificLocation: 'Haveli, Pune (411001), Maharashtra',
+      zone: 'Western Plateau and Hills (Zone 9)',
+      lat: 18.52,
+      lon: 73.85,
+      temp: 26.5,
+      rain: 210,
+      humidity: 72,
+      n: 92, p: 46, k: 44
+    },
+    nashik: {
+      city: 'Nashik',
+      state: 'Maharashtra',
+      specificLocation: 'Nashik Road, Nashik (422001), Maharashtra',
+      zone: 'Western Plateau and Hills (Zone 9)',
+      lat: 19.99,
+      lon: 73.78,
+      temp: 25.0,
+      rain: 185,
+      humidity: 68,
+      n: 85, p: 42, k: 50
+    },
+    nagpur: {
+      city: 'Nagpur',
+      state: 'Maharashtra',
+      specificLocation: 'Sitabuldi, Nagpur (440001), Maharashtra',
+      zone: 'Eastern Plateau and Hills (Zone 7)',
+      lat: 21.14,
+      lon: 79.08,
+      temp: 29.0,
+      rain: 240,
+      humidity: 65,
+      n: 78, p: 38, k: 62
+    },
+    indore: {
+      city: 'Indore',
+      state: 'Madhya Pradesh',
+      specificLocation: 'Palasia, Indore (452001), Madhya Pradesh',
+      zone: 'Central Plateau and Hills (Zone 8)',
+      lat: 22.71,
+      lon: 75.85,
+      temp: 27.5,
+      rain: 195,
+      humidity: 60,
+      n: 82, p: 40, k: 48
+    },
+    kolhapur: {
+      city: 'Kolhapur',
+      state: 'Maharashtra',
+      specificLocation: 'Shahupuri, Kolhapur (416001), Maharashtra',
+      zone: 'Western Plateau and Hills (Zone 9)',
+      lat: 16.70,
+      lon: 74.24,
+      temp: 26.0,
+      rain: 310,
+      humidity: 78,
+      n: 95, p: 50, k: 54
+    },
+    ludhiana: {
+      city: 'Ludhiana',
+      state: 'Punjab',
+      specificLocation: 'Civil Lines, Ludhiana (141001), Punjab',
+      zone: 'Trans-Gangetic Plain (Zone 6)',
+      lat: 30.90,
+      lon: 75.85,
+      temp: 28.0,
+      rain: 160,
+      humidity: 66,
+      n: 110, p: 48, k: 40
+    },
+    varanasi: {
+      city: 'Varanasi',
+      state: 'Uttar Pradesh',
+      specificLocation: 'Cantonment, Varanasi (221002), Uttar Pradesh',
+      zone: 'Middle Gangetic Plain (Zone 4)',
+      lat: 25.31,
+      lon: 82.97,
+      temp: 29.5,
+      rain: 225,
+      humidity: 74,
+      n: 88, p: 44, k: 42
+    },
+    prayagraj: {
+      city: 'Prayagraj',
+      state: 'Uttar Pradesh',
+      specificLocation: 'Civil Lines, Prayagraj (211001), Uttar Pradesh',
+      zone: 'Middle Gangetic Plain (Zone 4)',
+      lat: 25.45,
+      lon: 81.84,
+      temp: 29.0,
+      rain: 215,
+      humidity: 70,
+      n: 90, p: 45, k: 42
+    },
+    lucknow: {
+      city: 'Lucknow',
+      state: 'Uttar Pradesh',
+      specificLocation: 'Hazratganj, Lucknow (226001), Uttar Pradesh',
+      zone: 'Middle Gangetic Plain (Zone 4)',
+      lat: 26.84,
+      lon: 80.94,
+      temp: 28.5,
+      rain: 210,
+      humidity: 72,
+      n: 88, p: 46, k: 44
+    },
+    patna: {
+      city: 'Patna',
+      state: 'Bihar',
+      specificLocation: 'Kankarbagh, Patna (800020), Bihar',
+      zone: 'Middle Gangetic Plain (Zone 4)',
+      lat: 25.59,
+      lon: 85.13,
+      temp: 29.0,
+      rain: 230,
+      humidity: 75,
+      n: 86, p: 42, k: 40
+    },
+    jaipur: {
+      city: 'Jaipur',
+      state: 'Rajasthan',
+      specificLocation: 'Malviya Nagar, Jaipur (302017), Rajasthan',
+      zone: 'Central Plateau and Hills (Zone 8)',
+      lat: 26.91,
+      lon: 75.78,
+      temp: 30.5,
+      rain: 145,
+      humidity: 50,
+      n: 74, p: 38, k: 55
+    },
+    bhopal: {
+      city: 'Bhopal',
+      state: 'Madhya Pradesh',
+      specificLocation: 'MP Nagar, Bhopal (462011), Madhya Pradesh',
+      zone: 'Central Plateau and Hills (Zone 8)',
+      lat: 23.25,
+      lon: 77.41,
+      temp: 28.0,
+      rain: 210,
+      humidity: 64,
+      n: 80, p: 42, k: 46
+    },
+    chandigarh: {
+      city: 'Chandigarh',
+      state: 'Punjab',
+      specificLocation: 'Sector 17, Chandigarh (160017), Punjab',
+      zone: 'Trans-Gangetic Plain (Zone 6)',
+      lat: 30.73,
+      lon: 76.77,
+      temp: 27.0,
+      rain: 180,
+      humidity: 65,
+      n: 105, p: 46, k: 42
+    }
+  };
+
   function applyDistrictData(btn) {
     districtChips.forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
@@ -376,47 +535,86 @@ document.addEventListener('DOMContentLoaded', () => {
     const k = parseInt(btn.dataset.k, 10);
     const zone = btn.dataset.zone;
 
+    const cityKey = (city || '').toLowerCase().trim();
+    const known = KNOWN_DISTRICTS[cityKey] || {};
+
+    const specificLoc = known.specificLocation || `${city}, ${known.state || 'India'}`;
+    const lat = known.lat || 18.52;
+    const lon = known.lon || 73.85;
+    const agroZone = known.zone || (known.state ? getAgroClimaticZone(known.state, city) : zone) || zone;
+
     state.currentCity = city;
-    state.currentZone = zone;
+    state.currentZone = agroZone;
+    state.currentWeather = { temperature: temp, humidity: known.humidity || 70, rainfall: rain };
+
+    // Update Floating Agro-Climatic Telemetry Box
+    const specificLocEl = document.getElementById('specific-location-val');
+    if (specificLocEl) {
+      specificLocEl.textContent = specificLoc;
+    }
+    if (zoneLabel) {
+      const coordsText = (lat && lon) ? ` • Lat ${lat.toFixed(2)}° N, Lon ${lon.toFixed(2)}° E` : '';
+      zoneLabel.textContent = `Agro-Climatic Region: ${agroZone}${coordsText}`;
+    }
+    if (telemetryTemp) telemetryTemp.textContent = `${temp.toFixed(1)}°C`;
+    if (zoneMonsoonText) zoneMonsoonText.textContent = `${Math.round(rain)} mm`;
 
     if (sliders.temp) {
       sliders.temp.value = temp;
-      if (displays.temp) displays.temp.textContent = temp;
-      if (telemetryTemp) telemetryTemp.textContent = `${temp}°C`;
+      if (displays.temp) displays.temp.textContent = temp.toFixed(1);
     }
 
     if (sliders.rain) {
       sliders.rain.value = rain;
-      if (displays.rain) displays.rain.textContent = rain;
-      if (zoneMonsoonText) zoneMonsoonText.textContent = `${rain} mm`;
+      if (displays.rain) displays.rain.textContent = Math.round(rain);
     }
 
-    if (inputs.n && sliders.n) {
+    if (sliders.hum) {
+      const humVal = known.humidity || 70;
+      sliders.hum.value = humVal;
+      const valHum = document.getElementById('val-hum');
+      if (valHum) valHum.textContent = Math.round(humVal);
+    }
+
+    if (inputs.n && sliders.n && !isNaN(n)) {
       inputs.n.value = n;
       sliders.n.value = n;
       if (displays.n) displays.n.textContent = n;
       updateNutrientStatusPill('n', n);
     }
 
-    if (inputs.p && sliders.p) {
+    if (inputs.p && sliders.p && !isNaN(p)) {
       inputs.p.value = p;
       sliders.p.value = p;
       if (displays.p) displays.p.textContent = p;
       updateNutrientStatusPill('p', p);
     }
 
-    if (inputs.k && sliders.k) {
+    if (inputs.k && sliders.k && !isNaN(k)) {
       inputs.k.value = k;
       sliders.k.value = k;
       if (displays.k) displays.k.textContent = k;
       updateNutrientStatusPill('k', k);
     }
 
-    if (zoneLabel) {
-      zoneLabel.textContent = `Agro-Climatic Zone: ${zone}`;
+    updateConditionPill(temp);
+
+    // Auto-sync soil state dropdown
+    const stateName = known.state;
+    if (stateDropdown && stateName) {
+      for (let i = 0; i < stateDropdown.options.length; i++) {
+        if (stateDropdown.options[i].value.toLowerCase().includes(stateName.toLowerCase())) {
+          stateDropdown.selectedIndex = i;
+          loadSoilStateProfile(stateDropdown.options[i].value);
+          break;
+        }
+      }
     }
 
-    updateConditionPill(temp);
+    // Auto-refresh recommendations for the new location
+    if (typeof predictCrops === 'function') {
+      predictCrops();
+    }
   }
 
   districtChips.forEach(btn => {
@@ -759,26 +957,179 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function fetchLiveTelemetry(query) {
-    try {
-      const res = await apiFetch(`/weather?query=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      if (data.success && data.telemetry) {
-        const t = data.telemetry;
-        state.currentCity = t.city || query;
-        state.currentWeather = {
-          temperature: t.temperature,
-          humidity: t.humidity,
-          rainfall: t.rainfall || 0
-        };
+    if (!query) return;
+    const qClean = query.trim();
+    const cityKey = qClean.toLowerCase();
+    const known = KNOWN_DISTRICTS[cityKey];
 
-        if (telemetryTemp) telemetryTemp.textContent = `${t.temperature.toFixed(1)}°C`;
-        if (zoneMonsoonText && t.rainfall) zoneMonsoonText.textContent = `${t.rainfall.toFixed(0)} mm`;
-        if (zoneLabel) zoneLabel.textContent = `Agro-Climatic Zone: ${t.city || query} District`;
-        if (sliders.temp) {
-          sliders.temp.value = t.temperature;
-          if (displays.temp) displays.temp.textContent = t.temperature.toFixed(1);
+    const specificLocEl = document.getElementById('specific-location-val');
+    if (specificLocEl) specificLocEl.textContent = `📍 Locating ${qClean}...`;
+
+    try {
+      let lat = known?.lat;
+      let lon = known?.lon;
+      let cityName = known?.city || qClean;
+      let stateName = known?.state || '';
+      let specificLoc = known?.specificLocation || '';
+      let agroZone = known?.zone || '';
+
+      // 1. If not in known presets, resolve via Open-Meteo Geocoding
+      if (!lat || !lon || !stateName) {
+        try {
+          const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qClean)}&count=1&language=en&format=json`;
+          const geoRes = await fetch(geoUrl);
+          const geoJson = await geoRes.json();
+          if (geoJson && Array.isArray(geoJson.results) && geoJson.results.length > 0) {
+            const r = geoJson.results[0];
+            lat = r.latitude;
+            lon = r.longitude;
+            cityName = r.name || qClean;
+            stateName = r.admin1 || '';
+            const locality = r.admin3 || r.admin2 || '';
+            specificLoc = locality ? `${locality}, ${cityName}, ${stateName}` : `${cityName}, ${stateName}`;
+            agroZone = getAgroClimaticZone(stateName, cityName);
+          }
+        } catch (geoErr) {
+          console.warn('Geocoding error:', geoErr);
         }
-        updateConditionPill(t.temperature);
+      }
+
+      if (!specificLoc) {
+        specificLoc = stateName ? `${cityName}, ${stateName}` : `${cityName}, India`;
+      }
+      if (!agroZone) {
+        agroZone = getAgroClimaticZone(stateName, cityName);
+      }
+
+      // 2. Fetch live high-resolution weather telemetry from Open-Meteo
+      let temp = known?.temp || 27.0;
+      let humidity = known?.humidity || 68;
+      let rainfall = known?.rain || 200;
+      let conditionIcon = '☀️';
+
+      if (lat && lon) {
+        try {
+          const omUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&daily=precipitation_sum&timezone=auto`;
+          const omRes = await fetch(omUrl);
+          const omData = await omRes.json();
+          if (omData && omData.current) {
+            temp = omData.current.temperature_2m;
+            humidity = omData.current.relative_humidity_2m || 70;
+            const wCode = omData.current.weather_code || 0;
+            const dailySum = (omData.daily && omData.daily.precipitation_sum) ? omData.daily.precipitation_sum.reduce((a, b) => a + (b || 0), 0) : 12;
+            rainfall = Math.max(70, Math.min(380, Math.round(dailySum * 6.5 + 40)));
+            conditionIcon = (wCode >= 51 && wCode <= 67) ? '🌧️' : (wCode >= 1 && wCode <= 3 ? '⛅' : (wCode >= 95 ? '⛈️' : '☀️'));
+          }
+        } catch (omErr) {
+          console.warn('Open-Meteo forecast error:', omErr);
+        }
+      } else {
+        try {
+          const res = await apiFetch(`/weather?query=${encodeURIComponent(qClean)}`);
+          const data = await res.json();
+          if (data && data.success && data.telemetry) {
+            const t = data.telemetry;
+            temp = t.temperature || temp;
+            humidity = t.humidity || humidity;
+            rainfall = t.rainfall || rainfall;
+            cityName = t.city || cityName;
+            stateName = t.region || stateName;
+          }
+        } catch (e) {}
+      }
+
+      // Update state and UI
+      state.currentCity = cityName;
+      state.currentZone = agroZone;
+      state.currentWeather = { temperature: temp, humidity, rainfall };
+
+      if (specificLocEl) {
+        specificLocEl.textContent = specificLoc;
+      }
+      if (zoneLabel) {
+        const coordsText = (lat && lon) ? ` • Lat ${lat.toFixed(2)}° N, Lon ${lon.toFixed(2)}° E` : '';
+        zoneLabel.textContent = `Agro-Climatic Region: ${agroZone}${coordsText}`;
+      }
+      if (telemetryTemp) telemetryTemp.textContent = `${temp.toFixed(1)}°C`;
+      if (zoneMonsoonText) zoneMonsoonText.textContent = `${Math.round(rainfall)} mm`;
+      const wIconEl = document.querySelector('.zone-weather-icon');
+      if (wIconEl) wIconEl.textContent = conditionIcon;
+
+      // Update Form Sliders
+      if (sliders.temp) {
+        sliders.temp.value = temp;
+        if (displays.temp) displays.temp.textContent = temp.toFixed(1);
+      }
+      if (sliders.rain) {
+        sliders.rain.value = rainfall;
+        if (displays.rain) displays.rain.textContent = Math.round(rainfall);
+      }
+      if (sliders.hum) {
+        sliders.hum.value = humidity;
+        const valHum = document.getElementById('val-hum');
+        if (valHum) valHum.textContent = Math.round(humidity);
+      }
+
+      // If known preset has NPK, calibrate inputs
+      if (known && known.n && known.p && known.k) {
+        if (inputs.n && sliders.n) {
+          inputs.n.value = known.n;
+          sliders.n.value = known.n;
+          if (displays.n) displays.n.textContent = known.n;
+          updateNutrientStatusPill('n', known.n);
+        }
+        if (inputs.p && sliders.p) {
+          inputs.p.value = known.p;
+          sliders.p.value = known.p;
+          if (displays.p) displays.p.textContent = known.p;
+          updateNutrientStatusPill('p', known.p);
+        }
+        if (inputs.k && sliders.k) {
+          inputs.k.value = known.k;
+          sliders.k.value = known.k;
+          if (displays.k) displays.k.textContent = known.k;
+          updateNutrientStatusPill('k', known.k);
+        }
+      }
+
+      updateConditionPill(temp);
+
+      // Auto-sync soil dropdown if state matches
+      if (stateDropdown && stateName) {
+        for (let i = 0; i < stateDropdown.options.length; i++) {
+          if (stateDropdown.options[i].value.toLowerCase().includes(stateName.toLowerCase()) || stateName.toLowerCase().includes(stateDropdown.options[i].value.toLowerCase())) {
+            stateDropdown.selectedIndex = i;
+            loadSoilStateProfile(stateDropdown.options[i].value);
+            break;
+          }
+        }
+      }
+
+      // Add or update Auto chip in district row
+      const districtChipsContainer = document.getElementById('district-chips');
+      if (districtChipsContainer && cityName) {
+        let existingAutoChip = document.getElementById('auto-district-chip');
+        if (!existingAutoChip) {
+          existingAutoChip = document.createElement('button');
+          existingAutoChip.type = 'button';
+          existingAutoChip.id = 'auto-district-chip';
+          existingAutoChip.className = 'dist-chip active';
+          districtChipsContainer.insertBefore(existingAutoChip, districtChipsContainer.firstChild);
+        }
+        existingAutoChip.textContent = `📍 ${cityName}`;
+        existingAutoChip.dataset.city = cityName;
+        existingAutoChip.dataset.temp = temp;
+        existingAutoChip.dataset.rain = rainfall;
+        existingAutoChip.dataset.zone = agroZone;
+
+        districtChips.forEach(c => {
+          if (c !== existingAutoChip) c.classList.remove('active');
+        });
+      }
+
+      // Re-run prediction with the updated weather parameters
+      if (typeof predictCrops === 'function') {
+        predictCrops();
       }
     } catch (err) {
       console.warn('Telemetry fetch error:', err);
@@ -4942,7 +5293,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         const snippet = chunks[curIndex++];
-        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(langCode)}&q=${encodeURIComponent(snippet)}`;
+        const audioUrl = `/api/tts?lang=${encodeURIComponent(langCode)}&text=${encodeURIComponent(snippet)}`;
         const audio = new Audio(audioUrl);
         activeSpeechAudio = audio;
 
@@ -4952,13 +5303,37 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         };
         audio.onerror = (e) => {
-          console.warn('Audio fallback error:', e);
+          console.warn('Audio endpoint error, falling back to Web Speech API:', e);
+          if ('speechSynthesis' in window) {
+            try {
+              const u = new SpeechSynthesisUtterance(snippet);
+              u.lang = langCode === 'en' ? 'en-IN' : `${langCode}-IN`;
+              u.onend = () => {
+                if (activeSpeakingBtn === btnElement) playNextChunk();
+              };
+              u.onerror = () => resetBtn();
+              window.speechSynthesis.speak(u);
+              return;
+            } catch (synthErr) {}
+          }
           resetBtn();
         };
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch(err => {
-            console.warn('Audio play rejection:', err);
+            console.warn('Audio play rejection, trying Web Speech API:', err);
+            if ('speechSynthesis' in window) {
+              try {
+                const u = new SpeechSynthesisUtterance(snippet);
+                u.lang = langCode === 'en' ? 'en-IN' : `${langCode}-IN`;
+                u.onend = () => {
+                  if (activeSpeakingBtn === btnElement) playNextChunk();
+                };
+                u.onerror = () => resetBtn();
+                window.speechSynthesis.speak(u);
+                return;
+              } catch (synthErr) {}
+            }
             resetBtn();
           });
         }
