@@ -145,7 +145,9 @@ def predict_crop(req: CropPredictionRequest):
             potassium=req.potassium,
             rainfall=req.rainfall,
             temperature=req.temperature,
-            top_k=req.top_k
+            top_k=req.top_k,
+            humidity=req.humidity,
+            ph=req.ph
         )
 
         detailed_results = []

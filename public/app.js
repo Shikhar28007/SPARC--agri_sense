@@ -801,21 +801,72 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  const EMPIRICAL_CROP_BENCHMARKS = {"rice":{"n":{"mean":80,"min":60,"max":99},"p":{"mean":48,"min":35,"max":60},"k":{"mean":40,"min":35,"max":45},"temp":{"mean":23.7,"min":20,"max":26.9},"hum":{"mean":82.3,"min":80.1,"max":85},"ph":{"mean":6.43,"min":5.01,"max":7.87},"rain":{"mean":236,"min":183,"max":299},"count":100},"maize":{"n":{"mean":78,"min":60,"max":100},"p":{"mean":48,"min":35,"max":60},"k":{"mean":20,"min":15,"max":25},"temp":{"mean":22.4,"min":18,"max":26.5},"hum":{"mean":65.1,"min":55.3,"max":74.8},"ph":{"mean":6.25,"min":5.51,"max":7},"rain":{"mean":85,"min":61,"max":110},"count":100},"chickpea":{"n":{"mean":40,"min":20,"max":60},"p":{"mean":68,"min":55,"max":80},"k":{"mean":80,"min":75,"max":85},"temp":{"mean":18.9,"min":17,"max":21},"hum":{"mean":16.9,"min":14.3,"max":20},"ph":{"mean":7.34,"min":5.99,"max":8.87},"rain":{"mean":80,"min":65,"max":95},"count":100},"kidneybeans":{"n":{"mean":21,"min":0,"max":40},"p":{"mean":68,"min":55,"max":80},"k":{"mean":20,"min":15,"max":25},"temp":{"mean":20.1,"min":15.3,"max":24.9},"hum":{"mean":21.6,"min":18.1,"max":25},"ph":{"mean":5.75,"min":5.5,"max":6},"rain":{"mean":106,"min":60,"max":150},"count":100},"pigeonpeas":{"n":{"mean":21,"min":0,"max":40},"p":{"mean":68,"min":55,"max":80},"k":{"mean":20,"min":15,"max":25},"temp":{"mean":27.7,"min":18.3,"max":37},"hum":{"mean":48.1,"min":30.4,"max":69.7},"ph":{"mean":5.79,"min":4.55,"max":7.45},"rain":{"mean":149,"min":90,"max":199},"count":100},"mothbeans":{"n":{"mean":21,"min":0,"max":40},"p":{"mean":48,"min":35,"max":60},"k":{"mean":20,"min":15,"max":25},"temp":{"mean":28.2,"min":24,"max":32},"hum":{"mean":53.2,"min":40,"max":65},"ph":{"mean":6.83,"min":3.5,"max":9.94},"rain":{"mean":51,"min":31,"max":74},"count":100},"mungbean":{"n":{"mean":21,"min":0,"max":40},"p":{"mean":47,"min":35,"max":60},"k":{"mean":20,"min":15,"max":25},"temp":{"mean":28.5,"min":27,"max":29.9},"hum":{"mean":85.5,"min":80,"max":90},"ph":{"mean":6.72,"min":6.22,"max":7.2},"rain":{"mean":48,"min":36,"max":60},"count":100},"blackgram":{"n":{"mean":40,"min":20,"max":60},"p":{"mean":67,"min":55,"max":80},"k":{"mean":19,"min":15,"max":25},"temp":{"mean":30,"min":25.1,"max":34.9},"hum":{"mean":65.1,"min":60.1,"max":70},"ph":{"mean":7.13,"min":6.5,"max":7.78},"rain":{"mean":68,"min":60,"max":75},"count":100},"lentil":{"n":{"mean":19,"min":0,"max":40},"p":{"mean":68,"min":55,"max":80},"k":{"mean":19,"min":15,"max":25},"temp":{"mean":24.5,"min":18.1,"max":29.9},"hum":{"mean":64.8,"min":60.1,"max":69.9},"ph":{"mean":6.93,"min":5.92,"max":7.84},"rain":{"mean":46,"min":35,"max":55},"count":100},"pomegranate":{"n":{"mean":19,"min":0,"max":40},"p":{"mean":19,"min":5,"max":30},"k":{"mean":40,"min":35,"max":45},"temp":{"mean":21.8,"min":18.1,"max":25},"hum":{"mean":90.1,"min":85.1,"max":95},"ph":{"mean":6.43,"min":5.56,"max":7.2},"rain":{"mean":108,"min":103,"max":112},"count":100},"banana":{"n":{"mean":100,"min":80,"max":120},"p":{"mean":82,"min":70,"max":95},"k":{"mean":50,"min":45,"max":55},"temp":{"mean":27.4,"min":25,"max":29.9},"hum":{"mean":80.4,"min":75,"max":85},"ph":{"mean":5.98,"min":5.51,"max":6.49},"rain":{"mean":105,"min":90,"max":120},"count":100},"mango":{"n":{"mean":20,"min":0,"max":40},"p":{"mean":27,"min":15,"max":40},"k":{"mean":30,"min":25,"max":35},"temp":{"mean":31.2,"min":27,"max":36},"hum":{"mean":50.2,"min":45,"max":55},"ph":{"mean":5.77,"min":4.51,"max":6.97},"rain":{"mean":95,"min":89,"max":101},"count":100},"grapes":{"n":{"mean":23,"min":0,"max":40},"p":{"mean":133,"min":120,"max":145},"k":{"mean":200,"min":195,"max":205},"temp":{"mean":23.8,"min":8.8,"max":41.9},"hum":{"mean":81.9,"min":80,"max":84},"ph":{"mean":6.03,"min":5.51,"max":6.5},"rain":{"mean":70,"min":65,"max":75},"count":100},"watermelon":{"n":{"mean":99,"min":80,"max":120},"p":{"mean":17,"min":5,"max":30},"k":{"mean":50,"min":45,"max":55},"temp":{"mean":25.6,"min":24,"max":27},"hum":{"mean":85.2,"min":80,"max":90},"ph":{"mean":6.5,"min":6,"max":6.96},"rain":{"mean":51,"min":40,"max":60},"count":100},"muskmelon":{"n":{"mean":100,"min":80,"max":120},"p":{"mean":18,"min":5,"max":30},"k":{"mean":50,"min":45,"max":55},"temp":{"mean":28.7,"min":27,"max":29.9},"hum":{"mean":92.3,"min":90,"max":95},"ph":{"mean":6.36,"min":6,"max":6.78},"rain":{"mean":25,"min":20,"max":30},"count":100},"apple":{"n":{"mean":21,"min":0,"max":40},"p":{"mean":134,"min":120,"max":145},"k":{"mean":200,"min":195,"max":205},"temp":{"mean":22.6,"min":21,"max":24},"hum":{"mean":92.3,"min":90,"max":94.9},"ph":{"mean":5.93,"min":5.51,"max":6.5},"rain":{"mean":113,"min":100,"max":125},"count":100},"orange":{"n":{"mean":20,"min":0,"max":40},"p":{"mean":17,"min":5,"max":30},"k":{"mean":10,"min":5,"max":15},"temp":{"mean":22.8,"min":10,"max":34.9},"hum":{"mean":92.2,"min":90,"max":95},"ph":{"mean":7.02,"min":6.01,"max":8},"rain":{"mean":110,"min":100,"max":120},"count":100},"papaya":{"n":{"mean":50,"min":31,"max":70},"p":{"mean":59,"min":46,"max":70},"k":{"mean":50,"min":45,"max":55},"temp":{"mean":33.7,"min":23,"max":43.7},"hum":{"mean":92.4,"min":90,"max":94.9},"ph":{"mean":6.74,"min":6.5,"max":6.99},"rain":{"mean":143,"min":40,"max":249},"count":100},"coconut":{"n":{"mean":22,"min":0,"max":40},"p":{"mean":17,"min":5,"max":30},"k":{"mean":31,"min":25,"max":35},"temp":{"mean":27.4,"min":25,"max":29.9},"hum":{"mean":94.8,"min":90,"max":100},"ph":{"mean":5.98,"min":5.5,"max":6.47},"rain":{"mean":176,"min":131,"max":226},"count":100},"cotton":{"n":{"mean":118,"min":100,"max":140},"p":{"mean":46,"min":35,"max":60},"k":{"mean":20,"min":15,"max":25},"temp":{"mean":24,"min":22,"max":26},"hum":{"mean":79.8,"min":75,"max":84.9},"ph":{"mean":6.91,"min":5.8,"max":7.99},"rain":{"mean":80,"min":61,"max":100},"count":100},"jute":{"n":{"mean":78,"min":60,"max":100},"p":{"mean":47,"min":35,"max":60},"k":{"mean":40,"min":35,"max":45},"temp":{"mean":25,"min":23.1,"max":27},"hum":{"mean":79.6,"min":70.9,"max":89.9},"ph":{"mean":6.73,"min":6,"max":7.49},"rain":{"mean":175,"min":150,"max":200},"count":100},"coffee":{"n":{"mean":101,"min":80,"max":120},"p":{"mean":29,"min":15,"max":40},"k":{"mean":30,"min":25,"max":35},"temp":{"mean":25.5,"min":23.1,"max":27.9},"hum":{"mean":58.9,"min":50,"max":69.9},"ph":{"mean":6.79,"min":6.02,"max":7.49},"rain":{"mean":158,"min":115,"max":199},"count":100},"wheat":{"n":{"mean":120,"min":102,"max":140},"p":{"mean":56,"min":40,"max":70},"k":{"mean":41,"min":30,"max":55},"temp":{"mean":19.5,"min":14,"max":24},"hum":{"mean":60.5,"min":50,"max":72},"ph":{"mean":6.84,"min":6,"max":7.6},"rain":{"mean":69,"min":45,"max":95},"count":100},"sugarcane":{"n":{"mean":198,"min":159,"max":240},"p":{"mean":70,"min":51,"max":90},"k":{"mean":116,"min":80,"max":150},"temp":{"mean":31,"min":24.5,"max":36},"hum":{"mean":75.8,"min":65,"max":88},"ph":{"mean":7.05,"min":6.2,"max":8},"rain":{"mean":212,"min":155,"max":260},"count":100},"mustard":{"n":{"mean":78,"min":60,"max":95},"p":{"mean":41,"min":30,"max":54},"k":{"mean":33,"min":20,"max":45},"temp":{"mean":18.3,"min":12.8,"max":22.7},"hum":{"mean":56.9,"min":45,"max":70},"ph":{"mean":7,"min":6,"max":7.8},"rain":{"mean":52,"min":35,"max":71},"count":100},"soybean":{"n":{"mean":33,"min":20,"max":50},"p":{"mean":74,"min":55,"max":90},"k":{"mean":52,"min":39,"max":70},"temp":{"mean":26.9,"min":22,"max":32},"hum":{"mean":71.1,"min":60,"max":81},"ph":{"mean":6.67,"min":6.03,"max":7.4},"rain":{"mean":121,"min":85,"max":160},"count":100},"groundnut":{"n":{"mean":27,"min":15,"max":40},"p":{"mean":54,"min":40,"max":73},"k":{"mean":46,"min":30,"max":60},"temp":{"mean":27.8,"min":23,"max":33},"hum":{"mean":62.9,"min":50.2,"max":75},"ph":{"mean":6.44,"min":5.8,"max":7.2},"rain":{"mean":82,"min":55,"max":110},"count":100},"potato":{"n":{"mean":149,"min":120,"max":180},"p":{"mean":96,"min":75,"max":125},"k":{"mean":133,"min":100,"max":168},"temp":{"mean":17.6,"min":13.2,"max":21.8},"hum":{"mean":75,"min":65.1,"max":85},"ph":{"mean":5.7,"min":5,"max":6.47},"rain":{"mean":69,"min":46,"max":90},"count":100},"tomato":{"n":{"mean":127,"min":100,"max":160},"p":{"mean":83,"min":60,"max":101},"k":{"mean":96,"min":71,"max":117},"temp":{"mean":24.4,"min":19,"max":30},"hum":{"mean":65.6,"min":55,"max":80},"ph":{"mean":6.52,"min":6,"max":7.2},"rain":{"mean":87,"min":60,"max":113},"count":100},"onion":{"n":{"mean":105,"min":83,"max":130},"p":{"mean":54,"min":40,"max":75},"k":{"mean":83,"min":60,"max":105},"temp":{"mean":20.9,"min":15,"max":28},"hum":{"mean":59.5,"min":50,"max":68.9},"ph":{"mean":6.91,"min":6,"max":7.6},"rain":{"mean":72,"min":50,"max":95},"count":100},"bajra":{"n":{"mean":61,"min":45,"max":80},"p":{"mean":32,"min":20,"max":45},"k":{"mean":30,"min":20,"max":42},"temp":{"mean":32.1,"min":26,"max":38},"hum":{"mean":41.6,"min":30,"max":55},"ph":{"mean":7.66,"min":6.64,"max":8.5},"rain":{"mean":45,"min":28,"max":60},"count":100},"jowar":{"n":{"mean":74,"min":60,"max":95},"p":{"mean":40,"min":30,"max":55},"k":{"mean":37,"min":25,"max":50},"temp":{"mean":29.7,"min":25,"max":36},"hum":{"mean":48.1,"min":35,"max":65},"ph":{"mean":7.18,"min":6.02,"max":8.2},"rain":{"mean":60,"min":40,"max":81},"count":100},"barley":{"n":{"mean":66,"min":50,"max":85},"p":{"mean":35,"min":25,"max":50},"k":{"mean":31,"min":20,"max":42},"temp":{"mean":17,"min":12,"max":22.9},"hum":{"mean":55.7,"min":45,"max":66.8},"ph":{"mean":7.35,"min":6.5,"max":8.2},"rain":{"mean":54,"min":35,"max":75},"count":100},"garlic":{"n":{"mean":91,"min":72,"max":113},"p":{"mean":52,"min":40,"max":70},"k":{"mean":69,"min":50,"max":90},"temp":{"mean":19.2,"min":13,"max":24},"hum":{"mean":64.9,"min":55,"max":75},"ph":{"mean":6.6,"min":6,"max":7.4},"rain":{"mean":65,"min":45,"max":85},"count":100},"ginger":{"n":{"mean":93,"min":72,"max":112},"p":{"mean":56,"min":40,"max":73},"k":{"mean":98,"min":76,"max":125},"temp":{"mean":25.1,"min":20,"max":30.7},"hum":{"mean":82.4,"min":71.2,"max":92},"ph":{"mean":6.18,"min":5.5,"max":6.8},"rain":{"mean":178,"min":136,"max":230},"count":100},"turmeric":{"n":{"mean":106,"min":80,"max":130},"p":{"mean":67,"min":50,"max":82},"k":{"mean":112,"min":80,"max":145},"temp":{"mean":26.3,"min":20.2,"max":31.9},"hum":{"mean":82,"min":70,"max":92},"ph":{"mean":6.43,"min":5.5,"max":7.1},"rain":{"mean":170,"min":130,"max":220},"count":100},"chilli":{"n":{"mean":116,"min":90,"max":145},"p":{"mean":62,"min":45,"max":78},"k":{"mean":75,"min":55,"max":95},"temp":{"mean":26.3,"min":21.1,"max":31.5},"hum":{"mean":65.2,"min":55,"max":77.6},"ph":{"mean":6.55,"min":6,"max":7.4},"rain":{"mean":93,"min":65,"max":125},"count":100},"tea":{"n":{"mean":130,"min":100,"max":156},"p":{"mean":43,"min":30,"max":58},"k":{"mean":81,"min":60,"max":99},"temp":{"mean":22.8,"min":18.2,"max":28},"hum":{"mean":85.5,"min":75,"max":96},"ph":{"mean":5,"min":4.5,"max":5.6},"rain":{"mean":240,"min":175,"max":308},"count":100}};
+
+  function calculateAgronomicSuitability(crop, inputs) {
+    if (!crop) return 70.0;
+    const cKey = String(crop).toLowerCase().trim();
+    const bm = EMPIRICAL_CROP_BENCHMARKS[cKey];
+    if (!bm) return 70.0;
+
+    const n = Number(inputs.nitrogen ?? inputs.n ?? 90);
+    const p = Number(inputs.phosphorus ?? inputs.p ?? 45);
+    const k = Number(inputs.potassium ?? inputs.k ?? 45);
+    const temp = Number(inputs.temperature ?? inputs.temp ?? 26.5);
+    const hum = Number(inputs.humidity ?? inputs.hum ?? 70.0);
+    const ph = Number(inputs.ph ?? 6.5);
+    const rain = Number(inputs.rainfall ?? inputs.rain ?? 150.0);
+
+    function calcSubScore(val, stat, toleranceFactor = 1.0) {
+      if (val === undefined || val === null || isNaN(val)) return 85;
+      const { mean, min, max } = stat;
+      if (val >= min && val <= max) {
+        const span = Math.max(1, (max - min) / 2);
+        const dev = Math.abs(val - mean) / span;
+        return 100 - (dev * 8);
+      }
+      const dist = val < min ? (min - val) : (val - max);
+      const rangeSpan = Math.max(10, max - min);
+      const penalty = (dist / rangeSpan) * 45 * toleranceFactor;
+      return Math.max(15, Math.min(92, 92 - penalty));
+    }
+
+    const sN = calcSubScore(n, bm.n, 0.8);
+    const sP = calcSubScore(p, bm.p, 0.8);
+    const sK = calcSubScore(k, bm.k, 0.8);
+    const sPh = calcSubScore(ph, bm.ph, 1.2);
+    const sRain = calcSubScore(rain, bm.rain, 1.3);
+    const sTemp = calcSubScore(temp, bm.temp, 1.1);
+    const sHum = calcSubScore(hum, bm.hum, 0.7);
+
+    const composite = (
+      sN * 0.15 +
+      sP * 0.12 +
+      sK * 0.13 +
+      sPh * 0.15 +
+      sRain * 0.22 +
+      sTemp * 0.15 +
+      sHum * 0.08
+    );
+
+    return Math.round(composite * 10) / 10;
+  }
+
   function calculateCropPredictionLocal(payload) {
-    const n = Number(payload.nitrogen) || 90;
-    const p = Number(payload.phosphorus) || 45;
-    const k = Number(payload.potassium) || 45;
-    const ph = Number(payload.ph) || 6.5;
+    const inputs = {
+      nitrogen: Number(payload.nitrogen ?? 90),
+      phosphorus: Number(payload.phosphorus ?? 45),
+      potassium: Number(payload.potassium ?? 45),
+      temperature: Number(payload.temperature ?? 26.5),
+      humidity: Number(payload.humidity ?? 70),
+      ph: Number(payload.ph ?? 6.5),
+      rainfall: Number(payload.rainfall ?? 150)
+    };
 
     const scores = [];
-    for (const [cName, bm] of Object.entries(ICAR_CROP_BENCHMARKS)) {
-      const dN = Math.abs(n - bm.N) / (bm.N || 1);
-      const dP = Math.abs(p - bm.P) / (bm.P || 1);
-      const dK = Math.abs(k - bm.K) / (bm.K || 1);
-      const dPh = Math.abs(ph - bm.ph) / (bm.ph || 1);
-      const dist = (dN * 1.2 + dP * 1.0 + dK * 1.0 + dPh * 0.8) / 4.0;
-      const confidence = Math.max(45, Math.min(98.5, Math.round((1 - dist * 0.5) * 1000) / 10));
-      scores.push({ crop: cName, confidence });
+    for (const cName of Object.keys(EMPIRICAL_CROP_BENCHMARKS)) {
+      const score = calculateAgronomicSuitability(cName, inputs);
+      scores.push({ crop: cName, confidence: score, compatibility_score: score });
     }
 
     scores.sort((a, b) => b.confidence - a.confidence);
@@ -823,31 +874,51 @@ document.addEventListener('DOMContentLoaded', () => {
       rank: idx + 1,
       crop: s.crop,
       confidence: s.confidence,
+      compatibility_score: s.compatibility_score,
       profile: {
         cycle_days: '110 – 140 Days',
-        water_demand: 'Normal Seasonal',
-        economic_outlook: 'Strong regional APMC Mandi demand',
-        benefits: ['High NPK efficiency', 'Regional climate resilience']
+        water_demand: s.confidence > 80 ? 'Optimal Regional Fit' : 'Requires Irrigation Support',
+        economic_outlook: 'High domestic APMC Mandi liquidity',
+        benefits: ['Calibrated NPK biological uptake', 'Climate resilience index matched']
       }
     }));
 
     let targetDiag = null;
     const tgt = (payload.target_crop || '').toLowerCase().trim();
     if (tgt) {
-      const tgtScore = scores.find(s => s.crop === tgt);
-      const conf = tgtScore ? tgtScore.confidence : 75;
-      const isViable = conf >= 80;
+      const tgtScore = calculateAgronomicSuitability(tgt, inputs);
+      let riskLevel = 'Low Risk';
+      let summary = '🌟 Excellent Match! Current soil and weather parameters naturally support cultivating this crop.';
+      const issues = [];
+      const rescueRoadmap = [];
+
+      if (tgtScore >= 80) {
+        riskLevel = 'Low Risk';
+        summary = `🌟 High Agronomic Suitability (${tgtScore}%). Field conditions naturally meet optimal biological thresholds for ${tgt.toUpperCase()}.`;
+      } else if (tgtScore >= 65) {
+        riskLevel = 'Moderate Risk';
+        summary = `⚠️ Moderate Feasibility (${tgtScore}%). Field conditions are viable but sub-optimal compared to top AI choice ${topRecs[0].crop.toUpperCase()}.`;
+        issues.push({ param: 'Environmental/Soil Divergence', status: 'Moderate', detail: 'Soil nutrient ratio or moisture baseline requires adjustment.' });
+        rescueRoadmap.push({ category: 'Nutrient Timing', action: 'Apply split dose nitrogen and basal DAP/MOP based on soil test.', impact: 'Prevents deficiency during vegetative flush.' });
+      } else {
+        riskLevel = 'High Risk';
+        summary = `🚨 High Agronomic Risk (${tgtScore}%). Significant limiting factors detected for ${tgt.toUpperCase()} on this land. Consider switching to AI Top Choice (${topRecs[0].crop.toUpperCase()}) or implement intensive remediation.`;
+        issues.push({ param: 'Limiting Climate/Nutrient Factor', status: 'Severe Divergence', detail: 'Rainfall, thermal window, or soil pH deviates from physiological requirements.' });
+        rescueRoadmap.push({ category: 'Soil & Water Amendment', action: 'Incorporate 4-5 tons/acre organic compost and ensure scheduled micro-irrigation.', impact: 'Buffers root zone against abiotic stress.' });
+      }
+
       targetDiag = {
         crop: tgt.toUpperCase(),
-        risk_level: isViable ? 'Low Risk' : 'High Risk',
-        compatibility_score: conf,
+        risk_level: riskLevel,
+        compatibility_score: tgtScore,
+        summary: summary,
         profile: {
           cycle_days: '110 – 135 Days',
-          water_demand: 'Moderate',
-          economic_outlook: 'Stable market demand'
+          water_demand: 'Moderate to High',
+          economic_outlook: 'Subject to seasonal Mandi price cycles'
         },
-        issues: isViable ? [] : ['Sub-optimal nitrogen-phosphorus balance for root initiation'],
-        rescue_roadmap: isViable ? [] : ['Apply 25 kg/ha additional DAP at basal dressing', 'Enhance organic matter with 2 tons/acre compost']
+        issues: issues,
+        rescue_roadmap: rescueRoadmap
       };
     }
 
@@ -6408,7 +6479,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 1; i < Math.min(3, recs.length); i++) {
       const alt = recs[i];
       const altMeta = getCropMeta(alt.crop, alt.profile);
-      const matchScore = Number(alt.compatibility_score) || (i === 1 ? 82 : 74);
+      const matchScore = Math.round(Number(alt.compatibility_score || alt.confidence) || calculateAgronomicSuitability(alt.crop, {
+        nitrogen: currentN, phosphorus: currentP, potassium: currentK,
+        temperature: temp, humidity: hum, ph: currentPh, rainfall: rain
+      }));
       const altTag = i === 1 ? t.altTag1 : t.altTag2;
       altsHtml += `
         <tr>
@@ -7579,10 +7653,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const alt1FertLink = document.getElementById('alt-1-fert-link');
 
       if (alt1Tag) alt1Tag.textContent = t.altTag1;
-      let match1 = Number(alt1.compatibility_score) || 0;
-      if (!match1 || match1 < 50) {
-        match1 = Math.min(88, Math.max(74, Math.round(Number(alt1.confidence) * 1.5 + 70)));
-      }
+      let match1 = Math.round(Number(alt1.compatibility_score || alt1.confidence) || calculateAgronomicSuitability(alt1.crop, {
+        nitrogen: currentN,
+        phosphorus: parseFloat(inputs.p?.value || (sliders.p ? sliders.p.value : 45)),
+        potassium: parseFloat(inputs.k?.value || (sliders.k ? sliders.k.value : 45)),
+        temperature: parseFloat(sliders.temp ? sliders.temp.value : 25),
+        humidity: parseFloat(sliders.hum ? sliders.hum.value : 70),
+        ph: parseFloat(sliders.ph ? sliders.ph.value : (inputs.ph ? inputs.ph.value : 6.5)),
+        rainfall: currentRain
+      }));
       if (alt1Score) alt1Score.textContent = `${match1}% ${t.altMatchText}`;
       if (alt1Title) alt1Title.textContent = alt1Meta.fullName;
       if (alt1Desc) alt1Desc.textContent = getAlternativeCropRationale(alt1Meta.fullName, currentN, currentRain, lang);
@@ -7631,10 +7710,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const alt2FertLink = document.getElementById('alt-2-fert-link');
 
       if (alt2Tag) alt2Tag.textContent = t.altTag2;
-      let match2 = Number(alt2.compatibility_score) || 0;
-      if (!match2 || match2 < 50) {
-        match2 = Math.min(84, Math.max(68, Math.round(Number(alt2.confidence) * 1.5 + 64)));
-      }
+      let match2 = Math.round(Number(alt2.compatibility_score || alt2.confidence) || calculateAgronomicSuitability(alt2.crop, {
+        nitrogen: currentN,
+        phosphorus: parseFloat(inputs.p?.value || (sliders.p ? sliders.p.value : 45)),
+        potassium: parseFloat(inputs.k?.value || (sliders.k ? sliders.k.value : 45)),
+        temperature: parseFloat(sliders.temp ? sliders.temp.value : 25),
+        humidity: parseFloat(sliders.hum ? sliders.hum.value : 70),
+        ph: parseFloat(sliders.ph ? sliders.ph.value : (inputs.ph ? inputs.ph.value : 6.5)),
+        rainfall: currentRain
+      }));
       if (alt2Score) alt2Score.textContent = `${match2}% ${t.altMatchText}`;
       if (alt2Title) alt2Title.textContent = alt2Meta.fullName;
       if (alt2Desc) alt2Desc.textContent = getAlternativeCropRationale(alt2Meta.fullName, currentN, currentRain, lang);
