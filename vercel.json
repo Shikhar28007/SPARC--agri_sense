@@ -6,7 +6,7 @@
       "destination": "/api/index.py?__path__=$1"
     },
     {
-      "source": "/(predict|fertilizer-calc|fertilizer|crops|soil-states|soil-profile|weather|diseases)(.*)",
+      "source": "/(predict|fertilizer-calc|fertilizer|crops|soil-states|soil-profile|weather|diseases|past-season-records|tts)(.*)",
       "destination": "/api/index.py?__path__=$1$2"
     }
   ]
