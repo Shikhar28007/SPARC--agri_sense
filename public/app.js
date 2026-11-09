@@ -4852,48 +4852,165 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 200);
   }
 
-  // ── Speech Synthesis & WhatsApp Kisan Helpers ──
+  // ── Speech Synthesis & Audio Kisan Helpers ──
   let activeSpeakingBtn = null;
+  let activeSpeechAudio = null;
   window._activeSpeechUtterance = null; // Prevent Chromium Garbage Collection drop
 
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window._cachedSpeechVoices = window.speechSynthesis.getVoices();
-    };
+    try {
+      window.speechSynthesis.onvoiceschanged = () => {
+        try {
+          window._cachedSpeechVoices = window.speechSynthesis.getVoices();
+        } catch (e) {}
+      };
+    } catch (e) {}
+  }
+
+  function stopAllSpeech() {
+    try {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    } catch (e) {}
+    try {
+      if (activeSpeechAudio) {
+        activeSpeechAudio.pause();
+        activeSpeechAudio.currentTime = 0;
+        activeSpeechAudio = null;
+      }
+    } catch (e) {}
+    if (activeSpeakingBtn) {
+      activeSpeakingBtn.classList.remove('is-speaking');
+      const lang = state.language || 'hi';
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+      activeSpeakingBtn.innerHTML = t.listenBtnText || '🔊 Listen';
+      activeSpeakingBtn = null;
+    }
+    window._activeSpeechUtterance = null;
+  }
+
+  function chunkTextForAudio(str, maxLength = 180) {
+    if (!str || str.length <= maxLength) return [str];
+    const chunks = [];
+    const sentences = str.split(/(?<=[.।!?])\s+/);
+    let cur = '';
+    for (const s of sentences) {
+      if ((cur + ' ' + s).trim().length <= maxLength) {
+        cur = (cur ? cur + ' ' + s : s).trim();
+      } else {
+        if (cur) chunks.push(cur);
+        if (s.length > maxLength) {
+          const words = s.split(' ');
+          cur = '';
+          for (const w of words) {
+            if ((cur + ' ' + w).trim().length <= maxLength) {
+              cur = (cur ? cur + ' ' + w : w).trim();
+            } else {
+              if (cur) chunks.push(cur);
+              cur = w;
+            }
+          }
+        } else {
+          cur = s;
+        }
+      }
+    }
+    if (cur) chunks.push(cur);
+    return chunks;
+  }
+
+  function playAudioFallback(txt, langCode, btnElement, resetBtn) {
+    try {
+      stopAllSpeech();
+      btnElement.classList.add('is-speaking');
+      const lang = state.language || 'hi';
+      const stopMap = {
+        en: '⏹️ Stop', hi: '⏹️ रोकें / Stop', mr: '⏹️ थांबवा / Stop',
+        pa: '⏹️ ਰੋਕੋ / Stop', gu: '⏹️ રોકો / Stop', te: '⏹️ ఆపు / Stop',
+        ta: '⏹️ நிறுத்து / Stop', bn: '⏹️ থামুন / Stop', kn: '⏹️ ನಿಲ್ಲಿಸಿ / Stop'
+      };
+      btnElement.innerHTML = stopMap[lang] || '⏹️ Stop';
+      activeSpeakingBtn = btnElement;
+
+      const chunks = chunkTextForAudio(txt, 180);
+      let curIndex = 0;
+
+      function playNextChunk() {
+        if (activeSpeakingBtn !== btnElement || curIndex >= chunks.length) {
+          resetBtn();
+          return;
+        }
+        const snippet = chunks[curIndex++];
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(langCode)}&q=${encodeURIComponent(snippet)}`;
+        const audio = new Audio(audioUrl);
+        activeSpeechAudio = audio;
+
+        audio.onended = () => {
+          if (activeSpeakingBtn === btnElement) {
+            playNextChunk();
+          }
+        };
+        audio.onerror = (e) => {
+          console.warn('Audio fallback error:', e);
+          resetBtn();
+        };
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            console.warn('Audio play rejection:', err);
+            resetBtn();
+          });
+        }
+      }
+
+      playNextChunk();
+    } catch (err) {
+      console.warn('playAudioFallback failed:', err);
+      resetBtn();
+    }
   }
 
   function toggleSpeech(text, btnElement) {
-    if (!('speechSynthesis' in window)) {
-      alert('Voice audio is not supported in this browser. Please use Chrome or Edge.');
-      return;
-    }
+    if (!btnElement) return;
 
     const lang = state.language || 'hi';
     const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
     const listenLabel = t.listenBtnText || '🔊 Listen';
-    const stopLabel = '⏹️ Stop';
+    const stopMap = {
+      en: '⏹️ Stop', hi: '⏹️ रोकें / Stop', mr: '⏹️ थांबवा / Stop',
+      pa: '⏹️ ਰੋਕੋ / Stop', gu: '⏹️ રોકો / Stop', te: '⏹️ ఆపు / Stop',
+      ta: '⏹️ நிறுத்து / Stop', bn: '⏹️ থামুন / Stop', kn: '⏹️ ನಿಲ್ಲಿಸಿ / Stop'
+    };
+    const stopLabel = stopMap[lang] || '⏹️ Stop';
 
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-      if (activeSpeakingBtn) {
-        activeSpeakingBtn.classList.remove('is-speaking');
-        activeSpeakingBtn.innerHTML = listenLabel;
-      }
+    // If clicking the active speaking button, toggle off cleanly
+    if (activeSpeakingBtn === btnElement) {
+      stopAllSpeech();
+      return;
+    }
+
+    // If another button is speaking or previous audio is active, stop it
+    if (activeSpeakingBtn || (window.speechSynthesis && window.speechSynthesis.speaking) || activeSpeechAudio) {
+      stopAllSpeech();
+    }
+
+    const cleanText = (text || '').replace(/<[^>]*>?/gm, '').replace(/[*_#]/g, '').trim();
+    if (!cleanText) return;
+
+    btnElement.classList.add('is-speaking');
+    btnElement.innerHTML = stopLabel;
+    activeSpeakingBtn = btnElement;
+
+    const resetBtn = () => {
       if (activeSpeakingBtn === btnElement) {
+        btnElement.classList.remove('is-speaking');
+        btnElement.innerHTML = listenLabel;
         activeSpeakingBtn = null;
-        return;
+        activeSpeechAudio = null;
+        window._activeSpeechUtterance = null;
       }
-    }
-
-    // Clear stuck pauses in Chromium
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    }
-
-    const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/[*_#]/g, '');
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.95;
-    utterance.pitch = 1.0;
+    };
 
     const langVoiceMap = {
       en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN',
@@ -4902,39 +5019,84 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const targetTag = langVoiceMap[lang] || 'hi-IN';
     const baseCode = targetTag.split('-')[0];
-    utterance.lang = targetTag;
 
-    const voices = (window.speechSynthesis.getVoices() && window.speechSynthesis.getVoices().length > 0)
-      ? window.speechSynthesis.getVoices()
-      : (window._cachedSpeechVoices || []);
+    const hasSpeech = ('speechSynthesis' in window);
+    let voices = [];
+    if (hasSpeech) {
+      try {
+        voices = (window.speechSynthesis.getVoices() && window.speechSynthesis.getVoices().length > 0)
+          ? window.speechSynthesis.getVoices()
+          : (window._cachedSpeechVoices || []);
+      } catch (e) {
+        voices = [];
+      }
+    }
 
     let regionalVoice = null;
     if (voices.length > 0) {
-      regionalVoice = voices.find(v => v.lang.toLowerCase() === targetTag.toLowerCase()) ||
-                      voices.find(v => v.lang.toLowerCase().startsWith(baseCode)) ||
-                      voices.find(v => v.lang.includes('IN')) ||
-                      voices.find(v => v.lang.startsWith('en'));
+      regionalVoice = voices.find(v => v.lang && v.lang.toLowerCase() === targetTag.toLowerCase()) ||
+                      voices.find(v => v.lang && v.lang.toLowerCase().startsWith(baseCode));
+      if (!regionalVoice && baseCode === 'en') {
+        regionalVoice = voices.find(v => v.lang && (v.lang.toLowerCase() === 'en-in' || v.lang.toLowerCase().includes('in'))) ||
+                        voices.find(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+      }
     }
-    if (regionalVoice) {
-      utterance.voice = regionalVoice;
+
+    // If browser/OS lacks a native voice for the selected Indic language, use Google TTS audio immediately
+    if (baseCode !== 'en' && !regionalVoice) {
+      playAudioFallback(cleanText, lang, btnElement, resetBtn);
+      return;
     }
 
-    btnElement.classList.add('is-speaking');
-    btnElement.innerHTML = stopLabel;
-    activeSpeakingBtn = btnElement;
-    window._activeSpeechUtterance = utterance;
+    if (!hasSpeech) {
+      playAudioFallback(cleanText, lang, btnElement, resetBtn);
+      return;
+    }
 
-    const resetBtn = () => {
-      btnElement.classList.remove('is-speaking');
-      btnElement.innerHTML = listenLabel;
-      activeSpeakingBtn = null;
-      window._activeSpeechUtterance = null;
-    };
+    // Clear stuck paused state in Chromium
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    } catch (e) {}
 
-    utterance.onend = resetBtn;
-    utterance.onerror = resetBtn;
+    try {
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
 
-    window.speechSynthesis.speak(utterance);
+      if (regionalVoice) {
+        utterance.voice = regionalVoice;
+        utterance.lang = regionalVoice.lang;
+      } else {
+        utterance.lang = targetTag;
+      }
+
+      utterance.onend = () => {
+        resetBtn();
+      };
+      utterance.onerror = (evt) => {
+        console.warn('SpeechSynthesis error event:', evt, 'falling back to Google TTS audio...');
+        playAudioFallback(cleanText, lang, btnElement, resetBtn);
+      };
+
+      window._activeSpeechUtterance = utterance;
+
+      // 50ms delay to prevent Chromium from dropping speech after recent cancel
+      setTimeout(() => {
+        if (activeSpeakingBtn === btnElement) {
+          try {
+            window.speechSynthesis.speak(utterance);
+          } catch (speakErr) {
+            console.warn('speechSynthesis.speak error:', speakErr);
+            playAudioFallback(cleanText, lang, btnElement, resetBtn);
+          }
+        }
+      }, 50);
+    } catch (err) {
+      console.warn('Utterance creation failed, using audio fallback:', err);
+      playAudioFallback(cleanText, lang, btnElement, resetBtn);
+    }
   }
 
   function shareOnWhatsApp(cropName, details) {
@@ -4947,74 +5109,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(url, '_blank');
   }
 
-  // Initial attach for static listeners in Paddy hero card & Alternatives
-  const staticVoiceBtn = document.getElementById('best-voice-btn');
-  if (staticVoiceBtn) {
-    staticVoiceBtn.addEventListener('click', () => {
-      const lang = state.language || 'hi';
-      const meta = getCropMeta('rice');
-      const speech = getVoiceReadoutText(meta, { confidence: 94 }, lang);
-      toggleSpeech(speech, staticVoiceBtn);
-    });
-  }
-
-  const staticWaBtn = document.getElementById('best-whatsapp-btn');
-  if (staticWaBtn) {
-    staticWaBtn.addEventListener('click', () => {
-      shareOnWhatsApp('Paddy / धान (Indica Wet)', '📊 Suitability: 94%\n🌾 Expected Yield: 44-48 Q/Ha\n💧 Water Need: High\n⏱️ Duration: 120-135 Days');
-    });
-  }
-
-  const staticCalLink = document.getElementById('best-crop-calendar-link');
-  if (staticCalLink) {
-    staticCalLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      openCropCalendarModal(state.lastRecommendationsData?.crop || 'rice');
-    });
-  }
-
-  const staticAlt1FertLink = document.getElementById('alt-1-fert-link');
-  if (staticAlt1FertLink) {
-    staticAlt1FertLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigateToFertilizerPackage('cotton');
-    });
-  }
-
-  const staticAlt2FertLink = document.getElementById('alt-2-fert-link');
-  if (staticAlt2FertLink) {
-    staticAlt2FertLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigateToFertilizerPackage('maize');
-    });
-  }
-
-  const alt1VoiceBtn = document.getElementById('alt-1-voice-btn');
-  if (alt1VoiceBtn) {
-    alt1VoiceBtn.addEventListener('click', () => {
-      const lang = state.language || 'hi';
-      const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
-      const altMeta = getCropMeta('cotton');
-      const speech = getAltVoiceReadoutText(t.altTag1, altMeta, { confidence: 82 }, lang);
-      toggleSpeech(speech, alt1VoiceBtn);
-    });
-  }
-
-  const alt2VoiceBtn = document.getElementById('alt-2-voice-btn');
-  if (alt2VoiceBtn) {
-    alt2VoiceBtn.addEventListener('click', () => {
-      const lang = state.language || 'hi';
-      const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
-      const altMeta = getCropMeta('maize');
-      const speech = getAltVoiceReadoutText(t.altTag2, altMeta, { confidence: 74 }, lang);
-      toggleSpeech(speech, alt2VoiceBtn);
-    });
-  }
-
   // ── Language Switcher Controller ──
   const langSelect = document.getElementById('lang-select');
 
-      function applyLanguage(lang) {
+  function applyLanguage(lang) {
+    stopAllSpeech();
     if (!TRANSLATIONS[lang]) lang = 'hi';
     state.language = lang;
     localStorage.setItem('agrisense_lang', lang);
@@ -5301,8 +5400,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-      function renderRecommendations(data, currentN = 92, currentRain = 210) {
+  function renderRecommendations(data, currentN = 92, currentRain = 210) {
     state.lastRecommendationsData = data;
+    const recs = (data && data.recommendations) || [];
+    if (recs.length === 0) return;
+
     // Auto-save search to History
     try {
       const topRec = recs[0];
@@ -5329,9 +5431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (histErr) {
       console.warn('History save error:', histErr);
     }
-
-    const recs = data.recommendations || [];
-    if (recs.length === 0) return;
 
     const lang = state.language || 'hi';
     const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
@@ -5569,7 +5668,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const alt1V = document.getElementById('alt-1-voice-btn');
       if (alt1V) {
         alt1V.innerHTML = t.listenBtnText;
-        alt1V.onclick = () => toggleSpeech(getAltVoiceReadoutText(t.altTag1, alt1Meta, alt1, lang), alt1V);
+        const speech1 = getAltVoiceReadoutText(t.altTag1, alt1Meta, alt1, lang);
+        alt1V.onclick = () => toggleSpeech(speech1, alt1V);
+      }
+
+      const alt1Wa = document.getElementById('alt-1-share-btn');
+      if (alt1Wa) {
+        const alt1WaDet = `📊 *Match:* ${match1}%\n🌾 *Yield:* ${alt1Meta.yield}\n💧 *Water:* ${alt1Meta.water}\n📈 *Risk:* ${alt1Meta.priceSub}`;
+        alt1Wa.onclick = () => shareOnWhatsApp(alt1Meta.fullName, alt1WaDet);
       }
     }
 
@@ -5614,7 +5720,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const alt2V = document.getElementById('alt-2-voice-btn');
       if (alt2V) {
         alt2V.innerHTML = t.listenBtnText;
-        alt2V.onclick = () => toggleSpeech(getAltVoiceReadoutText(t.altTag2, alt2Meta, alt2, lang), alt2V);
+        const speech2 = getAltVoiceReadoutText(t.altTag2, alt2Meta, alt2, lang);
+        alt2V.onclick = () => toggleSpeech(speech2, alt2V);
+      }
+
+      const alt2Wa = document.getElementById('alt-2-share-btn');
+      if (alt2Wa) {
+        const alt2WaDet = `📊 *Match:* ${match2}%\n🌾 *Yield:* ${alt2Meta.yield}\n💧 *Water:* ${alt2Meta.water}\n📈 *Risk:* ${alt2Meta.priceSub}`;
+        alt2Wa.onclick = () => shareOnWhatsApp(alt2Meta.fullName, alt2WaDet);
       }
     }
   }
@@ -6255,7 +6368,7 @@ document.addEventListener('DOMContentLoaded', () => {
           : (lang === 'mr'
             ? `रोग: ${loc.name}. लक्षणे: ${loc.symptoms}. उपचार: ${loc.speechChem}.`
             : `रोग: ${loc.name}. लक्षण: ${loc.symptoms}. उपचार: ${loc.speechChem}.`);
-        vBtn.addEventListener('click', () => toggleSpeech(readout, vBtn));
+        vBtn.onclick = () => toggleSpeech(readout, vBtn);
       }
 
       // WhatsApp share
@@ -6269,7 +6382,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ${loc.symptoms.substring(0, 180)}...
 
 *Control:* ${loc.speechChem}`;
-        waBtn.addEventListener('click', () => shareOnWhatsApp(loc.name, waText));
+        waBtn.onclick = () => shareOnWhatsApp(loc.name, waText);
       }
 
       diseaseResultsContainer.appendChild(card);
