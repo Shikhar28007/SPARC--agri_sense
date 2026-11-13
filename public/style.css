@@ -1161,7 +1161,7 @@ button {
 
 /* Why fits callout */
 .why-fits-callout {
-  background: #F2F9F5;
+  background: var(--sage-light);
   border-left: 3.5px solid var(--leaf-green);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
@@ -1173,6 +1173,7 @@ button {
   align-items: center;
   gap: 6px;
   font-size: 12.5px;
+  font-weight: 700;
   color: var(--pine-primary);
   margin-bottom: 4px;
 }
@@ -2650,30 +2651,64 @@ button {
 }
 
 .state-callout-crops {
+  background: var(--sage-light);
+  border-left: 3.5px solid var(--leaf-green);
   margin-bottom: 1rem;
 }
 
 .state-crops-title {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
   color: var(--pine-primary);
+  margin-bottom: 3px;
 }
 
 .state-crops-body {
+  font-size: 13px;
   color: var(--text-body);
   margin-top: 0.25rem;
+  line-height: 1.45;
 }
 
 .state-callout-sau {
-  border-left-color: #E59B2E;
-  background: #FEF9EE;
+  border-left: 3.5px solid var(--gold-accent);
+  background: var(--peach-bg);
+  margin-bottom: 1rem;
 }
 
 .state-sau-title {
-  color: #8C6219;
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--peach-text);
+  margin-bottom: 3px;
 }
 
 .state-sau-body {
-  color: #4A3E2C;
+  font-size: 13px;
+  color: var(--text-body);
   margin-top: 0.25rem;
+  line-height: 1.45;
+}
+
+.state-callout-alert {
+  background: #FFF8E6;
+  border-left: 3.5px solid var(--amber-border);
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.state-alert-title {
+  font-weight: 700;
+  color: #B45309;
+}
+
+.state-alert-body {
+  color: #78350F;
 }
 
 .spinner {
@@ -4854,4 +4889,143 @@ button {
 [data-theme="dark"] .weather-panel {
   background: var(--bg-card);
   border-color: var(--border-card);
+}
+
+/* Dark Mode Callout Overrides (Why Fits, State Crops, SAU, Micronutrients) */
+[data-theme="dark"] .why-fits-callout {
+  background: #11281E;
+  border-left-color: #34D399;
+}
+
+[data-theme="dark"] .callout-header {
+  color: #6EE7B7;
+}
+
+[data-theme="dark"] .callout-text {
+  color: #E2ECE6;
+}
+
+[data-theme="dark"] .state-callout-crops {
+  background: #11281E;
+  border-left-color: #34D399;
+}
+
+[data-theme="dark"] .state-crops-title {
+  color: #6EE7B7;
+}
+
+[data-theme="dark"] .state-crops-body {
+  color: #E2ECE6;
+}
+
+[data-theme="dark"] .state-callout-sau {
+  background: #251D14;
+  border-left-color: #F59E0B;
+}
+
+[data-theme="dark"] .state-sau-title {
+  color: #FCD34D;
+}
+
+[data-theme="dark"] .state-sau-body {
+  color: #FDE68A;
+}
+
+[data-theme="dark"] .state-callout-alert {
+  background: #2A1D12;
+  border-left-color: #F59E0B;
+}
+
+[data-theme="dark"] .state-alert-title {
+  color: #FCD34D;
+}
+
+[data-theme="dark"] .state-alert-body {
+  color: #FDE68A;
+}
+
+[data-theme="dark"] .target-crop-section {
+  background: var(--bg-card);
+  border-color: var(--border-card);
+}
+
+[data-theme="dark"] .optional-badge {
+  background: #163022;
+  color: #A7F3D0;
+}
+
+[data-theme="dark"] .kvk-advisory-card {
+  background: #231C12;
+  border-color: #4D391F;
+}
+
+[data-theme="dark"] .season-prime-pill {
+  background: #231C12;
+  color: #FCD34D;
+  border-color: #4D391F;
+}
+
+[data-theme="dark"] .texture-radio-card.active {
+  background: #163022;
+  border-color: #34D399;
+}
+
+[data-theme="dark"] .kisan-bag-summary {
+  background: #11241B;
+  border-color: #1F4232;
+}
+
+[data-theme="dark"] .calendar-stage-notes {
+  background: #14281E;
+  border-color: #1F4232;
+}
+
+[data-theme="dark"] .spectrum-pill.optimal {
+  background: #122B1E;
+  color: #6EE7B7;
+  border: 1px solid #1E5037;
+}
+
+[data-theme="dark"] .spectrum-pill.adequate {
+  background: #292110;
+  color: #FCD34D;
+  border: 1px solid #57441B;
+}
+
+[data-theme="dark"] .spectrum-pill.balanced {
+  background: #0E2233;
+  color: #7DD3FC;
+  border: 1px solid #1A405F;
+}
+
+[data-theme="dark"] .spectrum-pill.low {
+  background: #2E1515;
+  color: #FCA5A5;
+  border: 1px solid #5C2424;
+}
+
+[data-theme="dark"] .priority-tag.high,
+[data-theme="dark"] .priority-tag.immediate {
+  background: #2E1515;
+  color: #FCA5A5;
+}
+
+[data-theme="dark"] .priority-tag.medium {
+  background: #292110;
+  color: #FCD34D;
+}
+
+[data-theme="dark"] .badge-coral {
+  background: #2E1515;
+  color: #FCA5A5;
+}
+
+[data-theme="dark"] .btn-download-pdf-header {
+  background: #163022;
+  color: #6EE7B7;
+  border-color: #245237;
+}
+
+[data-theme="dark"] .btn-download-pdf-header:hover {
+  background: #1E4230;
 }

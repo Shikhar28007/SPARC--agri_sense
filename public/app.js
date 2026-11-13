@@ -8679,7 +8679,7 @@ ${loc.symptoms.substring(0, 180)}...
     let microDef = '';
     if (Array.isArray(p.micronutrient_deficiencies) && p.micronutrient_deficiencies.length > 0) {
       const alertTitle = SOIL_PROFILE_I18N.criticalAlert[lang] || '⚠️ Critical Micronutrient Alerts:';
-      microDef = `<div class="why-fits-callout" style="background:#FFF9E6; border-left:4px solid #E59B2E; margin-bottom:12px; padding:10px 14px; border-radius:8px; font-size:12.5px;">${alertTitle} ${p.micronutrient_deficiencies.join(' | ')}</div>`;
+      microDef = `<div class="why-fits-callout state-callout-alert"><strong class="state-alert-title">${alertTitle}</strong> <span class="state-alert-body">${p.micronutrient_deficiencies.join(' | ')}</span></div>`;
     }
 
     const lblDominant = SOIL_PROFILE_I18N.dominantSoil[lang] || 'Dominant Soil';
