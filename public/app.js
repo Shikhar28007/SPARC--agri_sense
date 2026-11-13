@@ -1565,7 +1565,11 @@ document.addEventListener('DOMContentLoaded', () => {
       histRestoreBtn: '🔄 Restore & View Results',
       histDeleteBtn: 'Delete',
       histEmptyTitle: 'No Search Records Found',
-      histEmptyDesc: 'Run a crop recommendation, calculate fertilizer doses, or search plant pathology to build your farm history.'
+      histEmptyDesc: 'Run a crop recommendation, calculate fertilizer doses, or search plant pathology to build your farm history.',
+      themeDark: 'Dark',
+      themeLight: 'Light',
+      themeTitleDark: 'Switch to Dark Mode',
+      themeTitleLight: 'Switch to Light Mode'
     },    hi: {
       navAdvisory: 'फसल सलाह',
       navWeather: 'मौसम अलर्ट',
@@ -1649,7 +1653,11 @@ document.addEventListener('DOMContentLoaded', () => {
       histRestoreBtn: '🔄 परिणाम देखें एवं लोड करें',
       histDeleteBtn: 'हटाएं',
       histEmptyTitle: 'कोई पुराना रिकॉर्ड नहीं मिला',
-      histEmptyDesc: 'फसल अनुशंसा चलाएं, उर्वरक खुराक की गणना करें या इतिहास बनाने के लिए रोग खोजें।'
+      histEmptyDesc: 'फसल अनुशंसा चलाएं, उर्वरक खुराक की गणना करें या इतिहास बनाने के लिए रोग खोजें।',
+      themeDark: 'डार्क',
+      themeLight: 'लाइट',
+      themeTitleDark: 'डार्क मोड चालू करें',
+      themeTitleLight: 'लाइट मोड चालू करें'
     },
     mr: {
       navAdvisory: 'पीक सल्ला',
@@ -7122,6 +7130,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const t = TRANSLATIONS[lang];
 
+    // Sync Theme Switch Label to Active Language
+    if (typeof updateThemeUI === 'function') {
+      updateThemeUI(getActiveTheme());
+    }
+
     // Navigation Tabs
     const tabCrop = document.getElementById('tab-btn-crop');
     const tabWeather = document.getElementById('tab-btn-weather');
@@ -9105,7 +9118,6 @@ ${loc.symptoms.substring(0, 180)}...
   const welcomeCard = document.getElementById('welcome-gateway-card');
   const btnWelcomeStart = document.getElementById('btn-welcome-start');
   const btnWelcomeMinimize = document.getElementById('btn-welcome-minimize');
-  const btnWelcomeToggle = document.getElementById('btn-welcome-toggle');
 
   if (btnWelcomeStart) {
     btnWelcomeStart.addEventListener('click', () => {
@@ -9120,16 +9132,82 @@ ${loc.symptoms.substring(0, 180)}...
     btnWelcomeMinimize.addEventListener('click', () => {
       welcomeCard.classList.add('is-minimized');
       localStorage.setItem(WELCOME_DISMISSED_KEY, '1');
-      showToast('Welcome guide hidden. Click "Guide" in the top bar to reopen.', 'ℹ️');
+      showToast('Welcome overview hidden.', 'ℹ️');
     });
   }
 
-  if (btnWelcomeToggle && welcomeCard) {
-    btnWelcomeToggle.addEventListener('click', () => {
-      welcomeCard.classList.toggle('is-minimized');
-      if (!welcomeCard.classList.contains('is-minimized')) {
-        welcomeCard.scrollIntoView({ behavior: 'smooth' });
+  // ─────────────────────────────────────────────────────────────────────────
+  // THEME SWITCH CONTROLLER (LIGHT / DARK MODE)
+  // ─────────────────────────────────────────────────────────────────────────
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const themeToggleLabel = document.getElementById('theme-toggle-label');
+
+  function getActiveTheme() {
+    return document.documentElement.getAttribute('data-theme') || 'light';
+  }
+
+  function updateThemeUI(theme) {
+    const isDark = theme === 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    const metaColorScheme = document.querySelector('meta[name="color-scheme"]');
+    if (metaColorScheme) {
+      metaColorScheme.content = isDark ? 'dark' : 'light';
+    }
+    const lang = state.language || 'hi';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['hi'];
+    if (themeToggleBtn) {
+      themeToggleBtn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+      themeToggleBtn.title = isDark
+        ? (t.themeTitleLight || 'Switch to Light Mode / लाइट मोड चालू करें')
+        : (t.themeTitleDark || 'Switch to Dark Mode / डार्क मोड चालू करें');
+    }
+    if (themeToggleLabel) {
+      themeToggleLabel.textContent = isDark
+        ? (t.themeLight || 'Light')
+        : (t.themeDark || 'Dark');
+    }
+  }
+
+  function toggleTheme() {
+    const current = getActiveTheme();
+    const nextTheme = current === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem('theme', nextTheme);
+    } catch (e) {}
+    updateThemeUI(nextTheme);
+  }
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+    themeToggleBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleTheme();
       }
+    });
+  }
+
+  // Initialize theme from storage or OS preference
+  const initialTheme = (function() {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch (e) {}
+    return 'light';
+  })();
+  updateThemeUI(initialTheme);
+
+  // Sync with OS color scheme changes if user hasn't explicitly set a preference
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      try {
+        if (!localStorage.getItem('theme')) {
+          updateThemeUI(e.matches ? 'dark' : 'light');
+        }
+      } catch (err) {}
     });
   }
 

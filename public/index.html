@@ -3,6 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title>SPARC — Smart Crop Advisory & Recommendation | फसल और मिट्टी सलाहकार</title>
   <meta name="description" content="AI-powered precision agronomy, crop recommendation, elemental fertilizer prescription, and crop disease doctor rooted in real-time district weather and ICAR-KVK validated models.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -120,8 +133,14 @@
 
       <!-- Right Utility Controls -->
       <div class="header-actions">
-        <button type="button" class="btn-welcome-toggle" id="btn-welcome-toggle" title="Welcome Guide / मंच परिचय">
-          <span class="icon">ℹ️</span> <span class="label">Guide</span>
+        <!-- Theme Mode Switch (Light / Dark) -->
+        <button type="button" class="theme-toggle-switch" id="theme-toggle-btn" role="switch" aria-checked="false" title="Switch Theme (Light / Dark) • थीम बदलें" aria-label="Toggle light and dark mode">
+          <span class="theme-toggle-track">
+            <span class="theme-toggle-icon theme-icon-sun" aria-hidden="true">☀️</span>
+            <span class="theme-toggle-icon theme-icon-moon" aria-hidden="true">🌙</span>
+            <span class="theme-toggle-thumb"></span>
+          </span>
+          <span class="theme-toggle-label" id="theme-toggle-label">Dark</span>
         </button>
         <button type="button" class="btn-history-header" id="btn-history-toggle" title="Search History / पिछला खोज इतिहास">
           <span class="btn-history-icon">📜</span>
